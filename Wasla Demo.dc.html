@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Arabic:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#191A1E;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#F4F2EE;}
+  a{color:#F09A4D;text-decoration:none;} a:hover{color:#E88024;}
+  *{box-sizing:border-box;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+  @keyframes glowPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+  @keyframes scanline{0%{top:12%;}50%{top:82%;}100%{top:12%;}}
+  @keyframes stampPop{0%,55%{transform:scale(0);opacity:0;}70%{transform:scale(1.25);opacity:1;}82%{transform:scale(.95);}100%{transform:scale(1);opacity:1;}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:radial-gradient(1100px 560px at 18% -8%, rgba(232,128,36,.16), transparent 58%), radial-gradient(900px 500px at 100% 110%, rgba(232,128,36,.08), transparent 55%), #191A1E;display:flex;flex-direction:column;align-items:center;padding:52px 28px 44px;">
+  <div style="width:100%;max-width:1060px;">
+    <div style="display:flex;align-items:center;gap:16px;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) both;">
+      <svg viewBox="213.44 0 314.91 314.51" preserveAspectRatio="xMidYMid meet" style="width:52px;height:52px;flex-shrink:0;display:block;"><path fill="#E88024" d="M385.82,261.53c11.27,40.31,54.39,63.14,94.51,48.85,34.32-12.22,54.43-48.93,46.34-84.45-2.49-10.95-7.28-20.68-13.75-28.87-7.72-9.83-17.8-17.42-29.19-22.15-14.53-6.08-31.13-7.48-47.48-2.91-6.99,1.96-13.43,4.85-19.26,8.55-.24.14-.45.28-.66.41-5.71,3.89-8.03,11.74-4.13,18.55,3.1,5.41,9.72,7.93,15.71,6.22,1.09-.31,2.09-.74,3.02-1.29.08,0,.12-.03.16-.07.09-.03.16-.07.21-.13.03.02.05-.01.06-.04.15-.09.3-.18.45-.27h.05c3.56-2.28,7.55-4.07,11.84-5.27,13.78-3.85,27.83-.84,38.56,6.98,7.92,5.75,14.02,14.08,16.86,24.23.12.42.23.83.33,1.26,5.88,23.53-8.02,47.59-31.53,54.16-23.51,6.57-47.87-6.79-55.04-29.96-.21-.84-.93-3.39-1.2-4.31l-23.45-84.05,87.12-24.31c40.31-11.27,63.14-54.39,48.85-94.51-12.22-34.32-48.93-54.43-84.45-46.34-10.95,2.49-20.68,7.28-28.87,13.75-9.83,7.72-17.42,17.8-22.15,29.19-6.08,14.53-7.48,31.13-2.91,47.48,1.96,6.99,4.85,13.43,8.55,19.26.14.24.27.45.41.66,3.89,5.71,11.74,8.03,18.55,4.13,5.41-3.1,7.93-9.72,6.22-15.71-.31-1.09-.74-2.09-1.29-3.02,0-.08-.03-.12-.07-.16-.03-.09-.07-.16-.13-.21.02-.03-.01-.05-.04-.06-.09-.15-.18-.3-.27-.45v-.05c-2.28-3.56-4.07-7.55-5.27-11.84-3.85-13.78-.84-27.83,6.98-38.56,5.75-7.92,14.08-14.02,24.23-16.86.42-.12.83-.23,1.26-.33,23.53-5.88,47.59,8.02,54.16,31.53,6.57,23.51-6.8,47.87-29.96,55.04-.84.21-3.39.93-4.31,1.2l-84.05,23.45-24.31-87.12c-11.27-40.31-54.39-63.14-94.51-48.85-34.32,12.22-54.43,48.93-46.34,84.45,2.49,10.95,7.28,20.68,13.75,28.87,7.72,9.83,17.8,17.42,29.19,22.15,14.53,6.08,31.13,7.48,47.48,2.91,6.99-1.95,13.43-4.85,19.26-8.55.24-.14.45-.27.66-.41,5.71-3.89,8.03-11.74,4.13-18.55-3.1-5.41-9.72-7.93-15.71-6.22-1.09.31-2.09.74-3.02,1.29-.08,0-.12.03-.16.07-.09.03-.16.07-.21.13-.03-.02-.05.01-.06.04-.15.09-.3.18-.45.28h-.05c-3.56,2.28-7.55,4.07-11.84,5.27-13.78,3.85-27.83.84-38.56-6.98-7.92-5.75-14.02-14.08-16.86-24.23-.12-.42-.23-.83-.33-1.26-5.88-23.53,8.02-47.59,31.53-54.16,23.51-6.57,47.87,6.8,55.04,29.96.21.84.93,3.39,1.2,4.31l23.45,84.05-87.12,24.31c-40.31,11.27-63.14,54.39-48.85,94.51,12.22,34.32,48.93,54.43,84.45,46.34,10.95-2.49,20.68-7.28,28.87-13.75,9.83-7.72,17.42-17.8,22.15-29.19,6.08-14.53,7.48-31.13,2.91-47.48-1.95-6.99-4.85-13.43-8.55-19.26-.14-.24-.27-.45-.41-.66-3.89-5.71-11.74-8.03-18.55-4.13-5.41,3.1-7.93,9.72-6.22,15.71.31,1.09.74,2.09,1.29,3.02,0,.08.03.12.07.16.03.09.07.16.13.21-.02.03.01.05.04.06.09.15.18.3.27.45v.05c2.28,3.56,4.07,7.55,5.27,11.84,3.85,13.78.84,27.83-6.98,38.56-5.75,7.92-14.08,14.02-24.23,16.86-.42.12-.83.23-1.26.33-23.53,5.88-47.59-8.02-54.16-31.53-6.57-23.51,6.8-47.87,29.96-55.04.84-.21,3.39-.93,4.31-1.2l84.05-23.45,24.31,87.12Z"></path></svg>
+      <div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:34px;line-height:1;">Wasla <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:20px;color:#F09A4D;">وصلة</span></div>
+        <div style="font-size:13.5px;color:#9B948A;margin-top:6px;">Loyalty that lives in the wallet. No app, no plastic — <span style="color:#D8D2C8;">a working front-end, wall to wall.</span></div>
+      </div>
+      <div style="margin-inline-start:auto;text-align:end;font-size:11px;color:#6E6960;line-height:1.7;">Demo data throughout<br>Every number reconciles</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:36px;">
+      <a href="Wasla Dashboard.dc.html" style="display:block;background:linear-gradient(165deg,#F6F1E8,#EDE5D6);border-radius:22px;padding:20px;color:#241C16;position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) .08s both;" style-hover="transform:translateY(-7px);box-shadow:0 26px 60px rgba(0,0,0,.5)">
+        <div style="position:absolute;top:14px;inset-inline-end:14px;background:#E88024;color:#FFFFFF;font-size:9px;font-weight:800;letter-spacing:.08em;border-radius:999px;padding:4px 11px;">START HERE</div>
+        <div style="height:96px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:150px;background:#FFFFFF;border-radius:12px;padding:10px;box-shadow:0 10px 26px rgba(36,28,22,.18);">
+            <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;border-radius:50%;background:#E88024;"></div><div style="height:5px;width:52px;border-radius:99px;background:#E2DACB;"></div></div>
+            <div style="display:flex;gap:5px;margin-top:9px;"><div style="flex:1;height:26px;border-radius:6px;background:#1E5C43;"></div><div style="flex:1;height:26px;border-radius:6px;background:#1B2440;"></div><div style="flex:1;height:26px;border-radius:6px;background:#5C6B2F;"></div></div>
+            <div style="height:5px;width:86px;border-radius:99px;background:linear-gradient(90deg,#E88024,#F09A4D);margin-top:9px;"></div>
+          </div>
+        </div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;margin-top:10px;">The merchant</div>
+        <div style="font-size:11.5px;color:#5D5348;line-height:1.55;margin-top:4px;">Enter as Yara — five cards, a live wizard, broadcasts, and the whole business breathing.</div>
+      </a>
+      <a href="Wasla Customer.dc.html" style="display:block;background:linear-gradient(165deg,#232428,#1C1D21);border:1px solid #2E2F34;border-radius:22px;padding:20px;position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) .16s both;" style-hover="transform:translateY(-7px);box-shadow:0 26px 60px rgba(0,0,0,.55)">
+        <div style="height:96px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:74px;height:96px;border-radius:12px 12px 0 0;background:#101114;border:2px solid #2E2F34;border-bottom:none;padding:8px 7px;position:relative;">
+            <div style="background:linear-gradient(150deg,#1E5C43,#123D2C);border-radius:7px;padding:6px 6px;">
+              <div style="display:flex;gap:2.5px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.92);"></div><div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.92);"></div><div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.92);animation:stampPop 3s cubic-bezier(.22,.61,.36,1) infinite;"></div><div style="width:8px;height:8px;border-radius:50%;border:1px dashed rgba(255,255,255,.4);"></div>
+              </div>
+              <div style="height:4px;width:34px;border-radius:99px;background:rgba(255,255,255,.35);margin-top:6px;"></div>
+            </div>
+            <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:26px;height:3px;border-radius:99px;background:#2E2F34;"></div>
+          </div>
+        </div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;margin-top:10px;color:#F4F2EE;">The customer</div>
+        <div style="font-size:11.5px;color:#9B948A;line-height:1.55;margin-top:4px;">Be Sara — scan the counter QR, watch the pass land in the wallet, feel a stamp arrive.</div>
+      </a>
+      <a href="Wasla Scanner.dc.html" style="display:block;background:linear-gradient(165deg,#232428,#1C1D21);border:1px solid #2E2F34;border-radius:22px;padding:20px;position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) .24s both;" style-hover="transform:translateY(-7px);box-shadow:0 26px 60px rgba(0,0,0,.55)">
+        <div style="height:96px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:92px;height:92px;position:relative;">
+            <div style="position:absolute;top:0;left:0;width:22px;height:22px;border-top:3px solid #E88024;border-left:3px solid #E88024;border-radius:6px 0 0 0;"></div>
+            <div style="position:absolute;top:0;right:0;width:22px;height:22px;border-top:3px solid #E88024;border-right:3px solid #E88024;border-radius:0 6px 0 0;"></div>
+            <div style="position:absolute;bottom:0;left:0;width:22px;height:22px;border-bottom:3px solid #E88024;border-left:3px solid #E88024;border-radius:0 0 0 6px;"></div>
+            <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;border-bottom:3px solid #E88024;border-right:3px solid #E88024;border-radius:0 0 6px 0;"></div>
+            <div style="position:absolute;left:10%;right:10%;height:2.5px;border-radius:99px;background:linear-gradient(90deg,transparent,#F09A4D,transparent);animation:scanline 2.6s ease-in-out infinite;box-shadow:0 0 14px rgba(232,128,36,.8);"></div>
+          </div>
+        </div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;margin-top:10px;color:#F4F2EE;">The staff till</div>
+        <div style="font-size:11.5px;color:#9B948A;line-height:1.55;margin-top:4px;">Be Ahmad on Rainbow St — scan, stamp, take a bill, redeem. Fast enough for a queue.</div>
+      </a>
+      <a href="Wasla Console.dc.html" style="display:block;background:linear-gradient(165deg,#232428,#1C1D21);border:1px solid #2E2F34;border-radius:22px;padding:20px;position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) .32s both;" style-hover="transform:translateY(-7px);box-shadow:0 26px 60px rgba(0,0,0,.55)">
+        <div style="height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;background:#101114;border:1px solid #2E2F34;border-radius:10px;padding:8px 12px;">
+            <div style="width:20px;height:20px;border-radius:6px;background:#B14A32;color:#FFFFFF;font-family:'Nunito',sans-serif;font-weight:900;font-size:10px;display:flex;align-items:center;justify-content:center;">S</div>
+            <div><div style="height:4px;width:58px;border-radius:99px;background:#3A3B40;"></div><div style="height:4px;width:38px;border-radius:99px;background:#2E2F34;margin-top:4px;"></div></div>
+            <div style="background:#E88024;color:#FFFFFF;font-size:8px;font-weight:900;border-radius:999px;padding:3px 8px;animation:glowPulse 1.8s infinite;">2</div>
+          </div>
+          <div style="background:#2FAE66;color:#FFFFFF;font-size:9px;font-weight:800;border-radius:999px;padding:4px 14px;box-shadow:0 4px 18px rgba(47,174,102,.35);">Approve — it goes live</div>
+        </div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;margin-top:10px;color:#F4F2EE;">The Wasla console</div>
+        <div style="font-size:11.5px;color:#9B948A;line-height:1.55;margin-top:4px;">Be Omar — the approvals queue, 47 accounts, support tools, and the certificate clock.</div>
+      </a>
+    </div>
+
+    <div style="margin-top:34px;background:rgba(255,255,255,.04);border:1px solid #2E2F34;border-radius:18px;padding:18px 22px;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) .42s both;">
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;color:#F09A4D;">THE TEN-MINUTE WALK — ONE LOOP, ALL FOUR SEATS</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <sc-for list="{{ path }}" as="p" hint-placeholder-count="6">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <a href="{{ p.href }}" style="display:flex;align-items:center;gap:9px;background:#101114;border:1px solid #2E2F34;border-radius:12px;padding:9px 14px;transition:border-color .2s,background .2s,transform .2s;" style-hover="border-color:#E88024;background:#16171B;transform:translateY(-2px)">
+              <span style="width:20px;height:20px;border-radius:50%;background:#E88024;color:#FFFFFF;font-size:10.5px;font-weight:900;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;flex-shrink:0;">{{ p.n }}</span>
+              <span style="font-size:12px;color:#D8D2C8;"><strong style="color:#F4F2EE;">{{ p.a }}</strong> {{ p.b }}</span>
+            </a>
+            <sc-if value="{{ p.arrow }}" hint-placeholder-val="{{ true }}"><span style="color:#4A4B50;font-weight:800;">→</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:#6E6960;margin-top:26px;animation:fadeUp .6s .5s both;">Built for Rawan &amp; Khaled · every surface is clickable, every flow completes · Amman, 2026</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      path: [
+        { n: '1', a: 'Print the poster', b: 'in the dashboard — signup pages', arrow: true, href: 'Wasla Dashboard.dc.html' },
+        { n: '2', a: 'Join as Sara', b: 'scan it in the customer journey', arrow: true, href: 'Wasla Customer.dc.html' },
+        { n: '3', a: 'Stamp her card', b: 'at the staff till', arrow: true, href: 'Wasla Scanner.dc.html' },
+        { n: '4', a: 'Redeem the reward', b: 'when the card fills', arrow: true, href: 'Wasla Scanner.dc.html' },
+        { n: '5', a: 'Submit Sukkar', b: 'the wizard, live previews', arrow: true, href: 'Wasla Dashboard.dc.html' },
+        { n: '6', a: 'Approve it', b: 'in the console — it goes live', arrow: false, href: 'Wasla Console.dc.html' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<script src="wasla-data.js"></script>
+<style>
+  html,body{margin:0;padding:0;background:#F3EFE9;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#241C16;}
+  a{color:#C96A14;text-decoration:none;} a:hover{color:#E88024;}
+  *{box-sizing:border-box;} input,textarea{font-family:inherit;}
+  input:focus,textarea:focus{outline:2px solid rgba(232,128,36,.45);outline-offset:1px;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+  @keyframes popIn{0%{opacity:0;transform:scale(.86);}60%{transform:scale(1.03);}100%{opacity:1;transform:scale(1);}}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  @keyframes slideRight{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:none;}}
+  @keyframes colIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+  @keyframes cardIn{from{opacity:0;transform:translateY(12px) scale(.985);}to{opacity:1;transform:none;}}
+  @keyframes railDraw{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  @keyframes growX{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  @keyframes barRise{from{transform:scaleY(0);}to{transform:scaleY(1);}}
+  @keyframes dotDrop{0%{opacity:0;transform:translate(-50%,-18px) scale(.5);}70%{transform:translate(-50%,2px) scale(1.07);}100%{opacity:1;transform:translate(-50%,0) scale(1);}}
+  @keyframes tickIn{from{opacity:0;transform:translate(-50%,6px);}to{opacity:.999;transform:translate(-50%,0);}}
+  @keyframes riskPulse{0%{box-shadow:0 3px 8px rgba(40,30,18,.18),0 0 0 0 rgba(226,86,58,.5);}70%{box-shadow:0 3px 8px rgba(40,30,18,.18),0 0 0 9px rgba(226,86,58,0);}100%{box-shadow:0 3px 8px rgba(40,30,18,.18),0 0 0 0 rgba(226,86,58,0);}}
+  @keyframes sparkDraw{from{clip-path:inset(0 100% 0 0);}to{clip-path:inset(0 0 0 0);}}
+</style>
+</helmet>
+<div style="display:flex;min-height:100vh;background:radial-gradient(1200px 600px at 0% 0%, rgba(232,128,36,.07), transparent 60%), radial-gradient(1000px 500px at 100% 0%, rgba(40,38,34,.06), transparent 55%), #F3EFE9;">
+  <aside style="width:236px;flex-shrink:0;background:rgba(255,255,255,.72);backdrop-filter:blur(8px);border-inline-end:1px solid #E7E0D5;display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;height:100vh;">
+    <div style="display:flex;align-items:center;gap:11px;padding:2px 8px 16px;">
+      <svg viewBox="213.44 0 314.91 314.51" preserveAspectRatio="xMidYMid meet" style="width:32px;height:32px;flex-shrink:0;display:block;"><path fill="#E88024" d="M385.82,261.53c11.27,40.31,54.39,63.14,94.51,48.85,34.32-12.22,54.43-48.93,46.34-84.45-2.49-10.95-7.28-20.68-13.75-28.87-7.72-9.83-17.8-17.42-29.19-22.15-14.53-6.08-31.13-7.48-47.48-2.91-6.99,1.96-13.43,4.85-19.26,8.55-.24.14-.45.28-.66.41-5.71,3.89-8.03,11.74-4.13,18.55,3.1,5.41,9.72,7.93,15.71,6.22,1.09-.31,2.09-.74,3.02-1.29.08,0,.12-.03.16-.07.09-.03.16-.07.21-.13.03.02.05-.01.06-.04.15-.09.3-.18.45-.27h.05c3.56-2.28,7.55-4.07,11.84-5.27,13.78-3.85,27.83-.84,38.56,6.98,7.92,5.75,14.02,14.08,16.86,24.23.12.42.23.83.33,1.26,5.88,23.53-8.02,47.59-31.53,54.16-23.51,6.57-47.87-6.79-55.04-29.96-.21-.84-.93-3.39-1.2-4.31l-23.45-84.05,87.12-24.31c40.31-11.27,63.14-54.39,48.85-94.51-12.22-34.32-48.93-54.43-84.45-46.34-10.95,2.49-20.68,7.28-28.87,13.75-9.83,7.72-17.42,17.8-22.15,29.19-6.08,14.53-7.48,31.13-2.91,47.48,1.96,6.99,4.85,13.43,8.55,19.26.14.24.27.45.41.66,3.89,5.71,11.74,8.03,18.55,4.13,5.41-3.1,7.93-9.72,6.22-15.71-.31-1.09-.74-2.09-1.29-3.02,0-.08-.03-.12-.07-.16-.03-.09-.07-.16-.13-.21.02-.03-.01-.05-.04-.06-.09-.15-.18-.3-.27-.45v-.05c-2.28-3.56-4.07-7.55-5.27-11.84-3.85-13.78-.84-27.83,6.98-38.56,5.75-7.92,14.08-14.02,24.23-16.86.42-.12.83-.23,1.26-.33,23.53-5.88,47.59,8.02,54.16,31.53,6.57,23.51-6.8,47.87-29.96,55.04-.84.21-3.39.93-4.31,1.2l-84.05,23.45-24.31-87.12c-11.27-40.31-54.39-63.14-94.51-48.85-34.32,12.22-54.43,48.93-46.34,84.45,2.49,10.95,7.28,20.68,13.75,28.87,7.72,9.83,17.8,17.42,29.19,22.15,14.53,6.08,31.13,7.48,47.48,2.91,6.99-1.95,13.43-4.85,19.26-8.55.24-.14.45-.27.66-.41,5.71-3.89,8.03-11.74,4.13-18.55-3.1-5.41-9.72-7.93-15.71-6.22-1.09.31-2.09.74-3.02,1.29-.08,0-.12.03-.16.07-.09.03-.16.07-.21.13-.03-.02-.05.01-.06.04-.15.09-.3.18-.45.28h-.05c-3.56,2.28-7.55,4.07-11.84,5.27-13.78,3.85-27.83.84-38.56-6.98-7.92-5.75-14.02-14.08-16.86-24.23-.12-.42-.23-.83-.33-1.26-5.88-23.53,8.02-47.59,31.53-54.16,23.51-6.57,47.87,6.8,55.04,29.96.21.84.93,3.39,1.2,4.31l23.45,84.05-87.12,24.31c-40.31,11.27-63.14,54.39-48.85,94.51,12.22,34.32,48.93,54.43,84.45,46.34,10.95-2.49,20.68-7.28,28.87-13.75,9.83-7.72,17.42-17.8,22.15-29.19,6.08-14.53,7.48-31.13,2.91-47.48-1.95-6.99-4.85-13.43-8.55-19.26-.14-.24-.27-.45-.41-.66-3.89-5.71-11.74-8.03-18.55-4.13-5.41,3.1-7.93,9.72-6.22,15.71.31,1.09.74,2.09,1.29,3.02,0,.08.03.12.07.16.03.09.07.16.13.21-.02.03.01.05.04.06.09.15.18.3.27.45v.05c2.28,3.56,4.07,7.55,5.27,11.84,3.85,13.78.84,27.83-6.98,38.56-5.75,7.92-14.08,14.02-24.23,16.86-.42.12-.83.23-1.26.33-23.53,5.88-47.59-8.02-54.16-31.53-6.57-23.51,6.8-47.87,29.96-55.04.84-.21,3.39-.93,4.31-1.2l84.05-23.45,24.31,87.12Z"></path></svg>
+      <div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;line-height:1;">Wasla</div>
+        <div style="font-size:10.5px;color:#93887A;margin-top:3px;letter-spacing:.04em;">The console · staff only</div>
+      </div>
+    </div>
+    <div style="display:flex;background:#F0EAE0;border-radius:999px;padding:3px;margin:0 4px 18px;">
+      <sc-for list="{{ roleChips }}" as="rc" hint-placeholder-count="2">
+        <div onClick="{{ rc.go }}" style="cursor:pointer;flex:1;text-align:center;border-radius:999px;padding:7px 0;font-size:11.5px;font-weight:800;background:{{ rc.bg }};color:{{ rc.fg }};transition:all .25s;">{{ rc.label }}</div>
+      </sc-for>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:4px;">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <div onClick="{{ n.go }}" style="cursor:pointer;padding:11px 14px;border-radius:12px;font-size:13.5px;font-weight:{{ n.fw }};color:{{ n.fg }};background:{{ n.bg }};display:flex;align-items:center;gap:10px;transition:background .2s,color .2s;" style-hover="background:rgba(232,128,36,.10);color:#C96A14">
+          <span style="width:7px;height:7px;border-radius:50%;background:{{ n.dot }};flex-shrink:0;"></span>{{ n.label }}
+          <sc-if value="{{ n.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="margin-inline-start:auto;background:#E88024;color:#FFFFFF;font-size:10px;font-weight:800;border-radius:999px;padding:2px 8px;">{{ n.badge }}</span></sc-if>
+        </div>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;">
+      <a href="Wasla Dashboard.dc.html" style="display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:12px;font-size:12.5px;font-weight:700;color:#5D5348;border:1.5px dashed #E7E0D5;margin-bottom:14px;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14"><span style="width:7px;height:7px;border-radius:50%;background:#E88024;flex-shrink:0;"></span>Client dashboard →</a>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px;">
+        <div style="width:34px;height:34px;border-radius:50%;background:#26262B;color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;">{{ meInitials }}</div>
+        <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;">{{ meName }}</div><div style="font-size:10.5px;color:#93887A;">{{ meRole }}</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column;">
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 32px;border-bottom:1px solid #E7E0D5;background:rgba(255,255,255,.6);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40;">
+      <div style="font-size:12px;color:#93887A;">{{ crumb }}</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <sc-if value="{{ showInviteBtn }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ startInvite }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:9px 18px;transition:transform .2s;" style-hover="transform:translateY(-1px)">+ Invite a client</div>
+        </sc-if>
+        <div style="width:34px;height:34px;border-radius:50%;background:#26262B;color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;">{{ meInitials }}</div>
+      </div>
+    </header>
+    <div style="flex:1;">
+
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:30px 32px 48px;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">{{ homeTitle }}</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">{{ homeSub }}</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:24px;">
+            <sc-for list="{{ homeStats }}" as="hs" hint-placeholder-count="4">
+              <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:18px 20px;animation:{{ hs.anim }};">
+                <div style="font-size:11px;font-weight:600;color:#93887A;letter-spacing:.03em;text-transform:uppercase;">{{ hs.label }}</div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:28px;margin-top:6px;font-variant-numeric:tabular-nums;color:{{ hs.color }};">{{ hs.value }}</div>
+                <div style="font-size:11px;color:#93887A;margin-top:3px;">{{ hs.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:20px;align-items:start;">
+            <div onClick="{{ goApprovals }}" style="cursor:pointer;background:#FFFFFF;border:1.5px solid #E88024;border-radius:18px;padding:20px;transition:transform .2s;" style-hover="transform:translateY(-2px)">
+              <div style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:#E88024;animation:pulse 1.6s infinite;"></span><span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">{{ apprCountLine }}</span></div>
+              <div style="font-size:12.5px;color:#5D5348;margin-top:8px;line-height:1.55;">{{ apprPreviewLine }}</div>
+              <div style="font-size:11.5px;font-weight:800;color:#C96A14;margin-top:10px;">{{ apprCta }}</div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px;">{{ homePanel2Title }}</div>
+              <sc-for list="{{ homePanel2Rows }}" as="p2" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F5F0E8;animation:{{ p2.anim }};">
+                  <span style="width:8px;height:8px;border-radius:50%;background:{{ p2.dot }};flex-shrink:0;animation:{{ p2.dotAnim }};"></span>
+                  <div style="font-size:12.5px;line-height:1.5;flex:1;min-width:0;"><strong>{{ p2.a }}</strong> {{ p2.b }}</div>
+                  <sc-if value="{{ p2.canResolve }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ p2.resolve }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:10.5px;font-weight:800;border-radius:999px;padding:5px 12px;white-space:nowrap;flex-shrink:0;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14;background:#FDF8F1">Resolve</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ showRenewals }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px 22px;margin-top:16px;">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div style="min-width:0;">
+                  <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">Renewals on the clock</div>
+                  <div style="font-size:11px;color:#93887A;margin-top:2px;">{{ renewSub }}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <span style="background:#FDF4EC;color:#C96A14;font-size:10.5px;font-weight:800;border-radius:999px;padding:5px 12px;white-space:nowrap;">{{ renewStakeLine }}</span>
+                  <span style="background:{{ renewRiskBg }};color:{{ renewRiskFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:5px 12px;white-space:nowrap;">{{ renewRiskLine }}</span>
+                </div>
+              </div>
+              <div style="position:relative;height:66px;margin:20px 2px 4px;">
+                <div style="position:absolute;left:0;right:0;bottom:17px;height:3px;border-radius:99px;background:linear-gradient(90deg,#E2563A,#F0A92B 26%,#DCD3C4 62%,#E7E0D5);transform-origin:left;animation:{{ railAnim }};"></div>
+                <sc-for list="{{ renewTicks }}" as="rt" hint-placeholder-count="5">
+                  <div style="position:absolute;bottom:0;left:{{ rt.left }};transform:translateX(-50%);text-align:center;animation:{{ rt.anim }};">
+                    <div style="width:1.5px;height:10px;background:#E0D8CB;margin:0 auto 4px;"></div>
+                    <div style="font-size:9px;color:#A79C8D;font-weight:800;white-space:nowrap;letter-spacing:.03em;">{{ rt.label }}</div>
+                  </div>
+                </sc-for>
+                <sc-for list="{{ renewDots }}" as="rd" hint-placeholder-count="4">
+                  <div onClick="{{ rd.open }}" title="{{ rd.tip }}" style="cursor:pointer;position:absolute;bottom:25px;left:{{ rd.left }};transform:translateX(-50%);width:27px;height:27px;border-radius:50%;background:{{ rd.bg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:11.5px;border:2px solid #FFFFFF;box-shadow:0 3px 8px rgba(40,30,18,.18);animation:{{ rd.anim }};transition:filter .2s;" style-hover="filter:brightness(1.1)">{{ rd.initial }}</div>
+                </sc-for>
+              </div>
+              <div style="border-top:1px solid #F1EBE1;margin-top:6px;padding-top:4px;">
+                <sc-for list="{{ renewRows }}" as="rn" hint-placeholder-count="4">
+                  <div onClick="{{ rn.open }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;padding:10px 8px;border-bottom:1px solid #F5F0E8;border-radius:11px;transition:background .15s;flex-wrap:wrap;animation:{{ rn.anim }};" style-hover="background:#FAF6EF">
+                    <div style="width:31px;height:31px;border-radius:10px;background:{{ rn.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;flex-shrink:0;">{{ rn.initial }}</div>
+                    <div style="min-width:0;flex:1;">
+                      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                        <span style="font-size:12.5px;font-weight:700;">{{ rn.name }}</span>
+                        <span style="border:1px solid #E7E0D5;color:#6B6760;font-size:9px;font-weight:800;border-radius:999px;padding:2px 8px;white-space:nowrap;">{{ rn.plan }}</span>
+                        <sc-if value="{{ rn.risk }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;font-weight:800;color:#B23420;background:#FBE6E1;border-radius:999px;padding:2px 8px;white-space:nowrap;">AT RISK</span></sc-if>
+                      </div>
+                      <div style="font-size:10.5px;color:#93887A;margin-top:2px;">{{ rn.renewal }} · <strong style="color:#5D5348;font-weight:700;">{{ rn.stake }}</strong> at stake</div>
+                    </div>
+                    <span style="min-width:48px;text-align:center;background:{{ rn.chipBg }};color:{{ rn.chipFg }};font-size:10.5px;font-weight:900;border-radius:999px;padding:5px 8px;font-variant-numeric:tabular-nums;">{{ rn.days }}d</span>
+                    <sc-if value="{{ rn.canPay }}" hint-placeholder-val="{{ true }}">
+                      <div onClick="{{ rn.pay }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-size:10.5px;font-weight:800;border-radius:999px;padding:6px 13px;white-space:nowrap;transition:background .2s;" style-hover="background:rgba(232,128,36,.09)">Mark paid</div>
+                    </sc-if>
+                    <sc-if value="{{ rn.paid }}" hint-placeholder-val="{{ false }}">
+                      <span style="background:#E7F6EE;color:#1E7D47;font-size:9.5px;font-weight:800;border-radius:999px;padding:6px 12px;white-space:nowrap;">PAID</span>
+                    </sc-if>
+                    <div onClick="{{ rn.ping }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:10.5px;font-weight:700;border-radius:999px;padding:6px 13px;white-space:nowrap;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14">Ping owner</div>
+                  </div>
+                </sc-for>
+                <div style="font-size:10.5px;color:#93887A;padding-top:10px;line-height:1.5;">{{ renewFootLine }}</div>
+              </div>
+            </div>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:16px;align-items:start;">
+            <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+              <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px 22px;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                  <div style="min-width:0;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">The week, day by day</div>
+                    <div style="font-size:11px;color:#93887A;margin-top:2px;">New passes issued across every account</div>
+                  </div>
+                  <div style="text-align:end;flex-shrink:0;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:21px;line-height:1;font-variant-numeric:tabular-nums;">{{ weekTotal }}</div>
+                    <span style="display:inline-block;background:{{ weekDeltaBg }};color:{{ weekDeltaFg }};font-size:9.5px;font-weight:800;border-radius:999px;padding:3px 9px;margin-top:5px;white-space:nowrap;">{{ weekDelta }}</span>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:flex-end;gap:5px;height:112px;margin-top:18px;">
+                  <sc-for list="{{ weekBars }}" as="wb" hint-placeholder-count="7">
+                    <div onMouseEnter="{{ wb.enter }}" onMouseLeave="{{ wb.leave }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end;border-radius:11px;padding:4px 0;background:{{ wb.colBg }};transform:{{ wb.lift }};transition:transform .22s cubic-bezier(.22,.61,.36,1),background .22s;">
+                      <span style="font-size:9.5px;font-weight:800;color:{{ wb.vFg }};font-variant-numeric:tabular-nums;animation:{{ wb.labAnim }};">{{ wb.v }}</span>
+                      <div style="width:100%;max-width:30px;height:{{ wb.h }};border-radius:7px 7px 3px 3px;background:{{ wb.bg }};transform-origin:bottom;animation:{{ wb.anim }};transition:background .22s;"></div>
+                      <span style="font-size:9.5px;font-weight:{{ wb.dFw }};color:{{ wb.dFg }};">{{ wb.d }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;align-items:center;gap:9px;margin-top:13px;min-height:18px;">
+                  <span style="width:7px;height:7px;border-radius:50%;background:{{ weekCapDot }};flex-shrink:0;transition:background .2s;"></span>
+                  <span style="font-size:10.5px;color:#5D5348;line-height:1.5;">{{ weekCaption }}</span>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isSales }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ goLeads }}" style="cursor:pointer;background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px 22px;transition:border-color .2s;" style-hover="border-color:#E88024">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                  <div style="min-width:0;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">The pipeline at a glance</div>
+                    <div style="font-size:11px;color:#93887A;margin-top:2px;">Tap to open the full board</div>
+                  </div>
+                  <div style="text-align:end;flex-shrink:0;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:21px;line-height:1;font-variant-numeric:tabular-nums;">{{ pipeSnapTotal }}</div>
+                    <div style="font-size:9px;color:#93887A;letter-spacing:.05em;margin-top:4px;">IN PLAY / MONTH</div>
+                  </div>
+                </div>
+                <div style="margin-top:14px;">
+                  <sc-for list="{{ pipeSnap }}" as="pp" hint-placeholder-count="5">
+                    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;">
+                      <span style="width:88px;font-size:11px;font-weight:700;color:#5D5348;flex-shrink:0;">{{ pp.stage }}</span>
+                      <div style="flex:1;min-width:0;height:9px;border-radius:99px;background:#F0EAE0;overflow:hidden;"><div style="height:100%;width:{{ pp.w }};border-radius:99px;background:{{ pp.bg }};transform-origin:left;animation:{{ pp.anim }};"></div></div>
+                      <span style="font-size:9.5px;color:#93887A;width:56px;text-align:end;font-variant-numeric:tabular-nums;">{{ pp.val }}</span>
+                      <span style="font-size:11.5px;font-weight:900;font-family:'Nunito',sans-serif;width:14px;text-align:end;">{{ pp.n }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="font-size:10.5px;color:#93887A;margin-top:10px;">{{ pipeSnapNote }}</div>
+              </div>
+            </sc-if>
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:12px;">Quick moves</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <sc-for list="{{ quickMoves }}" as="qm" hint-placeholder-count="4">
+                  <div onClick="{{ qm.go }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;border:1.5px solid #E7E0D5;border-radius:12px;padding:11px 14px;transition:all .2s;" style-hover="border-color:#E88024;background:#FDF8F1">
+                    <span style="width:8px;height:8px;border-radius:50%;background:{{ qm.dot }};flex-shrink:0;"></span>
+                    <div style="min-width:0;flex:1;"><div style="font-size:12.5px;font-weight:800;">{{ qm.a }}</div><div style="font-size:10.5px;color:#93887A;">{{ qm.b }}</div></div>
+                    <span style="color:#C9BFAF;font-weight:800;">→</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <sc-if value="{{ showFeed }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;margin-top:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;">
+                <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">Across the platform, this morning</div>
+                <span onClick="{{ goLog }}" style="cursor:pointer;font-size:11.5px;font-weight:800;color:#C96A14;" style-hover="color:#E88024">The full log →</span>
+              </div>
+              <sc-for list="{{ homeFeed }}" as="hf" hint-placeholder-count="5">
+                <sc-if value="{{ hf.showGroup }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:9.5px;font-weight:800;letter-spacing:.09em;color:#B0A594;text-transform:uppercase;padding:12px 0 5px;animation:{{ hf.anim }};">{{ hf.group }}</div>
+                </sc-if>
+                <div style="display:flex;align-items:flex-start;gap:11px;padding:9px 8px;border-bottom:1px solid #F5F0E8;border-radius:10px;transition:background .15s;animation:{{ hf.anim }};" style-hover="background:#FAF6EF">
+                  <span style="width:8px;height:8px;border-radius:50%;background:{{ hf.kindDot }};box-shadow:0 0 0 3.5px {{ hf.kindRing }};margin-top:8px;flex-shrink:0;"></span>
+                  <div style="width:26px;height:26px;border-radius:50%;background:{{ hf.avBg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:9.5px;flex-shrink:0;">{{ hf.who }}</div>
+                  <div style="min-width:0;flex:1;font-size:12.5px;line-height:1.5;"><span style="background:{{ hf.tagBg }};color:{{ hf.tagFg }};font-size:9px;font-weight:800;border-radius:999px;padding:2px 8px;margin-inline-end:7px;">{{ hf.tag }}</span>{{ hf.line }}</div>
+                  <div style="font-size:10.5px;color:#93887A;white-space:nowrap;">{{ hf.t }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isSales }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;margin-top:16px;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:12px;">Activations this quarter — the board</div>
+              <sc-for list="{{ boardRows }}" as="bd2" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
+                  <div style="width:30px;height:30px;border-radius:50%;background:#F0E7DB;color:#7A5A2E;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;">{{ bd2.initials }}</div>
+                  <div style="width:60px;font-size:13px;font-weight:700;">{{ bd2.name }}</div>
+                  <div style="flex:1;height:9px;border-radius:99px;background:#F0EAE0;overflow:hidden;"><div style="height:100%;width:{{ bd2.w }};border-radius:99px;background:linear-gradient(90deg,#E88024,#F09A4D);transition:width 1s cubic-bezier(.22,.61,.36,1);"></div></div>
+                  <span style="font-weight:900;font-family:'Nunito',sans-serif;font-size:16px;">{{ bd2.n }}</span>
+                </div>
+              </sc-for>
+              <div style="font-size:10.5px;color:#93887A;margin-top:8px;">An activation = invite accepted + first card live. Two more and the quarter bonus lands.</div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAccounts }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">Every account, one register.</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">{{ accHeading }}</div>
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;margin-top:22px;">
+            <sc-for list="{{ accountRows }}" as="ac" hint-placeholder-count="8">
+              <div onClick="{{ ac.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid #F5F0E8;transition:background .15s;flex-wrap:wrap;" style-hover="background:#FAF6EF">
+                <div style="width:38px;height:38px;border-radius:12px;background:{{ ac.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;flex-shrink:0;opacity:{{ ac.op }};">{{ ac.initial }}</div>
+                <div style="min-width:0;width:210px;"><div style="font-size:14px;font-weight:700;">{{ ac.name }}</div><div style="font-size:11px;color:#93887A;">{{ ac.owner }} · <span style="font-family:'IBM Plex Sans Arabic',sans-serif;">{{ ac.ar }}</span></div></div>
+                <span style="background:{{ ac.stBg }};color:{{ ac.stFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:4px 12px;white-space:nowrap;">{{ ac.stLabel }}</span>
+                <span style="border:1px solid #E7E0D5;color:#5D5348;font-size:10.5px;font-weight:700;border-radius:999px;padding:4px 12px;white-space:nowrap;">{{ ac.plan }}</span>
+                <div style="flex:1;"></div>
+                <div style="text-align:end;"><div style="font-weight:800;font-size:13.5px;font-variant-numeric:tabular-nums;">{{ ac.cardsLine }}</div><div style="font-size:10.5px;color:#93887A;">cards</div></div>
+                <div style="text-align:end;width:80px;"><div style="font-weight:800;font-size:13.5px;font-variant-numeric:tabular-nums;">{{ ac.members }}</div><div style="font-size:10.5px;color:#93887A;">members</div></div>
+                <div style="font-size:11px;color:#93887A;width:80px;text-align:end;">{{ ac.manager }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAccount }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:28px 32px 48px;animation:{{ enterAnim }};">
+          <div onClick="{{ goAccounts }}" style="cursor:pointer;font-size:13px;font-weight:700;color:#93887A;margin-bottom:20px;display:inline-flex;gap:7px;" style-hover="color:#C96A14">← Accounts</div>
+          <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:#FFFFFF;border:1px solid #E7E0D5;border-radius:22px;padding:24px 28px;">
+            <div style="width:56px;height:56px;border-radius:16px;background:{{ selAcc.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;">{{ selAcc.initial }}</div>
+            <div style="min-width:0;">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;">{{ selAcc.name }}</span><span style="background:{{ selStBg }};color:{{ selStFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:4px 12px;">{{ selStLabel }}</span></div>
+              <div style="font-size:12.5px;color:#93887A;margin-top:4px;">{{ selAcc.owner }} · {{ selAcc.plan }} plan · manager {{ selAcc.manager }} · renews {{ selAcc.renewal }}</div>
+            </div>
+            <div style="margin-inline-start:auto;display:flex;gap:18px;flex-wrap:wrap;align-items:center;">
+              <div><div style="font-size:10px;letter-spacing:.06em;color:#93887A;">CARDS</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums;">{{ selAcc.cards }} / {{ selAcc.quota }}</div></div>
+              <div><div style="font-size:10px;letter-spacing:.06em;color:#93887A;">MEMBERS</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums;">{{ selMembers }}</div></div>
+              <a href="Wasla Dashboard.dc.html?viewas=1" onClick="{{ viewAsGo }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-weight:800;font-size:12px;border-radius:999px;padding:9px 18px;" style-hover="background:rgba(232,128,36,.08)">View as client</a>
+            </div>
+          </div>
+          <sc-if value="{{ selHasNote }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:14px;background:#FDF1DC;border:1px solid #F6DDB0;color:#9A6B12;border-radius:14px;padding:13px 18px;font-size:12.5px;font-weight:600;">{{ selAcc.note }}</div>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:18px;align-items:start;">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:12px;">Plan &amp; quotas</div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:9px 0;border-bottom:1px solid #F5F0E8;"><span style="color:#93887A;">Cards</span><strong>{{ selAcc.cards }} of {{ selAcc.quota }}</strong></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:9px 0;border-bottom:1px solid #F5F0E8;"><span style="color:#93887A;">Broadcasts</span><strong>10 / month</strong></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:9px 0;"><span style="color:#93887A;">Certificate</span><strong>{{ selCert }}</strong></div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:12px;">The relationship</div>
+              <sc-for list="{{ selTimeline }}" as="tl" hint-placeholder-count="4">
+                <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #F5F0E8;">
+                  <span style="width:8px;height:8px;border-radius:50%;background:{{ tl.dot }};margin-top:5px;flex-shrink:0;"></span>
+                  <div style="font-size:12.5px;line-height:1.5;flex:1;"><strong>{{ tl.a }}</strong> {{ tl.b }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#FFFFFF;border:1.5px solid #F6DDB0;border-radius:18px;padding:20px;margin-top:16px;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:4px;">How this account changes, pauses and ends</div>
+              <div style="font-size:11.5px;color:#93887A;margin-bottom:14px;">Every action here states its blast radius before it happens — and lands in the append-only log.</div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 0;border-bottom:1px solid #F5F0E8;">
+                <span style="font-size:12.5px;font-weight:700;width:130px;">Plan</span>
+                <sc-for list="{{ dzPlans }}" as="dz" hint-placeholder-count="3">
+                  <div onClick="{{ dz.pick }}" style="cursor:pointer;border:1.5px solid {{ dz.br }};background:{{ dz.bg }};color:{{ dz.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ dz.label }}</div>
+                </sc-for>
+                <span style="font-size:10.5px;color:#93887A;">quota flips instantly · invoice follows</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 0;border-bottom:1px solid #F5F0E8;">
+                <span style="font-size:12.5px;font-weight:700;width:130px;">{{ dzPauseWord }}</span>
+                <div onClick="{{ dzPause }}" style="cursor:pointer;border:1.5px solid #F0A92B;color:#9A6B12;font-size:11.5px;font-weight:800;border-radius:999px;padding:7px 16px;" style-hover="background:#FDF1DC">{{ dzPauseLabel }}</div>
+                <span style="font-size:10.5px;color:#93887A;flex:1;min-width:180px;">{{ dzPauseNote }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 0;border-bottom:1px solid #F5F0E8;">
+                <span style="font-size:12.5px;font-weight:700;width:130px;">Owner</span>
+                <div onClick="{{ dzOwner }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 16px;" style-hover="border-color:#E88024;color:#C96A14">Change owner…</div>
+                <span style="font-size:10.5px;color:#93887A;">a new set-password link — the old login dies the moment the new one lives</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 0 2px;">
+                <span style="font-size:12.5px;font-weight:700;width:130px;color:#B23420;">Delete forever</span>
+                <div onClick="{{ dzDelete }}" style="cursor:pointer;border:1.5px solid #E2563A;color:#E2563A;font-size:11.5px;font-weight:800;border-radius:999px;padding:7px 16px;" style-hover="background:#FBE6E1">Delete account…</div>
+                <span style="font-size:10.5px;color:#93887A;flex:1;min-width:180px;">{{ dzDeleteNote }}</span>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSupport }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">Somebody has to be able to help.</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Wasla is the named issuer on every pass — escalations end here. Every tool below is logged forever, with your name.</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:22px;align-items:start;">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;min-width:0;">
+              <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Find a member — the answer to “I lost my card”</div>
+              <input value="{{ supQuery }}" onChange="{{ setSupQuery }}" placeholder="Name or phone · e.g. Sara or 0114" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;">
+              <div style="display:flex;flex-direction:column;margin-top:10px;">
+                <sc-for list="{{ supRows }}" as="sr" hint-placeholder-count="5">
+                  <div onClick="{{ sr.open }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;padding:10px 8px;border-bottom:1px solid #F5F0E8;background:{{ sr.bg }};border-radius:8px;transition:background .15s;" style-hover="background:#FAF6EF">
+                    <div style="width:30px;height:30px;border-radius:50%;background:#F0E7DB;color:#7A5A2E;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10.5px;flex-shrink:0;">{{ sr.initials }}</div>
+                    <div style="min-width:0;flex:1;"><div style="font-size:12.5px;font-weight:700;">{{ sr.name }}</div><div style="font-size:10.5px;color:#93887A;">{{ sr.phone }} · {{ sr.card }}</div></div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="background:{{ privCardBg }};border-radius:12px;padding:12px 14px;margin-top:12px;transition:background .3s;">
+                <div style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#93887A;text-transform:uppercase;margin-bottom:6px;">Privacy queue · {{ privCount }} pending</div>
+                <div style="font-size:12px;color:{{ privBodyFg }};line-height:1.5;"><strong>Dana Tahboub</strong> asked for full deletion (GDPR-style). 28 days to act.</div>
+                <sc-if value="{{ privPending }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;gap:8px;margin-top:9px;">
+                    <div onClick="{{ supGrant }}" style="cursor:pointer;background:#26262B;color:#F4F2EE;font-size:11px;font-weight:800;border-radius:999px;padding:7px 15px;">Grant — erase her</div>
+                    <div onClick="{{ supDecline }}" style="cursor:pointer;border:1.5px solid {{ privDeclineBr }};color:#5D5348;font-size:11px;font-weight:700;border-radius:999px;padding:7px 15px;" style-hover="border-color:#93887A">Decline with reason</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ privDeclining }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#FFFFFF;border:1px solid #EDE6DA;border-radius:11px;padding:12px;margin-top:9px;animation:{{ popAnim }};">
+                    <input value="{{ privReason }}" onChange="{{ setPrivReason }}" placeholder="Why she keeps her record — she reads this, verbatim" style="width:100%;border:1px solid #D8D0C2;border-radius:9px;padding:10px 12px;font-size:12.5px;background:#FFFFFF;">
+                    <div onClick="{{ privApply }}" style="cursor:pointer;background:{{ privBg }};color:{{ privFg }};font-size:12px;font-weight:800;border-radius:999px;padding:10px 0;text-align:center;margin-top:9px;transition:background .3s;">{{ privLabel }}</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ privResolved }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:flex-start;gap:9px;margin-top:9px;animation:{{ popAnim }};">
+                    <span style="background:{{ privChipBg }};color:{{ privChipFg }};font-size:9.5px;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap;margin-top:1px;">{{ privChip }}</span>
+                    <div style="font-size:11.5px;color:#8C877F;line-height:1.5;flex:1;min-width:0;">{{ privResolvedLine }}</div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+            <sc-if value="{{ supHasSel }}" hint-placeholder-val="{{ true }}">
+              <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;animation:{{ slideAnim }};min-width:0;">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                  <div style="width:42px;height:42px;border-radius:50%;background:#26262B;color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">{{ supSel.initials }}</div>
+                  <div style="min-width:0;"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;">{{ supSel.name }}</div><div style="font-size:11px;color:#93887A;">{{ supSel.phone }} · joined {{ supSel.joined }}</div></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-bottom:1px solid #F5F0E8;"><span style="color:#93887A;">Card</span><strong>{{ supSel.card }}</strong></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-bottom:1px solid #F5F0E8;"><span style="color:#93887A;">Standing</span><strong>{{ supSel.progress }}</strong></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-bottom:1px solid #F5F0E8;"><span style="color:#93887A;">Device</span><strong>iPhone · Apple Wallet · push OK</strong></div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
+                  <div onClick="{{ supReissue }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-size:12px;font-weight:800;border-radius:999px;padding:9px 17px;transition:transform .2s;" style-hover="transform:translateY(-1px)">Re-issue the pass</div>
+                  <div onClick="{{ supFix }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:12px;font-weight:700;border-radius:999px;padding:9px 17px;" style-hover="border-color:#E88024;color:#C96A14">Fix a contact detail</div>
+                  <div onClick="{{ corrToggle }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:12px;font-weight:700;border-radius:999px;padding:9px 17px;" style-hover="border-color:#E88024;color:#C96A14">Balance correction…</div>
+                </div>
+                <sc-if value="{{ supFixOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:14px;margin-top:12px;animation:{{ popAnim }};">
+                    <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Mobile number on file</div>
+                    <input value="{{ supPhoneDraft }}" onChange="{{ setSupPhoneDraft }}" placeholder="+962 79 000 0000" style="width:100%;border:1px solid #D8D0C2;border-radius:9px;padding:10px 12px;font-size:12.5px;background:#FFFFFF;font-variant-numeric:tabular-nums;">
+                    <div style="font-size:10.5px;color:#93887A;margin-top:8px;line-height:1.5;">{{ supPhoneNote }}</div>
+                    <div onClick="{{ supPhoneSave }}" style="cursor:pointer;background:{{ supPhoneBg }};color:{{ supPhoneFg }};font-size:12px;font-weight:800;border-radius:999px;padding:10px 0;text-align:center;margin-top:9px;transition:background .3s;">{{ supPhoneLabel }}</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ corrOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:14px;margin-top:12px;animation:{{ popAnim }};">
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:9px;">
+                      <sc-for list="{{ corrAmts }}" as="ca" hint-placeholder-count="4">
+                        <div onClick="{{ ca.pick }}" style="cursor:pointer;border:1.5px solid {{ ca.br }};background:{{ ca.bg }};color:{{ ca.fg }};font-size:11.5px;font-weight:800;border-radius:999px;padding:6px 13px;font-variant-numeric:tabular-nums;">{{ ca.label }}</div>
+                      </sc-for>
+                    </div>
+                    <input value="{{ corrReason }}" onChange="{{ setCorrReason }}" placeholder="Why — the client and the log both see this, verbatim" style="width:100%;border:1px solid #D8D0C2;border-radius:9px;padding:10px 12px;font-size:12.5px;background:#FFFFFF;">
+                    <div onClick="{{ corrApply }}" style="cursor:pointer;background:{{ corrBg }};color:{{ corrFg }};font-size:12px;font-weight:800;border-radius:999px;padding:10px 0;text-align:center;margin-top:9px;transition:background .3s;">{{ corrLabel }}</div>
+                  </div>
+                </sc-if>
+                <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.5;">Every action here is append-only: your name, the reason, the member — forever.</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLog }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">An append-only memory.</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Nothing here can be edited or deleted — including by us. It is how a dispute gets settled.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;">
+            <sc-for list="{{ logChips }}" as="lc" hint-placeholder-count="5">
+              <div onClick="{{ lc.pick }}" style="cursor:pointer;border:1.5px solid {{ lc.br }};background:{{ lc.bg }};color:{{ lc.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:8px 16px;transition:all .2s;">{{ lc.label }}</div>
+            </sc-for>
+          </div>
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;overflow:hidden;margin-top:16px;max-width:820px;">
+            <sc-for list="{{ logRows }}" as="lg" hint-placeholder-count="8">
+              <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 20px;border-bottom:1px solid #F5F0E8;animation:{{ lg.anim }};">
+                <div style="width:30px;height:30px;border-radius:50%;background:{{ lg.avBg }};color:{{ lg.avFg }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10.5px;flex-shrink:0;">{{ lg.who }}</div>
+                <div style="min-width:0;flex:1;font-size:12.5px;line-height:1.55;"><span style="background:{{ lg.tagBg }};color:{{ lg.tagFg }};font-size:9.5px;font-weight:800;border-radius:999px;padding:2px 8px;margin-inline-end:7px;">{{ lg.tag }}</span>{{ lg.line }}</div>
+                <div style="font-size:10.5px;color:#93887A;white-space:nowrap;">{{ lg.t }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTeam }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;animation:{{ enterAnim }};">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+            <div>
+              <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">Who at Wasla can do what.</div>
+              <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Same console, three scopes — what changes is reach and destructive power.</div>
+            </div>
+            <div onClick="{{ teamInvite }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-weight:800;font-size:13px;border-radius:999px;padding:11px 22px;" style-hover="background:rgba(232,128,36,.08)">{{ teamInviteLabel }}</div>
+          </div>
+          <sc-if value="{{ teamFormOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFFFFF;border:1.5px solid #E88024;border-radius:16px;padding:16px 18px;margin-top:16px;max-width:420px;animation:{{ popAnim }};">
+              <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Full name</div>
+              <input value="{{ teamNewName }}" onChange="{{ setTeamNewName }}" placeholder="e.g. Rana Odeh" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+              <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:11px 0 6px;">Scope</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <sc-for list="{{ teamNewRoles }}" as="tr" hint-placeholder-count="3">
+                  <div onClick="{{ tr.pick }}" style="cursor:pointer;border:1.5px solid {{ tr.br }};background:{{ tr.bg }};color:{{ tr.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:8px 16px;transition:all .2s;">{{ tr.label }}</div>
+                </sc-for>
+              </div>
+              <div style="font-size:10.5px;color:#93887A;margin-top:10px;line-height:1.5;">{{ teamNewRoleNote }} They set their own password from the link — nobody here ever knows it.</div>
+              <div onClick="{{ teamAddApply }}" style="cursor:pointer;background:{{ teamAddBg }};color:{{ teamAddFg }};font-size:12.5px;font-weight:800;border-radius:999px;padding:11px 0;text-align:center;margin-top:11px;transition:background .3s;">{{ teamAddLabel }}</div>
+            </div>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:22px;align-items:start;">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;">
+              <sc-for list="{{ teamRows }}" as="tm" hint-placeholder-count="4">
+                <div onClick="{{ tm.open }}" style="cursor:pointer;display:flex;align-items:center;gap:13px;padding:14px 20px;border-bottom:1px solid #F5F0E8;background:{{ tm.rowBg }};transition:background .15s;" style-hover="background:#FAF6EF">
+                  <div style="width:36px;height:36px;border-radius:50%;background:#26262B;color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;">{{ tm.initials }}</div>
+                  <div style="min-width:0;flex:1;"><div style="font-size:13.5px;font-weight:700;">{{ tm.name }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#93887A;font-size:11.5px;">{{ tm.ar }}</span></div><div style="font-size:10.5px;color:#93887A;">{{ tm.last }}</div></div>
+                  <span style="background:{{ tm.roleBg }};color:{{ tm.roleFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:4px 12px;">{{ tm.role }}</span>
+                  <span style="font-size:10px;font-weight:800;color:{{ tm.tfaFg }};">{{ tm.tfaLabel }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ teamHasSel }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#FFFFFF;border:1.5px solid #E88024;border-radius:18px;padding:20px;animation:{{ slideAnim }};min-width:0;">
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                  <div style="width:42px;height:42px;border-radius:50%;background:#26262B;color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">{{ teamSelObj.initials }}</div>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;">{{ teamSelObj.name }}</div>
+                    <div style="font-size:11px;color:#93887A;margin-top:2px;">{{ teamSelSub }}</div>
+                  </div>
+                  <div onClick="{{ teamClose }}" style="cursor:pointer;color:#93887A;font-weight:800;font-size:14px;padding:2px 4px;" style-hover="color:#C96A14">✕</div>
+                </div>
+                <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#93887A;text-transform:uppercase;margin:17px 0 8px;">Scope</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <sc-for list="{{ teamSelRoles }}" as="ts" hint-placeholder-count="3">
+                    <div onClick="{{ ts.pick }}" style="cursor:pointer;border:1.5px solid {{ ts.br }};background:{{ ts.bg }};color:{{ ts.fg }};font-size:11.5px;font-weight:800;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ts.label }}</div>
+                  </sc-for>
+                </div>
+                <div style="font-size:10.5px;color:#93887A;margin-top:9px;line-height:1.5;">A scope change takes effect at their next screen — nothing they already did is rewritten.</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">
+                  <sc-if value="{{ teamShowNudge }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ teamNudge }}" style="cursor:pointer;border:1.5px solid {{ teamNudgeBr }};color:{{ teamNudgeFg }};font-size:12px;font-weight:800;border-radius:999px;padding:9px 17px;" style-hover="background:#FDF1DC">{{ teamNudgeLabel }}</div>
+                  </sc-if>
+                  <div onClick="{{ teamRevoke }}" style="cursor:pointer;border:1.5px solid #E2563A;color:#E2563A;font-size:12px;font-weight:800;border-radius:999px;padding:9px 17px;" style-hover="background:#FBE6E1">Revoke access</div>
+                </div>
+                <div style="font-size:10.5px;color:#93887A;margin-top:14px;line-height:1.5;">Revoking ends the session now. What they did stays in the log with their name — that is the whole point of append-only.</div>
+              </div>
+            </sc-if>
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:6px 20px 14px;">
+              <div style="display:grid;grid-template-columns:1fr 62px 78px 62px;gap:6px;padding:12px 0 8px;border-bottom:1px solid #F1EBE1;font-size:10px;font-weight:800;letter-spacing:.05em;color:#93887A;text-transform:uppercase;">
+                <span>The power</span><span style="text-align:center;">Admin</span><span style="text-align:center;">Sales</span><span style="text-align:center;">Support</span>
+              </div>
+              <sc-for list="{{ matrixRows }}" as="mx" hint-placeholder-count="7">
+                <div style="display:grid;grid-template-columns:1fr 62px 78px 62px;gap:6px;padding:9px 0;border-bottom:1px solid #F5F0E8;align-items:center;">
+                  <span style="font-size:12px;font-weight:600;">{{ mx.label }}</span>
+                  <span style="text-align:center;font-size:11px;font-weight:800;color:{{ mx.aFg }};">{{ mx.a }}</span>
+                  <span style="text-align:center;font-size:10px;font-weight:700;color:{{ mx.sFg }};">{{ mx.s }}</span>
+                  <span style="text-align:center;font-size:11px;font-weight:800;color:{{ mx.pFg }};">{{ mx.p }}</span>
+                </div>
+              </sc-for>
+              <div style="font-size:10.5px;color:#93887A;padding-top:10px;">Deleting an account additionally requires a step-up: password again, then a typed confirmation.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSettingsC }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;max-width:940px;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">The catalogue, and the switches.</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">What belongs to Wasla and not to any client. Plans change quotas — never the catalogue.</div>
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;margin-top:22px;">
+            <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">All eight card types, on every plan</div>
+            <div style="font-size:11.5px;color:#93887A;margin-top:3px;margin-bottom:14px;">Settled in round three: the catalogue is the platform's. Plans differ only in card slots and broadcasts.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <sc-for list="{{ catChips }}" as="cc" hint-placeholder-count="8">
+                <span style="display:inline-flex;align-items:center;gap:7px;border:1px solid #E7E0D5;background:#FAF6EF;color:#241C16;font-size:12px;font-weight:700;border-radius:999px;padding:8px 15px;"><span style="width:7px;height:7px;border-radius:50%;background:#2FAE66;"></span>{{ cc.name }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#93887A;font-size:10.5px;">{{ cc.ar }}</span></span>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:16px;">
+              <sc-for list="{{ planCards }}" as="pc" hint-placeholder-count="3">
+                <div style="border:1.5px solid {{ pc.br }};border-radius:14px;padding:14px 16px;">
+                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;color:{{ pc.fg }};">{{ pc.name }}</div>
+                  <div style="font-size:11.5px;color:#5D5348;margin-top:6px;line-height:1.6;">{{ pc.line1 }}<br>{{ pc.line2 }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px;align-items:start;">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px;">Overlays &amp; attach rules</div>
+              <sc-for list="{{ overlayRows }}" as="ov" hint-placeholder-count="3">
+                <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #F5F0E8;">
+                  <span style="width:8px;height:8px;border-radius:50%;background:#E88024;margin-top:5px;flex-shrink:0;"></span>
+                  <div style="font-size:12.5px;line-height:1.55;flex:1;"><strong>{{ ov.a }}</strong> — {{ ov.b }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px;">The rules we bound ourselves to</div>
+              <sc-for list="{{ ruleRows }}" as="ru" hint-placeholder-count="3">
+                <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #F5F0E8;">
+                  <span style="width:8px;height:8px;border-radius:50%;background:#26262B;margin-top:5px;flex-shrink:0;"></span>
+                  <div style="font-size:12.5px;line-height:1.55;flex:1;">{{ ru.line }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isBilling }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">Renewals, and who owes what.</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">{{ billDue }} · {{ billTotal }} across every live account. Invoices and renewals only — commission lives in the commercial book, not here.</div>
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;margin-top:22px;max-width:920px;">
+            <sc-for list="{{ billRows }}" as="bl" hint-placeholder-count="7">
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid #F5F0E8;flex-wrap:wrap;">
+                <div style="width:34px;height:34px;border-radius:11px;background:{{ bl.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;flex-shrink:0;">{{ bl.initial }}</div>
+                <div style="min-width:0;width:190px;"><div style="font-size:13.5px;font-weight:700;">{{ bl.name }}</div><div style="font-size:10.5px;color:#93887A;">{{ bl.plan }} · renews {{ bl.renewal }}</div></div>
+                <span style="border:1px solid #E7E0D5;color:#5D5348;font-size:10.5px;font-weight:700;border-radius:999px;padding:4px 12px;white-space:nowrap;">in {{ bl.days }}</span>
+                <div style="flex:1;"></div>
+                <div style="text-align:end;width:92px;"><div style="font-weight:800;font-size:13.5px;font-variant-numeric:tabular-nums;">{{ bl.price }}</div><div style="font-size:10.5px;color:#93887A;">per month</div></div>
+                <span style="background:{{ bl.chipBg }};color:{{ bl.chipFg }};font-size:10px;font-weight:800;border-radius:999px;padding:4px 11px;white-space:nowrap;width:82px;text-align:center;">{{ bl.chip }}</span>
+                <sc-if value="{{ bl.canPay }}" hint-placeholder-val="{{ true }}">
+                  <div onClick="{{ bl.pay }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-size:11.5px;font-weight:800;border-radius:999px;padding:7px 15px;white-space:nowrap;" style-hover="background:rgba(232,128,36,.08)">Mark paid</div>
+                </sc-if>
+              </div>
+            </sc-for>
+            <div style="padding:13px 22px;font-size:11.5px;color:#93887A;">Marking paid re-arms the quota the same second, and lands in the append-only log. A payment can be reversed — an approval cannot.</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isApprovals }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">Publish is a request. This is where it lands.</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Every new card and every reviewed edit — nothing reaches a wallet without a pair of eyes.</div>
+          <div style="display:flex;gap:8px;margin-top:18px;">
+            <sc-for list="{{ apprTabs }}" as="at" hint-placeholder-count="2">
+              <div onClick="{{ at.go }}" style="cursor:pointer;border:1.5px solid {{ at.br }};background:{{ at.bg }};color:{{ at.fg }};font-size:12.5px;font-weight:700;border-radius:999px;padding:9px 18px;transition:all .2s;">{{ at.label }}</div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ apprDecidedTab }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;overflow:hidden;margin-top:16px;max-width:760px;">
+              <sc-for list="{{ decidedRows }}" as="dr" hint-placeholder-count="4">
+                <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid #F5F0E8;">
+                  <span style="background:{{ dr.bg }};color:{{ dr.fg }};font-size:10px;font-weight:800;border-radius:999px;padding:4px 11px;white-space:nowrap;margin-top:1px;">{{ dr.chip }}</span>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:13.5px;font-weight:700;">{{ dr.card }} <span style="color:#93887A;font-weight:500;font-size:12px;">· {{ dr.account }}</span></div>
+                    <sc-if value="{{ dr.hasReason }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#5D5348;margin-top:3px;">“{{ dr.reason }}” <span style="color:#93887A;">{{ dr.note }}</span></div></sc-if>
+                  </div>
+                  <div style="font-size:11px;color:#93887A;white-space:nowrap;">{{ dr.when }} · {{ dr.by }}</div>
+                </div>
+              </sc-for>
+              <div style="padding:13px 20px;font-size:11.5px;color:#93887A;">There is no reverse-an-approval — resubmission is the remedy. Every decision above is in the append-only log.</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ apprQueueTab }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;max-width:760px;">
+            <sc-for list="{{ apprRows }}" as="ap" hint-placeholder-count="2">
+              <div onClick="{{ ap.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;background:#FFFFFF;border:1.5px solid {{ ap.border }};border-radius:16px;padding:16px 20px;transition:transform .2s,border-color .2s;flex-wrap:wrap;" style-hover="transform:translateY(-2px);border-color:#E88024">
+                <div style="width:40px;height:40px;border-radius:12px;background:{{ ap.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;flex-shrink:0;">{{ ap.initial }}</div>
+                <div style="min-width:0;flex:1;">
+                  <div style="font-size:14.5px;font-weight:800;">{{ ap.card }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#93887A;font-size:12px;">{{ ap.ar }}</span></div>
+                  <div style="font-size:11.5px;color:#93887A;margin-top:2px;">{{ ap.account }} · {{ ap.kindLine }} · {{ ap.submitted }}</div>
+                </div>
+                <span style="background:{{ ap.chipBg }};color:{{ ap.chipFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:5px 13px;white-space:nowrap;">{{ ap.chip }}</span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ queueEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:40px 20px;color:#93887A;">
+                <div style="width:58px;height:58px;border-radius:50%;background:#E7F6EE;color:#1E7D47;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px;">✓</div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;color:#241C16;">Queue clear.</div>
+                <div style="font-size:12.5px;margin-top:5px;">Every client is told the moment you decide — by WhatsApp, in their language.</div>
+              </div>
+            </sc-if>
+          </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:28px 32px 48px;animation:{{ enterAnim }};">
+          <div onClick="{{ goApprovals }}" style="cursor:pointer;font-size:13px;font-weight:700;color:#93887A;margin-bottom:20px;display:inline-flex;gap:7px;" style-hover="color:#C96A14">← The queue</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:26px;align-items:start;">
+            <div>
+              <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;color:#C96A14;font-weight:700;">{{ rv.ar }}</div>
+              <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:28px;margin-top:2px;">{{ rv.card }}</div>
+              <div style="font-size:13px;color:#93887A;margin-top:5px;">{{ rv.account }} · submitted by {{ rv.by }} · {{ rv.submitted }}</div>
+              <sc-if value="{{ rvIsNew }}" hint-placeholder-val="{{ true }}">
+                <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:18px 20px;margin-top:18px;">
+                  <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#C96A14;text-transform:uppercase;margin-bottom:10px;">The check — four things, thirty seconds</div>
+                  <sc-for list="{{ rvChecks }}" as="ck" hint-placeholder-count="4">
+                    <div onClick="{{ ck.toggle }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #F5F0E8;">
+                      <span style="width:20px;height:20px;border-radius:7px;border:2px solid {{ ck.br }};background:{{ ck.bg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;transition:all .2s;">{{ ck.mark }}</span>
+                      <span style="font-size:13px;font-weight:600;color:{{ ck.fg }};">{{ ck.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ rvIsEdit }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:18px 20px;margin-top:18px;">
+                  <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#C96A14;text-transform:uppercase;margin-bottom:12px;">The edit — old stays live until you say yes</div>
+                  <div style="font-size:12px;color:#93887A;margin-bottom:6px;">{{ rvDiffField }}</div>
+                  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <span style="background:#FBE6E1;color:#B23420;font-size:12.5px;font-weight:700;border-radius:10px;padding:8px 14px;text-decoration:line-through;">{{ rvDiffFrom }}</span>
+                    <span style="color:#93887A;font-weight:800;">→</span>
+                    <span style="background:#E7F6EE;color:#1E7D47;font-size:12.5px;font-weight:700;border-radius:10px;padding:8px 14px;">{{ rvDiffTo }}</span>
+                  </div>
+                  <div style="font-size:12px;color:#5D5348;line-height:1.6;margin-top:14px;background:#FAF6EF;border-radius:10px;padding:11px 14px;"><strong>Member impact:</strong> {{ rvImpact }}</div>
+                </div>
+              </sc-if>
+              <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
+                <div onClick="{{ rvApprove }}" style="cursor:pointer;background:{{ rvApproveBg }};color:{{ rvApproveFg }};font-weight:800;font-size:14px;border-radius:999px;padding:14px 28px;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ rvApproveLabel }}</div>
+                <div onClick="{{ rvRejectOpen }}" style="cursor:pointer;border:1.5px solid #E2563A;color:#E2563A;font-weight:800;font-size:14px;border-radius:999px;padding:14px 24px;" style-hover="background:#FBE6E1">Send back…</div>
+              </div>
+              <sc-if value="{{ rvRejecting }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#FFFFFF;border:1.5px solid #E2563A;border-radius:16px;padding:16px 18px;margin-top:14px;animation:{{ popAnim }};">
+                  <div style="font-size:12.5px;font-weight:800;margin-bottom:10px;">Why? The client sees this, word for word.</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <sc-for list="{{ rvReasons }}" as="rr" hint-placeholder-count="3">
+                      <div onClick="{{ rr.send }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:12px;font-weight:700;border-radius:999px;padding:8px 15px;transition:all .2s;" style-hover="border-color:#E2563A;color:#E2563A">{{ rr.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+            <div style="background:linear-gradient(160deg,#2A2A30,#18181C);border-radius:22px;padding:26px 22px;animation:{{ slideAnim }};min-width:0;">
+              <div style="text-align:center;font-size:10.5px;font-weight:800;letter-spacing:.12em;color:#9B99A3;margin-bottom:14px;">EXACTLY WHAT LANDS IN WALLETS</div>
+              <div style="max-width:280px;margin:0 auto;border-radius:14px;background:linear-gradient(150deg,{{ rv.color }},{{ rvColor2 }});color:#FFFFFF;padding:14px 15px 16px;box-shadow:0 24px 50px rgba(0,0,0,.5);">
+                <div style="display:flex;align-items:center;gap:9px;">
+                  <div style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.94);color:{{ rv.color }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;">{{ rv.initial }}</div>
+                  <div style="font-size:12px;font-weight:700;">{{ rv.card }}</div>
+                  <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ rvHead0 }}</div><div style="font-size:13px;font-weight:700;">{{ rvHead1 }}</div></div>
+                </div>
+                <div style="margin:16px 0 14px;text-align:center;"><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">{{ rvHero }}</div></div>
+                <div style="display:flex;gap:14px;margin-bottom:13px;">
+                  <div style="min-width:0;flex:1;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">REWARD</div><div style="font-size:11.5px;font-weight:600;line-height:1.35;">{{ rvReward }}</div></div>
+                </div>
+                <div style="background:#FFFFFF;border-radius:9px;padding:9px;display:flex;justify-content:center;">
+                  <div style="display:grid;grid-template-columns:repeat(17,3.4px);grid-auto-rows:3.4px;">
+                    <sc-for list="{{ qrCells }}" as="q" hint-placeholder-count="0"><div style="background:{{ q.c }};"></div></sc-for>
+                  </div>
+                </div>
+              </div>
+              <div style="text-align:center;font-size:11px;color:#8E8C96;margin-top:16px;">Approving pushes it live · the client gets a WhatsApp in Arabic</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLeads }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;animation:{{ enterAnim }};">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+            <div style="min-width:0;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">The pipeline, honestly.</div>
+              <div style="font-size:13.5px;color:#93887A;margin-top:6px;">{{ pipeSub }}</div>
+            </div>
+            <div onClick="{{ leadAddToggle }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-weight:800;font-size:13px;border-radius:999px;padding:11px 22px;white-space:nowrap;transition:background .2s;" style-hover="background:rgba(232,128,36,.08)">{{ leadAddToggleLabel }}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px;">
+            <sc-for list="{{ pipeReps }}" as="pr" hint-placeholder-count="4">
+              <div onClick="{{ pr.pick }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:7px;border:1.5px solid {{ pr.br }};background:{{ pr.bg }};color:{{ pr.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;"><span style="width:7px;height:7px;border-radius:50%;background:{{ pr.dot }};flex-shrink:0;"></span>{{ pr.label }}</div>
+            </sc-for>
+            <div style="flex:1;min-width:10px;"></div>
+            <span style="font-size:11.5px;color:#93887A;white-space:nowrap;">{{ pipeTotalLine }}</span>
+          </div>
+
+          <sc-if value="{{ leadFormOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px;animation:{{ popAnim }};">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px;align-items:start;">
+                <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px 22px;">
+                  <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">Who they are</div>
+                  <div style="font-size:11px;color:#93887A;margin-top:3px;margin-bottom:14px;">The business, the person who signs, and how you reach them.</div>
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Business name <span style="color:#C96A14;">·  required</span></div>
+                  <input value="{{ leadNewBiz }}" onChange="{{ setLeadNewBiz }}" placeholder="e.g. Habibah Sweets" style="width:100%;border:1px solid {{ lfBizBr }};border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:11px 0 6px;">Business name — Arabic</div>
+                  <input value="{{ lfAr }}" onChange="{{ setLfAr }}" placeholder="حلويات حبيبة" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;font-family:'IBM Plex Sans Arabic',sans-serif;">
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:11px 0 6px;">Owner / contact <span style="color:#C96A14;">· required</span></div>
+                  <input value="{{ leadNewOwner }}" onChange="{{ setLeadNewOwner }}" placeholder="e.g. Nadia Habib" style="width:100%;border:1px solid {{ lfOwnerBr }};border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:11px 0 6px;">Phone <span style="color:#C96A14;">· required</span></div>
+                  <input value="{{ lfPhone }}" onChange="{{ setLfPhone }}" placeholder="+962 79 000 0000" style="width:100%;border:1px solid {{ lfPhoneBr }};border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;font-variant-numeric:tabular-nums;">
+                  <div style="font-size:10px;color:{{ lfPhoneFg }};margin-top:5px;line-height:1.5;">{{ lfPhoneNote }}</div>
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:11px 0 6px;">Email</div>
+                  <input value="{{ lfEmail }}" onChange="{{ setLfEmail }}" placeholder="owner@business.jo" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:13px 0 7px;">Vertical</div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                    <sc-for list="{{ lfVerticals }}" as="lv" hint-placeholder-count="7">
+                      <div onClick="{{ lv.pick }}" style="cursor:pointer;border:1.5px solid {{ lv.br }};background:{{ lv.bg }};color:{{ lv.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;transition:all .2s;">{{ lv.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px 22px;">
+                  <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">Where they trade</div>
+                  <div style="font-size:11px;color:#93887A;margin-top:3px;margin-bottom:14px;">Areas decide who covers them. Locations decide the plan.</div>
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">City</div>
+                  <input value="{{ lfCity }}" onChange="{{ setLfCity }}" placeholder="Amman" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:13px 0 7px;">Areas <span style="color:#93887A;font-weight:600;">· pick as many as apply</span></div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                    <sc-for list="{{ lfAreaChips }}" as="la" hint-placeholder-count="6">
+                      <div onClick="{{ la.pick }}" style="cursor:pointer;border:1.5px solid {{ la.br }};background:{{ la.bg }};color:{{ la.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;transition:all .2s;">{{ la.mark }}{{ la.label }}</div>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:15px 0 7px;">Locations</div>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <div onClick="{{ lfLocMinus }}" style="cursor:pointer;width:31px;height:31px;border-radius:50%;border:1.5px solid #E7E0D5;color:#5D5348;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;flex-shrink:0;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                    <span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;min-width:24px;text-align:center;font-variant-numeric:tabular-nums;">{{ lfLocN }}</span>
+                    <div onClick="{{ lfLocPlus }}" style="cursor:pointer;width:31px;height:31px;border-radius:50%;border:1.5px solid #E7E0D5;color:#5D5348;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;flex-shrink:0;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                    <span style="font-size:10.5px;color:#93887A;line-height:1.45;">{{ lfLocNote }}</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:7px;margin-top:10px;">
+                    <sc-for list="{{ lfLocRows }}" as="ll" hint-placeholder-count="2">
+                      <div style="display:flex;align-items:center;gap:8px;animation:{{ ll.anim }};">
+                        <span style="font-size:10px;color:#B0A594;font-weight:800;width:14px;flex-shrink:0;">{{ ll.i }}</span>
+                        <input value="{{ ll.v }}" onChange="{{ ll.set }}" placeholder="{{ ll.ph }}" style="flex:1;min-width:0;border:1px solid #D8D0C2;border-radius:9px;padding:9px 11px;font-size:12.5px;background:#FFFFFF;">
+                        <sc-if value="{{ ll.canRemove }}" hint-placeholder-val="{{ false }}">
+                          <div onClick="{{ ll.remove }}" style="cursor:pointer;color:#B5AB9C;font-weight:800;font-size:13px;padding:2px 5px;flex-shrink:0;transition:color .2s;" style-hover="color:#E2563A">✕</div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:15px 0 7px;">Card types they asked about</div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                    <sc-for list="{{ lfTypeChips }}" as="lt" hint-placeholder-count="8">
+                      <div onClick="{{ lt.pick }}" style="cursor:pointer;border:1.5px solid {{ lt.br }};background:{{ lt.bg }};color:{{ lt.fg }};font-size:11px;font-weight:700;border-radius:999px;padding:6px 13px;transition:all .2s;">{{ lt.mark }}{{ lt.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+              <div style="background:#FFFFFF;border:1.5px solid #E88024;border-radius:18px;padding:20px 22px;margin-top:16px;">
+                <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">The deal, as you understand it today</div>
+                <div style="font-size:11px;color:#93887A;margin-top:3px;margin-bottom:14px;">Plan interest fills the expected value — override it if you negotiated something else.</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;align-items:start;">
+                  <div>
+                    <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:7px;">Plan interest</div>
+                    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                      <sc-for list="{{ lfPlanChips }}" as="lp" hint-placeholder-count="3">
+                        <div onClick="{{ lp.pick }}" style="cursor:pointer;border:1.5px solid {{ lp.br }};background:{{ lp.bg }};color:{{ lp.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;transition:all .2s;">{{ lp.label }}</div>
+                      </sc-for>
+                    </div>
+                    <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:13px 0 6px;">Expected monthly value</div>
+                    <div style="display:flex;align-items:center;gap:9px;">
+                      <span style="font-size:12px;font-weight:800;color:#93887A;">JOD</span>
+                      <input value="{{ lfValue }}" onChange="{{ setLfValue }}" placeholder="79" style="flex:1;min-width:0;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;font-variant-numeric:tabular-nums;">
+                    </div>
+                  </div>
+                  <div>
+                    <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:7px;">Where they came from</div>
+                    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                      <sc-for list="{{ lfSourceChips }}" as="ls2" hint-placeholder-count="5">
+                        <div onClick="{{ ls2.pick }}" style="cursor:pointer;border:1.5px solid {{ ls2.br }};background:{{ ls2.bg }};color:{{ ls2.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;transition:all .2s;">{{ ls2.label }}</div>
+                      </sc-for>
+                    </div>
+                    <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:13px 0 7px;">First follow-up</div>
+                    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                      <sc-for list="{{ lfFollowChips }}" as="lfw" hint-placeholder-count="3">
+                        <div onClick="{{ lfw.pick }}" style="cursor:pointer;border:1.5px solid {{ lfw.br }};background:{{ lfw.bg }};color:{{ lfw.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;transition:all .2s;">{{ lfw.label }}</div>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <div>
+                    <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:7px;">Notes</div>
+                    <textarea value="{{ lfNotes }}" onChange="{{ setLfNotes }}" placeholder="What actually happens next — and when." rows="5" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:12.5px;resize:none;background:#FFFFFF;"></textarea>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px;">
+                  <div onClick="{{ leadAddApply }}" style="cursor:pointer;background:{{ leadAddBg }};color:{{ leadAddFg }};font-size:13px;font-weight:800;border-radius:999px;padding:13px 26px;transition:background .3s,transform .2s;" style-hover="transform:translateY(-1px)">{{ leadAddLabel }}</div>
+                  <span style="font-size:10.5px;color:#93887A;line-height:1.5;flex:1;min-width:180px;">{{ lfSummaryLine }}</span>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ pipeBoardOpen }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:12px;overflow-x:auto;padding:4px 2px 12px;margin-top:16px;">
+              <sc-for list="{{ pipeCols }}" as="pc2" hint-placeholder-count="5">
+                <div style="flex:1 1 0;min-width:214px;background:{{ pc2.colBg }};border:1px solid #EDE6DA;border-radius:16px;padding:12px 11px 14px;animation:{{ pc2.anim }};">
+                  <div style="display:flex;align-items:center;gap:7px;padding:2px 3px 10px;border-bottom:1px solid #EFE8DC;">
+                    <span style="width:8px;height:8px;border-radius:50%;background:{{ pc2.dot }};flex-shrink:0;"></span>
+                    <span style="font-size:11.5px;font-weight:800;color:{{ pc2.fg }};white-space:nowrap;">{{ pc2.stage }}</span>
+                    <span style="background:#FFFFFF;border:1px solid #E7E0D5;color:#6B6760;font-size:9.5px;font-weight:800;border-radius:999px;padding:2px 7px;font-variant-numeric:tabular-nums;">{{ pc2.n }}</span>
+                    <span style="margin-inline-start:auto;font-size:10px;font-weight:800;color:#8C877F;font-variant-numeric:tabular-nums;white-space:nowrap;">{{ pc2.val }}</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:9px;margin-top:10px;">
+                    <sc-for list="{{ pc2.cards }}" as="lc2" hint-placeholder-count="2">
+                      <div onClick="{{ lc2.open }}" style="cursor:pointer;background:#FFFFFF;border:1.5px solid {{ lc2.br }};border-radius:13px;padding:11px 12px;opacity:{{ lc2.op }};transition:transform .2s cubic-bezier(.22,.61,.36,1),border-color .2s,box-shadow .2s;animation:{{ lc2.anim }};" style-hover="transform:translateY(-2px);border-color:#E88024;box-shadow:0 9px 22px rgba(40,30,18,.10)">
+                        <div style="display:flex;align-items:flex-start;gap:7px;">
+                          <div style="min-width:0;flex:1;">
+                            <div style="font-size:12.5px;font-weight:800;line-height:1.3;">{{ lc2.name }}</div>
+                            <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10.5px;color:#93887A;margin-top:1px;">{{ lc2.ar }}</div>
+                          </div>
+                          <span style="background:{{ lc2.repBg }};color:{{ lc2.repFg }};font-size:9px;font-weight:800;border-radius:999px;padding:3px 8px;white-space:nowrap;flex-shrink:0;">{{ lc2.by }}</span>
+                        </div>
+                        <div style="font-size:10.5px;color:#5D5348;margin-top:6px;">{{ lc2.owner }}</div>
+                        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;">
+                          <sc-for list="{{ lc2.areas }}" as="ar2" hint-placeholder-count="1">
+                            <span style="background:#F4F0E8;color:#7A7166;font-size:9px;font-weight:700;border-radius:999px;padding:2px 8px;white-space:nowrap;">{{ ar2.label }}</span>
+                          </sc-for>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-top:9px;padding-top:8px;border-top:1px solid #F5F0E8;">
+                          <span style="font-size:11px;font-weight:900;font-family:'Nunito',sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap;">{{ lc2.value }}</span>
+                          <span style="font-size:9.5px;color:{{ lc2.ageFg }};font-weight:{{ lc2.ageFw }};flex:1;min-width:0;">{{ lc2.age }}</span>
+                          <sc-if value="{{ lc2.hasAct }}" hint-placeholder-val="{{ true }}">
+                            <div onClick="{{ lc2.act }}" title="{{ lc2.actTip }}" style="cursor:pointer;border:1.5px solid {{ lc2.actBr }};background:{{ lc2.actBg }};color:{{ lc2.actFg }};font-size:{{ lc2.actFs }};font-weight:900;border-radius:999px;padding:3px 9px;flex-shrink:0;white-space:nowrap;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14;background:#FDF4EC">{{ lc2.actLabel }}</div>
+                          </sc-if>
+                        </div>
+                        <sc-if value="{{ lc2.converted }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin-top:8px;background:#E7F6EE;color:#1E7D47;font-size:8.5px;font-weight:800;border-radius:999px;padding:3px 9px;text-align:center;letter-spacing:.05em;">CONVERTED → ACCOUNT</div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{ pc2.empty }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1.5px dashed #E5DDD0;border-radius:12px;padding:18px 10px;text-align:center;font-size:10.5px;color:#B0A594;line-height:1.5;">{{ pc2.emptyLine }}</div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ leadHasSel }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#FFFFFF;border:1.5px solid #E88024;border-radius:20px;padding:22px 24px;margin-top:6px;animation:{{ slideAnim }};">
+                <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+                  <div style="min-width:0;flex:1;">
+                    <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+                      <span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;">{{ leadSel.name }}</span>
+                      <span style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#93887A;font-size:13.5px;">{{ leadSel.ar }}</span>
+                      <span style="background:{{ leadStBg }};color:{{ leadStFg }};font-size:10px;font-weight:800;border-radius:999px;padding:4px 12px;white-space:nowrap;">{{ leadSel.stage }}</span>
+                      <sc-if value="{{ leadIsConverted }}" hint-placeholder-val="{{ false }}">
+                        <span style="background:#E7F6EE;color:#1E7D47;font-size:10px;font-weight:800;border-radius:999px;padding:4px 12px;white-space:nowrap;">CONVERTED → ACCOUNT</span>
+                      </sc-if>
+                    </div>
+                    <div style="font-size:11.5px;color:#93887A;margin-top:5px;line-height:1.55;">{{ leadSubLine }}</div>
+                  </div>
+                  <div onClick="{{ leadClose }}" style="cursor:pointer;color:#93887A;font-weight:800;font-size:15px;padding:2px 4px;flex-shrink:0;transition:color .2s;" style-hover="color:#C96A14">✕</div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:14px;margin-top:18px;align-items:start;">
+                  <sc-for list="{{ leadGroups }}" as="lg2" hint-placeholder-count="3">
+                    <div style="background:#FAF6EF;border:1px solid #EFE8DC;border-radius:14px;padding:14px 16px;animation:{{ lg2.anim }};">
+                      <div style="font-size:9.5px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:8px;">{{ lg2.title }}</div>
+                      <sc-for list="{{ lg2.rows }}" as="lr2" hint-placeholder-count="4">
+                        <div style="display:flex;gap:12px;justify-content:space-between;align-items:baseline;font-size:11.5px;padding:6px 0;border-bottom:1px solid #F0EAE0;">
+                          <span style="color:#93887A;flex-shrink:0;">{{ lr2.k }}</span>
+                          <span style="font-weight:700;text-align:end;min-width:0;line-height:1.45;">{{ lr2.v }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-for>
+                  <div style="background:#FAF6EF;border:1px solid #EFE8DC;border-radius:14px;padding:14px 16px;">
+                    <div style="font-size:9.5px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:8px;">The trail — this session</div>
+                    <sc-for list="{{ leadTrailRows }}" as="lt2" hint-placeholder-count="3">
+                      <div style="display:flex;gap:9px;padding:6px 0;border-bottom:1px solid #F0EAE0;animation:{{ lt2.anim }};">
+                        <span style="width:7px;height:7px;border-radius:50%;background:{{ lt2.dot }};margin-top:6px;flex-shrink:0;"></span>
+                        <div style="min-width:0;flex:1;"><div style="font-size:11.5px;line-height:1.45;">{{ lt2.line }}</div><div style="font-size:9.5px;color:#B0A594;margin-top:2px;">{{ lt2.t }}</div></div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="font-size:10px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;margin:20px 0 8px;">Stage — forward only</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <sc-for list="{{ leadStages }}" as="ls" hint-placeholder-count="5">
+                    <div onClick="{{ ls.pick }}" style="cursor:{{ ls.cursor }};border:1.5px solid {{ ls.br }};background:{{ ls.bg }};color:{{ ls.fg }};font-size:11px;font-weight:800;border-radius:999px;padding:7px 14px;opacity:{{ ls.op }};transition:all .2s;">{{ ls.label }}</div>
+                  </sc-for>
+                </div>
+                <div style="font-size:10.5px;color:#93887A;margin-top:9px;line-height:1.5;">{{ leadStageNote }}</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:18px;align-items:start;">
+                  <div>
+                    <div style="font-size:10px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;margin-bottom:8px;">The note</div>
+                    <textarea value="{{ leadNote }}" onChange="{{ setLeadNote }}" placeholder="What actually happens next — and when." rows="3" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:12.5px;resize:none;background:#FFFFFF;"></textarea>
+                    <div onClick="{{ leadNoteSave }}" style="cursor:pointer;background:{{ leadNoteBg }};color:{{ leadNoteFg }};font-size:11.5px;font-weight:800;border-radius:999px;padding:9px 0;text-align:center;margin-top:9px;transition:background .3s;">{{ leadNoteLabel }}</div>
+                  </div>
+                  <div>
+                    <div style="font-size:10px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;margin-bottom:8px;">Schedule the follow-up</div>
+                    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                      <sc-for list="{{ leadFollowChips }}" as="lf2" hint-placeholder-count="3">
+                        <div onClick="{{ lf2.pick }}" style="cursor:pointer;border:1.5px solid {{ lf2.br }};background:{{ lf2.bg }};color:{{ lf2.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ lf2.label }}</div>
+                      </sc-for>
+                    </div>
+                    <div style="font-size:10.5px;color:#93887A;margin-top:9px;line-height:1.5;">{{ leadFollowNote }}</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;">
+                  <div onClick="{{ leadPing }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-size:12px;font-weight:800;border-radius:999px;padding:10px 18px;transition:transform .2s;" style-hover="transform:translateY(-1px)">Ping on WhatsApp</div>
+                  <div onClick="{{ leadEscalate }}" style="cursor:pointer;border:1.5px solid {{ leadEscBr }};color:{{ leadEscFg }};font-size:12px;font-weight:700;border-radius:999px;padding:10px 18px;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14">{{ leadEscalateLabel }}</div>
+                  <sc-if value="{{ leadCanConvert }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ leadConvert }}" style="cursor:pointer;background:#2FAE66;color:#FFFFFF;font-size:12px;font-weight:800;border-radius:999px;padding:10px 20px;transition:transform .2s;" style-hover="transform:translateY(-1px)">Convert — send the invite →</div>
+                  </sc-if>
+                </div>
+                <div style="font-size:10.5px;color:#93887A;margin-top:13px;line-height:1.5;">{{ leadFootNote }}</div>
+              </div>
+            </sc-if>
+
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:20px;padding:22px 24px;margin-top:16px;">
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+                <div style="min-width:0;">
+                  <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;">The team, this month</div>
+                  <div style="font-size:11.5px;color:#93887A;margin-top:3px;line-height:1.5;">An activation = invite accepted + first card live. The bar is open pipeline value, by stage.</div>
+                </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <sc-for list="{{ perfLegend }}" as="pl" hint-placeholder-count="5">
+                    <span style="display:inline-flex;align-items:center;gap:5px;font-size:9.5px;color:#8C877F;font-weight:700;white-space:nowrap;"><span style="width:8px;height:8px;border-radius:3px;background:{{ pl.bg }};"></span>{{ pl.label }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(266px,1fr));gap:14px;margin-top:18px;">
+                <sc-for list="{{ perfRows }}" as="pf" hint-placeholder-count="3">
+                  <div style="border:1px solid #EDE6DA;border-radius:16px;padding:16px 17px;background:#FAF6EF;animation:{{ pf.anim }};">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <div style="width:34px;height:34px;border-radius:50%;background:{{ pf.avBg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12.5px;flex-shrink:0;">{{ pf.initials }}</div>
+                      <div style="min-width:0;flex:1;">
+                        <div style="font-size:13.5px;font-weight:800;">{{ pf.name }}</div>
+                        <div style="font-size:10px;color:#93887A;">{{ pf.sub }}</div>
+                      </div>
+                      <div style="text-align:end;flex-shrink:0;">
+                        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:23px;line-height:1;font-variant-numeric:tabular-nums;">{{ pf.n }}</div>
+                        <div style="font-size:8.5px;color:#93887A;letter-spacing:.06em;margin-top:3px;">ACTIVATIONS</div>
+                      </div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:12px;">
+                      <span style="background:{{ pf.dBg }};color:{{ pf.dFg }};font-size:9.5px;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap;">{{ pf.delta }}</span>
+                      <span style="font-size:9.5px;color:#93887A;">vs last month</span>
+                    </div>
+                    <div style="display:flex;height:9px;border-radius:99px;overflow:hidden;background:#EFE8DC;margin-top:13px;transform-origin:left;animation:{{ pf.barAnim }};">
+                      <sc-for list="{{ pf.stack }}" as="sk" hint-placeholder-count="3">
+                        <div style="width:{{ sk.w }};background:{{ sk.bg }};"></div>
+                      </sc-for>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;gap:8px;font-size:9.5px;color:#93887A;margin-top:6px;">
+                      <span style="min-width:0;">{{ pf.pipeLine }}</span><span style="white-space:nowrap;font-weight:800;color:#5D5348;">{{ pf.stackTotal }}</span>
+                    </div>
+                    <div style="display:flex;gap:16px;margin-top:14px;align-items:flex-end;">
+                      <div style="flex-shrink:0;"><div style="font-size:8.5px;color:#93887A;letter-spacing:.06em;">WIN RATE</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;margin-top:2px;">{{ pf.win }}</div></div>
+                      <div style="flex-shrink:0;"><div style="font-size:8.5px;color:#93887A;letter-spacing:.06em;">AVG CLOSE</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;margin-top:2px;">{{ pf.close }}</div></div>
+                      <div style="flex:1;min-width:64px;">
+                        <div style="font-size:8.5px;color:#93887A;letter-spacing:.06em;text-align:end;margin-bottom:4px;">8 WEEKS</div>
+                        <div style="height:28px;position:relative;">
+                          <div style="position:absolute;inset:0;animation:{{ pf.sparkAnim }};">
+                            <div style="position:absolute;inset:0;background:linear-gradient(180deg,{{ pf.sparkTop }},rgba(255,255,255,0));clip-path:{{ pf.clip }};"></div>
+                          </div>
+                          <div style="position:absolute;left:0;right:0;bottom:0;height:1.5px;background:#E3DACB;"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:10.5px;color:#93887A;margin-top:14px;line-height:1.5;">{{ perfFootLine }}</div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isHealth }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">The platform, breathing.</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">The certificate clock and the jobs — reported honestly, failures first.</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:22px;align-items:start;">
+            <div style="background:linear-gradient(135deg,#26262B,#1B1B1F);color:#F4F2EE;border-radius:20px;padding:24px;">
+              <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;">{{ certLabel }}</div>
+              <div style="display:flex;align-items:baseline;gap:10px;margin-top:10px;">
+                <span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:52px;line-height:1;color:#F09A4D;">{{ certDays }}</span>
+                <span style="font-size:14px;color:#9B99A3;">days to renewal</span>
+              </div>
+              <div style="height:8px;border-radius:99px;background:rgba(244,242,238,.12);overflow:hidden;margin:16px 0 10px;"><div style="height:100%;width:{{ certPct }};border-radius:99px;background:linear-gradient(90deg,#E88024,#F09A4D);transition:width 1s cubic-bezier(.22,.61,.36,1);"></div></div>
+              <div style="font-size:12px;color:#9B99A3;line-height:1.6;">Renews {{ certRenews }} · covers {{ certCovers }}.<br>{{ certDedicated }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <sc-for list="{{ jobRows }}" as="jb" hint-placeholder-count="3">
+                <div style="background:#FFFFFF;border:1px solid {{ jb.border }};border-radius:16px;padding:16px 18px;">
+                  <div style="display:flex;align-items:center;gap:9px;"><span style="width:9px;height:9px;border-radius:50%;background:{{ jb.dot }};animation:{{ jb.anim }};"></span><span style="font-size:13.5px;font-weight:800;">{{ jb.name }}</span><span style="margin-inline-start:auto;background:{{ jb.chipBg }};color:{{ jb.chipFg }};font-size:10px;font-weight:800;border-radius:999px;padding:3px 10px;">{{ jb.chip }}</span></div>
+                  <div style="font-size:12px;color:#5D5348;margin-top:7px;line-height:1.5;">{{ jb.line }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;margin-top:16px;max-width:660px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+              <div style="min-width:0;">
+                <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">Send a platform notice</div>
+                <div style="font-size:11.5px;color:#93887A;margin-top:3px;line-height:1.5;">Wasla speaking to its clients — maintenance windows, certificate work, policy changes. It never reaches a member's wallet.</div>
+              </div>
+              <div onClick="{{ noticeToggle }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-size:12px;font-weight:800;border-radius:999px;padding:9px 17px;white-space:nowrap;" style-hover="background:rgba(232,128,36,.08)">{{ noticeToggleLabel }}</div>
+            </div>
+            <sc-if value="{{ noticeOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:14px;margin-top:14px;animation:{{ popAnim }};">
+                <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#93887A;text-transform:uppercase;margin-bottom:8px;">Who hears it</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <sc-for list="{{ noticeAuds }}" as="na" hint-placeholder-count="3">
+                    <div onClick="{{ na.pick }}" style="cursor:pointer;border:1.5px solid {{ na.br }};background:{{ na.bg }};color:{{ na.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ na.label }}</div>
+                  </sc-for>
+                </div>
+                <div style="font-size:11px;color:#5D5348;margin-top:10px;line-height:1.55;">{{ noticeReachLine }}</div>
+                <textarea value="{{ noticeMsg }}" onChange="{{ setNoticeMsg }}" placeholder="Say it plainly — they read this word for word, in Arabic first." rows="3" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:12.5px;resize:none;background:#FFFFFF;margin-top:11px;"></textarea>
+                <div onClick="{{ noticeSend }}" style="cursor:pointer;background:{{ noticeBg }};color:{{ noticeFg }};font-size:12.5px;font-weight:800;border-radius:999px;padding:11px 0;text-align:center;margin-top:10px;transition:background .3s;">{{ noticeLabel }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isInvite }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:30px 32px 48px;max-width:940px;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">One link. One password. One owner.</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Accounts are born on a phone — sales sends a WhatsApp, the client owns it a minute later.</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:26px;margin-top:24px;align-items:start;">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:13px;">
+              <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Business</div>
+                <input value="{{ invBiz }}" onChange="{{ setInvBiz }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
+              <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Owner</div>
+                <input value="{{ invOwner }}" onChange="{{ setInvOwner }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
+              <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">WhatsApp</div>
+                <input value="{{ invPhone }}" onChange="{{ setInvPhone }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;font-variant-numeric:tabular-nums;"></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <sc-for list="{{ invPlans }}" as="ip" hint-placeholder-count="3"><div onClick="{{ ip.pick }}" style="cursor:pointer;border:1.5px solid {{ ip.br }};background:{{ ip.bg }};color:{{ ip.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:8px 16px;transition:all .2s;">{{ ip.label }}</div></sc-for>
+              </div>
+              <div onClick="{{ sendInvite }}" style="cursor:pointer;background:{{ invBtnBg }};color:#FFFFFF;font-weight:800;font-size:14px;border-radius:999px;padding:14px 0;text-align:center;transition:transform .2s,background .3s;" style-hover="transform:translateY(-2px)">{{ invBtnLabel }}</div>
+              <div style="font-size:10.5px;color:#93887A;line-height:1.5;">The set-password link IS the reset flow — no shared credentials, ever.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div style="background:#E7F0E4;border-radius:20px;padding:18px 16px;">
+                <div style="font-size:10.5px;font-weight:800;color:#4E6E50;letter-spacing:.06em;margin-bottom:10px;">WHATSAPP · {{ invPhone }}</div>
+                <div style="background:#FFFFFF;border-radius:4px 16px 16px 16px;padding:13px 15px;box-shadow:0 2px 6px rgba(30,50,30,.12);max-width:300px;">
+                  <div style="font-size:12.5px;line-height:1.65;">Marhaba {{ invOwnerFirst }} 👋 Your <strong>{{ invBiz }}</strong> account on Wasla is ready. Set your password here — takes a minute, works from your phone:</div>
+                  <div style="font-size:12px;color:#1D6FB8;margin-top:8px;font-weight:600;">wasla.app/start/{{ invSlug }}</div>
+                  <div style="text-align:end;font-size:9.5px;color:#93887A;margin-top:6px;">10:12 ✓✓</div>
+                </div>
+              </div>
+              <sc-if value="{{ invTracking }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px 18px;animation:{{ popAnim }};">
+                  <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">Invite tracking</div>
+                  <sc-for list="{{ invSteps }}" as="ivs" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;">
+                      <span style="width:18px;height:18px;border-radius:50%;background:{{ ivs.bg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;">{{ ivs.mark }}</span>
+                      <span style="font-size:12.5px;font-weight:600;color:{{ ivs.fg }};">{{ ivs.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </main>
+
+  <sc-if value="{{ ownerOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:300;background:rgba(28,24,20,.45);display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div style="background:#FFFFFF;border-radius:20px;padding:26px 28px;max-width:440px;width:100%;box-shadow:0 30px 70px rgba(20,14,8,.35);animation:popIn .3s cubic-bezier(.22,.61,.36,1) both;">
+        <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;">{{ ownerTitle }}</div>
+        <div style="font-size:13px;color:#5D5348;margin-top:8px;line-height:1.65;">{{ ownerBody }}</div>
+        <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:16px 0 6px;">New owner</div>
+        <input value="{{ ownerName }}" onChange="{{ setOwnerName }}" placeholder="e.g. Yara Nassar" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+        <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:11px 0 6px;">WhatsApp</div>
+        <input value="{{ ownerPhone }}" onChange="{{ setOwnerPhone }}" placeholder="+962 79 000 0000" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;font-variant-numeric:tabular-nums;">
+        <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;flex-wrap:wrap;">
+          <div onClick="{{ ownerCancel }}" style="cursor:pointer;border:1.5px solid #D8D0C2;color:#5D5348;font-weight:700;font-size:13px;border-radius:999px;padding:11px 20px;" style-hover="border-color:#93887A">Keep as is</div>
+          <div onClick="{{ ownerApply }}" style="cursor:pointer;background:{{ ownerBtnBg }};color:{{ ownerBtnFg }};font-weight:800;font-size:13px;border-radius:999px;padding:11px 22px;transition:background .3s;">{{ ownerBtnLabel }}</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasConfirm }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:300;background:rgba(28,24,20,.45);display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div style="background:#FFFFFF;border-radius:20px;padding:26px 28px;max-width:440px;width:100%;box-shadow:0 30px 70px rgba(20,14,8,.35);animation:popIn .3s cubic-bezier(.22,.61,.36,1) both;">
+        <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;">{{ confirmTitle }}</div>
+        <div style="font-size:13px;color:#5D5348;margin-top:8px;line-height:1.65;">{{ confirmBody }}</div>
+        <div style="display:flex;gap:10px;margin-top:22px;justify-content:flex-end;">
+          <div onClick="{{ confirmCancel }}" style="cursor:pointer;border:1.5px solid #D8D0C2;color:#5D5348;font-weight:700;font-size:13px;border-radius:999px;padding:11px 20px;" style-hover="border-color:#93887A">Keep as is</div>
+          <div onClick="{{ confirmOkGo }}" style="cursor:pointer;background:{{ confirmColor }};color:#FFFFFF;font-weight:800;font-size:13px;border-radius:999px;padding:11px 22px;transition:transform .2s;" style-hover="transform:translateY(-1px)">{{ confirmOk }}</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:310;background:#26262B;color:#F4F2EE;font-size:13px;font-weight:600;border-radius:999px;padding:12px 24px;box-shadow:0 14px 34px rgba(0,0,0,.3);animation:popIn .3s cubic-bezier(.22,.61,.36,1) both;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;admin&quot;,&quot;sales&quot;,&quot;support&quot;],&quot;default&quot;:&quot;admin&quot;,&quot;tsType&quot;:&quot;'admin'|'sales'|'support'&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
+class Component extends DCLogic {
+  state = { role: this.props.role ?? 'admin', screen: 'home', accIdx: null, apprId: null, checks: {}, rejecting: false, decided: {}, invBiz: 'Louma Chocolate', invOwner: 'Reem Louma', invPhone: '+962 79 555 0433', invPlan: 'Growth', invSent: false, toast: '', tick: 0, settled: false, apprTab: 'queue', supQuery: '', supIdx: 0, corrOpen: false, corrAmt: '+ JOD 1.50', corrReason: '', logFilter: 'all', accMods: {}, confirm: null, supPrivacy: 'pending', privOpen: false, privReason: '', leadSel: null, leadMods: {}, leadsAdded: [], leadFormOpen: false, leadNewBiz: '', leadNewOwner: '', leadTrail: {}, leadMoved: null, converted: {}, escal: [], escalDone: {}, pipeRep: null, hoverDay: null, lfAr: '', lfPhone: '', lfEmail: '', lfVertical: 'Café', lfCity: 'Amman', lfAreas: [], lfLocs: [''], lfTypes: [], lfPlan: 'Growth', lfValue: '79', lfSource: 'Referral', lfFollow: 'Tomorrow', lfNotes: '', sessionLog: [], ownerOpen: false, ownerName: '', ownerPhone: '', supFixOpen: false, supPhoneDraft: '', supPhones: {}, teamSel: null, teamMods: {}, teamAdded: [], teamRemoved: [], teamFormOpen: false, teamNewName: '', teamNewRole: 'Sales', billPaid: {}, noticeOpen: false, noticeAud: 'All clients', noticeMsg: '' };
+  componentDidMount() {
+    const t0 = performance.now(), dur = 1000;
+    const step = (t) => { const p = Math.min(1, (t - t0) / dur); this.setState({ tick: 1 - Math.pow(1 - p, 3) }); if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+    this.poke();
+  }
+  poke() { clearTimeout(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = setTimeout(() => this.setState({ settled: true }), 2600); }
+  componentDidUpdate() {
+    const s = this.state;
+    const cur = [s.role, s.screen, s.accIdx, s.apprId, s.rejecting, JSON.stringify(s.decided), s.invSent, s.toast, s.apprTab, s.supIdx, s.corrOpen, s.logFilter, !!s.confirm, JSON.stringify(s.accMods), s.supPrivacy, s.privOpen, s.leadSel, s.leadFormOpen, JSON.stringify(s.leadMods), (s.leadsAdded || []).length, s.leadMoved, s.pipeRep, JSON.stringify(s.converted), (s.escal || []).length, JSON.stringify(s.escalDone), JSON.stringify(s.leadTrail).length, s.ownerOpen, s.supFixOpen, s.teamSel, s.teamFormOpen, JSON.stringify(s.teamMods), (s.teamAdded || []).length, (s.teamRemoved || []).length, JSON.stringify(s.billPaid), s.noticeOpen, (s.sessionLog || []).length].join('|');
+    if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
+    this._lastSig = cur;
+  }
+  db() { return (window.WASLA_DB || {}).console || { accounts: [], approvals: [], leads: [], leaderboard: [], health: { cert: {}, jobs: [], totals: {} } }; }
+  sukkarKey() { const D = window.WASLA_DB; return (D && D.demoFlags && D.demoFlags.sukkarKey) || 'wasla_demo_sukkar_state'; }
+  qr() { if (!this._qr) { this._qr = []; let s = 7; for (let i = 0; i < 289; i++) { s = (s * 1103515245 + 12345) % 2147483648; const row = Math.floor(i / 17), col = i % 17; const finder = (row < 5 && col < 5) || (row < 5 && col > 11) || (row > 11 && col < 5); const on = finder ? ((row % 4 === 0 || col % 4 === 0 || (row > 0 && row < 4 && col > 0 && col < 4)) ? (row === 2 && col === 2) || row % 4 === 0 || col % 4 === 0 : false) : (s / 2147483648) < 0.46; this._qr.push({ c: on ? '#1C1C20' : 'transparent' }); } } return this._qr; }
+  say(msg) { clearTimeout(this._tt); this.setState({ toast: msg }); this._tt = setTimeout(() => this.setState({ toast: '' }), 3200); }
+  ask(title, body, ok, color, fn) { this._onConfirm = fn; this.setState({ confirm: { title, body, ok, color } }); }
+  slog(kind, line) { this.setState({ sessionLog: [{ t: 'Just now', who: 'OH', tag: 'Wasla', kind, line }, ...(this.state.sessionLog || [])] }); }
+  shade(hex) { const n = parseInt(hex.slice(1), 16); const f = (v) => Math.max(0, Math.round(v * 0.72)); return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => f(v).toString(16).padStart(2, '0')).join(''); }
+  renderVals() {
+    const C = this.db(), st = this.state, tick = st.tick;
+    const AN = (n, du, dl) => st.settled ? 'none' : n + ' ' + du + ' cubic-bezier(.22,.61,.36,1) ' + (dl || '0s') + ' both';
+    const admin = st.role === 'admin', sales = st.role === 'sales', supportRole = st.role === 'support';
+    const pending = C.approvals.filter(a => !st.decided[a.id]);
+    const navDef = admin ? [['home', 'Home'], ['accounts', 'Accounts'], ['leads', 'Pipeline'], ['approvals', 'Approvals'], ['billing', 'Billing'], ['support', 'Support'], ['health', 'Platform health'], ['log', 'Activity log'], ['team', 'Team'], ['settingsC', 'Settings']] : sales ? [['home', 'Home'], ['leads', 'Pipeline'], ['accounts', 'My accounts'], ['log', 'Activity log']] : [['home', 'Home'], ['support', 'Support tools'], ['log', 'Activity log']];
+    const navItems = navDef.map(([key, label]) => { const active = st.screen === key || (key === 'accounts' && st.screen === 'account') || (key === 'approvals' && st.screen === 'review'); return { label, go: () => this.setState({ screen: key, accIdx: null }), bg: active ? 'rgba(232,128,36,.14)' : 'transparent', fg: active ? '#C96A14' : '#5D5348', fw: active ? 800 : 500, dot: active ? '#E88024' : 'transparent', hasBadge: key === 'approvals' && pending.length > 0, badge: String(pending.length) }; });
+    const stBadge = (s) => s === 'active' ? { l: 'Active', bg: '#E7F6EE', fg: '#1E7D47' } : s === 'at-risk' ? { l: 'At risk', bg: '#FDF1DC', fg: '#9A6B12' } : s === 'paused' ? { l: 'Paused', bg: '#FDF1DC', fg: '#9A6B12' } : { l: 'Closed', bg: '#EFEDE8', fg: '#8C877F' };
+    const applyMod = (a) => ({ ...a, ...(st.accMods[a.name] || {}) });
+    const myAccounts = (admin || supportRole ? C.accounts : C.accounts.filter(a => a.manager === 'Omar')).map(applyMod);
+    const allAccounts = C.accounts.map(applyMod);
+    const RD = { 'Wared Flowers': 6, 'Tala Hospitality Group': 13, 'Petra Gym': 31, 'Qamar Sweets': 46, 'Nara Pharmacy': 54, 'Rawi Coffee House': 65, 'Marmar Lounge': 124 };
+    const bookActive = myAccounts.filter(a => a.state === 'active').length;
+    const bookRisk = myAccounts.filter(a => a.state === 'at-risk').length;
+    const bookPaused = myAccounts.filter(a => a.state === 'paused').length;
+    const bookClosed = myAccounts.filter(a => a.state === 'closed').length;
+    const bookLine = myAccounts.length + ' in your book · ' + bookActive + ' active' + (bookRisk ? ' · ' + bookRisk + ' at risk' : '') + (bookPaused ? ' · ' + bookPaused + ' paused' : '') + (bookClosed ? ' · ' + bookClosed + ' closed' : '') + ' — every one of them yours to answer for.';
+    const planPrice = { 'Starter': 25, 'Growth': 79, 'Unlimited': 149 };
+    const isPaid = (a) => !!st.billPaid[a.name] || (RD[a.name] == null ? true : RD[a.name] > 30);
+    // renewals rail — everything inside the 60-day window, nearest first
+    const renewList = myAccounts.filter(a => RD[a.name] != null && RD[a.name] <= 60 && a.state !== 'closed').sort((a, b) => RD[a.name] - RD[b.name]);
+    const renewRiskN = renewList.filter(a => a.state === 'at-risk').length;
+    // the week chart — Mon..Sun, Friday (index 4) is today and the broadcast peak
+    const WEEK = [78, 92, 64, 88, 121, 102, 96];
+    const WEEK_PREV = 578;
+    const weekPct = Math.round((WEEK.reduce((n, v) => n + v, 0) - WEEK_PREV) / WEEK_PREV * 100);
+    const sessLog = st.sessionLog || [];
+    const fullLog = [...sessLog, ...(C.activityLog || [])];
+    // feed polish — kind-coloured dots + grouped time headings
+    const kindTone = (k) => ({ approve: ['#2FAE66', 'rgba(47,174,102,.16)'], support: ['#4E6E8E', 'rgba(78,110,142,.16)'], money: ['#F0A92B', 'rgba(240,169,43,.18)'], client: ['#E88024', 'rgba(232,128,36,.16)'], viewas: ['#8C877F', 'rgba(140,135,127,.18)'] }[k] || ['#C9BFAF', 'rgba(201,191,175,.2)']);
+    const feedGroup = (t) => (t === 'Just now' || /^\d{1,2}:\d{2}$/.test(String(t))) ? 'This morning' : (String(t) === 'Yesterday' ? 'Yesterday' : 'Earlier');
+    const teamAll = [...(C.team || []), ...(st.teamAdded || [])].filter(t => !(st.teamRemoved || []).includes(t.name)).map(t => ({ ...t, ...(st.teamMods[t.name] || {}) }));
+    const teamSel = teamAll.find(t => t.name === st.teamSel) || null;
+    const teamNewReady = (st.teamNewName || '').trim().length >= 3 && (st.teamNewName || '').trim().includes(' ');
+    const ownerReady = (st.ownerName || '').trim().length >= 3 && (st.ownerPhone || '').replace(/\D/g, '').length >= 8;
+    const roleTone = (r) => r === 'Admin' ? ['#FDF4EC', '#C96A14'] : r === 'Sales' ? ['#F0E7DB', '#7A5A2E'] : ['#E8EDF3', '#4E6E8E'];
+    const billLive = allAccounts.filter(a => a.state !== 'closed');
+    const noticeTargets = billLive.filter(a => st.noticeAud === 'All clients' || a.plan === st.noticeAud.replace(' plan', ''));
+    const noticeWallets = noticeTargets.reduce((n, a) => n + (a.members || 0), 0);
+    const noticeReady = (st.noticeMsg || '').trim().length >= 12;
+    const accountRows = myAccounts.map((a, i) => { const b = stBadge(a.state); return { ...a, open: () => this.setState({ screen: 'account', accIdx: C.accounts.findIndex(x => x.name === a.name) }), stLabel: b.l, stBg: b.bg, stFg: b.fg, op: a.state === 'closed' ? 0.5 : 1, cardsLine: a.cards + ' / ' + (a.quota === 99 ? '∞' : a.quota), members: a.members.toLocaleString('en-US') }; });
+    const selAcc = applyMod(C.accounts[st.accIdx] || C.accounts[0] || {});
+    const M = (window.WASLA_DB || {}).members || [];
+    const TY = (window.WASLA_DB || {}).types || [];
+    const withPhone = (m) => m ? { ...m, phone: st.supPhones[m.name] || m.phone } : {};
+    const supList = M.filter(m => { const q = st.supQuery.trim().toLowerCase(); return !q || m.name.toLowerCase().includes(q) || m.phone.replace(/\s/g, '').includes(q.replace(/\s/g, '')); }).slice(0, 5).map(withPhone);
+    const supSelM = supList[st.supIdx] || withPhone(M[0]);
+    const supPhoneReady = (st.supPhoneDraft || '').replace(/\D/g, '').length >= 9 && (st.supPhoneDraft || '').trim() !== (supSelM.phone || '');
+    const selB = stBadge(selAcc.state);
+    const rv = C.approvals.find(a => a.id === st.apprId) || C.approvals[0] || {};
+    const allChecked = (rv.checks || []).every((_, i) => st.checks[rv.id + i]);
+    const canApprove = rv.kind === 'edit' || allChecked;
+    const apprRows = pending.map(a => ({ ...a, open: () => this.setState({ screen: 'review', apprId: a.id, rejecting: false, checks: {} }), kindLine: a.kind === 'new' ? 'New card — full review' : 'Edit — ' + (a.diff || {}).field, chip: a.kind === 'new' ? 'NEW CARD' : 'EDIT', chipBg: a.kind === 'new' ? '#FDF4EC' : '#F0E7DB', chipFg: a.kind === 'new' ? '#C96A14' : '#7A5A2E', border: '#E7E0D5' }));
+    const H = C.health, T = H.totals || {};
+    // ── SALES · pipeline board, rich capture, lead trail, escalations, team performance ──
+    const stageStyle = { 'Invited': ['#F0E7DB', '#7A5A2E'], 'Demo booked': ['#FDF4EC', '#C96A14'], 'Won': ['#E7F6EE', '#1E7D47'], 'Negotiating': ['#EDE9F5', '#5B4A8A'], 'Cold': ['#EFEDE8', '#8C877F'] };
+    const stageOrder = ['Cold', 'Invited', 'Demo booked', 'Negotiating', 'Won'];
+    const stageBar = { 'Cold': '#C9BFAF', 'Invited': '#B99A6B', 'Demo booked': '#E88024', 'Negotiating': '#7B68AE', 'Won': '#2FAE66' };
+    const repTone = (r) => ({ 'Omar': ['#FDF4EC', '#C96A14', '#E88024'], 'Lina': ['#EDE9F5', '#5B4A8A', '#7B68AE'], 'Sami': ['#E2EFF0', '#0F5B63', '#0F5B63'] }[r] || ['#EFEDE8', '#6B6760', '#8C877F']);
+    const AREAS = ['Rainbow St', 'Swefieh', 'Abdali', 'Jabal Amman', 'Sweifieh Village', 'Madina St'];
+    const VERTS = ['Café', 'Restaurant', 'Salon', 'Gym', 'Retail', 'Pharmacy', 'Other'];
+    const SOURCES = ['Referral', 'Walk-in', 'Instagram', 'Outbound', 'Event'];
+    const FOLLOWS = ['Today', 'Tomorrow', 'Next week'];
+    const TYPE_NAMES = (TY.length ? TY.map(t => t.name) : ['Stamp Card', 'Cashback Card', 'Points Card', 'Discount Card', 'Coupon', 'VIP Tiers', 'Challenge Card', 'Membership Card']);
+    // seed detail for the five leads that ship in WASLA_DB — read-only enrichment, never written back
+    const LEADX = {
+      'Louma Chocolate': { phone: '+962 79 555 0433', email: 'reem@louma.jo', vertical: 'Retail', areas: ['Abdali'], locs: ['Abdali Boulevard'], types: ['Points Card', 'Coupon'], plan: 'Growth', value: 79, source: 'Referral', follow: 'Tomorrow', touch: 2, seedTrail: [['2d ago', 'invite opened — no password yet', 'ping'], ['4d ago', 'moved Cold → Invited', 'move']] },
+      'Tuta Juice': { phone: '+962 78 555 0611', email: 'zain@tuta.jo', vertical: 'Café', areas: ['Swefieh', 'Rainbow St'], locs: ['Swefieh branch', 'Rainbow St kiosk'], types: ['Stamp Card'], plan: 'Starter', value: 25, source: 'Walk-in', follow: 'Thursday 11:00', touch: 1, seedTrail: [['Yesterday', 'demo booked for Thursday 11:00', 'move'], ['3d ago', 'walked in at the Swefieh branch — asked for the deck', 'note']] },
+      'Al-Quds Falafel': { phone: '+962 77 555 0290', email: 'abushadi@quds.jo', vertical: 'Restaurant', areas: ['Madina St'], locs: ['Madina St'], types: ['Stamp Card', 'Challenge Card'], plan: 'Starter', value: 25, source: 'Outbound', follow: 'Today', touch: 0, seedTrail: [['Today', 'first card submitted for review', 'won'], ['2d ago', 'moved Negotiating → Won', 'move']] },
+      'Baraka Style': { phone: '+962 79 555 0388', email: 'mona@baraka.jo', vertical: 'Salon', areas: ['Jabal Amman'], locs: ['Jabal Amman'], types: ['VIP Tiers'], plan: 'Starter', value: 25, source: 'Instagram', follow: 'After Eid', touch: 11, seedTrail: [['11d ago', 'asked to be called back after Eid', 'note']] },
+      'Deema Nails': { phone: '+962 78 555 0417', email: 'deema@deemanails.jo', vertical: 'Salon', areas: ['Sweifieh Village'], locs: ['Sweifieh Village'], types: ['Cashback Card', 'VIP Tiers'], plan: 'Growth', value: 79, source: 'Event', follow: 'Thursday', touch: 6, seedTrail: [['6d ago', 'wants Growth at Starter price — needs an admin answer', 'escalate'], ['9d ago', 'met at the Swefieh beauty fair', 'note']] }
+    };
+    const leadBase = { vertical: 'Other', city: 'Amman', areas: [], locs: [], types: [], plan: 'Starter', value: 25, source: 'Outbound', follow: 'This week', email: '—', phone: '—', touch: 0, seedTrail: [] };
+    const allLeads = [...C.leads, ...(st.leadsAdded || [])].map(l => ({ ...leadBase, ...(LEADX[l.name] || {}), ...l, ...(st.leadMods[l.name] || {}) }));
+    const leadSel = allLeads.find(l => l.name === st.leadSel) || null;
+    const leadNoteReady = !!leadSel && ((leadSel.note || '').trim().length >= 6);
+    const trailOf = (name) => [...((st.leadTrail || {})[name] || [])];
+    const addTrail = (name, line, kind) => ({ ...(st.leadTrail || {}), [name]: [{ t: 'Just now', line, kind: kind || 'note' }, ...trailOf(name)] });
+    const leadStage = (l, to) => {
+      this.setState({ leadMods: { ...st.leadMods, [l.name]: { ...(st.leadMods[l.name] || {}), stage: to, touch: 0 } }, leadMoved: l.name, leadSel: l.name, leadTrail: addTrail(l.name, 'moved ' + l.stage + ' → ' + to, 'move') });
+      this.say(l.name + ' moved to ' + to + ' — logged against ' + (l.by || 'the owner'));
+      this.slog('money', 'moved ' + l.name + ' from ' + l.stage + ' to ' + to + ' in the pipeline');
+    };
+    const stop = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
+    const pipeRep = st.pipeRep || 'All';
+    const pipeLeads = pipeRep === 'All' ? allLeads : allLeads.filter(l => l.by === pipeRep);
+    const leadVal = (l) => Number(l.value) || 0;
+    const pipeTotal = pipeLeads.reduce((n, l) => n + leadVal(l), 0);
+    const isConv = (n) => !!(st.converted || {})[n];
+    // escalations — session objects that surface on the ADMIN home under "Needs an eye"
+    const escalSeed = [{ id: 'e-Deema Nails', lead: 'Deema Nails', rep: 'Lina', ask: 'wants Growth at Starter price' }];
+    const escalAll = [...escalSeed, ...(st.escal || [])].filter((e, i, a) => a.findIndex(x => x.id === e.id) === i).filter(e => !(st.escalDone || {})[e.id]);
+    const leadEsc = !!leadSel && escalAll.some(e => e.lead === leadSel.name);
+    // rich capture form
+    const lfLocs = (st.lfLocs && st.lfLocs.length ? st.lfLocs : ['']);
+    const lfPhoneDigits = (st.lfPhone || '').replace(/\D/g, '').length;
+    const lfPhoneOk = lfPhoneDigits >= 9;
+    const lfBizOk = (st.leadNewBiz || '').trim().length >= 2;
+    const lfOwnerOk = (st.leadNewOwner || '').trim().length >= 2;
+    const leadAddReady = lfBizOk && lfOwnerOk && lfPhoneOk;
+    const lfDupe = lfBizOk && allLeads.some(l => l.name.toLowerCase() === st.leadNewBiz.trim().toLowerCase());
+    const setLf = (k, v) => this.setState({ [k]: v });
+    const pickMulti = (k, list, v) => setLf(k, (list || []).includes(v) ? list.filter(x => x !== v) : [...(list || []), v]);
+    // team performance — seeded from WASLA_DB.console.leaderboard, consistent with the leads above
+    const PERF = { 'Omar': { d: 2, initials: 'OH', spark: [1, 2, 1, 3, 2, 4, 3, 5] }, 'Lina': { d: -1, initials: 'LK', spark: [2, 1, 3, 2, 3, 2, 4, 2] }, 'Sami': { d: 1, initials: 'SA', spark: [0, 1, 1, 2, 1, 3, 2, 3] } };
+    const sparkClip = (arr) => { const mx = Math.max(1, ...arr); return 'polygon(' + arr.map((v, i) => (Math.round(i / (arr.length - 1) * 1000) / 10) + '% ' + (Math.round((100 - (v / mx * 76 + 9)) * 10) / 10) + '%').join(', ') + ', 100% 100%, 0% 100%)'; };
+    const invSlug = (st.invBiz || 'client').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    return {
+      enterAnim: AN('fadeUp', '.5s'), popAnim: AN('popIn', '.4s'), slideAnim: AN('slideRight', '.55s'),
+      qrCells: this.qr(),
+      roleChips: [['admin', 'Admin'], ['sales', 'Sales'], ['support', 'Support']].map(([k, label]) => ({ label, go: () => this.setState({ role: k, screen: 'home', accIdx: null, teamSel: null }), bg: st.role === k ? '#FFFFFF' : 'transparent', fg: st.role === k ? '#C96A14' : '#93887A' })),
+      navItems, meName: 'Omar Haddad', meInitials: 'OH', meRole: admin ? 'Wasla admin' : sales ? 'Account manager' : 'Support desk',
+      crumb: 'Console / ' + ({ home: 'Home', accounts: 'Accounts', account: selAcc.name || '', approvals: 'Approvals', review: 'Approvals / ' + (rv.card || ''), leads: 'Pipeline', health: 'Platform health', invite: 'Invite a client', support: 'Support', log: 'Activity log', team: 'Team', settingsC: 'Settings', billing: 'Billing' }[st.screen] || ''),
+      isHome: st.screen === 'home', isAccounts: st.screen === 'accounts', isAccount: st.screen === 'account', isApprovals: st.screen === 'approvals', isReview: st.screen === 'review', isLeads: st.screen === 'leads', isHealth: st.screen === 'health', isInvite: st.screen === 'invite', isSupport: st.screen === 'support', isLog: st.screen === 'log', isTeam: st.screen === 'team', isSettingsC: st.screen === 'settingsC', isBilling: st.screen === 'billing', isAdmin: admin,
+      showRenewals: !supportRole, showFeed: admin || supportRole, showInviteBtn: !supportRole,
+      accHeading: admin ? '47 total · 45 active · 2 closed — the demo shows the first eight.' : bookLine,
+      goAccounts: () => this.setState({ screen: 'accounts' }), goApprovals: () => this.setState({ screen: admin ? 'approvals' : supportRole ? 'support' : 'leads' }),
+      startInvite: () => this.setState({ screen: 'invite' }),
+      homeTitle: admin ? 'Good morning, Omar.' : sales ? 'Your book, Omar.' : 'The desk is open, Omar.',
+      homeSub: admin ? 'The platform slept well — one job needs an eye.' : sales ? 'Five leads moving · two accounts need a nudge.' : 'One privacy request on the clock · every tool here is logged with your name.',
+      homeStats: (admin ? [
+        ['Accounts', Math.round((T.accounts || 0) * tick), T.active + ' active', '#241C16'],
+        ['Cards live', Math.round((T.cardsLive || 0) * tick), 'across all accounts', '#241C16'],
+        ['Passes in wallets', Math.round((T.passes || 0) * tick).toLocaleString('en-US'), 'Apple + Google', '#241C16'],
+        ['Awaiting review', pending.length, pending.length ? 'oldest: yesterday' : 'queue clear', pending.length ? '#C96A14' : '#1E7D47']
+      ] : sales ? [
+        ['My accounts', myAccounts.length, bookRisk + ' at risk', '#241C16'],
+        ['Pipeline', allLeads.length, '1 won this week', '#241C16'],
+        ['Activations Q3', 6, 'leading the board', '#C96A14'],
+        ['Next demo', 'Thu', 'Tuta Juice · 11:00', '#241C16']
+      ] : [
+        ['Members on file', Math.round(M.length * tick), 'searchable by name or phone', '#241C16'],
+        ['Privacy queue', st.supPrivacy === 'pending' ? 1 : 0, st.supPrivacy === 'pending' ? '28 days to act' : 'cleared — logged forever', st.supPrivacy === 'pending' ? '#C96A14' : '#1E7D47'],
+        ['Re-issues today', 4, 'old barcodes voided', '#241C16'],
+        ['Corrections today', 2, 'each one with a reason', '#241C16']
+      ]).map(([label, value, sub, color], i) => ({ label, value: String(value), sub, color, anim: AN('fadeUp', '.5s', (0.05 * i) + 's') })),
+      isSales: sales,
+      // ── HOME · renewals on the clock, as a 60-day rail ──
+      renewSub: admin ? 'Everything due in the next 60 days' : 'Your book — due in the next 60 days',
+      renewStakeLine: 'JOD ' + renewList.reduce((n, a) => n + (planPrice[a.plan] || 0), 0) + ' / month on the rail',
+      renewRiskLine: renewRiskN ? renewRiskN + ' at risk' : 'none at risk',
+      renewRiskBg: renewRiskN ? '#FBE6E1' : '#E7F6EE', renewRiskFg: renewRiskN ? '#B23420' : '#1E7D47',
+      railAnim: AN('railDraw', '.85s'),
+      renewTicks: [['Now', 0], ['15d', 25], ['30d', 50], ['45d', 75], ['60d', 100]].map(([label, p], i) => ({ label, left: p + '%', anim: AN('tickIn', '.45s', (0.06 * i) + 's') })),
+      renewDots: renewList.map((a, i) => { const d = RD[a.name], risk = a.state === 'at-risk'; return { initial: a.initial, left: Math.min(98, Math.max(2, Math.round(d / 60 * 100))) + '%', bg: d <= 7 ? '#E2563A' : d <= 14 ? '#E08A1E' : a.color || '#8C877F', tip: a.name + ' · renews ' + a.renewal + ' · in ' + d + ' days', anim: (() => { const p = []; if (!st.settled) p.push('dotDrop .55s cubic-bezier(.22,.61,.36,1) ' + (0.18 + i * 0.09) + 's both'); if (risk) p.push('riskPulse 2.2s ease-out infinite'); return p.length ? p.join(', ') : 'none'; })(), open: () => this.setState({ screen: 'account', accIdx: C.accounts.findIndex(x => x.name === a.name) }) }; }),
+      renewRows: renewList.map((a, i) => { const d = RD[a.name], price = planPrice[a.plan] || 0, paid = !!st.billPaid[a.name]; return { name: a.name, initial: a.initial, color: a.color || '#8C877F', plan: a.plan, renewal: a.renewal, stake: 'JOD ' + price, days: Math.round(d * tick), risk: a.state === 'at-risk', chipBg: d <= 7 ? '#FBE6E1' : d <= 14 ? '#FDF1DC' : '#EFEDE8', chipFg: d <= 7 ? '#B23420' : d <= 14 ? '#9A6B12' : '#6B6760', anim: AN('fadeUp', '.45s', (0.28 + i * 0.07) + 's'), paid, canPay: !paid, open: () => this.setState({ screen: 'account', accIdx: C.accounts.findIndex(x => x.name === a.name) }), pay: (e) => { stop(e); this.setState({ billPaid: { ...st.billPaid, [a.name]: true } }); this.say(a.name + ' marked paid — JOD ' + price + ' received, quota re-armed'); this.slog('money', 'marked ' + a.name + ' renewal paid — JOD ' + price + ', quota re-armed'); }, ping: (e) => { stop(e); this.say('WhatsApp sent to ' + ((a.owner || 'the owner').split(' ')[0]) + ' at ' + a.name + ' — renewal in ' + d + ' days, in Arabic'); this.slog('money', 'pinged ' + a.name + ' about the renewal in ' + d + ' days — WhatsApp to ' + (a.owner || 'the owner')); } }; }),
+      renewFootLine: 'Marking paid re-arms the quota the same second and lands in the log. A ping goes out in Arabic, from your number.',
+      // ── HOME · the week, day by day ──
+      weekTotal: WEEK.reduce((n, v) => n + v, 0).toLocaleString('en-US'),
+      weekDelta: (weekPct >= 0 ? '▲ +' : '▼ ') + weekPct + '% vs last week',
+      weekDeltaBg: weekPct >= 0 ? '#E7F6EE' : '#FBE6E1', weekDeltaFg: weekPct >= 0 ? '#1E7D47' : '#B23420',
+      weekBars: WEEK.map((v, i) => { const hov = st.hoverDay === i, today = i === 4, wknd = i > 4; return { v: String(v), h: Math.max(5, Math.round(v / 121 * 70)) + 'px', d: ['M', 'T', 'W', 'T', 'F', 'S', 'S'][i], bg: hov ? '#C96A14' : today ? '#E88024' : wknd ? '#DFD2BE' : '#EAD9C2', colBg: hov ? '#FAF4EA' : wknd ? 'rgba(240,234,224,.5)' : 'transparent', lift: hov ? 'translateY(-4px)' : 'none', vFg: hov || today ? '#C96A14' : '#5D5348', dFg: today ? '#C96A14' : '#93887A', dFw: today ? 900 : 600, anim: AN('barRise', '.6s', (0.06 * i) + 's'), labAnim: AN('fadeUp', '.4s', (0.24 + 0.06 * i) + 's'), enter: () => this.setState({ hoverDay: i }), leave: () => this.setState({ hoverDay: null }) }; }),
+      weekCaption: st.hoverDay == null ? 'Friday is the platform’s heartbeat — broadcast day, and the week’s peak.' : (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][st.hoverDay] + ' — ' + WEEK[st.hoverDay] + ' passes' + (st.hoverDay === 4 ? ' · broadcast day, today' : st.hoverDay > 4 ? ' · weekend' : ' · a working day')),
+      weekCapDot: st.hoverDay == null ? '#E88024' : st.hoverDay === 4 ? '#E88024' : st.hoverDay > 4 ? '#C9BFAF' : '#EAD9C2',
+      // ── HOME (sales) · the pipeline at a glance ──
+      pipeSnap: stageOrder.map((stage, i) => { const inSt = allLeads.filter(l => l.by === 'Omar' && l.stage === stage); const n = inSt.length; const v = inSt.reduce((a, l) => a + leadVal(l), 0); return { stage, n, w: Math.round(Math.min(1, n / 3) * 100) + '%', val: v ? 'JOD ' + v : '—', bg: stageBar[stage] || '#C9BFAF', anim: AN('growX', '.7s', (0.05 * i) + 's') }; }),
+      pipeSnapTotal: 'JOD ' + allLeads.filter(l => l.by === 'Omar').reduce((n, l) => n + leadVal(l), 0),
+      pipeSnapNote: escalAll.length ? escalAll[0].lead + ' is stuck — ' + escalAll[0].rep + ' escalated it to admin.' : 'Nothing stuck — every lead has a next step.',
+      quickMoves: (admin ? [
+        ['Invite a client', 'account born on a phone', '#E88024', () => this.setState({ screen: 'invite' })],
+        ['Open the approvals queue', pending.length ? pending.length + ' waiting' : 'queue clear', '#F0A92B', () => this.setState({ screen: 'approvals' })],
+        ['The sales pipeline', allLeads.length + ' leads · JOD ' + allLeads.reduce((n, l) => n + (Number(l.value) || 0), 0) + '/month in play', '#7B68AE', () => this.setState({ screen: 'leads' })],
+        ['The certificate clock', '41 days — calendar held', '#2FAE66', () => this.setState({ screen: 'health' })],
+        ['The append-only log', 'every decision, forever', '#26262B', () => this.setState({ screen: 'log' })]
+      ] : sales ? [
+        ['Invite a client', 'WhatsApp, one minute', '#E88024', () => this.setState({ screen: 'invite' })],
+        ['My pipeline', '5 leads · 1 demo Thursday', '#F0A92B', () => this.setState({ screen: 'leads' })],
+        ['Ping Wared Flowers', '19 quiet days — send the nudge', '#E2563A', () => { this.say('WhatsApp nudge sent to Dalia — logged on the account'); this.slog('money', 'nudged Wared Flowers on WhatsApp — 19 quiet days, renewal in 6'); }],
+        ['The demo kit', 'poster + script for Thursday', '#26262B', () => this.say('Demo kit: counter poster, sample pass, 4-minute script — in your inbox')]
+      ] : [
+        ['Find a member', 'the answer to “I lost my card”', '#E88024', () => this.setState({ screen: 'support' })],
+        ['The privacy queue', st.supPrivacy === 'pending' ? '1 request · 28 days to act' : 'clear — decision logged', '#F0A92B', () => this.setState({ screen: 'support' })],
+        ['The append-only log', 'every action, with your name', '#26262B', () => this.setState({ screen: 'log' })]
+      ]).map(([a, b, dot, go]) => ({ a, b, dot, go })),
+      // ── HOME · across the platform, this morning ──
+      homeFeed: (() => { let last = null; return fullLog.slice(0, 6).map((l, i) => { const g = feedGroup(l.t), k = kindTone(l.kind), show = g !== last; last = g; return { ...l, group: g, showGroup: show, kindDot: k[0], kindRing: k[1], anim: AN('fadeUp', '.45s', (0.05 * i) + 's'), avBg: l.tag === 'Client' ? '#E88024' : '#26262B', tagBg: l.tag === 'Client' ? '#FDF4EC' : '#EFEDE8', tagFg: l.tag === 'Client' ? '#C96A14' : '#6B6760' }; }); })(),
+      goLog: () => this.setState({ screen: 'log' }), goLeads: () => this.setState({ screen: 'leads' }),
+      apprCountLine: supportRole ? (st.supPrivacy === 'pending' ? '1 privacy request on the clock' : 'Privacy queue is clear') : pending.length ? pending.length + ' waiting for a pair of eyes' : 'Approvals queue is clear',
+      apprPreviewLine: supportRole ? (st.supPrivacy === 'pending' ? 'Dana Tahboub asked for full deletion (GDPR-style) — 28 days to grant or decline, in writing.' : 'Decided, with a reason she can read — and it is in the log forever.') : pending.length ? pending.map(p => p.card + ' (' + (p.kind === 'new' ? 'new' : 'edit') + ')').join(' · ') : 'Nothing reaches a wallet unreviewed — and right now, everything has been.',
+      apprCta: supportRole ? 'Open support tools →' : admin ? 'Open the queue →' : 'Open the pipeline →',
+      homePanel2Title: admin ? (escalAll.length ? 'Needs an eye · ' + escalAll.length + ' from sales' : 'Needs an eye') : sales ? 'Today' : 'At the desk',
+      // admin rows carry the live sales escalations, each with a resolve affordance
+      homePanel2Rows: (admin ? [
+        ...escalAll.map(e => [e.lead, '— ' + e.rep + ' asks: ' + e.ask + '.', '#E2563A', e]),
+        ['Birthday job', '— 3 pushes failed, retrying at 12:00.', '#F0A92B', null],
+        ['Wared Flowers', 'quiet for 19 days, renewal in 6 — Omar pinged.', '#E2563A', null],
+        ['Certificate', 'renews in ' + ((H.cert || {}).days || '—') + ' days — calendar held.', '#2FAE66', null]
+      ] : sales ? [
+        ['Tuta Juice', '— demo Thursday 11:00, deck ready.', '#C96A14', null],
+        ['Louma Chocolate', 'opened the invite — no password yet. Nudge?', '#F0A92B', null],
+        ['Al-Quds Falafel', 'first card is in review — tell them today.', '#2FAE66', null]
+      ] : [
+        ['Dana Tahboub', 'asked for full deletion — 28 days to answer.', '#E2563A', null],
+        ['Birthday job', '— 3 pushes failed, retrying at 12:00.', '#F0A92B', null],
+        ['Sara Al-Amin', 'pass re-issued at 09:58 — SMS delivered.', '#2FAE66', null]
+      ]).map(([a, b, dot, esc], i) => ({ a, b, dot, anim: AN('fadeUp', '.45s', (0.05 * i) + 's'), dotAnim: esc ? 'pulse 1.8s infinite' : 'none', canResolve: !!esc, resolve: esc ? () => { this.setState({ escalDone: { ...(st.escalDone || {}), [esc.id]: true } }); this.say(esc.lead + ' — answered. ' + esc.rep + ' gets it on WhatsApp, and it is in the log.'); this.slog('money', 'resolved ' + esc.rep + '’s escalation on ' + esc.lead + ' — ' + esc.ask); } : () => {} })),
+      accountRows, selAcc, selStLabel: selB.l, selStBg: selB.bg, selStFg: selB.fg, selMembers: (selAcc.members || 0).toLocaleString('en-US'),
+      selHasNote: !!selAcc.note, selCert: (selAcc.name === 'Marmar Lounge') ? 'Dedicated — renews 2 Feb 2027' : 'Shared — renews 9 Sep 2026',
+      selTimeline: [
+        ['Invited', 'by ' + (selAcc.manager || '—') + ' · WhatsApp, accepted same day.', '#2FAE66'],
+        ['First card live', 'within 2 days of signup.', '#2FAE66'],
+        ['Last broadcast', '“Weekend special” · reached ' + Math.round((selAcc.members || 0) * 0.9).toLocaleString('en-US') + ' wallets.', '#C96A14'],
+        [selAcc.state === 'at-risk' ? 'Going quiet' : 'Healthy', selAcc.state === 'at-risk' ? '19 days without a scan — win-back suggested.' : 'scans this week on every live card.', selAcc.state === 'at-risk' ? '#E2563A' : '#2FAE66']
+      ].map(([a, b, dot]) => ({ a, b, dot })),
+      viewAsGo: () => { this.slog('viewas', 'viewed ' + (selAcc.name || 'an account') + ' as client — read-only, every screen logged'); this.say('Opening ' + (selAcc.name || 'the account') + ' read-only — every number matches what ' + ((selAcc.owner || '').split(' ')[0] || 'the owner') + ' sees · the whole visit lands in the view-as trail'); window.location.href = 'Wasla Dashboard.dc.html?viewas=1'; },
+      apprRows, queueEmpty: pending.length === 0,
+      rv, rvColor2: this.shade(rv.color || '#26262B'), rvIsNew: rv.kind === 'new', rvIsEdit: rv.kind === 'edit',
+      rvHead0: (rv.head || ['', ''])[0], rvHead1: (rv.head || ['', ''])[1], rvHero: rv.kind === 'edit' ? '7%' : '250', rvReward: rv.kind === 'edit' ? (rv.diff || {}).to : rv.reward,
+      rvChecks: (rv.checks || []).map((label, i) => { const on = !!st.checks[rv.id + i]; return { label, mark: on ? '✓' : '', br: on ? '#2FAE66' : '#D8D0C2', bg: on ? '#2FAE66' : 'transparent', fg: on ? '#241C16' : '#5D5348', toggle: () => this.setState({ checks: { ...st.checks, [rv.id + i]: !on } }) }; }),
+      rvDiffField: (rv.diff || {}).field || '', rvDiffFrom: (rv.diff || {}).from || '', rvDiffTo: (rv.diff || {}).to || '', rvImpact: rv.impact || '',
+      rvApproveBg: canApprove ? '#2FAE66' : '#EFEDE8', rvApproveFg: canApprove ? '#FFFFFF' : '#93887A',
+      rvApproveLabel: rv.kind === 'edit' ? 'Approve — new value goes live' : (allChecked ? 'Approve — it goes live now' : 'Tick the four checks first'),
+      rvApprove: () => { if (!canApprove) return; if (rv.id === 'sukkar') { try { localStorage.setItem(this.sukkarKey(), 'approved'); } catch (e) {} } this.setState({ decided: { ...st.decided, [rv.id]: 'approved' }, screen: 'approvals' }); this.say((rv.card || '') + ' is LIVE — ' + (rv.by || '') + ' just got the WhatsApp' + (rv.id === 'sukkar' ? ' · open the dashboard, it\u2019s live there too' : '')); this.slog('approve', 'approved ' + (rv.card || '') + ' — live in wallets, ' + (rv.by || 'the client') + ' notified by WhatsApp'); },
+      rvRejectOpen: () => this.setState({ rejecting: !st.rejecting }), rvRejecting: st.rejecting,
+      rvReasons: ['Reward text unclear', 'Logo unreadable at pass size', 'Terms missing'].map(label => ({ label, send: () => { if (rv.id === 'sukkar') { try { localStorage.setItem(this.sukkarKey(), 'rejected'); } catch (e) {} } this.setState({ decided: { ...st.decided, [rv.id]: 'rejected' }, screen: 'approvals', rejecting: false }); this.say('Sent back with the note — nothing changed in wallets' + (rv.id === 'sukkar' ? ' · the dashboard shows it too' : '')); this.slog('approve', 'sent ' + (rv.card || '') + ' back — reason sent verbatim: ' + label.toLowerCase()); } })),
+      // ── SALES · board header, rep filter, totals ──
+      pipeSub: sales ? 'All three books, stage by stage — filter to yours with the chips. Every card carries its next step, or it says “cold” out loud.' : 'Every rep’s book, stage by stage. Read it, and answer what has been escalated to you.',
+      pipeReps: ['All', 'Omar', 'Lina', 'Sami'].map(r => { const on = pipeRep === r, t = repTone(r); const n = r === 'All' ? allLeads.length : allLeads.filter(l => l.by === r).length; return { label: (r === 'All' ? 'All reps' : r) + ' · ' + n, dot: r === 'All' ? '#C9BFAF' : t[2], br: on ? (r === 'All' ? '#93887A' : t[1]) : '#E7E0D5', bg: on ? (r === 'All' ? '#EFEDE8' : t[0]) : '#FFFFFF', fg: on ? (r === 'All' ? '#5D5348' : t[1]) : '#5D5348', pick: () => this.setState({ pipeRep: r }) }; }),
+      pipeTotalLine: pipeLeads.length + ' leads on the board · JOD ' + pipeTotal + ' / month in play',
+      pipeBoardOpen: !st.leadFormOpen,
+      // ── SALES · the pipeline board, five columns ──
+      pipeCols: stageOrder.map((stage, ci) => {
+        const cards = pipeLeads.filter(l => l.stage === stage);
+        const v = cards.reduce((n, l) => n + leadVal(l), 0);
+        const s = stageStyle[stage] || ['#EFEDE8', '#6B6760'];
+        return {
+          stage, n: String(cards.length), val: v ? 'JOD ' + v : '—', dot: stageBar[stage] || '#C9BFAF', fg: s[1], colBg: stage === 'Won' ? '#F5FAF6' : '#FBF8F3',
+          anim: AN('colIn', '.5s', (0.06 * ci) + 's'), empty: cards.length === 0,
+          emptyLine: stage === 'Won' ? 'Nothing won yet under this filter.' : stage === 'Cold' ? 'Nothing has gone cold. Good.' : 'Empty — move something here.',
+          cards: cards.map((l, ri) => {
+            const conv = isConv(l.name), sel = st.leadSel === l.name, moved = st.leadMoved === l.name;
+            const next = stageOrder[stageOrder.indexOf(l.stage) + 1];
+            const touch = Number(l.touch) || 0, stale = touch > 5;
+            const canConv = l.stage === 'Won' && !conv;
+            return {
+              name: l.name, ar: l.ar || '', owner: l.owner || '—', by: l.by || '—',
+              repBg: repTone(l.by)[0], repFg: repTone(l.by)[1],
+              areas: (l.areas || []).slice(0, 3).map(a => ({ label: a })),
+              value: 'JOD ' + leadVal(l),
+              age: touch === 0 ? 'touched today' : touch + 'd since last touch',
+              ageFg: stale ? '#9A6B12' : '#A79C8D', ageFw: stale ? 800 : 600,
+              br: conv ? '#9AD3B4' : sel ? '#E88024' : '#EDE6DA', op: conv ? '.86' : '1', converted: conv,
+              anim: moved ? AN('popIn', '.45s') : AN('cardIn', '.5s', (0.1 + 0.06 * ci + 0.05 * ri) + 's'),
+              hasAct: !!next || canConv,
+              actLabel: canConv ? 'Convert →' : '▸', actFs: canConv ? '9px' : '11px',
+              actTip: canConv ? 'Convert — prefill the invite' : 'Move to ' + next,
+              actBr: canConv ? '#9AD3B4' : '#E7E0D5', actBg: canConv ? '#E7F6EE' : '#FFFFFF', actFg: canConv ? '#1E7D47' : '#93887A',
+              act: (e) => { stop(e); if (canConv) { this.setState({ leadSel: l.name }); this.say('Open ' + l.name + ' below — “Convert” prefills the invite'); return; } if (next) leadStage(l, next); },
+              open: () => this.setState({ leadSel: l.name, leadFormOpen: false, leadMoved: null })
+            };
+          })
+        };
+      }),
+      // ── SALES · the lead detail panel ──
+      leadHasSel: !!leadSel, leadSel: leadSel || {}, leadClose: () => this.setState({ leadSel: null }),
+      leadStBg: (stageStyle[(leadSel || {}).stage] || ['#EFEDE8'])[0], leadStFg: (stageStyle[(leadSel || {}).stage] || ['', '#6B6760'])[1],
+      leadIsConverted: !!leadSel && isConv(leadSel.name),
+      leadSubLine: leadSel ? [leadSel.owner, leadSel.phone, leadSel.vertical, 'owned by ' + (leadSel.by || '—'), 'follow-up ' + (leadSel.follow || '—')].filter(Boolean).join(' · ') : '',
+      leadGroups: (leadSel ? [
+        ['Contact', [['Owner', leadSel.owner || '—'], ['Phone', leadSel.phone || '—'], ['Email', leadSel.email || '—'], ['Vertical', leadSel.vertical || '—'], ['Source', leadSel.source || '—']]],
+        ['Footprint', [['City', leadSel.city || 'Amman'], ['Areas', (leadSel.areas || []).join(' · ') || '—'], ['Locations', String((leadSel.locs || []).length || 1)], ['Branches', (leadSel.locs || []).join(' · ') || '—']]],
+        ['The deal', [['Plan interest', leadSel.plan || '—'], ['Expected value', 'JOD ' + leadVal(leadSel) + ' / month'], ['Card types', (leadSel.types || []).join(' · ') || '—'], ['Follow-up', leadSel.follow || '—'], ['Last touch', (Number(leadSel.touch) || 0) === 0 ? 'today' : (leadSel.touch + ' days ago')]]]
+      ] : []).map(([title, rows], i) => ({ title, anim: AN('fadeUp', '.45s', (0.06 * i) + 's'), rows: rows.map(([k, v]) => ({ k, v })) })),
+      leadTrailRows: (leadSel ? [...trailOf(leadSel.name), ...(leadSel.seedTrail || []).map(([t, line, kind]) => ({ t, line, kind }))] : []).slice(0, 7).map((e, i) => ({ line: e.line, t: e.t, dot: ({ move: '#E88024', ping: '#2FAE66', escalate: '#E2563A', won: '#1E7D47', note: '#C9BFAF' })[e.kind] || '#C9BFAF', anim: AN('fadeUp', '.4s', (0.05 * i) + 's') })),
+      leadStages: stageOrder.map(s => { const cur = stageOrder.indexOf((leadSel || {}).stage); const i = stageOrder.indexOf(s); const on = i === cur, past = i < cur; const c = stageStyle[s] || ['#EFEDE8', '#6B6760']; return { label: s, br: on ? c[1] : '#E7E0D5', bg: on ? c[0] : '#FFFFFF', fg: on ? c[1] : past ? '#B5AB9C' : '#5D5348', op: past ? '.45' : '1', cursor: past || on ? 'default' : 'pointer', pick: () => { if (!leadSel || i <= cur) { if (past) this.say('Forward only — the pipeline never walks backwards'); return; } leadStage(leadSel, s); } }; }),
+      leadStageNote: leadSel ? (leadSel.stage === 'Won' ? (isConv(leadSel.name) ? 'Won and converted — the invite is on its way, the account is born the second they set a password.' : 'Won — convert it and the account is born on their phone.') : 'Now ' + leadSel.stage + ' · next step is ' + (stageOrder[stageOrder.indexOf(leadSel.stage) + 1] || '—') + '. Earlier stages are closed.') : '',
+      leadNote: (leadSel || {}).note || '',
+      setLeadNote: (e) => { if (!leadSel) return; this.setState({ leadMods: { ...st.leadMods, [leadSel.name]: { ...(st.leadMods[leadSel.name] || {}), note: e.target.value } } }); },
+      leadNoteBg: leadNoteReady ? '#E88024' : '#EFEDE8', leadNoteFg: leadNoteReady ? '#FFFFFF' : '#93887A',
+      leadNoteLabel: leadNoteReady ? 'Save the note to the trail' : 'Write a few words first',
+      leadNoteSave: () => { if (!leadNoteReady) return; const n = (leadSel.note || '').trim(); this.setState({ leadTrail: addTrail(leadSel.name, 'note: ' + n, 'note'), leadMods: { ...st.leadMods, [leadSel.name]: { ...(st.leadMods[leadSel.name] || {}), touch: 0 } } }); this.say('Note saved on ' + leadSel.name + ' — it travels to the account timeline the day it converts'); this.slog('money', 'noted on ' + leadSel.name + ': ' + n); },
+      leadFollowChips: FOLLOWS.map(f => { const on = (leadSel || {}).follow === f; return { label: f, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => { if (!leadSel) return; this.setState({ leadMods: { ...st.leadMods, [leadSel.name]: { ...(st.leadMods[leadSel.name] || {}), follow: f, touch: 0 } }, leadTrail: addTrail(leadSel.name, 'follow-up scheduled — ' + f.toLowerCase(), 'move') }); this.say('Follow-up on ' + leadSel.name + ' set for ' + f.toLowerCase() + ' — it is on your Today panel'); this.slog('money', 'scheduled the ' + leadSel.name + ' follow-up for ' + f.toLowerCase()); } }; }),
+      leadFollowNote: leadSel ? 'Currently ' + (leadSel.follow || '—') + '. A follow-up you never set is a lead you already lost.' : '',
+      leadPing: () => { if (!leadSel) return; this.setState({ leadTrail: addTrail(leadSel.name, 'pinged ' + (leadSel.owner || 'the owner') + ' on WhatsApp', 'ping'), leadMods: { ...st.leadMods, [leadSel.name]: { ...(st.leadMods[leadSel.name] || {}), touch: 0 } } }); this.say('WhatsApp sent to ' + (leadSel.owner || 'the lead') + ' — in Arabic, from your number'); this.slog('money', 'pinged ' + leadSel.name + ' (' + (leadSel.owner || 'the owner') + ') on WhatsApp'); },
+      leadEscalateLabel: leadEsc ? 'Escalated — waiting on admin' : 'Escalate to admin',
+      leadEscBr: leadEsc ? '#F0A92B' : '#E7E0D5',
+      leadEscFg: leadEsc ? '#9A6B12' : '#5D5348',
+      leadEscalate: () => { if (!leadSel) return; const id = 'e-' + leadSel.name; if (escalAll.some(e => e.id === id)) { this.say(leadSel.name + ' is already on the admin Home — one escalation at a time'); return; } const ask = ((leadSel.note || 'needs a decision').replace(/\s*—\s*escalate\s*$/i, '')).trim(); this.setState({ escal: [...(st.escal || []), { id, lead: leadSel.name, rep: leadSel.by || 'Omar', ask }], leadTrail: addTrail(leadSel.name, 'escalated to admin — ' + ask, 'escalate') }); this.say(leadSel.name + ' escalated — it is on the admin Home under “Needs an eye”'); this.slog('money', 'escalated ' + leadSel.name + ' to admin — ' + (leadSel.by || 'Omar') + ' asks: ' + ask); },
+      // the seam: a won lead becomes an account through the existing invite screen
+      leadCanConvert: !!leadSel && leadSel.stage === 'Won' && !isConv(leadSel.name),
+      leadConvert: () => { if (!leadSel || leadSel.stage !== 'Won' || isConv(leadSel.name)) return; const ph = (leadSel.phone && leadSel.phone !== '—') ? leadSel.phone : '+962 79 000 0000'; this.setState({ converted: { ...(st.converted || {}), [leadSel.name]: true }, screen: 'invite', invBiz: leadSel.name, invOwner: leadSel.owner || '', invPhone: ph, invPlan: leadSel.plan || 'Starter', invSent: false, leadTrail: addTrail(leadSel.name, 'converted — invite prefilled on ' + (leadSel.plan || 'Starter'), 'won') }); this.say(leadSel.name + ' is converting — the invite is prefilled, send the WhatsApp'); this.slog('client', 'converted ' + leadSel.name + ' to an account — invite prefilled for ' + (leadSel.owner || 'the owner') + ' on ' + (leadSel.plan || 'Starter')); },
+      leadFootNote: 'Stage moves, pings, notes and escalations all land on the account timeline the day it converts — and in the append-only log today.',
+      // ── SALES · rich lead capture ──
+      leadAddToggle: () => this.setState({ leadFormOpen: !st.leadFormOpen, leadSel: null }),
+      leadAddToggleLabel: st.leadFormOpen ? 'Close the form' : '+ Add a lead',
+      leadFormOpen: st.leadFormOpen,
+      leadNewBiz: st.leadNewBiz, setLeadNewBiz: (e) => this.setState({ leadNewBiz: e.target.value }),
+      leadNewOwner: st.leadNewOwner, setLeadNewOwner: (e) => this.setState({ leadNewOwner: e.target.value }),
+      lfBizBr: lfDupe ? '#E2563A' : lfBizOk ? '#9AD3B4' : '#D8D0C2',
+      lfOwnerBr: lfOwnerOk ? '#9AD3B4' : '#D8D0C2',
+      lfPhoneBr: (st.lfPhone || '').length === 0 ? '#D8D0C2' : lfPhoneOk ? '#9AD3B4' : '#E2563A',
+      lfPhoneFg: (st.lfPhone || '').length === 0 ? '#93887A' : lfPhoneOk ? '#1E7D47' : '#B23420',
+      lfPhoneNote: (st.lfPhone || '').length === 0 ? 'Jordanian mobile — +962 7x xxx xxxx. It becomes the WhatsApp we invite them on.' : lfPhoneOk ? 'Good — this is the number the invite goes to.' : 'That is not a full number yet — ' + lfPhoneDigits + ' of 9 digits.',
+      lfAr: st.lfAr, setLfAr: (e) => this.setState({ lfAr: e.target.value }),
+      lfPhone: st.lfPhone, setLfPhone: (e) => this.setState({ lfPhone: e.target.value }),
+      lfEmail: st.lfEmail, setLfEmail: (e) => this.setState({ lfEmail: e.target.value }),
+      lfCity: st.lfCity, setLfCity: (e) => this.setState({ lfCity: e.target.value }),
+      lfVerticals: VERTS.map(v => { const on = st.lfVertical === v; return { label: v, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => setLf('lfVertical', v) }; }),
+      lfAreaChips: AREAS.map(a => { const on = (st.lfAreas || []).includes(a); return { label: a, mark: on ? '✓ ' : '', br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => pickMulti('lfAreas', st.lfAreas, a) }; }),
+      lfTypeChips: TYPE_NAMES.map(t => { const on = (st.lfTypes || []).includes(t); return { label: t, mark: on ? '✓ ' : '', br: on ? '#2FAE66' : '#E7E0D5', bg: on ? '#E7F6EE' : '#FFFFFF', fg: on ? '#1E7D47' : '#5D5348', pick: () => pickMulti('lfTypes', st.lfTypes, t) }; }),
+      lfLocN: String(lfLocs.length),
+      lfLocNote: lfLocs.length === 1 ? 'One location — Starter covers it.' : lfLocs.length + ' locations — name each one, staff scopes follow.',
+      lfLocPlus: () => { if (lfLocs.length >= 8) { this.say('Eight locations is the demo ceiling — real accounts have no cap'); return; } setLf('lfLocs', [...lfLocs, '']); },
+      lfLocMinus: () => { if (lfLocs.length <= 1) return; setLf('lfLocs', lfLocs.slice(0, -1)); },
+      lfLocRows: lfLocs.map((v, i) => ({ i: String(i + 1), v, ph: i === 0 ? 'e.g. Rainbow St — the main branch' : 'e.g. branch ' + (i + 1), canRemove: lfLocs.length > 1, anim: AN('fadeUp', '.35s', (0.03 * i) + 's'), set: (e) => setLf('lfLocs', lfLocs.map((x, j) => j === i ? e.target.value : x)), remove: () => setLf('lfLocs', lfLocs.filter((x, j) => j !== i)) })),
+      lfPlanChips: ['Starter', 'Growth', 'Unlimited'].map(p => { const on = st.lfPlan === p; return { label: p + ' · JOD ' + planPrice[p], br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => this.setState({ lfPlan: p, lfValue: String(planPrice[p]) }) }; }),
+      lfValue: st.lfValue, setLfValue: (e) => this.setState({ lfValue: e.target.value.replace(/[^0-9]/g, '') }),
+      lfSourceChips: SOURCES.map(s => { const on = st.lfSource === s; return { label: s, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => setLf('lfSource', s) }; }),
+      lfFollowChips: FOLLOWS.map(f => { const on = st.lfFollow === f; return { label: f, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => setLf('lfFollow', f) }; }),
+      lfNotes: st.lfNotes, setLfNotes: (e) => this.setState({ lfNotes: e.target.value }),
+      lfSummaryLine: lfDupe ? (st.leadNewBiz.trim() + ' is already on the board — open it instead of adding it twice.') : (leadAddReady ? ((st.leadNewBiz || '').trim() + ' · ' + st.lfVertical + ' · ' + ((st.lfAreas || []).length ? (st.lfAreas || []).join(', ') : st.lfCity) + ' · ' + lfLocs.length + ' location' + (lfLocs.length > 1 ? 's' : '') + ' · JOD ' + (st.lfValue || 0) + '/month · follow up ' + st.lfFollow.toLowerCase() + '. It lands in Cold — advance it from the card.') : 'Business, owner and a full phone number are the three we will not guess.'),
+      leadAddBg: (leadAddReady && !lfDupe) ? '#E88024' : '#EFEDE8', leadAddFg: (leadAddReady && !lfDupe) ? '#FFFFFF' : '#93887A',
+      leadAddLabel: lfDupe ? 'Already in the pipeline' : leadAddReady ? 'Add ' + st.leadNewBiz.trim() + ' to the board' : 'Business, owner, phone — all three, please',
+      leadAddApply: () => {
+        if (!leadAddReady || lfDupe) { if (lfDupe) this.say(st.leadNewBiz.trim() + ' is already in the pipeline'); return; }
+        const nm = st.leadNewBiz.trim(), locs = lfLocs.map(x => x.trim()).filter(Boolean);
+        const lead = { name: nm, ar: (st.lfAr || '').trim(), stage: 'Cold', owner: st.leadNewOwner.trim(), by: 'Omar', phone: (st.lfPhone || '').trim(), email: (st.lfEmail || '').trim() || '—', vertical: st.lfVertical, city: (st.lfCity || 'Amman').trim(), areas: [...(st.lfAreas || [])], locs: locs.length ? locs : [(st.lfCity || 'Amman').trim()], types: [...(st.lfTypes || [])], plan: st.lfPlan, value: Number(st.lfValue) || planPrice[st.lfPlan] || 25, source: st.lfSource, follow: st.lfFollow, touch: 0, note: (st.lfNotes || '').trim() || 'Captured just now — no touch yet', seedTrail: [] };
+        this.setState({ leadsAdded: [...(st.leadsAdded || []), lead], leadFormOpen: false, leadSel: nm, leadMoved: nm, leadTrail: addTrail(nm, 'captured from ' + st.lfSource.toLowerCase() + ' — follow up ' + st.lfFollow.toLowerCase(), 'note'), leadNewBiz: '', leadNewOwner: '', lfAr: '', lfPhone: '', lfEmail: '', lfAreas: [], lfLocs: [''], lfTypes: [], lfNotes: '', lfVertical: 'Café', lfPlan: 'Growth', lfValue: '79', lfSource: 'Referral', lfFollow: 'Tomorrow' });
+        this.say(nm + ' is on the board at Cold — JOD ' + lead.value + '/month expected, follow up ' + lead.follow.toLowerCase());
+        this.slog('money', 'added ' + nm + ' to the pipeline — ' + lead.vertical + ', ' + (lead.areas.join('/') || lead.city) + ', ' + lead.plan + ' interest at JOD ' + lead.value + '/month, from ' + lead.source.toLowerCase());
+      },
+      // ── SALES · team performance ──
+      perfLegend: stageOrder.map(s => ({ label: s, bg: stageBar[s] })),
+      perfRows: (C.leaderboard || []).map(([name, n], i) => {
+        const P = PERF[name] || { d: 0, initials: name.slice(0, 2).toUpperCase(), spark: [1, 1, 1, 1, 1, 1, 1, 1] };
+        const mine = allLeads.filter(l => l.by === name);
+        const seg = stageOrder.map(s => ({ s, v: mine.filter(l => l.stage === s).reduce((a, l) => a + leadVal(l), 0) })).filter(x => x.v > 0);
+        const tot = seg.reduce((a, x) => a + x.v, 0);
+        const t = repTone(name);
+        return {
+          name, n: String(n), initials: P.initials, avBg: t[2], sub: mine.length + ' leads · last month ' + (n - P.d),
+          delta: P.d > 0 ? '▲ +' + P.d : P.d < 0 ? '▼ ' + P.d : '– no change',
+          dBg: P.d > 0 ? '#E7F6EE' : P.d < 0 ? '#FBE6E1' : '#EFEDE8', dFg: P.d > 0 ? '#1E7D47' : P.d < 0 ? '#B23420' : '#6B6760',
+          stack: tot ? seg.map(x => ({ w: Math.round(x.v / tot * 100) + '%', bg: stageBar[x.s] })) : [{ w: '100%', bg: '#EFE8DC' }],
+          stackTotal: tot ? 'JOD ' + tot : 'no open value',
+          pipeLine: seg.length ? seg.length + ' stages live' : 'nothing open',
+          win: Math.round(n / (n + 7) * 100) + '%', close: Math.round(26 - n * 2.4) + 'd',
+          clip: sparkClip(P.spark), sparkTop: 'rgba(' + (name === 'Omar' ? '232,128,36' : name === 'Lina' ? '123,104,174' : '15,91,99') + ',.42)',
+          anim: AN('fadeUp', '.5s', (0.07 * i) + 's'), barAnim: AN('growX', '.8s', (0.16 + 0.07 * i) + 's'), sparkAnim: AN('sparkDraw', '.9s', (0.26 + 0.07 * i) + 's')
+        };
+      }),
+      perfFootLine: 'Win rate is won ÷ everything worked this quarter. Avg close is invite-sent to first-card-live. The sparkline is activations per week, eight weeks back.',
+      boardRows: C.leaderboard.map(([name, n]) => ({ name, n, initials: name.slice(0, 2).toUpperCase(), w: Math.round(n / 6 * 100 * tick) + '%' })),
+      certLabel: (H.cert || {}).label, certDays: Math.round(((H.cert || {}).days || 0) * tick), certRenews: (H.cert || {}).renews, certCovers: (H.cert || {}).covers, certDedicated: (H.cert || {}).dedicated,
+      certPct: Math.round((1 - ((H.cert || {}).days || 0) / 365) * 100 * tick) + '%',
+      jobRows: (H.jobs || []).map(j => ({ ...j, dot: j.state === 'ok' ? '#2FAE66' : '#F0A92B', anim: j.state === 'ok' ? 'none' : 'pulse 1.6s infinite', border: j.state === 'ok' ? '#E7E0D5' : '#F6DDB0', chip: j.state === 'ok' ? 'HEALTHY' : 'PARTIAL — RETRYING', chipBg: j.state === 'ok' ? '#E7F6EE' : '#FDF1DC', chipFg: j.state === 'ok' ? '#1E7D47' : '#9A6B12' })),
+      invBiz: st.invBiz, setInvBiz: (e) => this.setState({ invBiz: e.target.value, invSent: false }),
+      invOwner: st.invOwner, setInvOwner: (e) => this.setState({ invOwner: e.target.value, invSent: false }),
+      invPhone: st.invPhone, setInvPhone: (e) => this.setState({ invPhone: e.target.value, invSent: false }),
+      invOwnerFirst: (st.invOwner || '').split(' ')[0], invSlug,
+      invPlans: ['Starter', 'Growth', 'Unlimited'].map(p => ({ label: p, pick: () => this.setState({ invPlan: p }), br: st.invPlan === p ? '#E88024' : '#E7E0D5', bg: st.invPlan === p ? '#FDF4EC' : '#FFFFFF', fg: st.invPlan === p ? '#C96A14' : '#5D5348' })),
+      invBtnBg: st.invSent ? '#2FAE66' : '#E88024', invBtnLabel: st.invSent ? 'Sent ✓ — tracking below' : 'Send the WhatsApp invite',
+      sendInvite: () => { if (st.invSent) return; this.setState({ invSent: true }); this.say('Invite sent — the account exists the moment they set a password'); },
+      invTracking: st.invSent,
+      invSteps: [['Sent', true], ['Opened', true], ['Password set — account live', false]].map(([label, done]) => ({ label, mark: done ? '✓' : '…', bg: done ? '#2FAE66' : '#D8D0C2', fg: done ? '#241C16' : '#93887A' })),
+      // approvals tabs + decided
+      apprTabs: [['queue', 'The queue' + (pending.length ? ' · ' + pending.length : '')], ['decided', 'Decided']].map(([k, label]) => ({ label, go: () => this.setState({ apprTab: k }), br: st.apprTab === k ? '#E88024' : '#E7E0D5', bg: st.apprTab === k ? '#E88024' : '#FFFFFF', fg: st.apprTab === k ? '#FFFFFF' : '#5D5348' })),
+      apprQueueTab: st.apprTab === 'queue', apprDecidedTab: st.apprTab === 'decided',
+      decidedRows: [
+        ...Object.entries(st.decided).map(([id, verdict]) => { const a = C.approvals.find(x => x.id === id) || {}; return { card: a.card, account: a.account, verdict, when: 'Just now', by: 'Omar', reason: verdict === 'rejected' ? 'Sent back with a note' : '', note: '' }; }),
+        ...(C.decidedSeed || [])
+      ].map(d => ({ ...d, chip: d.verdict.toUpperCase(), bg: d.verdict === 'approved' ? '#E7F6EE' : d.verdict === 'rejected' ? '#FBE6E1' : '#FDF1DC', fg: d.verdict === 'approved' ? '#1E7D47' : d.verdict === 'rejected' ? '#B23420' : '#9A6B12', hasReason: !!d.reason, reason: d.reason || '', note: d.note || '' })),
+      // danger zone
+      dzPlans: ['Starter', 'Growth', 'Unlimited'].map(p => ({ label: p, br: selAcc.plan === p ? '#E88024' : '#E7E0D5', bg: selAcc.plan === p ? '#FDF4EC' : '#FFFFFF', fg: selAcc.plan === p ? '#C96A14' : '#5D5348', pick: () => { if (selAcc.plan === p) return; this.ask('Move ' + selAcc.name + ' to ' + p + '?', 'Quota flips the moment you confirm — ' + (p === 'Starter' ? '3 card slots' : p === 'Growth' ? '10 card slots' : 'unlimited slots') + '. The invoice follows; nothing in wallets changes.', 'Change plan', '#E88024', () => { this.setState({ accMods: { ...st.accMods, [selAcc.name]: { ...(st.accMods[selAcc.name] || {}), plan: p, quota: p === 'Starter' ? 3 : p === 'Growth' ? 10 : 99 } } }); this.say(selAcc.name + ' is on ' + p + ' — logged'); this.slog('money', 'moved ' + selAcc.name + ' from ' + selAcc.plan + ' to ' + p + ' — quota flipped, invoice follows'); }); } })),
+      dzPauseWord: selAcc.state === 'paused' ? 'Paused' : 'Pause',
+      dzPauseLabel: selAcc.state === 'paused' ? 'Resume account' : 'Pause account…',
+      dzPauseNote: selAcc.state === 'paused' ? 'Signup pages are closed · balances stay redeemable.' : selAcc.cards + ' cards grey in ' + (selAcc.members || 0).toLocaleString('en-US') + ' wallets tonight — balances stay redeemable, signup pages close.',
+      dzPause: () => { if (selAcc.state === 'paused') { this.setState({ accMods: { ...st.accMods, [selAcc.name]: { ...(st.accMods[selAcc.name] || {}), state: 'active' } } }); this.say(selAcc.name + ' is live again'); this.slog('money', 'resumed ' + selAcc.name + ' — cards wake up tonight, signup pages reopen'); return; } this.ask('Pause ' + selAcc.name + '?', 'Blast radius: ' + selAcc.cards + ' cards grey in ' + (selAcc.members || 0).toLocaleString('en-US') + ' wallets. Earning stops, balances stay redeemable, every signup page closes. Reversible anytime.', 'Pause it', '#E2563A', () => { this.setState({ accMods: { ...st.accMods, [selAcc.name]: { ...(st.accMods[selAcc.name] || {}), state: 'paused' } } }); this.say('Paused — the client sees why on their dashboard'); this.slog('money', 'paused ' + selAcc.name + ' — ' + selAcc.cards + ' cards grey in ' + (selAcc.members || 0).toLocaleString('en-US') + ' wallets, balances stay redeemable'); }); },
+      dzOwner: () => this.setState({ ownerOpen: true, ownerName: '', ownerPhone: '' }),
+      ownerOpen: st.ownerOpen,
+      ownerTitle: 'Hand ' + (selAcc.name || 'this account') + ' to a new owner?',
+      ownerBody: 'One owner at a time. ' + (selAcc.owner || 'The current owner') + ' loses the account the moment the new password is set — their session ends at midnight either way.',
+      ownerName: st.ownerName, setOwnerName: (e) => this.setState({ ownerName: e.target.value }),
+      ownerPhone: st.ownerPhone, setOwnerPhone: (e) => this.setState({ ownerPhone: e.target.value }),
+      ownerBtnBg: ownerReady ? '#E88024' : '#EFEDE8', ownerBtnFg: ownerReady ? '#FFFFFF' : '#93887A',
+      ownerBtnLabel: ownerReady ? 'Send the set-password link' : 'A name and a WhatsApp number — both',
+      ownerCancel: () => this.setState({ ownerOpen: false, ownerName: '', ownerPhone: '' }),
+      ownerApply: () => { if (!ownerReady) return; const nm = st.ownerName.trim(); this.setState({ accMods: { ...st.accMods, [selAcc.name]: { ...(st.accMods[selAcc.name] || {}), owner: nm } }, ownerOpen: false, ownerName: '', ownerPhone: '' }); this.say('Set-password link sent on WhatsApp — the old owner’s session ends at midnight.'); this.slog('money', 'handed ' + selAcc.name + ' to ' + nm + ' (' + st.ownerPhone.trim() + ') — set-password link sent, old login dies at midnight'); },
+      dzDeleteNote: 'Blast radius: every pass voids, every balance dies, ' + (selAcc.members || 0).toLocaleString('en-US') + ' members lose their cards. Export first.',
+      dzDelete: () => this.ask('Delete ' + selAcc.name + ' forever?', 'Every pass voids in wallets, balances and history are erased after a 30-day export window. In production this asks for your password again, then the word DELETE, typed.', 'This is blocked in the demo', '#E2563A', () => this.say('Blocked in the demo — the blast radius is the point')),
+      // support
+      supQuery: st.supQuery, setSupQuery: (e) => this.setState({ supQuery: e.target.value, supIdx: 0 }),
+      supRows: supList.map((m, i) => ({ ...m, open: () => this.setState({ supIdx: i, corrOpen: false, corrReason: '', supFixOpen: false }), bg: st.supIdx === i ? '#FAF4EA' : 'transparent' })),
+      supHasSel: true,
+      supSel: supSelM,
+      supReissue: () => { this.say('New pass link by SMS — the old barcode is void already'); this.slog('support', 're-issued ' + (supSelM.name || 'a member') + '’s pass — old barcode voided, SMS sent'); },
+      supFix: () => this.setState({ supFixOpen: !st.supFixOpen, supPhoneDraft: supSelM.phone || '', corrOpen: false }),
+      supFixOpen: st.supFixOpen,
+      supPhoneDraft: st.supPhoneDraft, setSupPhoneDraft: (e) => this.setState({ supPhoneDraft: e.target.value }),
+      supPhoneBg: supPhoneReady ? '#E88024' : '#EFEDE8', supPhoneFg: supPhoneReady ? '#FFFFFF' : '#93887A',
+      supPhoneLabel: supPhoneReady ? 'Save — she confirms by SMS' : ((st.supPhoneDraft || '').trim() === (supSelM.phone || '') ? 'Change the number to save it' : 'A full mobile number, please'),
+      supPhoneNote: 'The old number keeps receiving passes until the new one answers the confirmation SMS.',
+      supPhoneSave: () => { if (!supPhoneReady) return; const was = supSelM.phone, now = st.supPhoneDraft.trim(); this.setState({ supPhones: { ...st.supPhones, [supSelM.name]: now }, supFixOpen: false }); this.say('Phone changed to ' + now + ' — a confirmation SMS is on its way to ' + (supSelM.name || 'the member').split(' ')[0]); this.slog('support', 'changed ' + (supSelM.name || 'a member') + '’s phone from ' + was + ' to ' + now + ' — confirmation SMS sent'); },
+      corrToggle: () => this.setState({ corrOpen: !st.corrOpen }), corrOpen: st.corrOpen,
+      corrAmts: ['+ JOD 0.50', '+ JOD 1.50', '− JOD 0.50', '− JOD 1.00'].map(a => ({ label: a, pick: () => this.setState({ corrAmt: a }), br: st.corrAmt === a ? '#E88024' : '#E7E0D5', bg: st.corrAmt === a ? '#FDF4EC' : '#FFFFFF', fg: st.corrAmt === a ? '#C96A14' : '#5D5348' })),
+      corrReason: st.corrReason, setCorrReason: (e) => this.setState({ corrReason: e.target.value }),
+      corrBg: st.corrReason.trim().length >= 8 ? '#E88024' : '#EFEDE8', corrFg: st.corrReason.trim().length >= 8 ? '#FFFFFF' : '#93887A',
+      corrLabel: st.corrReason.trim().length >= 8 ? 'Apply ' + st.corrAmt + ' — logged with your name' : 'A reason is required — the client reads it',
+      corrApply: () => { if (st.corrReason.trim().length < 8) return; const why = st.corrReason.trim(); this.setState({ corrOpen: false, corrReason: '' }); this.say('Corrected ' + st.corrAmt + ' — in the log forever, client notified'); this.slog('support', 'balance correction ' + st.corrAmt + ' for ' + (supSelM.name || 'a member') + ' — reason: ' + why); },
+      supGrant: () => this.ask('Erase Dana Tahboub?', 'Her pass voids, her history anonymizes, her number is forgotten. 30-day legal hold, then gone. This cannot be undone.', 'Grant — erase her', '#E2563A', () => { this.setState({ supPrivacy: 'granted', privOpen: false }); this.say('Erasure scheduled — Dana gets a confirmation SMS'); this.slog('support', 'granted Dana Tahboub’s erasure request — pass voided, 30-day legal hold, then gone'); }),
+      supDecline: () => this.setState({ privOpen: !st.privOpen }),
+      privPending: st.supPrivacy === 'pending', privResolved: st.supPrivacy !== 'pending',
+      privDeclining: st.supPrivacy === 'pending' && st.privOpen,
+      privCount: st.supPrivacy === 'pending' ? '1' : '0',
+      privCardBg: st.supPrivacy === 'pending' ? '#FAF6EF' : '#F4F1EA',
+      privBodyFg: st.supPrivacy === 'pending' ? '#5D5348' : '#A79C8D',
+      privDeclineBr: st.privOpen ? '#93887A' : '#E7E0D5',
+      privReason: st.privReason, setPrivReason: (e) => this.setState({ privReason: e.target.value }),
+      privBg: st.privReason.trim().length >= 8 ? '#26262B' : '#EFEDE8', privFg: st.privReason.trim().length >= 8 ? '#F4F2EE' : '#93887A',
+      privLabel: st.privReason.trim().length >= 8 ? 'Decline — send her this reason' : 'A reason is required — she reads it',
+      privApply: () => { if (st.privReason.trim().length < 8) return; const why = st.privReason.trim(); this.setState({ supPrivacy: 'declined', privOpen: false }); this.say('Declined with reason — she keeps her card, the request is logged'); this.slog('support', 'declined Dana Tahboub’s erasure request — sent to her verbatim: ' + why); },
+      privChip: st.supPrivacy === 'granted' ? 'GRANTED' : 'DECLINED',
+      privChipBg: '#EFEDE8', privChipFg: '#8C877F',
+      privResolvedLine: st.supPrivacy === 'granted' ? 'Erasure scheduled — 30-day hold, then her record is gone. Omar Haddad, just now.' : 'She keeps her card. Sent to her verbatim: “' + st.privReason.trim() + '” — Omar Haddad, just now.',
+      // activity log
+      logChips: [['all', 'Everything'], ['approve', 'Approvals'], ['support', 'Support'], ['money', 'Money'], ['client', 'Client actions'], ['viewas', 'View-as trail']].map(([k, label]) => ({ label, pick: () => this.setState({ logFilter: k }), br: st.logFilter === k ? '#E88024' : '#E7E0D5', bg: st.logFilter === k ? '#E88024' : '#FFFFFF', fg: st.logFilter === k ? '#FFFFFF' : '#5D5348' })),
+      logRows: fullLog.filter(l => st.logFilter === 'all' || l.kind === st.logFilter).map((l, i) => ({ ...l, anim: AN('fadeUp', '.4s', (0.04 * i) + 's'), avBg: l.tag === 'Client' ? '#E88024' : '#26262B', avFg: '#FFFFFF', tagBg: l.tag === 'Client' ? '#FDF4EC' : '#EFEDE8', tagFg: l.tag === 'Client' ? '#C96A14' : '#6B6760' })),
+      // team
+      teamRows: teamAll.map(tm => { const rt = roleTone(tm.role); return { ...tm, roleBg: rt[0], roleFg: rt[1], tfaLabel: tm.invited ? 'invited — password pending' : tm.tfa ? '2FA ✓' : tm.nudged ? '2FA — nudged' : '2FA off', tfaFg: tm.invited ? '#9A6B12' : tm.tfa ? '#1E7D47' : tm.nudged ? '#9A6B12' : '#B23420', rowBg: st.teamSel === tm.name ? '#FAF4EA' : 'transparent', open: () => this.setState({ teamSel: tm.name, teamFormOpen: false }) }; }),
+      teamHasSel: !!teamSel, teamSelObj: teamSel || {},
+      teamSelSub: teamSel ? (teamSel.invited ? 'Invited just now — the link is live for 48 hours' : 'Last seen ' + teamSel.last) : '',
+      teamClose: () => this.setState({ teamSel: null }),
+      teamSelRoles: ['Admin', 'Sales', 'Support'].map(r => { const on = (teamSel || {}).role === r, rt = roleTone(r); return { label: r, br: on ? rt[1] : '#E7E0D5', bg: on ? rt[0] : '#FFFFFF', fg: on ? rt[1] : '#5D5348', pick: () => { if (!teamSel || teamSel.role === r) return; if (teamSel.name === 'Omar Haddad') { this.say('You cannot change your own role — another admin has to do it'); return; } this.setState({ teamMods: { ...st.teamMods, [teamSel.name]: { ...(st.teamMods[teamSel.name] || {}), role: r } } }); this.say(teamSel.name + ' is now ' + r + ' — the scope changes at their next screen'); this.slog('support', 'changed ' + teamSel.name + ' from ' + teamSel.role + ' to ' + r + ' — console scope updated'); } }; }),
+      teamShowNudge: !!teamSel && !teamSel.tfa && !teamSel.invited,
+      teamNudgeLabel: (teamSel || {}).nudged ? 'Nudged — reminder sent' : 'Nudge 2FA',
+      teamNudgeBr: (teamSel || {}).nudged ? '#E7E0D5' : '#F0A92B', teamNudgeFg: (teamSel || {}).nudged ? '#93887A' : '#9A6B12',
+      teamNudge: () => { if (!teamSel) return; if (teamSel.nudged) { this.say('Already nudged — the next reminder goes out tomorrow'); return; } this.setState({ teamMods: { ...st.teamMods, [teamSel.name]: { ...(st.teamMods[teamSel.name] || {}), nudged: true } } }); this.say(teamSel.name + ' nudged — 2FA becomes mandatory for them in 7 days'); this.slog('support', 'nudged ' + teamSel.name + ' to turn on 2FA — mandatory in 7 days'); },
+      teamRevoke: () => { if (!teamSel) return; if (teamSel.name === 'Omar Haddad') { this.say('You cannot revoke your own access — another admin has to'); return; } this.ask('Revoke ' + teamSel.name + '?', 'Their session ends immediately and the console stops opening for them. Everything they already did stays in the append-only log, with their name on it. Re-inviting is a fresh link, not a restore.', 'Revoke access', '#E2563A', () => { this.setState({ teamRemoved: [...(st.teamRemoved || []), teamSel.name], teamSel: null }); this.say(teamSel.name + ' is out — session killed, log untouched'); this.slog('support', 'revoked ' + teamSel.name + '’s console access — session ended immediately'); }); },
+      teamInvite: () => this.setState({ teamFormOpen: !st.teamFormOpen, teamSel: null }),
+      teamInviteLabel: st.teamFormOpen ? 'Close the form' : '+ Invite a teammate',
+      teamFormOpen: st.teamFormOpen,
+      teamNewName: st.teamNewName, setTeamNewName: (e) => this.setState({ teamNewName: e.target.value }),
+      teamNewRoles: ['Admin', 'Sales', 'Support'].map(r => { const on = st.teamNewRole === r, rt = roleTone(r); return { label: r, br: on ? rt[1] : '#E7E0D5', bg: on ? rt[0] : '#FFFFFF', fg: on ? rt[1] : '#5D5348', pick: () => this.setState({ teamNewRole: r }) }; }),
+      teamNewRoleNote: st.teamNewRole === 'Admin' ? 'Admin sees everything and can pause or delete an account.' : st.teamNewRole === 'Sales' ? 'Sales sees only their own book, and can request plan changes — never approve.' : 'Support gets member lookup and balance corrections, no accounts screen.',
+      teamAddBg: teamNewReady ? '#E88024' : '#EFEDE8', teamAddFg: teamNewReady ? '#FFFFFF' : '#93887A',
+      teamAddLabel: teamNewReady ? 'Send the invite as ' + st.teamNewRole : 'A full name, first and last',
+      teamAddApply: () => { if (!teamNewReady) return; const nm = st.teamNewName.trim().replace(/\s+/g, ' '); if (teamAll.some(t => t.name.toLowerCase() === nm.toLowerCase())) { this.say(nm + ' is already on the team'); return; } const ini = nm.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(); this.setState({ teamAdded: [...(st.teamAdded || []), { name: nm, ar: '', initials: ini, role: st.teamNewRole, last: 'never signed in', tfa: false, invited: true }], teamFormOpen: false, teamNewName: '', teamSel: nm }); this.say('Invite sent to ' + nm + ' — they set a password, 2FA is forced on day one'); this.slog('support', 'invited ' + nm + ' as ' + st.teamNewRole + ' — password pending, 2FA forced on day one'); },
+      billRows: billLive.map(a => { const d = RD[a.name], paid = isPaid(a), price = planPrice[a.plan] || 0; return { name: a.name, initial: a.initial, color: a.color, plan: a.plan, renewal: a.renewal, days: d == null ? 'later' : d + ' days', price: 'JOD ' + price, chip: paid ? 'PAID' : 'DUE SOON', chipBg: paid ? '#E7F6EE' : '#FDF1DC', chipFg: paid ? '#1E7D47' : '#9A6B12', canPay: !paid, pay: () => { this.setState({ billPaid: { ...st.billPaid, [a.name]: true } }); this.say(a.name + ' marked paid — JOD ' + price + ' received, quota re-armed'); this.slog('money', 'marked ' + a.name + ' renewal paid — JOD ' + price + ', quota re-armed'); } }; }),
+      billTotal: 'JOD ' + billLive.reduce((n, a) => n + (planPrice[a.plan] || 0), 0).toLocaleString('en-US') + ' / month',
+      billDue: (() => { const n = billLive.filter(a => !isPaid(a)).length; return n ? n + ' due in the next 30 days' : 'Nothing due in the next 30 days'; })(),
+      noticeOpen: st.noticeOpen,
+      noticeToggle: () => this.setState({ noticeOpen: !st.noticeOpen }),
+      noticeToggleLabel: st.noticeOpen ? 'Close' : 'Compose…',
+      noticeAuds: ['All clients', 'Growth plan', 'Starter plan'].map(a => ({ label: a, pick: () => this.setState({ noticeAud: a }), br: st.noticeAud === a ? '#E88024' : '#E7E0D5', bg: st.noticeAud === a ? '#FDF4EC' : '#FFFFFF', fg: st.noticeAud === a ? '#C96A14' : '#5D5348' })),
+      noticeMsg: st.noticeMsg, setNoticeMsg: (e) => this.setState({ noticeMsg: e.target.value }),
+      noticeReachLine: noticeTargets.length + ' accounts · ' + noticeWallets.toLocaleString('en-US') + ' wallets behind them. Owners get it on WhatsApp and in the dashboard — members never see it.',
+      noticeBg: noticeReady ? '#E88024' : '#EFEDE8', noticeFg: noticeReady ? '#FFFFFF' : '#93887A',
+      noticeLabel: noticeReady ? 'Send to ' + noticeTargets.length + ' accounts' : 'Write the notice first — they read it verbatim',
+      noticeSend: () => { if (!noticeReady) return; const n = noticeTargets.length, w = noticeWallets; this.setState({ noticeOpen: false, noticeMsg: '' }); this.say('Notice sent to ' + n + ' accounts · ' + w.toLocaleString('en-US') + ' wallets behind them'); this.slog('client', 'sent a platform notice to ' + st.noticeAud.toLowerCase() + ' — ' + n + ' accounts, ' + w.toLocaleString('en-US') + ' wallets behind them'); },
+      matrixRows: (C.matrix || []).map(([label, a, s, p]) => { const cell = (v) => v === true ? ['✓', '#1E7D47'] : v === false ? ['—', '#B5AB9C'] : [v, '#9A6B12']; const A2 = cell(a), S2 = cell(s), P2 = cell(p); return { label, a: A2[0], aFg: A2[1], s: S2[0], sFg: S2[1], p: P2[0], pFg: P2[1] }; }),
+      // settings
+      catChips: TY.map(ty => ({ name: ty.name, ar: ty.ar })),
+      planCards: [['Starter', '3 card slots · no broadcasts', 'JOD 15 / month'], ['Growth', '10 slots · 10 broadcasts / month', 'JOD 39 / month'], ['Unlimited', 'No caps · priority review', 'JOD 89 / month']].map(([name, line1, line2], i) => ({ name, line1, line2, br: i === 1 ? '#E88024' : '#E7E0D5', fg: i === 1 ? '#C96A14' : '#241C16' })),
+      overlayRows: [
+        { a: 'Birthday', b: 'attaches to any card with a birthday field · gift rides the strip art, never touches balances.' },
+        { a: 'Referral', b: 'attaches to stamps, points and cashback · both sides credited, codes on the pass back.' },
+        { a: 'Seasonal (Ramadan / Eid)', b: 'attaches to everything · scheduled greeting strips, auto-removed after the season.' }
+      ],
+      ruleRows: [
+        { line: 'Plans change quotas — never the catalogue. All eight types on every plan.' },
+        { line: 'Reverse-a-payment exists; reverse-an-approval deliberately does not. Resubmission is the remedy.' },
+        { line: 'Every client-visible message has an Arabic original, not a translation.' },
+        { line: 'The console never edits a member\'s earned balance without a logged reason.' }
+      ],
+      // confirm
+      hasConfirm: !!st.confirm, confirmTitle: (st.confirm || {}).title || '', confirmBody: (st.confirm || {}).body || '', confirmOk: (st.confirm || {}).ok || '', confirmColor: (st.confirm || {}).color || '#E88024',
+      confirmCancel: () => this.setState({ confirm: null }),
+      confirmOkGo: () => { const fn = this._onConfirm; this.setState({ confirm: null }); if (fn) fn(); },
+      hasToast: !!st.toast, toast: st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

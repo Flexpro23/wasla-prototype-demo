@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<script src="wasla-data.js"></script>
+<style>
+  html,body{margin:0;padding:0;background:#F3EFE9;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#241C16;}
+  a{color:#C96A14;text-decoration:none;} a:hover{color:#E88024;}
+  *{box-sizing:border-box;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+  @keyframes popIn{0%{opacity:0;transform:scale(.86);}60%{transform:scale(1.03);}100%{opacity:1;transform:scale(1);}}
+  @keyframes stampPop{0%{transform:scale(0) rotate(-30deg);}70%{transform:scale(1.3) rotate(6deg);}100%{transform:scale(1) rotate(0);}}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  @keyframes scanLine{0%,100%{top:12%;}50%{top:84%;}}
+  @keyframes shimmer{0%{opacity:.45;}50%{opacity:.9;}100%{opacity:.45;}}
+  @keyframes flashIn{0%{opacity:0;transform:scale(.8);}60%{transform:scale(1.05);}100%{opacity:1;transform:scale(1);}}
+  @keyframes shakeX{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+</style>
+</helmet>
+<div dir="{{ dir }}" style="min-height:100vh;background:radial-gradient(1200px 600px at 0% 0%, rgba(232,128,36,.07), transparent 60%), radial-gradient(1000px 500px at 100% 0%, rgba(40,38,34,.06), transparent 55%), #F3EFE9;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:34px;padding:34px 22px 60px;">
+
+  <div style="width:402px;max-width:96vw;height:830px;border-radius:48px;border:11px solid #1B1B1F;box-shadow:0 34px 80px rgba(20,16,10,.38);overflow:hidden;background:#101013;display:flex;flex-direction:column;position:relative;color:#F4F2EE;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 26px 6px;flex-shrink:0;">
+      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13.5px;">9:41</div>
+      <div style="display:flex;align-items:center;gap:5px;">
+        <span style="width:5px;height:5px;border-radius:50%;background:#F4F2EE;"></span>
+        <span style="width:5px;height:5px;border-radius:50%;background:#F4F2EE;"></span>
+        <span style="width:20px;height:10px;border-radius:3px;border:1.5px solid #F4F2EE;"></span>
+      </div>
+    </div>
+
+    <sc-if value="{{ offline }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ openQueueSheet }}" style="cursor:pointer;margin:6px 14px 0;background:rgba(240,169,43,.14);border:1px solid rgba(240,169,43,.4);color:#F0A92B;border-radius:12px;padding:9px 13px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#F0A92B;animation:pulse 1.6s infinite;"></span>{{ offlineLine }}
+      </div>
+    </sc-if>
+
+    <div style="flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column;padding:14px 14px 18px;">
+      <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;display:flex;flex-direction:column;animation:{{ enterAnim }};">
+          <div style="display:flex;align-items:center;gap:11px;padding:4px 6px 18px;">
+            <div style="width:38px;height:38px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">{{ staffInitials }}</div>
+            <div style="min-width:0;">
+              <div style="font-size:14px;font-weight:800;">{{ staffName }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#9B99A3;">{{ staffAr }}</span></div>
+              <div style="font-size:11px;color:#9B99A3;">Rainbow St · {{ scansToday }} scans today</div>
+            </div>
+            <div onClick="{{ endShift }}" style="cursor:pointer;margin-inline-start:auto;border:1px solid rgba(244,242,238,.18);color:#9B99A3;font-size:10.5px;font-weight:700;border-radius:999px;padding:6px 12px;" style-hover="color:#F4F2EE;border-color:rgba(244,242,238,.4)">{{ t.endShift }}</div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+            <div onClick="{{ scanDefault }}" style="cursor:pointer;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #2A2A30, #1B1B1F);border:2.5px solid rgba(232,128,36,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:transform .2s,border-color .2s;" style-hover="transform:scale(1.04);border-color:#E88024">
+              <div style="width:44px;height:44px;border:3px solid #E88024;border-radius:11px;position:relative;"><div style="position:absolute;left:6px;right:6px;top:50%;height:2.5px;background:#E88024;"></div></div>
+              <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;">{{ t.ready }}</div>
+              <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11.5px;color:#9B99A3;">جاهز للمسح</div>
+            </div>
+            <div onClick="{{ openManual }}" style="cursor:pointer;border:1.5px solid rgba(244,242,238,.2);color:#F4F2EE;font-weight:700;font-size:12.5px;border-radius:999px;padding:11px 22px;" style-hover="border-color:#E88024;color:#E88024">{{ t.manual }}</div>
+          </div>
+          <div style="padding-top:14px;">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;margin-bottom:9px;">{{ t.yourCards }}</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(30,92,67,.25);border:1px solid rgba(47,174,102,.35);color:#7BD8A5;font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;"><span style="width:7px;height:7px;border-radius:50%;background:#2FAE66;"></span>Daraj Coffee</span>
+              <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(27,36,64,.4);border:1px solid rgba(120,140,200,.3);color:#A9B6E0;font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;"><span style="width:7px;height:7px;border-radius:50%;background:#6E82C4;"></span>Layl Lounge</span>
+            </div>
+            <div style="font-size:10.5px;color:#8E8C96;margin-top:9px;">{{ t.onlyYours }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isScan }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div style="flex:1;position:relative;border-radius:20px;overflow:hidden;background:radial-gradient(420px 300px at 50% 40%, #26262B, #121214);">
+            <div style="position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,rgba(232,128,36,.8),transparent);animation:scanLine 2.2s ease-in-out infinite;"></div>
+            <div style="position:absolute;top:22px;left:22px;width:26px;height:26px;border-top:3.5px solid #E88024;border-inline-start:3.5px solid #E88024;border-start-start-radius:8px;"></div>
+            <div style="position:absolute;top:22px;right:22px;width:26px;height:26px;border-top:3.5px solid #E88024;border-inline-end:3.5px solid #E88024;border-start-end-radius:8px;"></div>
+            <div style="position:absolute;bottom:22px;left:22px;width:26px;height:26px;border-bottom:3.5px solid #E88024;border-inline-start:3.5px solid #E88024;border-end-start-radius:8px;"></div>
+            <div style="position:absolute;bottom:22px;right:22px;width:26px;height:26px;border-bottom:3.5px solid #E88024;border-inline-end:3.5px solid #E88024;border-end-end-radius:8px;"></div>
+            <sc-if value="{{ resolving }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;left:18px;right:18px;bottom:18px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);border-radius:16px;padding:14px;animation:fadeUp .3s both;">
+                <div style="display:flex;align-items:center;gap:11px;">
+                  <div style="width:36px;height:36px;border-radius:50%;background:#2A2A30;animation:shimmer 1.2s infinite;"></div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+                    <div style="height:11px;width:60%;border-radius:6px;background:#2A2A30;animation:shimmer 1.2s infinite;"></div>
+                    <div style="height:9px;width:40%;border-radius:6px;background:#2A2A30;animation:shimmer 1.2s .15s infinite;"></div>
+                  </div>
+                </div>
+                <div style="font-size:10.5px;color:#9B99A3;margin-top:10px;">{{ t.resolving }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMember }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;animation:{{ enterAnim }};">
+          <div style="display:flex;align-items:center;gap:10px;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:16px;padding:12px 14px;">
+            <div style="width:38px;height:38px;border-radius:50%;background:{{ scCardColor }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;flex-shrink:0;">{{ scMemberInitials }}</div>
+            <div style="min-width:0;flex:1;">
+              <div style="font-size:14.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ scMemberName }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#9B99A3;font-size:12px;">{{ scMemberAr }}</span></div>
+              <div style="font-size:11px;color:#9B99A3;">{{ scCardLine }}</div>
+            </div>
+            <div onClick="{{ toIdle }}" style="cursor:pointer;color:#8E8C96;font-size:17px;padding:4px 6px;" style-hover="color:#F4F2EE">✕</div>
+          </div>
+
+          <sc-if value="{{ hasTabs }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:8px;margin-top:12px;">
+              <sc-for list="{{ tabItems }}" as="tb" hint-placeholder-count="2">
+                <div onClick="{{ tb.go }}" style="cursor:pointer;flex:1;text-align:center;border-radius:12px;padding:11px 0;font-size:13px;font-weight:800;border:1.5px solid {{ tb.br }};background:{{ tb.bg }};color:{{ tb.fg }};transition:all .2s;">{{ tb.label }}</div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="flex:1;display:flex;flex-direction:column;padding-top:14px;">
+            <sc-if value="{{ bStamps }}" hint-placeholder-val="{{ true }}">
+              <sc-if value="{{ modeCollect }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
+                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:40px;font-variant-numeric:tabular-nums;">{{ stampCount }}<span style="color:#8E8C96;font-size:22px;"> / {{ goal }}</span></div>
+                  <div style="display:flex;justify-content:center;align-items:center;gap:13px;flex-wrap:wrap;max-width:280px;">
+                    <sc-for list="{{ stampCells }}" as="stc" hint-placeholder-count="8">
+                      <span style="font-size:27px;line-height:1;display:inline-block;transform:translateY({{ stc.dy }});filter:{{ stc.filter }};animation:{{ stc.anim }};">☕</span>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:12px;color:#9B99A3;">{{ stampHint }}</div>
+                </div>
+                <div onClick="{{ addStamp }}" style="cursor:pointer;background:{{ collectBg }};color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ addStampLabel }}</div>
+              </sc-if>
+              <sc-if value="{{ modeRedeem }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;">
+                  <sc-if value="{{ stampsReady }}" hint-placeholder-val="{{ true }}">
+                    <div style="width:64px;height:64px;border-radius:50%;background:rgba(232,128,36,.15);border:2px solid #E88024;display:flex;align-items:center;justify-content:center;font-size:26px;">☕</div>
+                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;">Free drink of your choice</div>
+                    <div style="font-size:12px;color:#9B99A3;">{{ goal }} / {{ goal }} — the card resets after redeeming</div>
+                  </sc-if>
+                  <sc-if value="{{ stampsNotReady }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;color:#9B99A3;">{{ shortfallLine }}</div>
+                    <div style="font-size:12px;color:#8E8C96;">Nothing to redeem yet — keep collecting.</div>
+                  </sc-if>
+                </div>
+                <div onClick="{{ redeemStamps }}" style="cursor:{{ redeemCursor }};background:{{ redeemStampsBg }};color:{{ redeemStampsFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;transition:transform .2s;">{{ redeemStampsLabel }}</div>
+              </sc-if>
+            </sc-if>
+
+            <sc-if value="{{ bAmount }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:6px 0 2px;">
+                <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;">{{ amtTopLabel }}</div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:38px;font-variant-numeric:tabular-nums;margin-top:2px;">{{ amtTopValue }}</div>
+              </div>
+              <sc-if value="{{ modeCollect }}" hint-placeholder-val="{{ true }}">
+                <div style="text-align:center;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:14px;padding:12px;margin-top:10px;">
+                  <div style="font-size:11px;color:#9B99A3;">{{ t.bill }}</div>
+                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">JOD {{ amtDisplay }}</div>
+                  <div style="font-size:12.5px;font-weight:800;color:#7BD8A5;margin-top:3px;animation:{{ previewAnim }};">{{ collectPreview }}</div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;">
+                  <sc-for list="{{ keypad }}" as="kp" hint-placeholder-count="12">
+                    <div onClick="{{ kp.tap }}" style="cursor:pointer;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:12px;padding:13px 0;text-align:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;transition:background .15s;" style-hover="background:#26262B">{{ kp.k }}</div>
+                  </sc-for>
+                </div>
+                <div onClick="{{ collectAmount }}" style="cursor:pointer;background:{{ collectBg }};color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:15px 0;text-align:center;margin-top:12px;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ collectAmtLabel }}</div>
+              </sc-if>
+              <sc-if value="{{ modeRedeem }}" hint-placeholder-val="{{ false }}">
+                <sc-if value="{{ isCashback }}" hint-placeholder-val="{{ true }}">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center;">
+                    <div style="text-align:center;font-size:12px;color:#9B99A3;">{{ cbRedeemHint }}</div>
+                    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+                      <sc-for list="{{ cbQuick }}" as="cq" hint-placeholder-count="3">
+                        <div onClick="{{ cq.pick }}" style="cursor:pointer;border:1.5px solid {{ cq.br }};background:{{ cq.bg }};color:{{ cq.fg }};font-weight:800;font-size:13px;border-radius:999px;padding:10px 18px;font-variant-numeric:tabular-nums;transition:all .2s;">{{ cq.label }}</div>
+                      </sc-for>
+                    </div>
+                    <div style="text-align:center;font-size:11px;color:#8E8C96;">{{ cbMinLine }}</div>
+                  </div>
+                  <div onClick="{{ redeemCash }}" style="cursor:{{ redeemCursor }};background:{{ cbRedeemBg }};color:{{ cbRedeemFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;">{{ cbRedeemLabel }}</div>
+                </sc-if>
+                <sc-if value="{{ isPoints }}" hint-placeholder-val="{{ false }}">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:9px;justify-content:center;">
+                    <div style="text-align:center;font-size:12px;color:#9B99A3;">{{ t.nothingPre }}</div>
+                    <sc-for list="{{ ptRungs }}" as="pr" hint-placeholder-count="2">
+                      <div onClick="{{ pr.pick }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:{{ pr.bg }};border:1.5px solid {{ pr.br }};border-radius:14px;padding:13px 14px;transition:all .2s;opacity:{{ pr.op }};">
+                        <span style="width:18px;height:18px;border-radius:50%;border:2px solid {{ pr.ring }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="width:8px;height:8px;border-radius:50%;background:{{ pr.dot }};"></span></span>
+                        <div style="flex:1;min-width:0;"><div style="font-size:13.5px;font-weight:800;">{{ pr.name }}</div><div style="font-size:11px;color:{{ pr.subColor }};">{{ pr.sub }}</div></div>
+                        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;font-variant-numeric:tabular-nums;">{{ pr.cost }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div onClick="{{ redeemPts }}" style="cursor:{{ redeemCursor }};background:{{ ptRedeemBg }};color:{{ ptRedeemFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;">{{ ptRedeemLabel }}</div>
+                </sc-if>
+              </sc-if>
+            </sc-if>
+
+            <sc-if value="{{ bCoupon }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;">
+                <sc-if value="{{ couponFresh }}" hint-placeholder-val="{{ true }}">
+                  <div style="width:64px;height:64px;border-radius:50%;background:rgba(232,128,36,.15);border:2px dashed #E88024;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;color:#E88024;">1×</div>
+                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;">One free dessert</div>
+                  <div style="font-size:12px;color:#9B99A3;">Expires 29 AUG · one per customer · no undo</div>
+                </sc-if>
+                <sc-if value="{{ couponUsed }}" hint-placeholder-val="{{ false }}">
+                  <div style="width:64px;height:64px;border-radius:50%;background:rgba(226,86,58,.14);border:2px solid #E2563A;display:flex;align-items:center;justify-content:center;font-size:24px;color:#E2563A;">✕</div>
+                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;color:#F0A92B;">Already used — Jul 12, 14:02</div>
+                  <div style="font-size:12.5px;color:#9B99A3;line-height:1.6;max-width:250px;">Coupons are one-shot. Offer the stamp card instead — same QR, one tap.</div>
+                </sc-if>
+              </div>
+              <div onClick="{{ redeemCoupon }}" style="cursor:{{ redeemCursor }};background:{{ cpRedeemBg }};color:{{ cpRedeemFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;">{{ cpRedeemLabel }}</div>
+              <sc-if value="{{ couponUsed }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ crossSellStamp }}" style="cursor:pointer;background:transparent;border:1.5px solid rgba(47,174,102,.4);color:#7BD8A5;font-weight:800;font-size:13px;border-radius:14px;padding:13px 0;text-align:center;margin-top:8px;transition:all .2s;" style-hover="border-color:#2FAE66;background:rgba(47,174,102,.08)">{{ t.crossSellStamp }}</div>
+              </sc-if>
+            </sc-if>
+
+            <sc-if value="{{ bVip }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center;">
+                <div style="text-align:center;margin-bottom:4px;">
+                  <span style="display:inline-flex;align-items:center;gap:8px;background:{{ vipTierBg }};color:{{ vipTierFg }};font-size:12px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:7px 18px;text-transform:uppercase;animation:{{ popAnim }};">{{ vipTier }}</span>
+                  <div style="font-size:11px;color:#9B99A3;margin-top:7px;">{{ vipProgressLine }}</div>
+                </div>
+                <sc-for list="{{ vipPerks }}" as="vp" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:10px;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:12px;padding:12px 14px;">
+                    <span style="color:#7BD8A5;font-weight:900;font-size:14px;">✓</span>
+                    <span style="font-size:13px;font-weight:600;">{{ vp.p }}</span>
+                  </div>
+                </sc-for>
+                <div style="text-align:center;font-size:11px;color:#8E8C96;margin-top:4px;">{{ t.noRedeemVip }}</div>
+              </div>
+              <div onClick="{{ vipCheckin }}" style="cursor:pointer;background:{{ collectBg }};color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ vipBtnLabel }}</div>
+            </sc-if>
+
+            <sc-if value="{{ bChallenge }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;display:flex;flex-direction:column;gap:12px;justify-content:center;">
+                <sc-if value="{{ chActive }}" hint-placeholder-val="{{ true }}">
+                  <div style="text-align:center;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:36px;font-variant-numeric:tabular-nums;">{{ chVisits }}<span style="color:#8E8C96;font-size:19px;"> / {{ chGoal }}</span></div>
+                    <div style="font-size:12.5px;font-weight:700;color:#F4F2EE;margin-top:6px;">{{ chWindowLine }}</div>
+                  </div>
+                  <div style="text-align:center;background:rgba(240,169,43,.1);border:1px solid rgba(240,169,43,.32);color:#F0A92B;border-radius:12px;padding:9px 14px;font-size:11.5px;font-weight:700;">{{ chDeadlineLine }}</div>
+                </sc-if>
+                <sc-if value="{{ chComplete }}" hint-placeholder-val="{{ false }}">
+                  <div style="text-align:center;">
+                    <div style="width:64px;height:64px;margin:0 auto;border-radius:50%;background:rgba(47,174,102,.15);border:2px solid #2FAE66;display:flex;align-items:center;justify-content:center;font-size:26px;animation:{{ popAnim }};">🎉</div>
+                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;margin-top:10px;">{{ t.challengeDoneTitle }}</div>
+                    <div style="font-size:11.5px;color:#9B99A3;margin-top:4px;max-width:250px;">{{ t.challengeDoneSub }}</div>
+                  </div>
+                </sc-if>
+              </div>
+              <div onClick="{{ countVisit }}" style="cursor:{{ chBtnCursor }};background:{{ chBtnBg }};color:{{ chBtnFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ chBtnLabel }}</div>
+            </sc-if>
+
+            <sc-if value="{{ bVerdict }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;">
+                <div style="width:88px;height:88px;border-radius:50%;background:{{ vdBg }};border:3px solid {{ vdBorder }};display:flex;align-items:center;justify-content:center;font-size:38px;color:{{ vdBorder }};animation:{{ popAnim }};">{{ vdMark }}</div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;color:{{ vdBorder }};">{{ vdTitle }}</div>
+                <div style="font-size:13px;color:#9B99A3;line-height:1.6;max-width:260px;">{{ vdSub }}</div>
+              </div>
+              <sc-if value="{{ showRenewBtn }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ renewMembership }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;margin-bottom:8px;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ t.renewBtn }}</div>
+              </sc-if>
+              <div onClick="{{ toIdle }}" style="cursor:pointer;background:#26262B;border:1px solid rgba(244,242,238,.14);color:#F4F2EE;font-weight:800;font-size:14px;border-radius:14px;padding:15px 0;text-align:center;" style-hover="background:#2E2E34">{{ t.nextCustomer }}</div>
+            </sc-if>
+
+            <sc-if value="{{ bRefusal }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;">
+                <div style="width:88px;height:88px;border-radius:50%;background:rgba(226,86,58,.12);border:3px solid #E2563A;display:flex;align-items:center;justify-content:center;font-size:34px;color:#E2563A;animation:{{ popAnim }};">✕</div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;">{{ rfTitle }}</div>
+                <div style="font-size:13px;color:#9B99A3;line-height:1.65;max-width:270px;">{{ rfWhy }}</div>
+                <div style="background:rgba(232,128,36,.1);border:1px solid rgba(232,128,36,.35);color:#F09A4D;border-radius:12px;padding:11px 16px;font-size:12.5px;font-weight:700;max-width:280px;line-height:1.5;">{{ rfDo }}</div>
+              </div>
+              <div onClick="{{ toIdle }}" style="cursor:pointer;background:#26262B;border:1px solid rgba(244,242,238,.14);color:#F4F2EE;font-weight:800;font-size:14px;border-radius:14px;padding:15px 0;text-align:center;" style-hover="background:#2E2E34">{{ t.nextCustomer }}</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ hasFlash }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:80;background:rgba(16,16,19,.88);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:30px;animation:flashIn .35s cubic-bezier(.22,.61,.36,1) both;">
+        <div style="width:96px;height:96px;border-radius:50%;background:rgba(47,174,102,.15);border:3.5px solid {{ flashColor }};display:flex;align-items:center;justify-content:center;font-size:42px;color:{{ flashColor }};">{{ flashMark }}</div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;">{{ flashTitle }}</div>
+        <div style="font-size:13.5px;color:#9B99A3;line-height:1.6;">{{ flashSub }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasUndo }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;bottom:64px;z-index:70;display:flex;justify-content:center;pointer-events:none;">
+        <div onClick="{{ undoLast }}" style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:7px;background:#26262B;border:1px solid rgba(244,242,238,.18);color:#F4F2EE;font-size:12.5px;font-weight:800;border-radius:999px;padding:9px 16px;box-shadow:0 8px 20px rgba(0,0,0,.35);animation:flashIn .25s both;" style-hover="border-color:#E88024;color:#F09A4D">↺ {{ t.undo }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ queueSheetOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.96);display:flex;flex-direction:column;padding:26px 22px 22px;gap:12px;animation:flashIn .3s both;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;">{{ t.queueTitle }}</div>
+          <div onClick="{{ closeQueueSheet }}" style="cursor:pointer;color:#8E8C96;font-size:18px;padding:4px 6px;" style-hover="color:#F4F2EE">✕</div>
+        </div>
+        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-height:0;">
+          <sc-if value="{{ queueEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="text-align:center;color:#8E8C96;font-size:12px;padding:36px 10px;">{{ t.queueEmptyLine }}</div>
+          </sc-if>
+          <sc-for list="{{ queueItems }}" as="qi" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:12px;padding:10px 13px;flex-shrink:0;">
+              <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ qi.member }}</div><div style="font-size:10.5px;color:#9B99A3;">{{ qi.action }}</div></div>
+              <div style="font-size:10px;color:#8E8C96;white-space:nowrap;">{{ qi.time }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:rgba(240,169,43,.1);border:1px solid rgba(240,169,43,.35);color:#F0A92B;border-radius:12px;padding:11px 14px;font-size:11.5px;font-weight:700;text-align:center;flex-shrink:0;">{{ t.queueSyncNote }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pinOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.94);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px;animation:flashIn .3s both;">
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;">{{ t.pinTitle }}</div>
+        <div style="font-size:11.5px;color:#9B99A3;">{{ t.pinSub }}</div>
+        <div style="display:flex;gap:12px;">
+          <sc-for list="{{ pinDots }}" as="pd" hint-placeholder-count="4"><span style="width:14px;height:14px;border-radius:50%;background:{{ pd.bg }};border:1.5px solid rgba(244,242,238,.4);transition:background .15s;"></span></sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,64px);gap:10px;margin-top:6px;">
+          <sc-for list="{{ pinKeys }}" as="pk" hint-placeholder-count="9">
+            <div onClick="{{ pk.tap }}" style="cursor:pointer;height:52px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;" style-hover="background:#26262B">{{ pk.k }}</div>
+          </sc-for>
+        </div>
+        <div onClick="{{ pinCancel }}" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:4px;" style-hover="color:#F4F2EE">{{ t.cancel }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ manualOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.94);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px;animation:flashIn .3s both;">
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;">{{ t.manualTitle }}</div>
+        <div style="font-size:11.5px;color:#9B99A3;text-align:center;max-width:280px;">{{ t.manualSub }}</div>
+        <div style="display:flex;gap:6px;animation:{{ manualShake }};">
+          <sc-for list="{{ manualCells }}" as="mc" hint-placeholder-count="8">
+            <span style="width:25px;height:32px;border-radius:8px;background:#1B1B1F;border:1.5px solid {{ mc.br }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;">{{ mc.v }}</span>
+          </sc-for>
+        </div>
+        <sc-if value="{{ manualError }}" hint-placeholder-val="{{ false }}">
+          <div style="color:#E2563A;font-size:11.5px;font-weight:700;text-align:center;max-width:260px;">{{ t.manualNoMatch }}</div>
+        </sc-if>
+        <div style="display:grid;grid-template-columns:repeat(3,64px);gap:9px;margin-top:2px;">
+          <sc-for list="{{ manualKeys }}" as="mk" hint-placeholder-count="12">
+            <div onClick="{{ mk.tap }}" style="cursor:{{ mk.cur }};height:48px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;visibility:{{ mk.vis }};" style-hover="background:#26262B">{{ mk.k }}</div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:280px;margin-top:2px;">
+          <sc-for list="{{ manualHints }}" as="mh" hint-placeholder-count="3">
+            <div style="background:rgba(232,128,36,.08);border:1px solid rgba(232,128,36,.25);color:#F09A4D;border-radius:10px;padding:6px 10px;font-size:10.5px;font-weight:700;text-align:center;">{{ mh.label }}</div>
+          </sc-for>
+        </div>
+        <div onClick="{{ manualCancel }}" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:2px;" style-hover="color:#F4F2EE">{{ t.cancel }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ shiftOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px 30px 26px;animation:flashIn .3s both;text-align:center;overflow-y:auto;">
+        <sc-if value="{{ showShiftSummary }}" hint-placeholder-val="{{ true }}">
+          <div style="width:56px;height:56px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;flex-shrink:0;">{{ staffInitials }}</div>
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;flex-shrink:0;">{{ t.shiftDone }}</div>
+          <div style="display:flex;gap:22px;flex-shrink:0;">
+            <div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">{{ shiftScans }}</div><div style="font-size:10.5px;color:#9B99A3;">scans</div></div>
+            <div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">{{ shiftStamps }}</div><div style="font-size:10.5px;color:#9B99A3;">stamps</div></div>
+            <div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">{{ shiftRewards }}</div><div style="font-size:10.5px;color:#9B99A3;">rewards</div></div>
+          </div>
+          <div style="width:100%;max-width:280px;text-align:start;flex-shrink:0;">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;margin-bottom:8px;">{{ t.lastActions }}</div>
+            <div style="display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto;">
+              <sc-if value="{{ shiftLogEmpty }}" hint-placeholder-val="{{ true }}">
+                <div style="text-align:center;color:#8E8C96;font-size:11.5px;padding:14px 4px;">{{ t.noActionsYet }}</div>
+              </sc-if>
+              <sc-for list="{{ shiftLog }}" as="sl" hint-placeholder-count="6">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:10px;padding:8px 11px;">
+                  <div style="min-width:0;"><div style="font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ sl.member }}</div><div style="font-size:10px;color:#9B99A3;">{{ sl.action }}</div></div>
+                  <div style="font-size:9.5px;color:#8E8C96;white-space:nowrap;">{{ sl.time }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="font-size:12px;color:#9B99A3;max-width:240px;line-height:1.6;flex-shrink:0;">{{ t.shiftNote }}</div>
+          <div onClick="{{ startHandover }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 26px;flex-shrink:0;" style-hover="background:#C96A14">{{ t.handOver }}</div>
+        </sc-if>
+        <sc-if value="{{ showHandoverPicker }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;flex-shrink:0;">{{ t.handoverPickTitle }}</div>
+          <div style="font-size:11.5px;color:#9B99A3;max-width:250px;flex-shrink:0;">{{ t.handoverPickSub }}</div>
+          <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:260px;margin-top:6px;flex-shrink:0;">
+            <sc-for list="{{ staffChoices }}" as="sf" hint-placeholder-count="2">
+              <div onClick="{{ sf.pick }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);border-radius:14px;padding:12px 14px;transition:border-color .2s;" style-hover="border-color:#E88024">
+                <div style="width:36px;height:36px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex-shrink:0;">{{ sf.initials }}</div>
+                <div style="min-width:0;text-align:start;"><div style="font-size:13.5px;font-weight:800;">{{ sf.name }}</div><div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#9B99A3;">{{ sf.ar }} · Rainbow St</div></div>
+              </div>
+            </sc-for>
+          </div>
+          <div onClick="{{ cancelHandover }}" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:4px;flex-shrink:0;" style-hover="color:#F4F2EE">{{ t.cancel }}</div>
+        </sc-if>
+      </div>
+    </sc-if>
+    <div style="width:110px;height:4px;border-radius:99px;background:rgba(244,242,238,.4);margin:0 auto 8px;flex-shrink:0;"></div>
+  </div>
+
+  <div style="width:300px;max-width:96vw;display:flex;flex-direction:column;gap:14px;padding-top:6px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg viewBox="213.44 0 314.91 314.51" preserveAspectRatio="xMidYMid meet" style="width:26px;height:26px;display:block;"><path fill="#E88024" d="M385.82,261.53c11.27,40.31,54.39,63.14,94.51,48.85,34.32-12.22,54.43-48.93,46.34-84.45-2.49-10.95-7.28-20.68-13.75-28.87-7.72-9.83-17.8-17.42-29.19-22.15-14.53-6.08-31.13-7.48-47.48-2.91-6.99,1.96-13.43,4.85-19.26,8.55-.24.14-.45.28-.66.41-5.71,3.89-8.03,11.74-4.13,18.55,3.1,5.41,9.72,7.93,15.71,6.22,1.09-.31,2.09-.74,3.02-1.29.08,0,.12-.03.16-.07.09-.03.16-.07.21-.13.03.02.05-.01.06-.04.15-.09.3-.18.45-.27h.05c3.56-2.28,7.55-4.07,11.84-5.27,13.78-3.85,27.83-.84,38.56,6.98,7.92,5.75,14.02,14.08,16.86,24.23.12.42.23.83.33,1.26,5.88,23.53-8.02,47.59-31.53,54.16-23.51,6.57-47.87-6.79-55.04-29.96-.21-.84-.93-3.39-1.2-4.31l-23.45-84.05,87.12-24.31c40.31-11.27,63.14-54.39,48.85-94.51-12.22-34.32-48.93-54.43-84.45-46.34-10.95,2.49-20.68,7.28-28.87,13.75-9.83,7.72-17.42,17.8-22.15,29.19-6.08,14.53-7.48,31.13-2.91,47.48,1.96,6.99,4.85,13.43,8.55,19.26.14.24.27.45.41.66,3.89,5.71,11.74,8.03,18.55,4.13,5.41-3.1,7.93-9.72,6.22-15.71-.31-1.09-.74-2.09-1.29-3.02,0-.08-.03-.12-.07-.16-.03-.09-.07-.16-.13-.21.02-.03-.01-.05-.04-.06-.09-.15-.18-.3-.27-.45v-.05c-2.28-3.56-4.07-7.55-5.27-11.84-3.85-13.78-.84-27.83,6.98-38.56,5.75-7.92,14.08-14.02,24.23-16.86.42-.12.83-.23,1.26-.33,23.53-5.88,47.59,8.02,54.16,31.53,6.57,23.51-6.8,47.87-29.96,55.04-.84.21-3.39.93-4.31,1.2l-84.05,23.45-24.31-87.12c-11.27-40.31-54.39-63.14-94.51-48.85-34.32,12.22-54.43,48.93-46.34,84.45,2.49,10.95,7.28,20.68,13.75,28.87,7.72,9.83,17.8,17.42,29.19,22.15,14.53,6.08,31.13,7.48,47.48,2.91,6.99-1.95,13.43-4.85,19.26-8.55.24-.14.45-.27.66-.41,5.71-3.89,8.03-11.74,4.13-18.55-3.1-5.41-9.72-7.93-15.71-6.22-1.09.31-2.09.74-3.02,1.29-.08,0-.12.03-.16.07-.09.03-.16.07-.21.13-.03-.02-.05.01-.06.04-.15.09-.3.18-.45.28h-.05c-3.56,2.28-7.55,4.07-11.84,5.27-13.78,3.85-27.83.84-38.56-6.98-7.92-5.75-14.02-14.08-16.86-24.23-.12-.42-.23-.83-.33-1.26-5.88-23.53,8.02-47.59,31.53-54.16,23.51-6.57,47.87,6.8,55.04,29.96.21.84.93,3.39,1.2,4.31l23.45,84.05-87.12,24.31c-40.31,11.27-63.14,54.39-48.85,94.51,12.22,34.32,48.93,54.43,84.45,46.34,10.95-2.49,20.68-7.28,28.87-13.75,9.83-7.72,17.42-17.8,22.15-29.19,6.08-14.53,7.48-31.13,2.91-47.48-1.95-6.99-4.85-13.43-8.55-19.26-.14-.24-.27-.45-.41-.66-3.89-5.71-11.74-8.03-18.55-4.13-5.41,3.1-7.93,9.72-6.22,15.71.31,1.09.74,2.09,1.29,3.02,0,.08.03.12.07.16.03.09.07.16.13.21-.02.03.01.05.04.06.09.15.18.3.27.45v.05c2.28,3.56,4.07,7.55,5.27,11.84,3.85,13.78.84,27.83-6.98,38.56-5.75,7.92-14.08,14.02-24.23,16.86-.42.12-.83.23-1.26.33-23.53,5.88-47.59-8.02-54.16-31.53-6.57-23.51,6.8-47.87,29.96-55.04.84-.21,3.39-.93,4.31-1.2l84.05-23.45,24.31,87.12Z"></path></svg>
+      <div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;line-height:1;">The staff scanner</div>
+        <div style="font-size:11px;color:#93887A;margin-top:3px;">One screen · nine card types · 3 seconds</div>
+      </div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">Scan a customer</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <sc-for list="{{ demoScans }}" as="dsc" hint-placeholder-count="9">
+          <div onClick="{{ dsc.go }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ dsc.br }};background:{{ dsc.bg }};border-radius:11px;padding:9px 12px;transition:all .2s;" style-hover="border-color:#E88024">
+            <span style="width:9px;height:9px;border-radius:3px;background:{{ dsc.dot }};flex-shrink:0;"></span>
+            <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#241C16;">{{ dsc.label }}</div><div style="font-size:10.5px;color:#93887A;">{{ dsc.sub }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;">
+      <div style="flex:1;"><div style="font-size:13px;font-weight:800;">Kill the internet</div><div style="font-size:11px;color:#93887A;margin-top:2px;">Collections queue · redemptions lock</div></div>
+      <div onClick="{{ toggleOffline }}" style="cursor:pointer;width:42px;height:24px;border-radius:99px;background:{{ offSwBg }};position:relative;transition:background .25s;flex-shrink:0;">
+        <div style="position:absolute;top:3px;inset-inline-start:{{ offSwKnob }};width:18px;height:18px;border-radius:50%;background:#FFFFFF;transition:inset-inline-start .25s;box-shadow:0 1px 3px rgba(0,0,0,.25);"></div>
+      </div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;">
+      <div style="flex:1;"><div style="font-size:13px;font-weight:800;">Switch language</div><div style="font-size:11px;color:#93887A;margin-top:2px;">Flips the phone to Arabic-first RTL</div></div>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        <div onClick="{{ setLangEn }}" style="cursor:pointer;border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:800;background:{{ enBg }};color:{{ enFg }};transition:all .2s;">EN</div>
+        <div onClick="{{ setLangAr }}" style="cursor:pointer;border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:800;background:{{ arBg }};color:{{ arFg }};font-family:'IBM Plex Sans Arabic',sans-serif;transition:all .2s;">عربي</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <a href="Wasla Dashboard.dc.html" style="flex:1;display:block;background:#26262B;color:#F4F2EE;border-radius:14px;padding:13px 10px;font-size:12px;font-weight:700;text-align:center;">← Dashboard</a>
+      <a href="Wasla Customer.dc.html" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#241C16;border-radius:14px;padding:13px 10px;font-size:12px;font-weight:700;text-align:center;">Customer side →</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;offlineStart&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
+class Component extends DCLogic {
+  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinTaps: 0, flash: null, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد', staffInitials: 'AZ' };
+  componentDidMount() { this.poke(); }
+  poke() { clearTimeout(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = setTimeout(() => this.setState({ settled: true }), 2600); }
+  componentDidUpdate() {
+    const s = this.state;
+    const cur = [s.screen, s.scenario, s.mode, s.stamps, s.amount, s.selRw, s.cbSel, s.couponDone, !!s.pin, !!s.flash, s.offline, s.shiftOpen, s.lang, s.resolving, s.pts, s.cbBal, s.rTier, s.chVisits, s.chDone, s.handoverPick, s.queueSheetOpen].join('|');
+    if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
+    this._lastSig = cur;
+  }
+  flashNow(mark, color, title, sub, after) { clearTimeout(this._ft); this.setState({ flash: { mark, color, title, sub } }); this._ft = setTimeout(() => { this.setState({ flash: null }); if (after) after(); }, 1700); }
+  scanTo(scenario) {
+    clearTimeout(this._ut);
+    this.setState({ screen: 'scan', resolving: false, scenario, mode: scenario === 'coupon' ? 'redeem' : 'collect', amount: '', selRw: null, cbSel: null, pin: null, undo: null });
+    clearTimeout(this._s1); clearTimeout(this._s2);
+    this._s1 = setTimeout(() => this.setState({ resolving: true }), 450);
+    this._s2 = setTimeout(() => { this.setState({ screen: 'member', resolving: false, scansToday: this.state.scansToday + 1 }); this.logAction(this.scenInfo(scenario).m[0], 'Scanned · مسح'); }, 1400);
+  }
+  askPin(tag) { this.setState({ pin: tag, pinTaps: 0 }); }
+  finishPin() {
+    const tag = this.state.pin; this.setState({ pin: null });
+    const member = this.scenInfo(this.state.scenario).m[0];
+    if (tag === 'stamps') { this.setState({ stamps: 0, sRewards: this.state.sRewards + 1, mode: 'collect' }); this.flashNow('☕', '#2FAE66', 'Reward redeemed', 'Free drink — a fresh card is already counting.'); this.logAction(member, 'Redeemed · reward'); }
+    if (tag === 'cash') { const v = this.state.cbSel; const newBal = +(this.state.cbBal - v).toFixed(2); this.setState({ cbBal: newBal, cbSel: null }); this.flashNow('✓', '#2FAE66', 'JOD ' + v.toFixed(2) + ' off the bill', 'New balance JOD ' + newBal.toFixed(2) + ' — spend it like money.'); this.logAction(member, 'Redeemed · JOD ' + v.toFixed(2)); }
+    if (tag === 'pts') { const r = this.rungs()[this.state.selRw]; const newPts = this.state.pts - r.cost; this.setState({ pts: newPts, selRw: null }); this.flashNow('✓', '#2FAE66', r.name, r.cost + ' pts spent · ' + newPts + ' left.'); this.logAction(member, 'Redeemed · ' + r.name); }
+    if (tag === 'coupon') { this.setState({ couponDone: true }); this.flashNow('1×', '#2FAE66', 'Dessert is theirs', 'The coupon is spent — it can never fire twice.'); this.logAction(member, 'Redeemed · coupon'); }
+    if (tag === 'renew') { this.setState({ renewedMembership: true }); this.flashNow('✓', '#2FAE66', 'Membership renewed', 'Active again — same pass, fresh year. · فعّالة من جديد'); this.logAction(member, 'Renewed · membership'); }
+  }
+  rungs() { return [{ name: 'Free espresso', cost: 250 }, { name: 'A dozen ka\'ak', cost: 500 }]; }
+  armUndo(type, amount, wasOffline) { clearTimeout(this._ut); this.setState({ undo: { type, amount, wasOffline } }); this._ut = setTimeout(() => this.setState({ undo: null }), 8000); }
+  undoLast() {
+    const u = this.state.undo; if (!u) return;
+    clearTimeout(this._ut);
+    const member = this.scenInfo(this.state.scenario).m[0];
+    if (u.type === 'stamp') { this.setState({ stamps: Math.max(0, this.state.stamps - 1), sStamps: Math.max(0, this.state.sStamps - 1), queued: u.wasOffline ? Math.max(0, this.state.queued - 1) : this.state.queued, undo: null }); this.flashNow('↺', '#F0A92B', 'تم التصحيح · Corrected', '−1 stamp · ختم واحد أُزيل'); this.logAction(member, 'Undo · stamp'); }
+    else if (u.type === 'cash') { this.setState({ cbBal: +(this.state.cbBal - u.amount).toFixed(2), queued: u.wasOffline ? Math.max(0, this.state.queued - 1) : this.state.queued, undo: null }); this.flashNow('↺', '#F0A92B', 'تم التصحيح · Corrected', '− JOD ' + u.amount.toFixed(2) + ' · خُصم من الرصيد'); this.logAction(member, 'Undo · cashback'); }
+    else if (u.type === 'pts') { this.setState({ pts: Math.max(0, this.state.pts - u.amount), queued: u.wasOffline ? Math.max(0, this.state.queued - 1) : this.state.queued, undo: null }); this.flashNow('↺', '#F0A92B', 'تم التصحيح · Corrected', '− ' + u.amount + ' pts · نقاط أُزيلت'); this.logAction(member, 'Undo · points'); }
+  }
+  manualCodes() { return { '01142201': 'stamps', '01775533': 'cashback', '01924410': 'points' }; }
+  finishManual() {
+    const code = this.state.manualCode;
+    if (code.length !== 8) return;
+    const scen = this.manualCodes()[code];
+    if (scen) { this.setState({ manualOpen: false, manualCode: '' }); this.scanTo(scen); }
+    else { this.setState({ manualError: true }); clearTimeout(this._mt); this._mt = setTimeout(() => this.setState({ manualCode: '', manualError: false }), 900); }
+  }
+  scenInfo(scen) {
+    return {
+      stamps: { m: ['Sara Al-Amin', 'سارة الأمين', 'SA'], card: 'Daraj Coffee · Stamp card', color: '#1E5C43' },
+      cashback: { m: ['Khaled Mansour', 'خالد منصور', 'KM'], card: 'Zaytoun Kitchen · Cashback', color: '#5C6B2F' },
+      points: { m: ['Salma Oweis', 'سلمى عويس', 'SO'], card: 'Sukkar Bakery · Points', color: '#B14A32' },
+      coupon: { m: ['Nadia Farhat', 'نادية فرحات', 'NF'], card: 'Daraj Coffee · Coupon', color: '#1E5C43' },
+      vip: { m: ['Rania Qasem', 'رانيا قاسم', 'RQ'], card: 'Layl Lounge · VIP tiers', color: '#1B2440' },
+      discount: { m: ['Ruba Zureikat', 'روبا زريقات', 'RZ'], card: 'Zaytoun Kitchen · Discount', color: '#5C6B2F' },
+      membership: { m: ['Anas Freihat', 'أنس فريحات', 'AF'], card: 'Ghaim Studio · Membership', color: '#4E6E8E' },
+      challenge: { m: ['Huda Barakat', 'هدى بركات', 'HB'], card: 'Daraj Coffee · Challenge', color: '#7A4FA3' },
+      foreign: { m: ['Unknown pass', 'بطاقة غريبة', '؟'], card: 'Marmar Lounge — not your account', color: '#6B6760' }
+    }[scen] || { m: ['', '', ''], card: '', color: '#26262B' };
+  }
+  toAr(n) { const d = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩']; return String(n).split('').map(c => d[+c] ?? c).join(''); }
+  timeAgo(ts) { const sec = Math.max(0, Math.round((Date.now() - ts) / 1000)); if (sec < 5) return 'just now · الآن'; if (sec < 60) return sec + 's ago · قبل ' + sec + 'ث'; const m = Math.round(sec / 60); return m + 'm ago · قبل ' + m + 'د'; }
+  logAction(member, action) { this.setState(s => ({ sessionLog: [{ member, action, ts: Date.now() }, ...s.sessionLog].slice(0, 20) })); }
+  pushQueue(member, action) { this.setState(s => ({ queueLog: [{ member, action, ts: Date.now() }, ...s.queueLog].slice(0, 20) })); }
+  staffList() { return [{ name: 'Ahmad Zoubi', ar: 'أحمد', initials: 'AZ' }, { name: 'Rasha Kilani', ar: 'رشا', initials: 'RK' }]; }
+  pickStaff(idx) { clearTimeout(this._ut); const p = this.staffList()[idx]; this.setState({ staffName: p.name, staffAr: p.ar, staffInitials: p.initials, shiftOpen: false, handoverPick: false, scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', undo: null }); }
+  renderVals() {
+    const st = this.state, EN = st.lang === 'en';
+    const AN = (n, du, dl) => st.settled ? 'none' : n + ' ' + du + ' cubic-bezier(.22,.61,.36,1) ' + (dl || '0s') + ' both';
+    const t = { endShift: 'End shift · نهاية المناوبة', ready: 'Ready to scan', manual: 'Type the code · أدخل الرمز يدوياً', yourCards: 'Your cards · بطاقاتك', onlyYours: 'The scanner only knows the cards assigned to you — anything else politely refuses.', resolving: 'Reading the pass… never a blank screen · جارٍ القراءة', bill: 'Bill amount · قيمة الفاتورة', nothingPre: 'Nothing preselected — the customer picks. · لا شيء محدد مسبقاً', noRedeemVip: 'VIP has no redeem — the tier is the reward.', nextCustomer: 'Next customer · الزبون التالي', pinTitle: 'Manager PIN · رمز المدير', pinSub: 'Redeems ask for a PIN — collections never do.', cancel: 'Cancel · إلغاء', shiftDone: 'Shift summary · ملخص المناوبة', shiftNote: 'The count starts fresh for the next teammate — history stays on the dashboard.', handOver: 'Hand the phone over', manualTitle: 'Enter the code · أدخل الرمز', manualSub: 'Type the 8 digits under the QR · اكتب الأرقام الثمانية تحت الرمز', manualNoMatch: 'No member with this code · لا يوجد عضو بهذا الرمز', renewBtn: 'Renew · JOD 25 · تجديد', undo: 'تراجع · Undo', crossSellStamp: '+ Add a stamp instead · ختم بدلاً منه', crossSellFlashTitle: 'Switched to the stamp card · تحويل لبطاقة الختم', crossSellFlashSub: 'Same QR, one tap · نفس الرمز، لمسة واحدة', challengeDoneTitle: 'Challenge complete · اكتمل التحدي', challengeDoneSub: 'Free lunch unlocked — next challenge starts fresh · فازت بغداء مجاني', challengeDoneBtn: 'Done — nothing to count · تم', countVisitLabel: '+ Count this visit · تسجيل الزيارة', lastActions: 'Last actions · آخر العمليات', noActionsYet: 'No actions yet this shift · لا عمليات بعد', handoverPickTitle: 'Who\'s taking over? · من سيكمل المناوبة؟', handoverPickSub: 'Pick the next teammate — counters reset for them. · اختر الزميل التالي', queueTitle: 'Queued while offline · قائمة الانتظار', queueEmptyLine: 'Nothing queued right now · لا شيء بالانتظار', queueSyncNote: 'Syncs automatically when the till is back · تتم المزامنة تلقائياً' };
+    if (!EN) { const flip = str => { const parts = str.split(' · '); return parts.length === 2 ? parts[1] + ' · ' + parts[0] : str; }; Object.keys(t).forEach(k => { t[k] = flip(t[k]); }); }
+    const scen = st.scenario;
+    const SCEN = this.scenInfo(scen);
+    const isStampsS = scen === 'stamps', isCash = scen === 'cashback', isPts = scen === 'points';
+    const membershipRenewed = scen === 'membership' && st.renewedMembership;
+    const hasTabs = isStampsS || isCash || isPts;
+    const full = st.stamps >= st.goal;
+    const amt = parseFloat(st.amount) || 0;
+    const rungs = this.rungs();
+    const tierIdx = st.rTier === 'Gold' ? 1 : 0;
+    const demoDefs = [
+      ['stamps', 'Sara — a stamp is one tap', 'Stamp card · 6/8, two from a reward', '#1E5C43'],
+      ['cashback', 'Khaled — cashback is money', 'JOD 3.20 balance · partial redeem · min JOD 2', '#5C6B2F'],
+      ['points', 'Salma — the redeem ladder', 'points · nothing preselected, shortfalls shown', '#B14A32'],
+      ['coupon', 'Nadia — a one-shot coupon', 'asks twice · try scanning her twice', '#E88024'],
+      ['vip', 'Rania — VIP, collect only', '11 visits · one more to GOLD', '#1B2440'],
+      ['discount', 'Ruba — a verdict, not a transaction', 'discount card · valid', '#2FAE66'],
+      ['membership', 'Anas — lapsed membership', 'verdict · expired 12 days ago', '#F0A92B'],
+      ['challenge', 'Huda — a challenge has a clock · بطاقة التحدي', '3/5 visits this month · 9-day window', '#7A4FA3'],
+      ['foreign', 'A stranger\'s card', 'another account · polite refusal', '#E2563A']
+    ];
+    return {
+      dir: EN ? 'ltr' : 'rtl', t,
+      enterAnim: AN('fadeUp', '.45s'), popAnim: AN('popIn', '.45s'), previewAnim: 'none',
+      isIdle: st.screen === 'idle', isScan: st.screen === 'scan', isMember: st.screen === 'member', resolving: st.resolving,
+      scansToday: st.scansToday,
+      scanDefault: () => this.scanTo('stamps'),
+      openManual: () => this.setState({ manualOpen: true, manualCode: '', manualError: false }),
+      manualCancel: () => { clearTimeout(this._mt); this.setState({ manualOpen: false, manualCode: '', manualError: false }); },
+      manualOpen: st.manualOpen, manualError: st.manualError,
+      manualCells: Array.from({ length: 8 }, (_, i) => ({ v: st.manualCode[i] || '', br: st.manualError ? '#E2563A' : (i < st.manualCode.length ? '#E88024' : 'rgba(244,242,238,.15)') })),
+      manualShake: st.manualError ? 'shakeX .4s cubic-bezier(.22,.61,.36,1) both' : 'none',
+      manualKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map(k => ({
+        k, vis: k ? 'visible' : 'hidden', cur: k ? 'pointer' : 'default',
+        tap: () => { if (!k) return; this.setState(s => { let code = s.manualCode; if (k === '⌫') code = code.slice(0, -1); else if (code.length < 8) code += k; if (code.length === 8) setTimeout(() => this.finishManual(), 200); return { manualCode: code, manualError: false }; }); }
+      })),
+      manualHints: [
+        { label: 'Sara · stamps · سارة · ختم — 0114 2201' },
+        { label: 'Khaled · cashback · خالد · كاش باك — 0177 5533' },
+        { label: 'Salma · points · سلمى · نقاط — 0192 4410' }
+      ],
+      toIdle: () => { clearTimeout(this._ut); this.setState({ screen: 'idle', scenario: null, undo: null }); },
+      offline: st.offline, offlineLine: 'Offline — ' + st.queued + ' collection' + (st.queued === 1 ? '' : 's') + ' queued · redeems locked · يعمل دون إنترنت',
+      toggleOffline: () => this.setState({ offline: !st.offline, queued: st.offline ? 0 : st.queued, queueLog: st.offline ? [] : st.queueLog }),
+      offSwBg: st.offline ? '#F0A92B' : '#D8D0C2', offSwKnob: st.offline ? '21px' : '3px',
+      queueSheetOpen: st.queueSheetOpen,
+      openQueueSheet: () => this.setState({ queueSheetOpen: true }),
+      closeQueueSheet: () => this.setState({ queueSheetOpen: false }),
+      queueEmpty: st.queueLog.length === 0,
+      queueItems: st.queueLog.slice(0, 6).map(q => ({ member: q.member, action: q.action, time: this.timeAgo(q.ts) })),
+      enBg: EN ? '#E88024' : 'transparent', enFg: EN ? '#FFFFFF' : '#93887A',
+      arBg: !EN ? '#E88024' : 'transparent', arFg: !EN ? '#FFFFFF' : '#93887A',
+      setLangEn: () => this.setState({ lang: 'en' }), setLangAr: () => this.setState({ lang: 'ar' }),
+      scMemberName: SCEN.m[0], scMemberAr: SCEN.m[1], scMemberInitials: SCEN.m[2], scCardLine: SCEN.card, scCardColor: SCEN.color,
+      hasTabs, tabItems: [
+        { label: 'Collect · جمع', key: 'collect', c: '#2FAE66' },
+        { label: 'Redeem · استبدال', key: 'redeem', c: '#E88024' }
+      ].map(x => ({ label: x.label, go: () => this.setState({ mode: x.key, selRw: null, cbSel: null }), br: st.mode === x.key ? x.c : 'rgba(244,242,238,.14)', bg: st.mode === x.key ? (x.key === 'collect' ? 'rgba(47,174,102,.16)' : 'rgba(232,128,36,.16)') : 'transparent', fg: st.mode === x.key ? (x.key === 'collect' ? '#7BD8A5' : '#F09A4D') : '#9B99A3' })),
+      modeCollect: st.mode === 'collect', modeRedeem: st.mode === 'redeem',
+      collectBg: '#2FAE66',
+      // stamps
+      bStamps: isStampsS, stampCount: st.stamps, goal: st.goal,
+      stampCells: Array.from({ length: st.goal }, (_, i) => ({ dy: i % 2 ? '5px' : '-5px', filter: i < st.stamps ? 'drop-shadow(0 2px 3px rgba(0,0,0,.4))' : 'grayscale(1) opacity(.28)', anim: i === st.stamps - 1 ? AN('stampPop', '.45s') : 'none' })),
+      stampHint: full ? 'Full card — switch to Redeem.' : (st.goal - st.stamps) + ' to a free drink · always preview before acting',
+      addStampLabel: st.offline ? '+ Add a stamp (queues offline)' : '+ Add a stamp · ختم',
+      addStamp: () => { if (full) { this.setState({ mode: 'redeem' }); return; } const member = SCEN.m[0]; this.setState({ stamps: st.stamps + 1, sStamps: st.sStamps + 1, queued: st.offline ? st.queued + 1 : st.queued }); this.armUndo('stamp', 1, st.offline); this.flashNow('☕', '#2FAE66', 'Stamp ' + (st.stamps + 1) + ' of ' + st.goal, st.offline ? 'Queued — lands the second the till is back online.' : (st.stamps + 1 >= st.goal ? 'Full card! The reward is ready to redeem.' : 'Sara sees it on her lock screen right now.')); this.logAction(member, 'Stamp added'); if (st.offline) this.pushQueue(member, 'Stamp added'); },
+      stampsReady: full, stampsNotReady: !full, shortfallLine: st.stamps + ' / ' + st.goal + ' — ' + (st.goal - st.stamps) + ' short',
+      redeemCursor: st.offline ? 'not-allowed' : 'pointer',
+      redeemStampsBg: full && !st.offline ? '#E88024' : '#26262B', redeemStampsFg: full && !st.offline ? '#FFFFFF' : '#8E8C96',
+      redeemStampsLabel: st.offline ? 'Redeem locked offline — why: no double-spend' : (full ? 'Redeem the free drink (PIN)' : 'Nothing to redeem yet'),
+      redeemStamps: () => { if (!full || st.offline) return; this.askPin('stamps'); },
+      // amount types
+      bAmount: isCash || isPts, isCashback: isCash, isPoints: isPts,
+      amtTopLabel: isCash ? 'Wallet balance · الرصيد' : 'Points balance · النقاط',
+      amtTopValue: isCash ? 'JOD ' + st.cbBal.toFixed(2) : st.pts + ' pts',
+      amtDisplay: st.amount || '0',
+      collectPreview: isCash ? '+ JOD ' + (amt * 0.05).toFixed(2) + ' back (5%)' : '+ ' + Math.round(amt * 10) + ' pts',
+      keypad: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map(k => ({ k, tap: () => { let a = st.amount; if (k === '⌫') a = a.slice(0, -1); else if (k === '.') { if (!a.includes('.')) a = (a || '0') + '.'; } else if (a.replace('.', '').length < 5) a += k; this.setState({ amount: a }); } })),
+      collectAmtLabel: amt > 0 ? (isCash ? 'Add JOD ' + (amt * 0.05).toFixed(2) + ' to the wallet' : 'Add ' + Math.round(amt * 10) + ' points') + (st.offline ? ' (queues)' : '') : 'Type the bill first',
+      collectAmount: () => { if (amt <= 0) return; const member = SCEN.m[0]; if (isCash) { const back = +(amt * 0.05).toFixed(2); this.setState({ cbBal: +(st.cbBal + back).toFixed(2), amount: '', queued: st.offline ? st.queued + 1 : st.queued }); this.armUndo('cash', back, st.offline); this.flashNow('✓', '#2FAE66', '+ JOD ' + back.toFixed(2), st.offline ? 'Queued for sync.' : 'New balance JOD ' + (st.cbBal + back).toFixed(2) + ' — on his pass already.'); this.logAction(member, 'Collected · JOD ' + back.toFixed(2)); if (st.offline) this.pushQueue(member, 'JOD ' + back.toFixed(2) + ' cashback'); } else { const addPts = Math.round(amt * 10); this.setState({ pts: st.pts + addPts, amount: '', queued: st.offline ? st.queued + 1 : st.queued }); this.armUndo('pts', addPts, st.offline); this.flashNow('✓', '#2FAE66', '+ ' + addPts + ' pts', st.offline ? 'Queued for sync.' : 'Balance ' + (st.pts + addPts) + ' pts.'); this.logAction(member, 'Collected · ' + addPts + ' pts'); if (st.offline) this.pushQueue(member, addPts + ' pts'); } },
+      cbRedeemHint: 'Balance JOD ' + st.cbBal.toFixed(2) + ' — spend all of it or part of it.',
+      cbQuick: [1, 2, st.cbBal].map((v, i) => { const val = i === 2 ? st.cbBal : v; const ok = val <= st.cbBal; return { label: i === 2 ? 'All · JOD ' + st.cbBal.toFixed(2) : 'JOD ' + val.toFixed(2), pick: () => ok && this.setState({ cbSel: val }), br: st.cbSel === val ? '#E88024' : 'rgba(244,242,238,.16)', bg: st.cbSel === val ? 'rgba(232,128,36,.16)' : 'transparent', fg: ok ? (st.cbSel === val ? '#F09A4D' : '#F4F2EE') : '#5D5B66' }; }),
+      cbMinLine: st.cbBal < 2 ? 'Below the JOD 2 minimum — kindly refused, balance keeps growing.' : 'House rule: redeem from JOD 2.',
+      cbRedeemBg: st.cbSel && !st.offline && st.cbBal >= 2 ? '#E88024' : '#26262B', cbRedeemFg: st.cbSel && !st.offline && st.cbBal >= 2 ? '#FFFFFF' : '#8E8C96',
+      cbRedeemLabel: st.offline ? 'Redeem locked offline' : st.cbBal < 2 ? 'Below minimum — keep collecting' : st.cbSel ? 'Take JOD ' + st.cbSel.toFixed(2) + ' off the bill (PIN)' : 'Pick an amount — nothing preselected',
+      redeemCash: () => { if (!st.cbSel || st.offline || st.cbBal < 2) return; this.askPin('cash'); },
+      ptRungs: rungs.map((r, i) => { const ok = r.cost <= st.pts; const sel = st.selRw === i; return { name: r.name, cost: r.cost, sub: ok ? (sel ? 'Selected by the customer' : 'Affordable') : 'Needs ' + (r.cost - st.pts) + ' more', subColor: ok ? '#7BD8A5' : '#F0A92B', pick: () => ok && this.setState({ selRw: sel ? null : i }), bg: sel ? 'rgba(232,128,36,.14)' : '#1B1B1F', br: sel ? '#E88024' : 'rgba(244,242,238,.09)', ring: sel ? '#E88024' : 'rgba(244,242,238,.35)', dot: sel ? '#E88024' : 'transparent', op: ok ? 1 : 0.55 }; }),
+      ptRedeemBg: st.selRw != null && !st.offline ? '#E88024' : '#26262B', ptRedeemFg: st.selRw != null && !st.offline ? '#FFFFFF' : '#8E8C96',
+      ptRedeemLabel: st.offline ? 'Redeem locked offline' : st.selRw != null ? 'Redeem ' + rungs[st.selRw].name + ' (PIN)' : 'The customer picks first',
+      redeemPts: () => { if (st.selRw == null || st.offline) return; this.askPin('pts'); },
+      // coupon
+      bCoupon: scen === 'coupon', couponFresh: !st.couponDone, couponUsed: st.couponDone,
+      cpRedeemBg: !st.couponDone && !st.offline ? '#E88024' : '#26262B', cpRedeemFg: !st.couponDone && !st.offline ? '#FFFFFF' : '#8E8C96',
+      cpRedeemLabel: st.couponDone ? 'Nothing to redeem — it\'s spent' : st.offline ? 'Redeem locked offline' : 'Redeem — we\'ll ask twice',
+      redeemCoupon: () => { if (st.couponDone || st.offline) return; this.askPin('coupon'); },
+      crossSellStamp: () => { this.scanTo('stamps'); this.flashNow('☕', '#2FAE66', t.crossSellFlashTitle, t.crossSellFlashSub); },
+      // vip
+      bVip: scen === 'vip', vipTier: st.rTier, vipTierBg: tierIdx ? 'rgba(232,184,36,.16)' : 'rgba(174,183,194,.14)', vipTierFg: tierIdx ? '#E8B824' : '#AEB7C2',
+      vipProgressLine: tierIdx ? 'Gold since today · 12 visits' : st.rVisits + ' visits · 1 more to GOLD',
+      vipPerks: (tierIdx ? ['Skip the line, always', '15% off the bill', 'Gold nights — rooftop Thursdays'] : ['Members-only offers', 'Birthday dessert on the house']).map(p => ({ p })),
+      vipBtnLabel: '✓ Check in · تسجيل زيارة',
+      vipCheckin: () => { const member = SCEN.m[0]; if (tierIdx) { this.flashNow('★', '#E8B824', 'Visit logged', 'Rania keeps her Gold perks.'); this.logAction(member, 'Visit logged'); return; } const v = st.rVisits + 1; if (v >= 12) { this.setState({ rVisits: v, rTier: 'Gold' }); this.flashNow('★', '#E8B824', 'SILVER → GOLD', 'Tier-up lands on her pass with a little ceremony.'); this.logAction(member, 'Tier up · Gold'); } else { this.setState({ rVisits: v }); this.flashNow('✓', '#2FAE66', 'Visit ' + v, 'One more to Gold.'); this.logAction(member, 'Visit logged'); } },
+      // challenge (collect-only, like vip)
+      bChallenge: scen === 'challenge', chActive: scen === 'challenge' && !st.chDone, chComplete: scen === 'challenge' && st.chDone,
+      chVisits: st.chVisits, chGoal: st.chGoal,
+      chWindowLine: st.chVisits + ' of ' + st.chGoal + ' visits this month · ' + this.toAr(st.chVisits) + ' من ' + this.toAr(st.chGoal),
+      chDeadlineLine: 'Ends in ' + st.chDays + ' days · ينتهي بعد ' + this.toAr(st.chDays) + ' أيام',
+      chBtnCursor: st.chDone ? 'not-allowed' : 'pointer',
+      chBtnBg: st.chDone ? '#26262B' : '#2FAE66', chBtnFg: st.chDone ? '#8E8C96' : '#FFFFFF',
+      chBtnLabel: st.chDone ? t.challengeDoneBtn : t.countVisitLabel,
+      countVisit: () => {
+        if (st.chDone) return;
+        const member = SCEN.m[0];
+        const v = st.chVisits + 1;
+        if (v >= st.chGoal) { this.setState({ chVisits: v, chDone: true }); this.flashNow('🎉', '#2FAE66', 'Challenge complete — free lunch · اكتمل التحدي', 'Huda unlocked the reward · هدى فازت بالمكافأة'); this.logAction(member, 'Challenge complete'); }
+        else { this.setState({ chVisits: v }); this.flashNow('✓', '#2FAE66', 'Visit ' + v + ' of ' + st.chGoal, (st.chGoal - v) + ' to go · ' + this.toAr(st.chGoal - v) + ' متبقية'); this.logAction(member, 'Visit counted'); }
+      },
+      // verdicts
+      bVerdict: scen === 'discount' || scen === 'membership',
+      showRenewBtn: scen === 'membership' && !st.renewedMembership,
+      renewMembership: () => this.askPin('renew'),
+      vdMark: (scen === 'discount' || membershipRenewed) ? '✓' : '!', vdBg: (scen === 'discount' || membershipRenewed) ? 'rgba(47,174,102,.12)' : 'rgba(240,169,43,.12)', vdBorder: (scen === 'discount' || membershipRenewed) ? '#2FAE66' : '#F0A92B',
+      vdTitle: scen === 'discount' ? 'Valid — 15% off' : (membershipRenewed ? 'Active — renewed today · فعّالة — جُدّدت اليوم' : 'Expired 12 days ago'),
+      vdSub: scen === 'discount' ? 'Apply it at the till. No tabs, no typing — the card is a verdict.' : (membershipRenewed ? 'Renewed just now — same pass, active again. · جُدّدت الآن — نفس البطاقة فعّالة من جديد.' : 'Lapsed Jul 18. Renewal is JOD 25 at the counter — one tap re-activates the same pass.'),
+      // refusal
+      bRefusal: scen === 'foreign', rfTitle: 'Not your card to scan', rfWhy: 'This pass belongs to Marmar Lounge — a different Wasla account. Nothing was charged, nothing was stamped.', rfDo: 'What to do: send the customer to Marmar staff — or ask Yara to assign you the card if this is a mistake.',
+      // flash + pin + shift
+      hasFlash: !!st.flash, flashMark: (st.flash || {}).mark || '✓', flashColor: (st.flash || {}).color || '#2FAE66', flashTitle: (st.flash || {}).title || '', flashSub: (st.flash || {}).sub || '',
+      pinOpen: !!st.pin, pinDots: [0, 1, 2, 3].map(i => ({ bg: i < st.pinTaps ? '#E88024' : 'transparent' })),
+      pinKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k => ({ k, tap: () => this.setState(s => { if (!s.pin || s.pinTaps >= 4) return null; const n = s.pinTaps + 1; if (n >= 4) setTimeout(() => this.finishPin(), 220); return { pinTaps: n }; }) })),
+      pinCancel: () => this.setState({ pin: null, pinTaps: 0 }),
+      staffName: st.staffName, staffAr: st.staffAr, staffInitials: st.staffInitials,
+      endShift: () => this.setState({ shiftOpen: true, handoverPick: false }), shiftOpen: st.shiftOpen,
+      showShiftSummary: st.shiftOpen && !st.handoverPick, showHandoverPicker: st.shiftOpen && st.handoverPick,
+      shiftScans: st.scansToday, shiftStamps: st.sStamps, shiftRewards: st.sRewards,
+      shiftLogEmpty: st.sessionLog.length === 0,
+      shiftLog: st.sessionLog.slice(0, 6).map(l => ({ member: l.member, action: l.action, time: this.timeAgo(l.ts) })),
+      startHandover: () => this.setState({ handoverPick: true }),
+      cancelHandover: () => this.setState({ handoverPick: false }),
+      staffChoices: this.staffList().map((p, i) => ({ name: p.name, ar: p.ar, initials: p.initials, pick: () => this.pickStaff(i) })),
+      hasUndo: !!st.undo && st.screen === 'member', undoLast: () => this.undoLast(),
+      demoScans: demoDefs.map(([key, label, sub, dot]) => ({ label, sub, dot, go: () => this.scanTo(key), br: st.scenario === key && st.screen !== 'idle' ? '#E88024' : '#E7E0D5', bg: st.scenario === key && st.screen !== 'idle' ? '#FDF4EC' : '#FFFFFF' }))
+    };
+  }
+}
+</script>
+</body>
+</html>
