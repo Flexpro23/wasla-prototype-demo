@@ -122,7 +122,7 @@ window.WASLA_DB = {
     { name:"Lina Haddad", ar:"لينا حداد", initials:"LH", phone:"+962 79 555 0187", card:"Layl Lounge", progress:"Gold", joined:"Jan 2026", last:4, visits:41 },
     { name:"Noor Shami", ar:"نور الشامي", initials:"NS", phone:"+962 78 555 0121", card:"Daraj Coffee", progress:"8 / 8 — reward ready", joined:"Feb 2026", last:5, visits:29 },
     { name:"Khaled Mansour", ar:"خالد منصور", initials:"KM", phone:"+962 79 555 0166", card:"Zaytoun Kitchen", progress:"JOD 3.20 balance", joined:"Apr 2026", last:40, visits:17 },
-    { name:"Rania Qasem", ar:"رانيا قاسم", initials:"RQ", phone:"+962 77 555 0143", card:"Layl Lounge", progress:"Silver", joined:"May 2026", last:9, visits:12 },
+    { name:"Rania Qasem", ar:"رانيا قاسم", initials:"RQ", phone:"+962 77 555 0143", card:"Layl Lounge", progress:"Silver", joined:"May 2026", last:9, visits:11 },
     { name:"Fadi Nabulsi", ar:"فادي النابلسي", initials:"FN", phone:"+962 78 555 0177", card:"Daraj Coffee", progress:"5 / 8 stamps", joined:"Jun 2026", last:33, visits:14 },
     { name:"Dana Tahboub", ar:"دانا طهبوب", initials:"DT", phone:"+962 79 555 0192", card:"Zaytoun Kitchen", progress:"JOD 1.75 balance", joined:"Mar 2026", last:18, visits:9 },
     { name:"Hala Odeh", ar:"هلا عودة", initials:"HO", phone:"+962 77 555 0155", card:"Daraj Coffee", progress:"1 / 8 stamps", joined:"Jul 2026", last:70, visits:1 },

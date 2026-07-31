@@ -97,6 +97,15 @@
   .wl-play{transition:transform .18s cubic-bezier(.22,.61,.36,1),background .25s,box-shadow .25s;}
   .wl-play:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(36,28,22,.16);}
   .wl-play:active{transform:scale(.98);}
+
+  /* ── reduced motion · every entrance here is fill-mode:both, so collapsing the
+       duration still settles it on its 100% frame (opacity:1, transform:none) rather
+       than stranding it invisible. The infinite cues (glowPulse, scanLine, cornerPulse,
+       shimmerSweep, glowGreen, stepPulse, stampNext) carry no fill-mode, so one
+       hair-thin iteration reverts them to their base style. Nothing ends hidden. ── */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  }
 </style>
 </helmet>
 <div dir="{{ dir }}" style="min-height:100vh;background:radial-gradient(1200px 600px at 0% 0%, rgba(232,128,36,.07), transparent 60%), radial-gradient(1000px 500px at 100% 0%, rgba(40,38,34,.06), transparent 55%), #F3EFE9;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:34px;padding:34px 22px 60px;">
@@ -374,25 +383,58 @@
                     </div>
                   </sc-if>
                   <sc-if value="{{ isGooglePass }}" hint-placeholder-val="{{ false }}">
-                    <div style="border-radius:20px;background:#1E5C43;color:#FFFFFF;padding:18px 18px 20px;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};position:relative;overflow:hidden;">
-                      <div style="display:flex;align-items:center;gap:9px;">
-                        <div style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;">D</div>
-                        <div style="font-size:12px;font-weight:600;">Daraj Coffee</div>
-                      </div>
-                      <sc-if value="{{ rewardReady }}" hint-placeholder-val="{{ false }}">
-                        <div style="position:absolute;top:0;bottom:0;left:0;width:44%;z-index:3;pointer-events:none;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,214,10,.16),rgba(255,255,255,.24),rgba(255,255,255,0));animation:shimmerSweep 3.4s cubic-bezier(.4,0,.5,1) infinite;"></div>
-                      </sc-if>
-                      <div style="margin-top:15px;"><div style="font-size:11px;opacity:.8;">{{ gStampCard }}</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:19px;margin-top:2px;">{{ gTitleLine }}</div></div>
-                      <div style="display:flex;gap:22px;margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.25);position:relative;z-index:1;">
-                        <div><div style="font-size:9.5px;opacity:.75;">{{ rewardWord }}</div><div style="font-size:12px;font-weight:600;">{{ passRewardLine }}</div></div>
-                        <div><div style="font-size:9.5px;opacity:.75;">{{ memberWord }}</div><div style="font-size:12px;font-weight:600;">{{ memberFirst }}</div></div>
-                      </div>
-                      <div style="background:#FFFFFF;border-radius:12px;padding:10px;margin-top:15px;display:flex;justify-content:center;position:relative;z-index:1;">
-                        <div style="display:grid;grid-template-columns:repeat(17,3.8px);grid-auto-rows:3.8px;">
-                          <sc-for list="{{ qrCells }}" as="q5" hint-placeholder-count="0"><div style="background:{{ q5.c }};"></div></sc-for>
+                    <!-- Google Wallet renders a WHITE card: brand module on top, balance as the
+                         headline, a hero image band, then a Details list and a centred barcode
+                         block. Deliberately not the Apple layout in another colour. -->
+                    <div style="border-radius:16px;background:#FFFFFF;color:#241C16;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};overflow:hidden;">
+                      <div style="background:#1E5C43;color:#FFFFFF;padding:15px 17px 0;position:relative;overflow:hidden;">
+                        <sc-if value="{{ rewardReady }}" hint-placeholder-val="{{ false }}">
+                          <div style="position:absolute;top:0;bottom:0;left:0;width:44%;z-index:3;pointer-events:none;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,214,10,.16),rgba(255,255,255,.24),rgba(255,255,255,0));animation:shimmerSweep 3.4s cubic-bezier(.4,0,.5,1) infinite;"></div>
+                        </sc-if>
+                        <div style="display:flex;align-items:center;gap:9px;position:relative;z-index:1;">
+                          <div style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;flex-shrink:0;">D</div>
+                          <div style="font-size:12.5px;font-weight:600;">{{ gProgram }}</div>
+                        </div>
+                        <div style="margin-top:15px;position:relative;z-index:1;">
+                          <div style="font-size:10.5px;opacity:.8;letter-spacing:.03em;">{{ gStampCard }}</div>
+                          <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:27px;line-height:1.15;margin-top:1px;">{{ gTitleLine }}</div>
+                        </div>
+                        <div style="margin:14px -17px 0;height:88px;position:relative;overflow:hidden;background:linear-gradient(115deg,#123D2C,#2E7D5B 54%,#C96A14);">
+                          <div style="position:absolute;inset-inline-end:-34px;bottom:-44px;width:124px;height:124px;border-radius:50%;background:rgba(255,255,255,.07);"></div>
+                          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 17px;">
+                            <div style="min-width:0;">
+                              <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;color:#FFFFFF;line-height:1.2;">{{ gHeroTitle }}</div>
+                              <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:rgba(255,255,255,.82);margin-top:3px;">قهوة الدرج</div>
+                            </div>
+                            <sc-if value="{{ gHasHeroArt }}" hint-placeholder-val="{{ false }}">
+                              <img src="{{ gHeroArt }}" alt="" style="width:60px;height:60px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 9px rgba(0,0,0,.45));">
+                            </sc-if>
+                          </div>
                         </div>
                       </div>
-                      <div style="text-align:center;font-size:9.5px;opacity:.7;margin-top:9px;">قهوة الدرج</div>
+                      <sc-if value="{{ giftOn }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:8px;padding:10px 17px;background:linear-gradient(90deg,rgba(232,128,36,.16),rgba(201,106,20,.05));border-bottom:1px solid #F1EBE1;animation:{{ popAnim }};">
+                          <span style="width:6px;height:6px;border-radius:50%;background:#E88024;flex-shrink:0;"></span>
+                          <span style="font-size:11.5px;font-weight:700;color:#B4753A;">{{ giftChip }}</span>
+                        </div>
+                      </sc-if>
+                      <div style="padding:13px 17px 5px;">
+                        <div style="font-size:9.5px;font-weight:800;letter-spacing:.09em;color:#93887A;text-transform:uppercase;">{{ gDetailsK }}</div>
+                      </div>
+                      <sc-for list="{{ gDetails }}" as="gd" hint-placeholder-count="3">
+                        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 17px;border-bottom:1px solid #F5F0E8;">
+                          <span style="font-size:11.5px;color:#93887A;flex-shrink:0;">{{ gd.k }}</span>
+                          <span dir="{{ gd.dir }}" style="font-size:12.5px;font-weight:600;color:#241C16;text-align:end;">{{ gd.v }}</span>
+                        </div>
+                      </sc-for>
+                      <div style="padding:15px 17px 17px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+                        <div style="background:#FFFFFF;border:1px solid #EDE7DC;border-radius:12px;padding:11px;display:flex;justify-content:center;box-shadow:0 1px 3px rgba(36,28,22,.07);">
+                          <div style="display:grid;grid-template-columns:repeat(17,3.8px);grid-auto-rows:3.8px;">
+                            <sc-for list="{{ qrCells }}" as="q5" hint-placeholder-count="0"><div style="background:{{ q5.c }};"></div></sc-for>
+                          </div>
+                        </div>
+                        <div dir="ltr" style="font-size:10.5px;color:#5D5348;letter-spacing:.09em;font-variant-numeric:tabular-nums;">{{ gBarcodeNo }}</div>
+                      </div>
                     </div>
                   </sc-if>
                 </div>
@@ -538,7 +580,9 @@
       <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.5;">{{ momentsHint }}</div>
     </div>
     <a href="Wasla Dashboard.dc.html" style="display:block;background:#26262B;color:#F4F2EE;border-radius:14px;padding:14px 16px;font-size:12.5px;font-weight:700;text-align:center;">{{ dashLink }}</a>
-    <div style="text-align:center;padding-bottom:4px;">
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;padding-bottom:4px;">
+      <a href="Wasla Demo.dc.html" class="wl-link" style="font-size:10.5px;font-weight:700;color:#93887A;letter-spacing:.03em;">{{ hubLink }}</a>
+      <span style="width:3px;height:3px;border-radius:50%;background:#D8D0C2;"></span>
       <span onClick="{{ resetDemo }}" class="wl-link" style="cursor:pointer;font-size:10.5px;font-weight:700;color:{{ resetFg }};letter-spacing:.03em;">{{ resetLabel }}</span>
     </div>
   </div>
@@ -586,6 +630,30 @@ class Component extends DCLogic {
     });
   }
   clearSaved() { this.kill(this._sv); try { localStorage.removeItem(this.custKey()); } catch (e) {} }
+
+  /* ── LIVE CROSS-TAB EVENTS · writer side ────────────────────────────────
+     Shared contract, identical in the Scanner; the Dashboard is the listener.
+       key   'wasla_demo_live_events'
+       value JSON array, NEWEST FIRST, capped 20
+       entry { at: Date.now(), kind: 'earn'|'reward'|'join'|'redeem'|'renew'|'referral',
+               who, what, card }
+     Read-modify-write rather than keeping an in-memory copy, so two demo tabs writing
+     at once interleave instead of one clobbering the other. `who` is always the
+     CARDHOLDER — including the referral, where the card that moved is Sara's — so the
+     Dashboard feed stays keyed to one member per row. Wrapped end to end in try/catch:
+     a storage failure must never break the action that triggered it. ──────── */
+  liveKey() { return 'wasla_demo_live_events'; }
+  emitLive(kind, what) {
+    try {
+      let list = [];
+      const raw = this._lsGet(this.liveKey());
+      if (raw) { try { const p = JSON.parse(raw); if (Array.isArray(p)) list = p; } catch (e) { list = []; } }
+      list.unshift({ at: Date.now(), kind, who: this.memberName(), what, card: 'Daraj Coffee' });
+      this._lsSet(this.liveKey(), JSON.stringify(list.slice(0, 20)));
+    } catch (e) {}
+  }
+  clearLive() { try { localStorage.removeItem(this.liveKey()); } catch (e) {} }
+  memberName() { return ((this.state.form || {}).name || '').trim() || 'Sara Al-Amin'; }
   /** Pure: a bad/foreign blob is ignored, never thrown. */
   readSaved() {
     const raw = this._lsGet(this.custKey());
@@ -666,6 +734,7 @@ class Component extends DCLogic {
                 : 'Noor joined with your code — you\'re both 1 stamp ahead 🎉 · انضمّت نور برمزك')
         : (full ? 'انضمّت نور برمزك — ختمك الإضافي محفوظ لبطاقتك القادمة 🎉'
                 : 'انضمّت نور برمزك — كلاكما متقدّم بختم 🎉'));
+      L.emitLive('referral', 'Noor joined from ' + L.firstName() + '’s code — bonus stamp');
       L.save();
     });
   }
@@ -900,6 +969,7 @@ class Component extends DCLogic {
     this.setState({ joined: true });
     this.go('success');
     this.notify('Daraj Coffee', (EN ? 'Welcome, ' : 'أهلاً ') + first + (EN ? ' — your card is ready.' : ' — بطاقتك جاهزة.'));
+    this.emitLive('join', this.memberName() + ' joined from the counter QR');
     this.save();
   }
   doConfirmAdd() {
@@ -916,6 +986,8 @@ class Component extends DCLogic {
       const EN = this.state.lang === 'en', first = this.firstName();
       this.setState({ redeemFlash: false, stamps: 0, stampSeq: 0 });
       this.notify('Daraj Coffee', EN ? 'Enjoy, ' + first + '! A fresh card is already counting.' : 'صحتين يا ' + first + '! بطاقة جديدة بدأت العدّ.');
+      // fired at the reset, not at the tap — that is the moment the card actually turns over
+      this.emitLive('reward', 'redeemed: free drink — card reset');
       this.save();
     });
   }
@@ -931,6 +1003,7 @@ class Component extends DCLogic {
     this.notify('Daraj Coffee', EN
       ? (n >= st.goal ? first + ', your ' + st.goal + 'th coffee is on us — the reward is READY.' : 'Stamp added — ' + n + ' of ' + st.goal + ' · ' + (st.goal - n) + ' to your free drink.')
       : (n >= st.goal ? 'يا ' + first + '، قهوتك رقم ' + st.goal + ' علينا — المكافأة جاهزة.' : 'أُضيف ختم — ' + n + ' من ' + st.goal + ' · بقي ' + (st.goal - n) + ' لمشروبك المجاني.'));
+    this.emitLive('earn', 'earned a stamp — ' + n + ' of ' + st.goal);
     this.save();
   };
 
@@ -1000,6 +1073,7 @@ class Component extends DCLogic {
     this.kill(this._lk); this.kill(this._rt); this.kill(this._ra); this.kill(this._rf); this.kill(this._ct);
     this.dismissNotifNow();
     this.clearSaved();
+    this.clearLive();
     const h = this.__host || this;
     h.__wcWelcomed = true; h.__wcRefArmed = false;
     this.__restored = false;
@@ -1034,6 +1108,8 @@ class Component extends DCLogic {
     //   sheet preview → real cups, 30px, one row    (iOS renders the actual pass art here)
     //   wallet row  → discs, 11px                   (a photo at 11px is mud)
     const DARAJ = { style: 'coffee', disc: '#F6F3EC', ink: '#1E5C43', inner: 'rgba(21,66,50,.24)', ring: '#FFFFFF', seed: 'daraj' };
+    // the Google hero band reuses the card's own art; null when wasla-stamps.js is absent
+    const heroArt = (this.stampArt('coffee') || {}).filled || null;
     // DARAJ is spread in so the DISC FALLBACK is styled too, not just the cup path
     const passStamps = this.stampCupRow(st.stamps, st.goal, {
       ...DARAJ, size: 46,
@@ -1179,7 +1255,19 @@ class Component extends DCLogic {
       passHeadValue: full ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal,
       passHeadColor: full ? '#FFD60A' : '#FFFFFF',
       rewardWord: T('REWARD', 'المكافأة'), memberWord: T('MEMBER', 'العضو'),
-      gStampCard: T('Stamp Card', 'بطاقة أختام'),
+      // ── the Google Wallet face · text-first, Details list, centred barcode ──
+      gProgram: 'Daraj Coffee',
+      gStampCard: T('Stamp card', 'بطاقة أختام'),
+      gHeroTitle: T('Buy 7, the 8th is on us', 'اشترِ ٧ والثامن علينا'),
+      gHasHeroArt: !!heroArt, gHeroArt: heroArt || '',
+      gDetailsK: T('Details', 'التفاصيل'),
+      gDetails: [
+        { k: T('Reward', 'المكافأة'), v: full ? T('Free drink — show this at the till', 'مشروب مجاني — أظهر هذه عند الكاشير') : T('Free drink at ' + st.goal + ' stamps', 'مشروب مجاني عند ' + st.goal + ' أختام'), dir: EN ? 'ltr' : 'rtl' },
+        { k: T('Member', 'العضو'), v: (st.form.name || '').trim() || 'Sara Al-Amin', dir: 'auto' },
+        { k: T('Member ID', 'رقم العضوية'), v: '0114 2291', dir: 'ltr' }
+      ],
+      gBarcodeNo: '0114 2291',
+      giftChip: T('A gift rides this card today', 'هدية على بطاقتك اليوم'),
       passStamps, giftOn: st.gift,
       // the cups carry alt="" — one label on the row beats eight identical ones
       stampsAria: T(st.stamps + ' of ' + st.goal + ' stamps collected', st.stamps + ' من ' + st.goal + ' أختام'),
@@ -1256,6 +1344,7 @@ class Component extends DCLogic {
       journeyK: T('The journey', 'الرحلة'), momentsK: T('Life with the card', 'الحياة مع البطاقة'),
       stepTrackH: '225px', stepFillH: Math.round((idx / (scenes.length - 1)) * 225) + 'px',
       dashLink: T('← The owner’s dashboard', 'لوحة صاحب المحل →'),
+      hubLink: T('Demo hub →', 'مركز العروض →'),
       isPlaying: st.playing,
       playLabel: st.playing ? T('◼ Stop', '◼ إيقاف') : T('▶ Play the whole journey', '▶ شغّل الرحلة كاملة'),
       playCaption: st.playCap || T('Hands off — Sara joins, collects, and redeems on her own.', 'بلا تدخّل — سارة تنضم وتجمع وتستبدل وحدها.'),

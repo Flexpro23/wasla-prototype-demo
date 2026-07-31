@@ -107,6 +107,17 @@
   .wz-tile:hover .wz-tick{animation:tickUp .5s cubic-bezier(.22,.61,.36,1) both;}
   .wz-tile:hover .wz-shine{animation:shineTier 1.15s ease-in-out;}
   .wz-tile:hover .wz-slide{animation:barGrow .6s cubic-bezier(.22,.61,.36,1) both;transform-origin:left center;}
+  /* Motion is a preference, not a decoration. Every entrance in this file is
+     `both`-filled and ends at its resting state (opacity:1 / transform:none),
+     and every looping cue ends on its 0%/100% frame — so collapsing the
+     durations lands each element exactly where the animation would have left
+     it. Nothing here gates visibility on an animation still running, so no
+     row, sheet or stamp can be stranded invisible. The two decorative
+     confetti bursts end off-screen, which is the right answer for a reader
+     who asked for less movement. */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  }
   @media print{
     html,body{background:#FFFFFF !important;}
     body *{visibility:hidden !important;}
@@ -264,7 +275,7 @@
           </sc-if>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:26px;">
             <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
-              <div class="wl-tile" style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:18px 20px;animation:{{ s.anim }};" style-hover="transform:translateY(-3px);box-shadow:0 16px 34px rgba(36,28,22,.12)">
+              <div class="wl-tile" style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:18px 20px;animation:{{ s.anim }};">
                 <div style="font-size:11.5px;font-weight:600;color:#93887A;letter-spacing:.03em;text-transform:uppercase;">{{ s.label }}</div>
                 <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;margin-top:6px;font-variant-numeric:tabular-nums;">{{ s.value }}</div>
                 <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:5px;">
@@ -331,11 +342,14 @@
                   <sc-for list="{{ feedGroups }}" as="fg1" hint-placeholder-count="2">
                     <div style="font-size:9.5px;font-weight:800;letter-spacing:.1em;color:#B5AB9C;text-transform:uppercase;padding:8px 0 4px;">{{ fg1.label }}</div>
                     <sc-for list="{{ fg1.items }}" as="a" hint-placeholder-count="5">
-                      <div class="wl-row" onClick="{{ a.openRow }}" style="cursor:pointer;display:flex;gap:11px;align-items:center;padding:8px 8px;margin:0 -8px;border-radius:10px;border-bottom:1px solid #F1EBE1;animation:{{ a.anim }};" style-hover="background:#FAF6EF">
+                      <div class="wl-row" onClick="{{ a.openRow }}" style="cursor:pointer;display:flex;gap:11px;align-items:center;padding:8px 8px;margin:0 -8px;border-radius:10px;border-bottom:1px solid #F1EBE1;animation:{{ a.anim }};">
                         <span style="width:22px;height:22px;border-radius:50%;background:{{ a.soft }};color:{{ a.dot }};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0;box-shadow:0 0 0 3px {{ a.soft }};">{{ a.glyph }}</span>
                         <div style="min-width:0;">
                           <div style="font-size:12.5px;line-height:1.45;"><strong>{{ a.who }}</strong> {{ a.what }}</div>
-                          <div style="font-size:10.5px;color:#93887A;margin-top:2px;">{{ a.card }} · {{ a.t }}</div>
+                          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10.5px;color:#93887A;margin-top:3px;">
+                            <sc-if value="{{ a.isLive }}" hint-placeholder-val="{{ false }}"><span style="{{ a.liveCss }}"><span style="{{ a.liveDot }}"></span>{{ t.liveChip }}</span></sc-if>
+                            <span>{{ a.card }} · {{ a.t }}</span>
+                          </div>
                         </div>
                       </div>
                     </sc-for>
@@ -1124,7 +1138,7 @@
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;">
             <sc-for list="{{ cardTabs }}" as="tb" hint-placeholder-count="4">
-              <div class="wl-press wl-tab" onClick="{{ tb.go }}" style="cursor:pointer;position:relative;overflow:hidden;border:1.5px solid {{ tb.br }};background:{{ tb.bg }};color:{{ tb.fg }};font-size:12.5px;font-weight:700;border-radius:999px;padding:9px 18px 11px;transition:background .28s cubic-bezier(.22,.61,.36,1),color .28s,border-color .28s;" style-hover="border-color:#E88024">{{ tb.label }}
+              <div class="wl-press wl-tab" onClick="{{ tb.go }}" style="cursor:pointer;position:relative;overflow:hidden;border:1.5px solid {{ tb.br }};background:{{ tb.bg }};color:{{ tb.fg }};font-size:12.5px;font-weight:700;border-radius:999px;padding:9px 18px 11px;transition:background .28s cubic-bezier(.22,.61,.36,1),color .28s,border-color .28s;">{{ tb.label }}
                 <sc-if value="{{ tb.active }}" hint-placeholder-val="{{ false }}">
                   <span style="position:absolute;inset-inline-start:15px;inset-inline-end:15px;bottom:5px;height:2px;border-radius:2px;background:rgba(255,255,255,.9);transform-origin:{{ tb.indOrigin }};animation:{{ tb.indAnim }};"></span>
                 </sc-if>
@@ -1137,14 +1151,14 @@
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px;">
               <span style="font-size:11.5px;font-weight:700;color:#93887A;">{{ t.lastVisitLabel }}</span>
               <sc-for list="{{ memFilters }}" as="mf" hint-placeholder-count="5">
-                <div class="wl-press wl-chip" onClick="{{ mf.pick }}" style="cursor:pointer;display:flex;align-items:center;gap:7px;border:1.5px solid {{ mf.br }};background:{{ mf.bg }};color:{{ mf.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 13px;" style-hover="border-color:#E88024">{{ mf.label }}<span style="background:{{ mf.cntBg }};color:{{ mf.cntFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:1px 7px;font-variant-numeric:tabular-nums;">{{ mf.count }}</span></div>
+                <div class="wl-press wl-chip" onClick="{{ mf.pick }}" style="cursor:pointer;display:flex;align-items:center;gap:7px;border:1.5px solid {{ mf.br }};background:{{ mf.bg }};color:{{ mf.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 13px;">{{ mf.label }}<span style="background:{{ mf.cntBg }};color:{{ mf.cntFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:1px 7px;font-variant-numeric:tabular-nums;">{{ mf.count }}</span></div>
               </sc-for>
             </div>
             <div style="display:grid;grid-template-columns:{{ cardGrid }};gap:22px;margin-top:16px;align-items:start;">
               <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;min-width:0;">
                 <div style="padding:16px 20px;border-bottom:1px solid #F1EBE1;display:flex;align-items:center;justify-content:space-between;gap:10px;"><span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">{{ t.members }}</span><span style="font-size:11.5px;font-weight:700;color:#93887A;">{{ memCount }}</span></div>
                 <sc-for list="{{ acMemberRows }}" as="m" hint-placeholder-count="6">
-                  <div class="wl-row" onClick="{{ m.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid #F5F0E8;background:{{ m.bg }};transition:background .15s;animation:{{ m.anim }};" style-hover="background:#FAF6EF">
+                  <div class="wl-row" onClick="{{ m.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid #F5F0E8;background:{{ m.bg }};transition:background .15s;animation:{{ m.anim }};">
                     <div style="width:34px;height:34px;border-radius:50%;background:#F0E7DB;color:#7A5A2E;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px;flex-shrink:0;">{{ m.initials }}</div>
                     <div style="min-width:0;flex:1;"><div style="font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ m.name }}</div><div style="font-size:11px;color:#93887A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ m.phone }}</div></div>
                     <div style="text-align:end;flex-shrink:0;">
@@ -1176,7 +1190,7 @@
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap;"><span style="width:8px;height:8px;border-radius:50%;background:#E88024;animation:pulse 1.6s infinite;flex-shrink:0;"></span><span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">{{ t.wbTitle }}</span><span style="margin-inline-start:auto;background:#FDF4EC;color:#C96A14;font-size:10.5px;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap;font-variant-numeric:tabular-nums;animation:{{ wbAnim }};">{{ wbReach }}</span></div>
                     <div style="font-size:12.5px;color:#5D5348;line-height:1.5;">{{ wbLine }}</div>
                     <textarea value="{{ wbText }}" onChange="{{ setWbText }}" placeholder="{{ wbPlaceholder }}" rows="3" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13px;resize:none;background:#FFFFFF;margin-top:12px;"></textarea>
-                    <div class="wl-cta" onClick="{{ sendWinback }}" style="cursor:pointer;opacity:{{ roDim }};background:{{ wbBtnBg }};color:#FFFFFF;font-weight:800;font-size:13px;border-radius:999px;padding:12px 0;text-align:center;margin-top:12px;" style-hover="transform:translateY(-2px)">{{ wbBtnLabel }}</div>
+                    <div class="wl-cta" onClick="{{ sendWinback }}" style="cursor:pointer;opacity:{{ roDim }};background:{{ wbBtnBg }};color:#FFFFFF;font-weight:800;font-size:13px;border-radius:999px;padding:12px 0;text-align:center;margin-top:12px;">{{ wbBtnLabel }}</div>
                     <div style="font-size:10.5px;color:#93887A;margin-top:10px;line-height:1.5;">{{ t.wbFoot }}</div>
                   </div>
                 </sc-if>
@@ -1260,7 +1274,7 @@
                 <div style="display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;">
                   <sc-for list="{{ anFunnel }}" as="fu" hint-placeholder-count="4">
                     <div style="display:flex;align-items:stretch;gap:10px;flex:1;min-width:158px;">
-                      <div class="wl-tile" style="flex:1;background:#FFFFFF;border:1px solid #E7E0D5;border-radius:14px;padding:14px 16px 15px;animation:{{ fu.anim }};" style-hover="transform:translateY(-3px);box-shadow:0 16px 34px rgba(36,28,22,.12)">
+                      <div class="wl-tile" style="flex:1;background:#FFFFFF;border:1px solid #E7E0D5;border-radius:14px;padding:14px 16px 15px;animation:{{ fu.anim }};">
                         <div style="font-size:10.5px;font-weight:700;color:#93887A;letter-spacing:.03em;text-transform:uppercase;">{{ fu.label }}</div>
                         <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;margin-top:4px;font-variant-numeric:tabular-nums;">{{ fu.v }}</div>
                         <div style="font-size:10.5px;color:{{ fu.subFg }};font-weight:700;margin-top:2px;">{{ fu.sub }}</div>
@@ -1335,7 +1349,7 @@
                     <div style="font-size:11px;color:#93887A;margin-top:2px;margin-bottom:12px;">{{ t.anTopSub }}</div>
                     <div style="display:flex;flex-direction:column;gap:8px;">
                       <sc-for list="{{ anTop }}" as="tp" hint-placeholder-count="3">
-                        <div class="wl-lift" onClick="{{ tp.open }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:#FAF6EF;border-radius:11px;padding:9px 12px;animation:{{ tp.anim }};" style-hover="background:#F5EDE0">
+                        <div class="wl-lift" onClick="{{ tp.open }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:#FAF6EF;border-radius:11px;padding:9px 12px;animation:{{ tp.anim }};">
                           <span style="width:22px;height:22px;border-radius:50%;background:{{ ac.color }};color:#FFFFFF;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;flex-shrink:0;">{{ tp.rank }}</span>
                           <span style="font-size:12.5px;font-weight:700;flex:1;min-width:0;">{{ tp.name }}</span>
                           <span style="font-size:11px;color:#93887A;font-variant-numeric:tabular-nums;white-space:nowrap;">{{ tp.visits }} {{ t.anTopVisits }}</span>
@@ -1493,7 +1507,7 @@
                       <div onClick="{{ ps.pick }}" style="cursor:pointer;border:1.5px solid {{ ps.br }};background:{{ ps.bg }};color:{{ ps.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ps.label }}</div>
                     </sc-for>
                   </div>
-                  <div class="wl-cta" onClick="{{ openPoster }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 0;text-align:center;" style-hover="transform:translateY(-2px)">{{ t.posterDownload }}</div>
+                  <div class="wl-cta" onClick="{{ openPoster }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 0;text-align:center;">{{ t.posterDownload }}</div>
                 </div>
               </div>
               <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
@@ -1655,7 +1669,7 @@
           </div>
           <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;margin-top:16px;">
             <sc-for list="{{ memDirRows }}" as="mr" hint-placeholder-count="8">
-              <div class="wl-row" onClick="{{ mr.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid #F5F0E8;flex-wrap:wrap;background:{{ mr.rowBg }};transition:background .15s;animation:{{ mr.anim }};" style-hover="background:#FAF6EF">
+              <div class="wl-row" onClick="{{ mr.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid #F5F0E8;flex-wrap:wrap;background:{{ mr.rowBg }};transition:background .15s;animation:{{ mr.anim }};">
                 <span class="wl-chk" data-on="{{ mr.selOn }}" onClick="{{ mr.toggleSel }}" style="cursor:pointer;width:18px;height:18px;border-radius:6px;border:2px solid {{ mr.chkBr }};background:{{ mr.chkBg }};color:#FFFFFF;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ mr.chkMark }}</span>
                 <div style="width:34px;height:34px;border-radius:50%;background:#F0E7DB;color:#7A5A2E;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px;flex-shrink:0;">{{ mr.initials }}</div>
                 <div style="min-width:150px;flex:2 1 190px;max-width:340px;">
@@ -1721,9 +1735,10 @@
               <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin:22px 0 10px;">{{ g.label }}</div>
               <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;overflow:hidden;">
                 <sc-for list="{{ g.items }}" as="a2" hint-placeholder-count="4">
-                  <div class="wl-row" onClick="{{ a2.openRow }}" style="cursor:pointer;display:flex;gap:12px;align-items:center;padding:13px 18px;border-bottom:1px solid #F5F0E8;animation:{{ a2.anim }};" style-hover="background:#FAF6EF">
+                  <div class="wl-row" onClick="{{ a2.openRow }}" style="cursor:pointer;display:flex;gap:12px;align-items:center;padding:13px 18px;border-bottom:1px solid #F5F0E8;animation:{{ a2.anim }};">
                     <span style="width:26px;height:26px;border-radius:50%;background:{{ a2.soft }};color:{{ a2.dot }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;box-shadow:0 0 0 3px {{ a2.soft }};">{{ a2.glyph }}</span>
                     <div style="min-width:0;flex:1;"><div style="font-size:13px;line-height:1.45;"><strong>{{ a2.who }}</strong> {{ a2.what }}</div></div>
+                    <sc-if value="{{ a2.isLive }}" hint-placeholder-val="{{ false }}"><span style="{{ a2.liveCss }}"><span style="{{ a2.liveDot }}"></span>{{ t.liveChip }}</span></sc-if>
                     <span onClick="{{ a2.pickCard }}" style="cursor:pointer;border:1.5px solid {{ a2.chipBr }};color:{{ a2.chipFg }};background:{{ a2.chipBg }};font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap;flex-shrink:0;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14;background:#FDF4EC">{{ a2.card }}</span>
                     <span style="font-size:11px;color:#93887A;white-space:nowrap;flex-shrink:0;">{{ a2.t }}</span>
                   </div>
@@ -1747,12 +1762,29 @@
                   <div onClick="{{ bc.pick }}" style="cursor:pointer;border:1.5px solid {{ bc.br }};background:{{ bc.bg }};color:{{ bc.fg }};font-size:12.5px;font-weight:700;border-radius:999px;padding:8px 16px;transition:all .2s;">{{ bc.name }}</div>
                 </sc-for>
               </div>
+              <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+                <span style="font-size:11.5px;font-weight:700;color:#5D5348;">{{ bcAudLabel }}</span>
+                <span style="font-size:10.5px;color:#93887A;line-height:1.45;min-width:0;">{{ bcAudHint }}</span>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
+                <sc-for list="{{ bcSegChips }}" as="bs1" hint-placeholder-count="4">
+                  <div class="wl-press wl-chip" onClick="{{ bs1.pick }}" style="cursor:pointer;display:flex;align-items:center;gap:7px;border:1.5px solid {{ bs1.br }};background:{{ bs1.bg }};color:{{ bs1.fg }};font-size:12.5px;font-weight:700;border-radius:999px;padding:8px 14px;transition:all .22s cubic-bezier(.22,.61,.36,1);">
+                    {{ bs1.label }}<span style="background:{{ bs1.cntBg }};color:{{ bs1.cntFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:1px 7px;font-variant-numeric:tabular-nums;">{{ bs1.count }}</span>
+                  </div>
+                </sc-for>
+              </div>
               <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Message</div>
               <textarea value="{{ bcTextRaw }}" onChange="{{ setBcText }}" placeholder="Double stamps all Friday — see you on the stairs." rows="3" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;resize:none;background:#FFFFFF;"></textarea>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px;">
                 <span style="font-size:11px;color:#93887A;font-variant-numeric:tabular-nums;">{{ bcCharLabel }}</span>
                 <span style="font-size:11px;color:{{ bcLandsFg }};font-weight:700;font-variant-numeric:tabular-nums;animation:{{ bcLandsAnim }};">{{ bcLandsLine }}</span>
               </div>
+              <sc-if value="{{ bcSegNarrow }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:10.5px;color:#C96A14;font-weight:700;margin-top:5px;font-variant-numeric:tabular-nums;">{{ bcSegLine }}</div>
+              </sc-if>
+              <sc-if value="{{ bcSegNone }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:10.5px;color:#B23420;margin-top:5px;">{{ t.bcSegEmpty }}</div>
+              </sc-if>
               <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:16px 0 8px;">{{ t.bcWhenLabel }}</div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;">
                 <sc-for list="{{ bcWhenChips }}" as="bw" hint-placeholder-count="3">
@@ -1825,7 +1857,11 @@
               <sc-for list="{{ bcLog }}" as="lg" hint-placeholder-count="4">
                 <div class="wl-row" onClick="{{ lg.open }}" style="cursor:pointer;display:flex;align-items:center;gap:16px;padding:15px 24px;border-bottom:1px solid #F5F0E8;animation:{{ lg.anim }};">
                   <div style="width:30px;height:30px;border-radius:9px;background:{{ lg.color }};color:#FFF;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;font-family:'Nunito',sans-serif;flex-shrink:0;">{{ lg.initial }}</div>
-                  <div style="min-width:0;flex:1;"><div style="font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lg.title }}</div><div style="font-size:11.5px;color:#93887A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lg.body }}</div></div>
+                  <div style="min-width:0;flex:1;"><div style="font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lg.title }}</div><div style="font-size:11.5px;color:#93887A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lg.body }}</div>
+                    <sc-if value="{{ lg.hasSeg }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:inline-block;margin-top:5px;background:#FDF4EC;color:#C96A14;font-size:10px;font-weight:800;border-radius:999px;padding:2px 9px;white-space:nowrap;font-variant-numeric:tabular-nums;">{{ lg.segChip }}</div>
+                    </sc-if>
+                  </div>
                   <sc-if value="{{ lg.hasBar }}" hint-placeholder-val="{{ false }}">
                     <div title="{{ lg.barTitle }}" style="width:100px;flex-shrink:0;">
                       <div style="height:6px;border-radius:99px;background:#F0EAE0;overflow:hidden;"><div class="wl-grow" style="height:100%;width:{{ lg.barW }};border-radius:99px;background:linear-gradient(90deg,#2FAE66,#7FCF9E);animation:{{ lg.barAnim }};"></div></div>
@@ -2502,7 +2538,10 @@ class Component extends DCLogic {
     wiz: { step: 1, typeId: null, name: '', ar: '', color: '#1E5C43', goal: 8, reward: '', cfg: {}, submitted: false },
     wizFocus: 'apple', wizNote: '', wizNoteKind: '', demoT: 0, wizBiz: '', wizGoalQ: '', extrasOpen: false, wizSuggest: null,
     addedCards: [], bcCard: 'daraj', bcText: '', quiet: true, sentExtra: [], cancelled: [], justSent: false,
-    bcWhen: 'now', bcLogCard: 'all',
+    bcWhen: 'now', bcLogCard: 'all', bcSeg: 'all',
+    /* what the till has done in the last few seconds, newest first, capped 20.
+       Written by the Scanner/Customer tabs, read here — see liveKey(). */
+    liveEvents: [],
     staffView: 'staff', staffBranch: '', secRevoked: [],
     celebrating: false, celebName: '', toast: '', confirm: null, settled: false,
     searchOpen: false, searchQ: '', searchSel: 0, memDirQ: '', memDirCard: 'all',
@@ -2521,6 +2560,9 @@ class Component extends DCLogic {
      `state` here means the very first render already has it, and a later
      instance swap carries it over as prevState. */
   __restored = this.bootRestore();
+  /* same reason, same place: if the scanner was already busy when this tab
+     opened, the first paint should already show it. */
+  __live = this.hydrateLive();
   componentDidMount() {
     if (this.__restored && !this._welcomed) {
       this._welcomed = true;
@@ -2534,7 +2576,14 @@ class Component extends DCLogic {
     try { const b = localStorage.getItem('wasla_wiz_banner'); if (b) this.setState(s => ({ wiz: { ...s.wiz, banner: b } })); } catch (e) {}
     try { const lg = localStorage.getItem('wasla_wiz_logo'); if (lg) this.setState(s => ({ wiz: { ...s.wiz, logo: lg } })); } catch (e) {}
     this._demo = setInterval(() => { const s0 = this.state; if (s0.screen === 'wizard' && s0.wiz.step === 2) this.setState({ demoT: (s0.demoT || 0) + 1 }); }, 1500);
-    this._storm = () => { this.poke(); this.forceUpdate(); };
+    /* the cross-tab ear. `storage` only fires in OTHER tabs, which is exactly
+       the console-approves-Sukkar and scanner-stamps-a-pass cases. A null key
+       means the whole store was cleared, so re-read rather than assume. */
+    this._storm = (e) => {
+      const k = e && e.key;
+      if (!k || k === this.liveKey()) { try { this.pullLive(); } catch (err) {} }
+      this.poke(); this.forceUpdate();
+    };
     window.addEventListener('storage', this._storm);
     this._skey = (e) => {
       const k = (e.key || '').toLowerCase();
@@ -2641,8 +2690,11 @@ class Component extends DCLogic {
   }
   resetDemo() {
     try { localStorage.removeItem(this.demoKey()); } catch (e) {}
+    /* the till's bus is demo data too — a reset that left it behind would
+       replay yesterday's stamps into a "fresh start" */
+    try { localStorage.removeItem(this.liveKey()); } catch (e) {}
     clearTimeout(this._sv);
-    this.setState({ addedCards: [], cardMods: {}, edits: {}, bday: {},
+    this.setState({ liveEvents: [], bcSeg: 'all', addedCards: [], cardMods: {}, edits: {}, bday: {},
       addons: { daraj: { b: true, r: true, s: false }, layl: { b: false, r: true, s: false }, zaytoun: { b: true, r: false, s: false }, sukkar: { b: false, r: false, s: false }, ghaim: { b: false, r: false, s: false } },
       staffMods: {}, staffRemoved: [], addedStaff: [], addedFields: {},
       sentExtra: [], cancelled: [], changeReqs: [], memSel: [], msgOpen: false, msgText: '',
@@ -2677,6 +2729,87 @@ class Component extends DCLogic {
   _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   _lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   sukkarKey() { const D = window.WASLA_DB; return (D && D.demoFlags && D.demoFlags.sukkarKey) || 'wasla_demo_sukkar_state'; }
+  /* ══ LIVE FROM THE TILL ═════════════════════════════════════════════════
+     One localStorage key is the whole cross-tab bus. The Scanner and the
+     Customer tabs WRITE it; this dashboard only ever READS it, so nothing
+     here can corrupt what another tab is holding.
+
+       key    'wasla_demo_live_events'
+       value  JSON array, NEWEST FIRST, capped 20
+       entry  { at: Date.now(), kind, who, what, card }
+       kind   earn | reward | join | redeem | renew | referral
+
+     Every line below treats that value as hostile: a missing key, a half-
+     written string, a non-array, entries that are numbers, entries with no
+     `at` — all of it degrades to "no events" instead of throwing. A demo
+     that white-screens because another tab wrote junk is worse than a demo
+     that shows nothing. ═══════════════════════════════════════════════ */
+  liveKey() { const D = window.WASLA_DB; return (D && D.demoFlags && D.demoFlags.liveKey) || 'wasla_demo_live_events'; }
+  liveKinds() { return { earn: 1, reward: 1, join: 1, redeem: 1, renew: 1, referral: 1 }; }
+  /** Pure: the bus as a clean, de-duped, capped, newest-first array. */
+  readLive() {
+    let raw = null;
+    try { raw = this._lsGet(this.liveKey()); } catch (e) { return []; }
+    if (!raw || typeof raw !== 'string') return [];
+    let a = null;
+    try { a = JSON.parse(raw); } catch (e) { return []; }
+    if (!Array.isArray(a)) return [];
+    const OK = this.liveKinds(), seen = {}, out = [];
+    const str = (v) => (typeof v === 'string' ? v : '').slice(0, 90);
+    for (let i = 0; i < a.length && out.length < 20; i++) {
+      const e = a[i];
+      if (!e || typeof e !== 'object' || Array.isArray(e)) continue;
+      const at = Number(e.at);
+      if (!isFinite(at) || at <= 0 || seen[at]) continue;
+      const who = str(e.who), what = str(e.what);
+      if (!who && !what) continue;
+      seen[at] = 1;
+      out.push({ at, kind: OK[e.kind] ? e.kind : 'earn', who, what, card: str(e.card) });
+    }
+    return out.sort((x, y) => y.at - x.at).slice(0, 20);
+  }
+  /** Whatever is on the bus that this session has not shown yet. */
+  newLive(have) {
+    const known = {};
+    (have || []).forEach(e => { if (e && e.at) known[e.at] = 1; });
+    let all = [];
+    try { all = this.readLive(); } catch (e) { return []; }
+    return all.filter(e => !known[e.at]);
+  }
+  /** Boot: adopt only what is genuinely FRESH. A bus left over from
+      yesterday must never render as "just now", but a dashboard opened a
+      moment after the scanner should still catch the last few minutes.
+      Runs at CONSTRUCTION, so the very first paint already has them. */
+  hydrateLive() {
+    let fresh = [];
+    try { fresh = this.readLive().filter(e => (Date.now() - e.at) < 300000); } catch (e) { fresh = []; }
+    if (!fresh.length) return false;
+    this.state = { ...this.state, liveEvents: fresh.slice(0, 20) };
+    return true;
+  }
+  /** The storage-event path: merge what is new, cap, toast the newest. */
+  pullLive() {
+    let add = [];
+    try { add = this.newLive((this.state || {}).liveEvents); } catch (e) { add = []; }
+    if (!add.length) return false;
+    const merged = [...add, ...((this.state || {}).liveEvents || [])]
+      .sort((x, y) => y.at - x.at).slice(0, 20);
+    this.setState({ liveEvents: merged });
+    try { this.say(this.liveToastFor(add[0])); } catch (e) {}
+    return true;
+  }
+  /** renderVals stashes the live `t` on the instance (same trick as
+      _searchFlat), so a toast fired from a DOM listener speaks the language
+      the screen is already in. The inline pair is only reached if an event
+      somehow lands before the first render. */
+  liveToastFor(e) {
+    const T = this._t || {};
+    const s = T.liveToast || (this.state.lang === 'ar'
+      ? 'مباشر من الكاشير — {who} {what} · Live'
+      : 'Live from the till — {who} {what} · مباشر');
+    return String(s).replace('{who}', (e && e.who) || '').replace('{what}', (e && e.what) || '')
+      .replace(/\s+/g, ' ').trim();
+  }
   qr() {
     if (!this._qr) { this._qr = []; let s = 7; for (let i = 0; i < 289; i++) { s = (s * 1103515245 + 12345) % 2147483648; const row = Math.floor(i / 17), col = i % 17; const finder = (row < 5 && col < 5) || (row < 5 && col > 11) || (row > 11 && col < 5); const on = finder ? ((row % 4 === 0 || col % 4 === 0 || (row > 0 && row < 4 && col > 0 && col < 4)) ? (row === 2 && col === 2) || row % 4 === 0 || col % 4 === 0 : false) : (s / 2147483648) < 0.46; this._qr.push({ c: on ? '#1C1C20' : 'transparent' }); } }
     return this._qr;
@@ -2924,6 +3057,10 @@ class Component extends DCLogic {
         pdCard: 'card in review', pdReturned: 'sent back — needs a fix', pdJustNow: 'just now', pdSubmitted: 'submitted',
         spark7: 'last 7 days',
         segAll: 'Everyone', segQuiet: 'Quiet 30+ days', segReady: 'Reward ready', segBirthday: 'Birthday this month', segNew: 'New this month',
+        liveChip: 'LIVE', liveJustNow: 'just now',
+        liveToast: 'Live from the till — {who} {what} · مباشر',
+        bcAudLabel: 'Audience', bcAudHint: 'Everyone on the card, or a slice of it — it still costs one broadcast.',
+        bcSegTo: 'to {s} · {n} wallets', bcSegEmpty: 'No one matches that segment on this card yet',
         selCount: 'selected', selClear: 'Clear', selMessage: 'Message these',
         msgTitle: 'Message {n} members', msgSub: 'One push to their lock screens — it counts as one of your monthly broadcasts.',
         msgPlaceholder: 'We miss you — your next visit earns a little extra.', msgSend: 'Send', msgChars: 'characters', msgWallets: 'wallets',
@@ -3229,6 +3366,10 @@ class Component extends DCLogic {
         pdCard: 'بطاقة قيد المراجعة', pdReturned: 'أُعيدت — تحتاج تصحيحاً', pdJustNow: 'الآن', pdSubmitted: 'أُرسلت',
         spark7: 'آخر ٧ أيام',
         segAll: 'الجميع', segQuiet: 'هادئون ٣٠+ يوم', segReady: 'مكافأة جاهزة', segBirthday: 'عيد ميلاد هذا الشهر', segNew: 'جدد هذا الشهر',
+        liveChip: 'مباشر', liveJustNow: 'الآن',
+        liveToast: 'مباشر من الكاشير — {who} {what} · Live',
+        bcAudLabel: 'الجمهور', bcAudHint: 'كل من على البطاقة، أو شريحة منهم — يبقى الإشعار واحداً من رصيدك.',
+        bcSegTo: 'إلى {s} · {n} محفظة', bcSegEmpty: 'لا أحد يطابق هذه الشريحة على هذه البطاقة بعد',
         selCount: 'محدّد', selClear: 'إلغاء التحديد', selMessage: 'راسل هؤلاء',
         msgTitle: 'رسالة إلى {n} عضواً', msgSub: 'إشعار واحد على شاشات القفل — يُحتسب من رصيدك الشهري.',
         msgPlaceholder: 'اشتقنا لك — زيارتك القادمة تكسب أكثر.', msgSend: 'أرسل', msgChars: 'حرفاً', msgWallets: 'محفظة',
@@ -3536,9 +3677,16 @@ class Component extends DCLogic {
       { label: EN ? 'Stamps today' : 'أختام اليوم', value: this.fmt((Acc.stampsToday || 0) * statTick), sub: EN ? 'across 3 branches' : 'في ٣ فروع', subColor: '#93887A', spark: mkSpark(weekSum, '#E88024') },
       { label: EN ? 'Rewards this week' : 'مكافآت الأسبوع', value: this.fmt((Acc.redeemedWeek || 0) * statTick), sub: EN ? 'redeemed at the till' : 'استُبدلت عند الكاشير', subColor: '#C96A14', spark: mkSpark(share(Acc.redeemedWeek || 0), '#C96A14') }
     ].map((s, i) => ({ ...s, anim: AN('fadeUp', '.5s', (0.05 * i) + 's') }));
-    const dotFor = { earn: '#2FAE66', reward: '#E88024', join: '#4E6E8E', broadcast: '#7A5A2E', review: '#B14A32' };
-    const softFor = { earn: '#E7F6EE', reward: '#FDF4EC', join: '#EDF1F6', broadcast: '#F4EFE6', review: '#FBE6E1' };
-    const glyphFor = { earn: '✓', reward: '★', join: '+', broadcast: '≡', review: '⏳' };
+    /* the live `t`, parked on the instance the same way _searchFlat is: a
+       toast fired from a DOM listener has no renderVals scope to borrow. */
+    this._t = t;
+    /* the row palette. The first five kinds are the ones the seeded activity
+       log uses; redeem/renew/referral only ever arrive live from the till,
+       and each gets its own dot so a glance down the feed still separates
+       "spent a reward" from "renewed" from "brought a friend". */
+    const dotFor = { earn: '#2FAE66', reward: '#E88024', join: '#4E6E8E', broadcast: '#7A5A2E', review: '#B14A32', redeem: '#C96A14', renew: '#0F5B63', referral: '#6E8F3E' };
+    const softFor = { earn: '#E7F6EE', reward: '#FDF4EC', join: '#EDF1F6', broadcast: '#F4EFE6', review: '#FBE6E1', redeem: '#FBEBDA', renew: '#E4F0F1', referral: '#EEF4E4' };
+    const glyphFor = { earn: '✓', reward: '★', join: '+', broadcast: '≡', review: '⏳', redeem: '◆', renew: '↻', referral: '⇢' };
     const dayOf = (tt) => { const s0 = String(tt || '').toLowerCase();
       if (s0.indexOf('yesterday') >= 0 || s0.indexOf('أمس') >= 0) return 'y';
       if (/day|week|month|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|يوم|أسبوع|شهر/.test(s0)) return 'e';
@@ -3546,9 +3694,21 @@ class Component extends DCLogic {
     const openActRow = (a) => () => { const mi = members.findIndex(m => m.name === a.who); if (mi >= 0) { openMemberAt(mi); return; }
       const c0 = allCards.find(x => x.name === a.card); if (c0) openCardId(c0.id); };
     const mkActRow = (a, delay) => ({ ...a, dot: dotFor[a.kind] || '#93887A', soft: softFor[a.kind] || '#F1EBE1', glyph: glyphFor[a.kind] || '·',
-      anim: AN('fadeUp', '.45s', delay), openRow: openActRow(a) });
+      anim: AN('fadeUp', '.45s', delay), openRow: openActRow(a),
+      isLive: !!a.isLive,
+      liveCss: 'display:inline-flex;align-items:center;gap:4px;background:#E7F6EE;color:#1E7D47;font-size:8.5px;font-weight:900;letter-spacing:.09em;border-radius:999px;padding:2px 7px;white-space:nowrap;flex-shrink:0;vertical-align:middle;',
+      liveDot: 'width:5px;height:5px;border-radius:50%;background:#2FAE66;flex-shrink:0;animation:' + (st.settled ? 'none' : 'pulse 1.35s infinite') + ';' });
     const dayDefs = [['t', t.grpToday], ['y', t.grpYesterday], ['e', t.grpEarlier]];
-    const feedItems = activity.slice(0, 7);
+    /* ── live from the till ────────────────────────────────────────────────
+       Events off the cross-tab bus are shaped into ordinary activity rows so
+       they flow through the very same mkActRow/dayOf pipeline. `t` reads
+       "just now", which dayOf() classes as TODAY, so they land at the head of
+       the first group in both feeds without a special case anywhere. */
+    const liveRows = (st.liveEvents || []).map(e => ({
+      t: t.liveJustNow, who: e.who, what: e.what, card: e.card, kind: e.kind, isLive: true }));
+    /* the home card is a glance, not a log — four live rows at most, so a
+       busy till cannot push the whole seeded day off the bottom */
+    const feedItems = [...liveRows.slice(0, 4), ...activity].slice(0, 7);
     let fIdx = 0;
     const feedGroups = dayDefs.map(([k, label]) => ({ label, items: feedItems.filter(a => dayOf(a.t) === k) }))
       .filter(gp => gp.items.length)
@@ -4032,8 +4192,60 @@ class Component extends DCLogic {
       : ac.state === 'draft' ? { label: EN ? 'Continue setup' : 'أكمل الإعداد', fn: () => this.resumeDraft(ac) }
       : { label: EN ? 'In review — Omar has it' : 'قيد المراجعة', fn: () => this.say('Omar is on it — usually within a day') };
     // ── broadcasts ─────────────────────────────────────────────────────────
+    /* the member SEGMENTS live here, above the broadcast composer, because
+       both screens read them: the directory filters rows with these predicates
+       and the composer sizes its audience with the same ones. One definition,
+       two surfaces, no chance of "Reward ready" meaning two different things. */
+    const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const NOWD = new Date(), curMon = MON3[NOWD.getMonth()], curYear = NOWD.getFullYear();
+    const segPred = {
+      all: () => true,
+      quiet: (m) => (m.last || 0) >= 30,
+      ready: (m) => { const p = String(m.progress || ''); if (p.toLowerCase().indexOf('reward ready') >= 0) return true;
+        const f = p.match(/(\d+)\s*\/\s*(\d+)/); return !!(f && +f[1] > 0 && +f[1] >= +f[2]); },
+      birthday: (m) => { const b = String(m.birthday || '').trim().split(/\s+/); return b.length > 1 && b[1] === curMon; },
+      newm: (m) => { const j = String(m.joined || '').trim().split(/\s+/); return j[0] === curMon && (!j[1] || parseInt(j[1], 10) === curYear); }
+    };
     const bcSel = allCards.find(c => c.id === st.bcCard) || allCards[0] || {};
-    const bcChips = allCards.filter(c => c.state === 'live').map(c => ({ name: c.name, pick: () => this.setState({ bcCard: c.id }), br: st.bcCard === c.id ? c.color : '#E7E0D5', bg: st.bcCard === c.id ? c.color : '#FFFFFF', fg: st.bcCard === c.id ? '#FFFFFF' : '#5D5348' }));
+    const bcChips = allCards.filter(c => c.state === 'live').map(c => ({ name: c.name, pick: () => this.setState({ bcCard: c.id, justSent: false }), br: st.bcCard === c.id ? c.color : '#E7E0D5', bg: st.bcCard === c.id ? c.color : '#FFFFFF', fg: st.bcCard === c.id ? '#FFFFFF' : '#5D5348' }));
+    /* ── who the broadcast is FOR ──────────────────────────────────────────
+       The composer used to shout at every pass on the card. It now aims at
+       the same slices the members directory offers, read from the very same
+       segPred above.
+
+       Sizing: the demo ships a 15-row SAMPLE of a 1,841-member book, so a
+       segment's SHARE is measured from the sample when the card has enough
+       rows to mean anything (>= 3), then applied to the card's real pass
+       count. A sampled zero at n=9 is noise rather than evidence, so the
+       share floors instead of collapsing the send to nobody; a card with too
+       few sampled rows falls back to a book average outright. Either way the
+       number is deterministic — the same card and segment always price the
+       same, so the composer, the log row and the delivery sheet agree. */
+    const BC_SEGS = [['all', t.segAll], ['quiet', t.segQuiet], ['ready', t.segReady], ['birthday', t.segBirthday]];
+    const SEG_BOOK = { all: 1, quiet: .24, ready: .11, birthday: .085 };
+    const SEG_FLOOR = { all: 1, quiet: .06, ready: .03, birthday: .02 };
+    const segShare = (card, id) => {
+      if (id === 'all') return 1;
+      const pred = segPred[id];
+      if (!pred) return 1;
+      const rows = members.filter(m => m && m.card === (card || {}).name);
+      if (rows.length < 3) return SEG_BOOK[id] || 0;
+      const hit = rows.filter(m => { try { return !!pred(m); } catch (e) { return false; } }).length;
+      return Math.max(hit / rows.length, SEG_FLOOR[id] || 0);
+    };
+    const bcSegId = BC_SEGS.some(s => s[0] === st.bcSeg) ? st.bcSeg : 'all';
+    const bcSegLabel = (BC_SEGS.find(s => s[0] === bcSegId) || BC_SEGS[0])[1];
+    const bcPasses = bcSel.passes || 0;
+    const bcSegN = (id) => id === 'all' ? bcPasses : Math.round(bcPasses * segShare(bcSel, id));
+    const bcReachN = bcSegN(bcSegId);
+    const bcSegChips = BC_SEGS.map(([id, label]) => { const on = bcSegId === id, n = bcSegN(id);
+      return { label, count: this.fmt(n), pick: () => this.setState({ bcSeg: id, justSent: false }),
+        br: on ? '#E88024' : '#E7E0D5', bg: on ? '#E88024' : '#FFFFFF',
+        fg: on ? '#FFFFFF' : (n ? '#5D5348' : '#B5AB9C'),
+        cntBg: on ? 'rgba(255,255,255,.24)' : '#F3EDE3', cntFg: on ? '#FFFFFF' : '#93887A' }; });
+    /* a log row stores the segment ID, never its label — so a broadcast sent
+       in English still reads its audience in Arabic after a language switch */
+    const SEG_LBL = { all: t.segAll, quiet: t.segQuiet, ready: t.segReady, birthday: t.segBirthday };
     /* one quota reading, shared by the composer, the win-back box and the bulk composer */
     const used = this.bcUsedCount();
     const bcQuota = Acc.broadcastQuota || 10;
@@ -4075,7 +4287,13 @@ class Component extends DCLogic {
     const bcDeco = (b, i) => {
       const c = allCards.find(x => x.name === b.card) || {}; const ch = chipFor[b.state] || chipFor.sent;
       const dl = bcStats(b), isSent = b.state === 'sent';
+      /* the audience, only when it was narrowed — a broadcast to everyone
+         says nothing extra, and the seeded log rows carry no segment at all */
+      const sg = b.seg && b.seg !== 'all' && SEG_LBL[b.seg] ? b.seg : '';
+      const sgN = sg ? (Number(b.segN) || dl.reachN) : 0;
       return { ...b, color: c.color || '#26262B', initial: (b.card || '?')[0], chip: ch.chip, chipBg: ch.bg, chipFg: ch.fg,
+      hasSeg: !!sg, segChip: sg ? fill(t.bcSegTo, { s: SEG_LBL[sg], n: this.fmt(sgN) }) : '',
+      segValue: sg ? (SEG_LBL[sg] + ' · ' + this.fmt(sgN) + bcUnit) : '',
       cancellable: b.state === 'scheduled' || b.state === 'held',
       anim: stag('fadeUp', '.44s', i, bcLogSeed),
       hasBar: isSent && dl.reachN > 0, barW: Math.round(dl.delPct) + '%',
@@ -4113,24 +4331,27 @@ class Component extends DCLogic {
       const dl = bcStats(bcd);
       const reachN = dl.reachN, delPct = dl.delPct, delN = dl.delN, openPct = dl.openPct, openN = dl.openN, heldN = dl.heldN;
       const rReach = { k: t.rReach, v: this.fmt(reachN) + bcUnit, fg: '#241C16' };
+      /* a narrowed send says WHO it went to, right above how many got it */
+      const rAud = bcd.hasSeg ? [{ k: t.bcAudLabel, v: bcd.segValue, fg: '#C96A14' }] : [];
       const rDel = { k: t.rDelivered, v: this.fmt(delN) + ' · ' + delPct.toFixed(1) + '%', fg: '#1E7D47' };
       const rDelSoon = { k: t.rDelivered, v: '≈ ' + this.fmt(delN) + ' · ' + delPct.toFixed(1) + '%', fg: '#93887A' };
       if (bcd.state === 'sent') {
-        bcdRows = [rReach, rDel, { k: t.rOpened, v: '≈ ' + this.fmt(openN) + ' · ' + openPct + '%', fg: '#C96A14' },
+        bcdRows = [...rAud, rReach, rDel, { k: t.rOpened, v: '≈ ' + this.fmt(openN) + ' · ' + openPct + '%', fg: '#C96A14' },
           ...(heldN > 0 ? [{ k: t.rHeld, v: this.fmt(heldN), fg: '#9A6B12' }] : []),
           { k: t.rUndelivered, v: this.fmt(reachN - delN), fg: '#93887A' }, { k: t.rWhen, v: bcd.sent || '', fg: '#241C16' }];
         bcdFoot = t.bcdFootSent;
       } else if (bcd.state === 'held') {
-        bcdRows = [rReach, { k: t.rHeld, v: this.fmt(heldN) + bcUnit, fg: '#9A6B12' }, rDelSoon, { k: t.rSendsAt, v: bcd.sent || '', fg: '#241C16' }];
+        bcdRows = [...rAud, rReach, { k: t.rHeld, v: this.fmt(heldN) + bcUnit, fg: '#9A6B12' }, rDelSoon, { k: t.rSendsAt, v: bcd.sent || '', fg: '#241C16' }];
         bcdFoot = t.bcdFootHeld;
       } else {
-        bcdRows = [rReach, rDelSoon, { k: t.rWhenSched, v: bcd.sent || '', fg: '#241C16' }];
+        bcdRows = [...rAud, rReach, rDelSoon, { k: t.rWhenSched, v: bcd.sent || '', fg: '#241C16' }];
         bcdFoot = t.bcdFootSched;
       }
     }
     // activity screen
     const actChips = [{ id: 'all', label: EN ? 'All cards' : 'كل البطاقات' }, ...allCards.filter(c => c.members > 0).map(c => ({ id: c.name, label: c.name }))].map(f => ({ ...f, pick: () => this.setState({ actFilter: f.id }), br: st.actFilter === f.id ? '#E88024' : '#E7E0D5', bg: st.actFilter === f.id ? '#E88024' : '#FFFFFF', fg: st.actFilter === f.id ? '#FFFFFF' : '#5D5348' }));
-    const actItemsRaw = activity.filter(a => st.actFilter === 'all' || a.card === st.actFilter);
+    /* the Activity screen is the log, so it takes every live row it has */
+    const actItemsRaw = [...liveRows, ...activity].filter(a => st.actFilter === 'all' || a.card === st.actFilter);
     let aIdx = 0;
     const actGroups = dayDefs.map(([k, label]) => ({ label, items: actItemsRaw.filter(a => dayOf(a.t) === k) }))
       .filter(gp => gp.items.length)
@@ -4282,16 +4503,6 @@ class Component extends DCLogic {
     const pending = pdRaw.map((p, i) => ({ ...p, anim: AN('popIn', '.42s', (0.06 * i + 0.12) + 's') }));
     const memDirChips = [{ id: 'all', label: t.allCards }, ...allCards.map(c => ({ id: c.name, label: c.name }))].map(f => ({ ...f, pick: () => this.setState({ memDirCard: f.id, memSel: [] }), br: st.memDirCard === f.id ? '#E88024' : '#E7E0D5', bg: st.memDirCard === f.id ? '#E88024' : '#FFFFFF', fg: st.memDirCard === f.id ? '#FFFFFF' : '#5D5348' }));
     const mq = (st.memDirQ || '').trim().toLowerCase(), mqn = norm(mq);
-    const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const NOWD = new Date(), curMon = MON3[NOWD.getMonth()], curYear = NOWD.getFullYear();
-    const segPred = {
-      all: () => true,
-      quiet: (m) => (m.last || 0) >= 30,
-      ready: (m) => { const p = String(m.progress || ''); if (p.toLowerCase().indexOf('reward ready') >= 0) return true;
-        const f = p.match(/(\d+)\s*\/\s*(\d+)/); return !!(f && +f[1] > 0 && +f[1] >= +f[2]); },
-      birthday: (m) => { const b = String(m.birthday || '').trim().split(/\s+/); return b.length > 1 && b[1] === curMon; },
-      newm: (m) => { const j = String(m.joined || '').trim().split(/\s+/); return j[0] === curMon && (!j[1] || parseInt(j[1], 10) === curYear); }
-    };
     const memBase = members.map((m, i) => ({ m, i }))
       .filter(x => st.memDirCard === 'all' || x.m.card === st.memDirCard)
       .filter(x => !mq || (x.m.name || '').toLowerCase().includes(mq) || (x.m.ar || '').includes(mq) || norm(x.m.phone).includes(mqn));
@@ -4725,7 +4936,13 @@ class Component extends DCLogic {
         anim: AN('barRise', '.42s', (0.028 * i + 0.12) + 's') })),
       bcWhenChips, bcShowHeld: bcHeld && canBc, bcHeldAnim: reAnim('fadeUp', '.36s', bcHeld ? 5 : 12),
       bcCharLabel: fill(t.bcChars, { n: (st.bcText || '').length }),
-      bcLandsLine: fill(t.bcLands, { n: this.fmt(bcSel.passes || 0) }),
+      /* the audience picker. Narrowing the send does NOT make it cheaper —
+         one broadcast is one broadcast — so the quota block below is
+         untouched by any of this; only the reach numbers move. */
+      bcSegChips, bcAudLabel: t.bcAudLabel, bcAudHint: t.bcAudHint,
+      bcSegNarrow: bcSegId !== 'all', bcSegNone: bcReachN === 0,
+      bcSegLine: fill(t.bcSegTo, { s: bcSegLabel, n: this.fmt(bcReachN) }),
+      bcLandsLine: fill(t.bcLands, { n: this.fmt(bcReachN) }),
       bcLandsFg: bcHasText ? '#C96A14' : '#B5AB9C', bcLandsAnim: reAnim('fadeUp', '.34s', bcHasText ? 3 : 10),
       bcNotifAnim: st.justSent ? 'notifPulse .62s cubic-bezier(.22,.61,.36,1) both'
         : (bcHasText ? 'notifIn .5s cubic-bezier(.22,.61,.36,1) both' : 'none'),
@@ -4737,15 +4954,18 @@ class Component extends DCLogic {
       bcBlocked: !canBc, bcBlockedReason: fill(t.bcNoneReason, { q: bcQuota, d: renewShort }),
       sendLabel: !canBc ? t.bcNoneLeft
         : st.justSent ? ((bcIsNow && !bcHeld) ? t.bcSentOk : t.bcScheduledOk)
-        : (bcIsNow && !bcHeld) ? fill(t.bcSendTo, { n: this.fmt(bcSel.passes || 0) })
+        : (bcIsNow && !bcHeld) ? fill(t.bcSendTo, { n: this.fmt(bcReachN) })
         : fill(t.bcScheduleBtn, { when: bcHeld ? t.bcMorning : bcWhenDef[1] }),
       sendBroadcast: g(() => {
         if (st.justSent) return;
         if (!this.canBroadcast()) { this.say(t.noBroadcastsLeft); return; }
         const body = (st.bcText || '').trim();
         if (!body) { this.say(t.msgNeedsText); return; }
+        /* an empty segment burns a broadcast on nobody — refuse before the
+           quota gate rather than after it */
+        if (bcReachN <= 0) { this.say(t.bcSegEmpty); return; }
         this.setState({ sentExtra: [{ title: body.slice(0, 34), body, card: bcSel.name, sent: bcWhenSent,
-          reach: this.fmt(bcSel.passes || 0) + bcUnit, state: bcRowState }, ...st.sentExtra], bcText: '', justSent: true });
+          reach: this.fmt(bcReachN) + bcUnit, seg: bcSegId, segN: bcReachN, state: bcRowState }, ...st.sentExtra], bcText: '', justSent: true });
         this.saveDemo();
         this.say(bcRowState === 'held' ? t.bcHeldToast
           : bcRowState === 'scheduled' ? fill(t.bcScheduledToast, { when: bcWhenDef[1] })

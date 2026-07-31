@@ -108,6 +108,18 @@
   .ws-shine{background-image:linear-gradient(100deg,#2A2A30 8%,#3B3B45 26%,#2A2A30 46%);background-size:240% 100%;animation:sheen 1.2s linear infinite;}
   /* the disabled register — declared last so it wins the specificity tie against every rule above */
   .ws-off,.ws-off:hover,.ws-off:active{transform:none !important;filter:none !important;box-shadow:none !important;}
+
+  /* ── reduced motion · every animation here ends on its resting, VISIBLE frame, so collapsing the
+        duration lands the UI in exactly the state it would have settled into. Two things are
+        deliberately not left to the blanket: the next-stamp halo drives its own opacity from a
+        loop (with no fill mode it would snap back to the inline opacity:0 and the "this one lands
+        next" cue would vanish), so it gets a static opacity instead; and the scan sweep is a
+        travelling highlight with nothing to settle into, so it simply does not draw. ── */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001ms !important;animation-delay:0ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;transition-delay:0ms !important;scroll-behavior:auto !important;}
+    .ws-halo{opacity:.34 !important;}
+    .ws-sweep{opacity:0 !important;}
+  }
 </style>
 </helmet>
 <div dir="ltr" style="min-height:100vh;background:radial-gradient(1200px 600px at 0% 0%, rgba(232,128,36,.07), transparent 60%), radial-gradient(1000px 500px at 100% 0%, rgba(40,38,34,.06), transparent 55%), #F3EFE9;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:34px;padding:34px 22px 60px;">
@@ -122,9 +134,9 @@
       </div>
     </div>
 
-    <sc-if value="{{ offline }}" hint-placeholder-val="{{ false }}">
-      <div onClick="{{ openQueueSheet }}" class="ws-press" style="cursor:pointer;margin:6px 14px 0;background:rgba(240,169,43,.14);border:1px solid rgba(240,169,43,.4);color:#F0A92B;border-radius:12px;padding:9px 13px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-shrink:0;animation:{{ offBannerAnim }};">
-        <span style="width:7px;height:7px;border-radius:50%;background:#F0A92B;animation:pulse 1.6s infinite;flex-shrink:0;"></span>{{ offlineLine }}
+    <sc-if value="{{ showOfflineBar }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ openQueueSheet }}" class="ws-press" style="cursor:pointer;margin:6px 14px 0;background:{{ barBg }};border:1px solid {{ barBr }};color:{{ barFg }};border-radius:12px;padding:9px 13px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-shrink:0;transition:background .3s,border-color .3s,color .3s;animation:{{ offBannerAnim }};">
+        <span style="width:7px;height:7px;border-radius:50%;background:{{ barDot }};animation:pulse 1.6s infinite;flex-shrink:0;transition:background .3s;"></span>{{ offlineLine }}
       </div>
     </sc-if>
 
@@ -161,7 +173,7 @@
       <sc-if value="{{ isScan }}" hint-placeholder-val="{{ false }}">
         <div style="flex:1;display:flex;flex-direction:column;">
           <div style="flex:1;position:relative;border-radius:20px;overflow:hidden;background:radial-gradient(420px 300px at 50% 40%, #26262B, #121214);">
-            <div style="position:absolute;left:10%;right:10%;height:2px;top:7%;background:linear-gradient(90deg,transparent,rgba(232,128,36,.85),transparent);box-shadow:0 0 18px rgba(232,128,36,.55);animation:{{ sweepAnim }};"></div>
+            <div class="ws-sweep" style="position:absolute;left:10%;right:10%;height:2px;top:7%;background:linear-gradient(90deg,transparent,rgba(232,128,36,.85),transparent);box-shadow:0 0 18px rgba(232,128,36,.55);animation:{{ sweepAnim }};"></div>
             <div style="position:absolute;top:22px;left:22px;width:26px;height:26px;border-top:3.5px solid #E88024;border-inline-start:3.5px solid #E88024;border-start-start-radius:8px;"></div>
             <div style="position:absolute;top:22px;right:22px;width:26px;height:26px;border-top:3.5px solid #E88024;border-inline-end:3.5px solid #E88024;border-start-end-radius:8px;"></div>
             <div style="position:absolute;bottom:22px;left:22px;width:26px;height:26px;border-bottom:3.5px solid #E88024;border-inline-start:3.5px solid #E88024;border-end-start-radius:8px;"></div>
@@ -209,7 +221,7 @@
                   <div style="display:flex;justify-content:center;align-items:center;gap:13px;flex-wrap:wrap;max-width:265px;animation:{{ gridSettleAnim }};">
                     <sc-for list="{{ stampCells }}" as="stc" hint-placeholder-count="8">
                       <span style="position:relative;display:inline-block;line-height:0;transform:translateY({{ stc.dy }});animation:{{ stc.enter }};">
-                        <span style="position:absolute;inset:{{ stc.haloInset }};border-radius:50%;background:radial-gradient(circle, rgba(232,128,36,.42), rgba(232,128,36,0) 68%);opacity:0;animation:{{ stc.halo }};"></span>
+                        <span class="ws-halo" style="position:absolute;inset:{{ stc.haloInset }};border-radius:50%;background:radial-gradient(circle, rgba(232,128,36,.42), rgba(232,128,36,0) 68%);opacity:0;animation:{{ stc.halo }};"></span>
                         <span style="position:relative;display:inline-block;transform:rotate({{ stc.rot }});">
                           <sc-if value="{{ stc.isArt }}" hint-placeholder-val="{{ true }}">
                             <img src="{{ stc.img }}" alt="" style="display:block;width:{{ stc.size }};height:{{ stc.size }};object-fit:contain;opacity:{{ stc.op }};filter:{{ stc.shadow }};animation:{{ stc.anim }};">
@@ -443,13 +455,16 @@
             <div style="text-align:center;color:#8E8C96;font-size:12px;padding:36px 10px;line-height:1.5;">{{ t.queueEmptyLine }}</div>
           </sc-if>
           <sc-for list="{{ queueItems }}" as="qi" hint-placeholder-count="4">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:12px;padding:10px 13px;flex-shrink:0;animation:{{ qi.anim }};">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:{{ qi.rowBg }};border:1px solid {{ qi.rowBr }};border-radius:12px;padding:10px 13px;flex-shrink:0;opacity:{{ qi.rowOp }};transition:background .3s,border-color .3s,opacity .3s;animation:{{ qi.anim }};">
               <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ qi.member }}</div><div style="font-size:10.5px;color:#9B99A3;">{{ qi.action }}</div></div>
+              <sc-if value="{{ qi.done }}" hint-placeholder-val="{{ false }}">
+                <span style="width:19px;height:19px;border-radius:50%;background:#2FAE66;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;animation:{{ qi.tickAnim }};">✓</span>
+              </sc-if>
               <div style="font-size:10px;color:#8E8C96;white-space:nowrap;">{{ qi.time }}</div>
             </div>
           </sc-for>
         </div>
-        <div style="background:rgba(240,169,43,.1);border:1px solid rgba(240,169,43,.35);color:#F0A92B;border-radius:12px;padding:11px 14px;font-size:11.5px;font-weight:700;text-align:center;flex-shrink:0;">{{ t.queueSyncNote }}</div>
+        <div style="background:rgba(240,169,43,.1);border:1px solid rgba(240,169,43,.35);color:#F0A92B;border-radius:12px;padding:11px 14px;font-size:11.5px;font-weight:700;text-align:center;flex-shrink:0;">{{ queueNote }}</div>
       </div>
     </sc-if>
 
@@ -457,16 +472,20 @@
       <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.94);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px;animation:flashIn .3s both;">
         <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ t.pinTitle }}</div>
         <div style="font-size:11.5px;color:#9B99A3;text-align:center;max-width:270px;line-height:1.5;">{{ t.pinSub }}</div>
-        <div style="position:relative;display:flex;gap:12px;align-items:center;justify-content:center;padding:10px 18px;">
+        <div style="position:relative;display:flex;gap:12px;align-items:center;justify-content:center;padding:10px 18px;animation:{{ pinShake }};">
           <div style="position:absolute;inset:0;border-radius:999px;border:2px solid #2FAE66;opacity:0;animation:{{ pinRippleAnim }};"></div>
           <sc-for list="{{ pinDots }}" as="pd" hint-placeholder-count="4"><span style="width:14px;height:14px;border-radius:50%;background:{{ pd.bg }};border:1.5px solid {{ pd.br }};transition:background .15s,border-color .15s;animation:{{ pd.anim }};"></span></sc-for>
         </div>
+        <sc-if value="{{ pinBad }}" hint-placeholder-val="{{ false }}">
+          <div style="color:#E2563A;font-size:11.5px;font-weight:800;text-align:center;animation:fadeUp .28s cubic-bezier(.22,.61,.36,1) both;">{{ pinBadLine }}</div>
+        </sc-if>
         <div style="display:grid;grid-template-columns:repeat(3,64px);gap:10px;margin-top:2px;">
           <sc-for list="{{ pinKeys }}" as="pk" hint-placeholder-count="9">
             <div onClick="{{ pk.tap }}" class="ws-key" style="cursor:pointer;height:52px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:18px;">{{ pk.k }}</div>
           </sc-for>
         </div>
-        <div onClick="{{ pinCancel }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:4px;padding:4px 10px;">{{ t.cancel }}</div>
+        <div style="background:rgba(232,128,36,.1);border:1px dashed rgba(232,128,36,.4);color:#F09A4D;border-radius:999px;padding:5px 13px;font-size:10.5px;font-weight:800;letter-spacing:.03em;">{{ t.pinHint }}</div>
+        <div onClick="{{ pinCancel }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;padding:4px 10px;">{{ t.cancel }}</div>
       </div>
     </sc-if>
 
@@ -576,9 +595,10 @@
         <div onClick="{{ setLangAr }}" class="ws-press" style="cursor:pointer;border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:800;background:{{ arBg }};color:{{ arFg }};border:1px solid {{ arBr }};font-family:'IBM Plex Sans Arabic',sans-serif;">عربي</div>
       </div>
     </div>
-    <div style="display:flex;gap:10px;">
-      <a href="Wasla Dashboard.dc.html" style="flex:1;display:block;background:#26262B;color:#F4F2EE;border-radius:14px;padding:13px 10px;font-size:12px;font-weight:700;text-align:center;">← Dashboard</a>
-      <a href="Wasla Customer.dc.html" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#241C16;border-radius:14px;padding:13px 10px;font-size:12px;font-weight:700;text-align:center;">Customer side →</a>
+    <div style="display:flex;gap:8px;">
+      <a href="Wasla Dashboard.dc.html" class="ws-tile" style="flex:1;display:block;background:#26262B;color:#F4F2EE;border:1.5px solid #26262B;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">← Dashboard</a>
+      <a href="Wasla Demo.dc.html" class="ws-tile" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#241C16;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">Demo hub →</a>
+      <a href="Wasla Customer.dc.html" class="ws-tile" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#241C16;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">Customer →</a>
     </div>
     <div onClick="{{ resetDemo }}" class="ws-link" style="cursor:pointer;text-align:center;border:1px dashed {{ resetBr }};color:{{ resetFg }};border-radius:12px;padding:9px 10px;font-size:11px;font-weight:700;">{{ resetLabel }}</div>
   </div>
@@ -586,7 +606,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;offlineStart&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
 class Component extends DCLogic {
-  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinTaps: 0, flash: null, flashOut: false, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ', ramp: 1, scanSeq: 0, stampSeq: 0, amtSeq: 0, chSeq: 0, chFrom: 0, staffSeq: 0, vipSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false };
+  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, flash: null, flashOut: false, syncing: false, syncDone: 0, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ', ramp: 1, scanSeq: 0, stampSeq: 0, amtSeq: 0, chSeq: 0, chFrom: 0, staffSeq: 0, vipSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false };
 
   // ────────────────────────────────────────────────────────────────────────────
   //  language · the map is real {en, ar} pairs, never a reordered concatenation
@@ -608,6 +628,7 @@ class Component extends DCLogic {
       nextCustomer: { en: 'Next customer', ar: 'الزبون التالي' },
       pinTitle: { en: 'Manager PIN', ar: 'رمز المدير' },
       pinSub: { en: 'Redeems ask for a PIN — collections never do.', ar: 'الاستبدال يطلب رمزاً — أما الجمع فلا.' },
+      pinHint: { en: 'Demo PIN 1234', ar: 'رمز العرض 1234' },
       cancel: { en: 'Cancel', ar: 'إلغاء' },
       shiftDone: { en: 'Shift summary', ar: 'ملخص المناوبة' },
       shiftNote: { en: 'The count starts fresh for the next teammate — the history stays on the dashboard.', ar: 'العدّاد يبدأ من الصفر للزميل التالي — والسجل الكامل يبقى في لوحة التحكم.' },
@@ -653,6 +674,32 @@ class Component extends DCLogic {
   //  session persistence · ONE blob under ONE key, cleared only by "Reset demo"
   // ────────────────────────────────────────────────────────────────────────────
   scanKey() { return 'wasla_demo_scanner_state'; }
+  // ── the live wire · one shared key every Wasla surface writes to and the dashboard reads ──
+  //    { at, kind: 'earn'|'reward'|'join'|'redeem'|'renew'|'referral', who, what, card }
+  //    newest-first, capped at 20. Written in ENGLISH regardless of the till's language: this is a
+  //    wire format read by another surface with its own toggle, so a mixed-language feed would be
+  //    the scanner leaking its UI state into someone else's screen.
+  liveKey() { return 'wasla_demo_live_events'; }
+  /** Read-modify-write, wrapped so a full/blocked/corrupt store can never break the till. */
+  pushLive(kind, who, what, card) {
+    try {
+      let arr = [];
+      const raw = this._lsGet(this.liveKey());
+      if (raw) { try { const p = JSON.parse(raw); if (Array.isArray(p)) arr = p.filter(e => e && typeof e === 'object'); } catch (e) { arr = []; } }
+      arr.unshift({ at: Date.now(), kind, who, what, card });
+      this._lsSet(this.liveKey(), JSON.stringify(arr.slice(0, 20)));
+    } catch (e) {}
+  }
+  /** The till's signature on every event — who served it and where. */
+  liveBy() { return ' · by ' + String(this.state.staffName || '').split(' ')[0] + ' — Rainbow St'; }
+  /** Builds the event for an action but does NOT write it. Online actions push immediately; an
+      offline action rides in the queue and is pushed when the sync actually reaches the server —
+      a till with no connection cannot put anything on a live feed. */
+  liveFor(scen, kind, phrase) {
+    const S = this.scenInfo(scen);
+    return { kind, who: S.m[0], what: S.m[0] + ' ' + phrase + this.liveBy(), card: S.card };
+  }
+  emitLive(e) { if (e) this.pushLive(e.kind, e.who, e.what, e.card); }
   _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   _lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   /** Debounced — every mutating action calls it; a burst of taps costs one write. */
@@ -712,12 +759,13 @@ class Component extends DCLogic {
   resetScanner() {
     clearTimeout(this._sv); clearTimeout(this._rt); clearTimeout(this._wt);
     try { localStorage.removeItem(this.scanKey()); } catch (e) {}
+    try { localStorage.removeItem(this.liveKey()); } catch (e) {}
     this.__restored = false;
     const h = this.__host || this;
     h.__wsWelcomed = true;   // a reset is not a return — no welcome-back on the way out
     h.__wsRampKey = null;
     this.setState({ lang: 'en', screen: 'idle', scenario: null, resolving: false, mode: 'collect',
-      stamps: 6, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinTaps: 0,
+      stamps: 6, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, syncing: false, syncDone: 0,
       flash: null, flashOut: false, offline: false, queued: 0, queueLog: [], queueSheetOpen: false,
       cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9,
       manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null,
@@ -771,7 +819,7 @@ class Component extends DCLogic {
   componentWillUnmount() {
     clearTimeout(this._pt); clearTimeout(this._ft); clearTimeout(this._fo); clearTimeout(this._s1);
     clearTimeout(this._s2); clearTimeout(this._ut); clearTimeout(this._mt); clearTimeout(this._sv);
-    clearTimeout(this._wt); clearTimeout(this._rt); clearTimeout(this._pk);
+    clearTimeout(this._wt); clearTimeout(this._rt); clearTimeout(this._pk); clearTimeout(this._sy);
     const h = this.__host || this;
     if (h.__wsRaf) { try { cancelAnimationFrame(h.__wsRaf); } catch (e) {} h.__wsRaf = null; }
     h.__wsRampKey = null;
@@ -779,7 +827,7 @@ class Component extends DCLogic {
   poke() { clearTimeout(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = setTimeout(() => this.setState({ settled: true }), 2600); }
   componentDidUpdate() {
     const s = this.state;
-    const cur = [s.screen, s.scenario, s.mode, s.stamps, s.amount, s.selRw, s.cbSel, s.couponDone, !!s.pin, !!s.flash, s.offline, s.shiftOpen, s.lang, s.resolving, s.pts, s.cbBal, s.rTier, s.chVisits, s.chDone, s.handoverPick, s.queueSheetOpen, s.manualOpen, s.staffName].join('|');
+    const cur = [s.screen, s.scenario, s.mode, s.stamps, s.amount, s.selRw, s.cbSel, s.couponDone, !!s.pin, s.pinDigits, s.pinErr, !!s.flash, s.offline, s.syncing, s.syncDone, s.shiftOpen, s.lang, s.resolving, s.pts, s.cbBal, s.rTier, s.chVisits, s.chDone, s.handoverPick, s.queueSheetOpen, s.manualOpen, s.staffName].join('|');
     if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
     this._lastSig = cur;
   }
@@ -797,7 +845,7 @@ class Component extends DCLogic {
   scanTo(scenario) {
     clearTimeout(this._ut); clearTimeout(this._s1); clearTimeout(this._s2);
     this.setState(s => ({ screen: 'scan', resolving: false, scenario, mode: scenario === 'coupon' ? 'redeem' : 'collect',
-      amount: '', selRw: null, cbSel: null, pin: null, pinTaps: 0, undo: null,
+      amount: '', selRw: null, cbSel: null, pin: null, pinDigits: '', pinTries: 0, pinErr: false, undo: null,
       scanSeq: s.scanSeq + 1, stampSeq: 0, amtSeq: 0,
       chFrom: 0, chSeq: s.chSeq + 1, vipClimb: false, vipSeq: s.vipSeq + 1 }));
     this._s1 = setTimeout(() => this.setState({ resolving: true }), 450);
@@ -807,15 +855,35 @@ class Component extends DCLogic {
       A.logAction(scenario, 'scan');
     }, 1400);
   }
-  askPin(tag) { this.setState({ pin: tag, pinTaps: 0 }); }
+  askPin(tag) { clearTimeout(this._pk); this.setState({ pin: tag, pinDigits: '', pinTries: 0, pinErr: false }); }
+  demoPin() { return '1234'; }
+  /** Three tries per sheet opening. A wrong code shakes and clears; the third closes the sheet with
+      a refusal rather than letting the pad be brute-forced in front of the customer. */
+  checkPin() {
+    const st = this.state;
+    if (!st.pin || st.pinDigits.length !== 4) return;
+    if (st.pinDigits === this.demoPin()) { this.finishPin(); return; }
+    const tries = st.pinTries + 1;
+    if (tries >= 3) {
+      this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false });
+      this.flashNow('✕', '#E2563A', this.L('Ask the manager', 'اسأل المدير'), this.L('Three wrong codes — this redeem is locked until a manager unlocks it.', 'ثلاثة رموز خاطئة — هذا الاستبدال مقفل حتى يفتحه المدير.'));
+      return;
+    }
+    this.setState({ pinTries: tries, pinErr: true });
+    clearTimeout(this._pk);
+    this._pk = setTimeout(() => {
+      const A = (this.__host && this.__host.logic) || this;
+      if (A.state.pin) A.setState({ pinDigits: '', pinErr: false });
+    }, 820);
+  }
   finishPin() {
     const st = this.state, tag = st.pin, scen = st.scenario;
-    this.setState({ pin: null, pinTaps: 0 });
-    if (tag === 'stamps') { this.setState({ stamps: 0, sRewards: st.sRewards + 1, mode: 'collect', stampSeq: 0 }); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L('Free drink — a fresh card is already counting.', 'مشروب مجاني — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward'); }
-    if (tag === 'cash') { const v = st.cbSel; const nb = +(st.cbBal - v).toFixed(2); this.setState({ cbBal: nb, cbSel: null }); this.flashNow('✓', '#2FAE66', this.L('JOD ' + v.toFixed(2) + ' off the bill', 'خُصم ' + v.toFixed(2) + ' ديناراً من الفاتورة'), this.L('New balance JOD ' + nb.toFixed(2) + ' — it spends like money.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — يُصرف كالنقود.')); this.logAction(scen, 'redCash', v); }
-    if (tag === 'pts') { const i = st.selRw; const r = this.rungs()[i]; const np = st.pts - r.cost; this.setState({ pts: np, selRw: null }); this.flashNow('✓', '#2FAE66', this.rungName(i), this.L(r.cost + ' pts spent · ' + np + ' left.', 'صُرفت ' + r.cost + ' نقطة · بقي ' + np + ' نقطة.')); this.logAction(scen, 'redPts', i); }
-    if (tag === 'coupon') { this.setState({ couponDone: true }); this.flashNow('1×', '#2FAE66', this.L('The dessert is theirs', 'الحلوى من نصيبها'), this.L('The coupon is spent — it can never fire twice.', 'الكوبون استُهلك — ولا يمكن أن يُصرف مرتين.')); this.logAction(scen, 'redCoupon'); }
-    if (tag === 'renew') { this.setState({ renewedMembership: true }); this.flashNow('✓', '#2FAE66', this.L('Membership renewed', 'تم تجديد الاشتراك'), this.L('Active again — same pass, fresh year.', 'فعّال من جديد — نفس البطاقة وسنة جديدة.')); this.logAction(scen, 'renew'); }
+    this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false });
+    if (tag === 'stamps') { this.setState({ stamps: 0, sRewards: st.sRewards + 1, mode: 'collect', stampSeq: 0 }); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L('Free drink — a fresh card is already counting.', 'مشروب مجاني — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward'); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free drink')); }
+    if (tag === 'cash') { const v = st.cbSel; const nb = +(st.cbBal - v).toFixed(2); this.setState({ cbBal: nb, cbSel: null }); this.flashNow('✓', '#2FAE66', this.L('JOD ' + v.toFixed(2) + ' off the bill', 'خُصم ' + v.toFixed(2) + ' ديناراً من الفاتورة'), this.L('New balance JOD ' + nb.toFixed(2) + ' — it spends like money.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — يُصرف كالنقود.')); this.logAction(scen, 'redCash', v); this.emitLive(this.liveFor(scen, 'reward', 'redeemed JOD ' + v.toFixed(2) + ' off the bill')); }
+    if (tag === 'pts') { const i = st.selRw; const r = this.rungs()[i]; const np = st.pts - r.cost; this.setState({ pts: np, selRw: null }); this.flashNow('✓', '#2FAE66', this.rungName(i), this.L(r.cost + ' pts spent · ' + np + ' left.', 'صُرفت ' + r.cost + ' نقطة · بقي ' + np + ' نقطة.')); this.logAction(scen, 'redPts', i); this.emitLive(this.liveFor(scen, 'reward', 'redeemed ' + this.rungs()[i].en)); }
+    if (tag === 'coupon') { this.setState({ couponDone: true }); this.flashNow('1×', '#2FAE66', this.L('The dessert is theirs', 'الحلوى من نصيبها'), this.L('The coupon is spent — it can never fire twice.', 'الكوبون استُهلك — ولا يمكن أن يُصرف مرتين.')); this.logAction(scen, 'redCoupon'); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free dessert')); }
+    if (tag === 'renew') { this.setState({ renewedMembership: true }); this.flashNow('✓', '#2FAE66', this.L('Membership renewed', 'تم تجديد الاشتراك'), this.L('Active again — same pass, fresh year.', 'فعّال من جديد — نفس البطاقة وسنة جديدة.')); this.logAction(scen, 'renew'); this.emitLive(this.liveFor(scen, 'renew', 'renewed their membership')); }
     this.saveScan();
   }
   rungs() { return [{ en: 'Free espresso', ar: 'إسبريسو مجاني', cost: 250 }, { en: 'A dozen ka’ak', ar: 'دزينة كعك', cost: 500 }]; }
@@ -956,7 +1024,47 @@ class Component extends DCLogic {
     return this.L(m + 'm ago', 'قبل ' + m + ' د');
   }
   logAction(scen, k, v) { this.setState(s => ({ sessionLog: [{ scen, k, v, ts: Date.now() }, ...s.sessionLog].slice(0, 20) })); this.saveScan(); }
-  pushQueue(scen, k, v) { this.setState(s => ({ queueLog: [{ scen, k, v, ts: Date.now() }, ...s.queueLog].slice(0, 20) })); this.saveScan(); }
+  /** A queued row carries the live event it will fire once it actually reaches the server. */
+  pushQueue(scen, k, v, live) { this.setState(s => ({ queueLog: [{ scen, k, v, ts: Date.now(), live }, ...s.queueLog].slice(0, 20) })); this.saveScan(); }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  offline sync · the queue drains one row at a time, not in a blink
+  // ────────────────────────────────────────────────────────────────────────────
+  /** Ticks one queued row green every 500ms, then settles. Armed from a click handler (the host is
+      already installed there, so no renderVals gymnastics), and every arm goes through this one
+      method so componentWillUnmount has a single timer to sweep. */
+  syncStep() {
+    clearTimeout(this._sy);
+    this._sy = setTimeout(() => {
+      const A = (this.__host && this.__host.logic) || this;
+      const s = A.state;
+      if (!s.syncing) return;                       // interrupted — stopSync already tidied up
+      const done = s.syncDone + 1;
+      if (done < s.queueLog.length) { A.setState({ syncDone: done }); A.syncStep(); return; }
+      // last row: flush the deferred events oldest-first so the newest lands on top of the feed
+      const rows = s.queueLog.slice();
+      A.setState({ syncDone: rows.length });
+      A._sy = setTimeout(() => {
+        const B = (A.__host && A.__host.logic) || A;
+        if (!B.state.syncing) return;
+        rows.slice().reverse().forEach(r => B.emitLive(r.live));
+        B.setState({ syncing: false, syncDone: 0, queued: 0, queueLog: [], queueSheetOpen: false });
+        B.flashNow('✓', '#2FAE66', B.L('All caught up', 'تمت المزامنة'), B.L(rows.length + (rows.length === 1 ? ' collection' : ' collections') + ' synced — nothing left waiting.', 'تمت مزامنة ' + rows.length + ' عملية — لم يبقَ شيء بالانتظار.'));
+      }, 520);
+    }, 500);
+  }
+  /** Going offline mid-sync: the rows already ticked really did land, so they are flushed and
+      dropped; the rest stay queued for the next reconnect. */
+  stopSync(goingOffline) {
+    clearTimeout(this._sy);
+    const s = this.state;
+    if (!s.syncing) return;
+    const sent = s.queueLog.slice(0, s.syncDone);
+    const left = s.queueLog.slice(s.syncDone);
+    sent.slice().reverse().forEach(r => this.emitLive(r.live));
+    this.setState({ syncing: false, syncDone: 0, queueLog: left, queued: left.length, queueSheetOpen: goingOffline ? false : s.queueSheetOpen });
+    this.saveScan();
+  }
   staffList() { return [{ name: 'Ahmad Zoubi', ar: 'أحمد الزعبي', initials: 'AZ' }, { name: 'Rasha Kilani', ar: 'رشا كيلاني', initials: 'RK' }]; }
   pickStaff(idx) {
     clearTimeout(this._ut);
@@ -1061,16 +1169,40 @@ class Component extends DCLogic {
       toIdle: () => { clearTimeout(this._ut); this.setState({ screen: 'idle', scenario: null, undo: null }); },
       // ── offline ──
       offline: st.offline,
-      offlineLine: this.L('Offline — ' + st.queued + (st.queued === 1 ? ' collection' : ' collections') + ' queued · redeems locked', 'دون إنترنت — ' + st.queued + ' عملية جمع بالانتظار · الاستبدال مقفل'),
+      // the bar stays up through the sync so the drain is visible, then clears itself
+      showOfflineBar: st.offline || st.syncing,
+      barBg: st.syncing ? 'rgba(47,174,102,.14)' : 'rgba(240,169,43,.14)',
+      barBr: st.syncing ? 'rgba(47,174,102,.4)' : 'rgba(240,169,43,.4)',
+      barFg: st.syncing ? '#7BD8A5' : '#F0A92B',
+      barDot: st.syncing ? '#2FAE66' : '#F0A92B',
+      offlineLine: st.syncing
+        ? this.L('Syncing ' + Math.max(0, st.queueLog.length - st.syncDone) + '…', 'جارٍ المزامنة — ' + Math.max(0, st.queueLog.length - st.syncDone) + ' متبقية')
+        : this.L('Offline — ' + st.queued + (st.queued === 1 ? ' collection' : ' collections') + ' queued · redeems locked', 'دون إنترنت — ' + st.queued + ' عملية جمع بالانتظار · الاستبدال مقفل'),
       offBannerAnim: AN('slideDown', '.35s'),
       offSwSub: 'Collections queue · redemptions lock',
-      toggleOffline: () => { this.setState({ offline: !st.offline, queued: st.offline ? 0 : st.queued, queueLog: st.offline ? [] : st.queueLog, queueSheetOpen: false }); this.saveScan(); },
+      toggleOffline: () => {
+        if (st.syncing) { this.stopSync(true); this.setState({ offline: true }); this.saveScan(); return; }
+        if (!st.offline) { this.setState({ offline: true, queueSheetOpen: false }); this.saveScan(); return; }
+        // back online: the queue drains as a moment, and the sheet opens so it can be watched
+        if (st.queueLog.length) { this.setState({ offline: false, syncing: true, syncDone: 0, queueSheetOpen: true }); this.syncStep(); }
+        else this.setState({ offline: false, queued: 0, queueLog: [], queueSheetOpen: false });
+        this.saveScan();
+      },
       offSwBg: st.offline ? '#F0A92B' : '#D8D0C2', offSwKnob: st.offline ? '21px' : '3px',
       queueSheetOpen: st.queueSheetOpen,
       openQueueSheet: () => this.setState({ queueSheetOpen: true }),
       closeQueueSheet: () => this.setState({ queueSheetOpen: false }),
       queueEmpty: st.queueLog.length === 0,
-      queueItems: st.queueLog.slice(0, 6).map((q, i) => ({ member: this.memberName(q.scen), action: this.actionText(q.k, q.v), time: this.timeAgo(q), anim: AN('fadeUp', '.32s', (0.04 + 0.05 * i) + 's') })),
+      queueItems: st.queueLog.slice(0, 6).map((q, i) => {
+        const done = st.syncing && i < st.syncDone;
+        return { member: this.memberName(q.scen), action: this.actionText(q.k, q.v), time: this.timeAgo(q),
+          anim: AN('fadeUp', '.32s', (0.04 + 0.05 * i) + 's'),
+          done, tickAnim: done ? 'popIn .3s cubic-bezier(.22,.61,.36,1) both' : 'none',
+          rowBr: done ? 'rgba(47,174,102,.4)' : 'rgba(244,242,238,.08)',
+          rowBg: done ? 'rgba(47,174,102,.07)' : '#1B1B1F',
+          rowOp: (st.syncing && !done) ? '.55' : '1' };
+      }),
+      queueNote: st.syncing ? this.L('Syncing now — one at a time, exactly as the till does it.', 'جارٍ المزامنة الآن — واحدة تلو الأخرى، تماماً كما يفعل الصندوق.') : t.queueSyncNote,
       // ── language ──
       langSubLine: 'Flips the phone to Arabic-first RTL',
       enBg: EN ? '#E88024' : 'transparent', enFg: EN ? '#FFFFFF' : '#93887A', enBr: EN ? '#E88024' : '#E7E0D5',
@@ -1139,7 +1271,8 @@ class Component extends DCLogic {
             : (n >= st.goal ? this.L('Full card! The reward is ready to redeem.', 'اكتملت البطاقة! المكافأة جاهزة للاستبدال.')
               : this.L(SCEN.m[0].split(' ')[0] + ' sees it on her lock screen right now.', SCEN.m[1].split(' ')[0] + ' ترى الختم على شاشة هاتفها الآن.')));
         this.logAction(scen, 'stamp');
-        if (st.offline) this.pushQueue(scen, 'qStamp');
+        const ev = this.liveFor(scen, 'earn', 'earned a stamp');
+        if (st.offline) this.pushQueue(scen, 'qStamp', undefined, ev); else this.emitLive(ev);
         this.saveScan();
       },
       stampsReady: full, stampsNotReady: !full,
@@ -1174,14 +1307,16 @@ class Component extends DCLogic {
           this.armUndo('cash', back, st.offline);
           this.flashNow('✓', '#2FAE66', this.L('+ JOD ' + back.toFixed(2), '+ ' + back.toFixed(2) + ' ديناراً'), st.offline ? this.L('Queued for sync.', 'محفوظ للمزامنة.') : this.L('New balance JOD ' + nb.toFixed(2) + ' — already on his pass.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — على بطاقته فوراً.'));
           this.logAction(scen, 'colCash', back.toFixed(2));
-          if (st.offline) this.pushQueue(scen, 'qCash', back.toFixed(2));
+          const ev = this.liveFor(scen, 'earn', 'earned JOD ' + back.toFixed(2) + ' cashback');
+          if (st.offline) this.pushQueue(scen, 'qCash', back.toFixed(2), ev); else this.emitLive(ev);
         } else {
           const add = Math.round(amt * 10), np = st.pts + add;
           this.setState(s => ({ pts: np, amount: '', amtSeq: 0, queued: s.offline ? s.queued + 1 : s.queued }));
           this.armUndo('pts', add, st.offline);
           this.flashNow('✓', '#2FAE66', this.L('+ ' + add + ' pts', '+ ' + add + ' نقطة'), st.offline ? this.L('Queued for sync.', 'محفوظ للمزامنة.') : this.L('Balance ' + np + ' pts.', 'الرصيد ' + np + ' نقطة.'));
           this.logAction(scen, 'colPts', add);
-          if (st.offline) this.pushQueue(scen, 'qPts', add);
+          const ev = this.liveFor(scen, 'earn', 'earned ' + add + ' points');
+          if (st.offline) this.pushQueue(scen, 'qPts', add, ev); else this.emitLive(ev);
         }
         this.saveScan();
       },
@@ -1265,16 +1400,16 @@ class Component extends DCLogic {
       ).map((p, i) => ({ p, anim: AN('fadeUp', '.36s', (0.2 + 0.06 * i) + 's') })),
       vipBtnLabel: this.L('✓ Check in', '✓ تسجيل زيارة'),
       vipCheckin: () => {
-        if (tierIdx) { this.flashNow('★', '#E8B824', this.L('Visit logged', 'سُجّلت الزيارة'), this.L('Rania keeps every Gold perk.', 'رانيا تحتفظ بكل مزايا الذهبية.')); this.logAction(scen, 'visit'); this.saveScan(); return; }
+        if (tierIdx) { this.flashNow('★', '#E8B824', this.L('Visit logged', 'سُجّلت الزيارة'), this.L('Rania keeps every Gold perk.', 'رانيا تحتفظ بكل مزايا الذهبية.')); this.logAction(scen, 'visit'); this.emitLive(this.liveFor(scen, 'earn', 'checked in — Gold')); this.saveScan(); return; }
         const v = st.rVisits + 1;
         if (v >= GOLD_AT) {
           this.setState(s => ({ rVisits: v, rTier: 'Gold', vipClimb: true, vipFromPct: vipTo, vipSeq: s.vipSeq + 1 }));
           this.flashNow('★', '#E8B824', this.L('SILVER → GOLD', 'فضية ← ذهبية'), this.L('The tier-up lands on her pass with a little ceremony.', 'الترقية تصل إلى بطاقتها باحتفال صغير.'));
-          this.logAction(scen, 'tierUp');
+          this.logAction(scen, 'tierUp'); this.emitLive(this.liveFor(scen, 'earn', 'checked in — Gold'));
         } else {
           this.setState(s => ({ rVisits: v, vipSeq: s.vipSeq + 1, vipClimb: true, vipFromPct: vipTo }));
           this.flashNow('✓', '#2FAE66', this.L('Visit ' + v, 'الزيارة ' + v), this.L((GOLD_AT - v) + ' more to Gold.', 'بقي ' + (GOLD_AT - v) + ' للوصول إلى الذهبية.'));
-          this.logAction(scen, 'visit');
+          this.logAction(scen, 'visit'); this.emitLive(this.liveFor(scen, 'earn', 'checked in — Silver'));
         }
         this.saveScan();
       },
@@ -1337,13 +1472,25 @@ class Component extends DCLogic {
       // ── PIN ──
       pinOpen: !!st.pin,
       pinDots: [0, 1, 2, 3].map(i => ({
-        bg: i < st.pinTaps ? '#E88024' : 'transparent',
-        br: i < st.pinTaps ? '#E88024' : 'rgba(244,242,238,.4)',
-        anim: i === st.pinTaps - 1 ? 'dotPop .3s cubic-bezier(.22,.61,.36,1) both' : 'none'
+        bg: st.pinErr ? '#E2563A' : (i < st.pinDigits.length ? '#E88024' : 'transparent'),
+        br: st.pinErr ? '#E2563A' : (i < st.pinDigits.length ? '#E88024' : 'rgba(244,242,238,.4)'),
+        anim: (!st.pinErr && i === st.pinDigits.length - 1) ? 'dotPop .3s cubic-bezier(.22,.61,.36,1) both' : 'none'
       })),
-      pinRippleAnim: st.pinTaps >= 4 ? 'ringOut .45s cubic-bezier(.22,.61,.36,1) both' : 'none',
-      pinKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k => ({ k, tap: () => this.setState(s => { if (!s.pin || s.pinTaps >= 4) return null; const n = s.pinTaps + 1; if (n >= 4) { clearTimeout(this._pk); this._pk = setTimeout(() => this.finishPin(), 260); } return { pinTaps: n }; }) })),
-      pinCancel: () => { clearTimeout(this._pk); this.setState({ pin: null, pinTaps: 0 }); },
+      pinShake: st.pinErr ? 'shakeX .4s cubic-bezier(.22,.61,.36,1) both' : 'none',
+      pinRippleAnim: (!st.pinErr && st.pinDigits.length >= 4) ? 'ringOut .45s cubic-bezier(.22,.61,.36,1) both' : 'none',
+      pinBad: st.pinErr,
+      pinBadLine: st.pinTries === 1
+        ? this.L('Wrong code — 2 tries left', 'رمز خاطئ — بقيت محاولتان')
+        : this.L('Wrong code — 1 try left', 'رمز خاطئ — بقيت محاولة واحدة'),
+      pinKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k => ({ k, tap: () => {
+        this.setState(s => (!s.pin || s.pinErr || s.pinDigits.length >= 4) ? null : { pinDigits: s.pinDigits + k });
+        // setState here is synchronous (support.js __setLogicState), so this reads the new length
+        if (this.state.pin && !this.state.pinErr && this.state.pinDigits.length === 4) {
+          clearTimeout(this._pk);
+          this._pk = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.checkPin(); }, 260);
+        }
+      } })),
+      pinCancel: () => { clearTimeout(this._pk); this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false }); },
       // ── shift + handover ──
       staffName: st.staffName, staffAr: st.staffAr, staffInitials: st.staffInitials,
       endShift: () => this.setState({ shiftOpen: true, handoverPick: false }), shiftOpen: st.shiftOpen,
