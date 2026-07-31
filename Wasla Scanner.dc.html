@@ -14,21 +14,103 @@
   html,body{margin:0;padding:0;background:#F3EFE9;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#241C16;}
   a{color:#C96A14;text-decoration:none;} a:hover{color:#E88024;}
   *{box-sizing:border-box;}
+
+  /* ── entrances ── */
   @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
   @keyframes popIn{0%{opacity:0;transform:scale(.86);}60%{transform:scale(1.03);}100%{opacity:1;transform:scale(1);}}
-  @keyframes stampPop{0%{transform:scale(0) rotate(-30deg);}70%{transform:scale(1.3) rotate(6deg);}100%{transform:scale(1) rotate(0);}}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:none;}}
+  @keyframes cardMat{from{opacity:0;transform:scale(.955);}to{opacity:1;transform:none;}}
+  /* the punch · a stamp lands hard and settles, it does not grow into place. The rotation here is
+     a settle on top of the cell's own hand-stamped tilt, which lives on a parent so this can end
+     at rotate(0) without flattening it. */
+  @keyframes stampPunch{0%{transform:scale(1.35) rotate(-7deg);opacity:0;}18%{opacity:1;}55%{transform:scale(.95) rotate(2.5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
-  @keyframes scanLine{0%,100%{top:12%;}50%{top:84%;}}
-  @keyframes shimmer{0%{opacity:.45;}50%{opacity:.9;}100%{opacity:.45;}}
   @keyframes flashIn{0%{opacity:0;transform:scale(.8);}60%{transform:scale(1.05);}100%{opacity:1;transform:scale(1);}}
+  @keyframes flashOut{from{opacity:1;transform:none;}to{opacity:0;transform:scale(1.035);}}
   @keyframes shakeX{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+  /* one beat, not a loop — the refusal card flinches once and then holds still */
+  @keyframes nudge{0%{transform:translateX(0);}22%{transform:translateX(-7px);}46%{transform:translateX(6px);}72%{transform:translateX(-3px);}100%{transform:translateX(0);}}
+  @keyframes ringOut{0%{transform:scale(.66);opacity:.55;}100%{transform:scale(1.62);opacity:0;}}
+  @keyframes flood{from{transform:scale(.24);opacity:0;}to{transform:scale(1);opacity:1;}}
+  @keyframes dotPop{0%{transform:scale(.3);}62%{transform:scale(1.28);}100%{transform:scale(1);}}
+  /* the verdict mark and the challenge ring both draw themselves — each element carries its own
+     start/end offsets on --md / --rf / --rt so one keyframe serves every instance */
+  @keyframes drawMark{from{stroke-dashoffset:var(--md);}to{stroke-dashoffset:0;}}
+  @keyframes growW{from{width:0;}to{width:var(--gw);}}
+  /* the guidance line types itself in — mirrored so it still reads start→end in Arabic */
+  @keyframes typeInLtr{from{clip-path:inset(0 100% 0 0);}to{clip-path:inset(0 0 0 0);}}
+  @keyframes typeInRtl{from{clip-path:inset(0 0 0 100%);}to{clip-path:inset(0 0 0 0);}}
+
+  /* ── seeded pairs · a CSS animation only restarts when its NAME changes, so every beat that has
+        to repeat on demand alternates between two identical keyframes off a counter ── */
+  @keyframes sweepA{0%{top:7%;opacity:0;}12%{opacity:1;}86%{opacity:1;}100%{top:88%;opacity:0;}}
+  @keyframes sweepB{0%{top:7%;opacity:0;}12%{opacity:1;}86%{opacity:1;}100%{top:88%;opacity:0;}}
+  @keyframes bumpA{0%{transform:scale(.945);}58%{transform:scale(1.045);}100%{transform:scale(1);}}
+  @keyframes bumpB{0%{transform:scale(.945);}58%{transform:scale(1.045);}100%{transform:scale(1);}}
+  @keyframes pvA{0%{opacity:.3;transform:translateY(4px);}100%{opacity:1;transform:none;}}
+  @keyframes pvB{0%{opacity:.3;transform:translateY(4px);}100%{opacity:1;transform:none;}}
+  @keyframes gridA{0%{transform:scale(1);}42%{transform:scale(1.035);}100%{transform:scale(1);}}
+  @keyframes gridB{0%{transform:scale(1);}42%{transform:scale(1.035);}100%{transform:scale(1);}}
+  @keyframes ringA{from{stroke-dashoffset:var(--rf);}to{stroke-dashoffset:var(--rt);}}
+  @keyframes ringB{from{stroke-dashoffset:var(--rf);}to{stroke-dashoffset:var(--rt);}}
+  @keyframes climbA{from{width:var(--cf);}to{width:var(--ct);}}
+  @keyframes climbB{from{width:var(--cf);}to{width:var(--ct);}}
+  @keyframes nameA{from{opacity:0;transform:translateY(-9px);}to{opacity:1;transform:none;}}
+  @keyframes nameB{from{opacity:0;transform:translateY(-9px);}to{opacity:1;transform:none;}}
+
+  /* ── deliberate loops · the only motion that never stops ── */
+  @keyframes breathe{0%,100%{box-shadow:0 0 0 0 rgba(232,128,36,.26), inset 0 0 22px rgba(232,128,36,.05);}50%{box-shadow:0 0 0 15px rgba(232,128,36,0), inset 0 0 44px rgba(232,128,36,.15);}}
+  @keyframes nextGlow{0%,100%{opacity:.26;transform:scale(1);}50%{opacity:.6;transform:scale(1.12);}}
+  @keyframes sheen{0%{background-position:-140% 0;}100%{background-position:240% 0;}}
+
+  /* ── the hover / press kit · style-hover is inert in this runtime, so these are the real states.
+        Everything here is styled inline, so any property the kit must win back from an inline
+        declaration (or from a filled entrance animation) is marked !important. ── */
+  .ws-cta{transition:transform .2s cubic-bezier(.22,.61,.36,1),filter .2s,box-shadow .22s,background .22s,color .22s;}
+  .ws-cta:hover{transform:translateY(-2px) !important;filter:brightness(1.08);box-shadow:0 14px 26px rgba(0,0,0,.34);}
+  .ws-cta:active{transform:translateY(0) scale(.982) !important;filter:brightness(.95);}
+  .ws-key{transition:background .15s,border-color .15s,transform .12s cubic-bezier(.22,.61,.36,1);}
+  .ws-key:hover{background:#26262B !important;border-color:rgba(244,242,238,.2) !important;}
+  .ws-key:active{transform:scale(.9) !important;background:#34343D !important;}
+  .ws-press{transition:transform .16s cubic-bezier(.22,.61,.36,1),background .2s,border-color .2s,color .2s,box-shadow .2s;}
+  .ws-press:hover{border-color:rgba(232,128,36,.6) !important;}
+  .ws-press:active{transform:scale(.965) !important;}
+  .ws-tab{transition:background .2s,border-color .2s,color .2s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .ws-tab:hover{filter:brightness(1.25);}
+  .ws-tab:active{transform:scale(.97) !important;}
+  .ws-tile{transition:transform .2s cubic-bezier(.22,.61,.36,1),box-shadow .2s,border-color .2s,background .2s;}
+  .ws-tile:hover{transform:translateY(-2px) !important;border-color:#E88024 !important;box-shadow:0 10px 22px rgba(40,30,18,.12);}
+  .ws-tile:active{transform:translateY(0) scale(.99) !important;}
+  .ws-ghost{transition:color .2s,border-color .2s,background .2s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .ws-ghost:hover{color:#E88024 !important;border-color:#E88024 !important;}
+  .ws-ghost:active{transform:scale(.96) !important;}
+  .ws-x{transition:color .18s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .ws-x:hover{color:#F4F2EE !important;}
+  .ws-x:active{transform:scale(.85) !important;}
+  .ws-undo{transition:border-color .2s,color .2s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .ws-undo:hover{border-color:#E88024 !important;color:#F09A4D !important;}
+  .ws-undo:active{transform:scale(.95) !important;}
+  .ws-scan{transition:transform .22s cubic-bezier(.22,.61,.36,1),border-color .22s;animation:breathe 3.6s ease-in-out infinite;}
+  .ws-scan:hover{transform:scale(1.04);border-color:#E88024 !important;}
+  .ws-scan:active{transform:scale(.985);}
+  .ws-switch{transition:background .25s cubic-bezier(.22,.61,.36,1),box-shadow .22s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .ws-switch:hover{box-shadow:0 0 0 4px rgba(232,128,36,.13);}
+  .ws-switch:active{transform:scale(.95);}
+  .ws-knob{transition:inset-inline-start .25s cubic-bezier(.22,.61,.36,1),width .16s cubic-bezier(.22,.61,.36,1);}
+  .ws-switch:hover .ws-knob{width:20px;}
+  .ws-switch:active .ws-knob{width:23px;}
+  .ws-link{transition:color .18s,border-color .18s,background .18s;}
+  .ws-link:hover{color:#E2563A !important;border-color:rgba(226,86,58,.55) !important;background:rgba(226,86,58,.06) !important;}
+  .ws-shine{background-image:linear-gradient(100deg,#2A2A30 8%,#3B3B45 26%,#2A2A30 46%);background-size:240% 100%;animation:sheen 1.2s linear infinite;}
+  /* the disabled register — declared last so it wins the specificity tie against every rule above */
+  .ws-off,.ws-off:hover,.ws-off:active{transform:none !important;filter:none !important;box-shadow:none !important;}
 </style>
 </helmet>
-<div dir="{{ dir }}" style="min-height:100vh;background:radial-gradient(1200px 600px at 0% 0%, rgba(232,128,36,.07), transparent 60%), radial-gradient(1000px 500px at 100% 0%, rgba(40,38,34,.06), transparent 55%), #F3EFE9;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:34px;padding:34px 22px 60px;">
+<div dir="ltr" style="min-height:100vh;background:radial-gradient(1200px 600px at 0% 0%, rgba(232,128,36,.07), transparent 60%), radial-gradient(1000px 500px at 100% 0%, rgba(40,38,34,.06), transparent 55%), #F3EFE9;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:34px;padding:34px 22px 60px;">
 
-  <div style="width:402px;max-width:96vw;height:830px;border-radius:48px;border:11px solid #1B1B1F;box-shadow:0 34px 80px rgba(20,16,10,.38);overflow:hidden;background:#101013;display:flex;flex-direction:column;position:relative;color:#F4F2EE;">
+  <div dir="{{ dir }}" style="width:402px;max-width:96vw;height:830px;border-radius:48px;border:11px solid #1B1B1F;box-shadow:0 34px 80px rgba(20,16,10,.38);overflow:hidden;background:#101013;display:flex;flex-direction:column;position:relative;color:#F4F2EE;font-family:'Plus Jakarta Sans','IBM Plex Sans Arabic',system-ui,sans-serif;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 26px 6px;flex-shrink:0;">
-      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13.5px;">9:41</div>
+      <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:13.5px;">9:41</div>
       <div style="display:flex;align-items:center;gap:5px;">
         <span style="width:5px;height:5px;border-radius:50%;background:#F4F2EE;"></span>
         <span style="width:5px;height:5px;border-radius:50%;background:#F4F2EE;"></span>
@@ -37,8 +119,8 @@
     </div>
 
     <sc-if value="{{ offline }}" hint-placeholder-val="{{ false }}">
-      <div onClick="{{ openQueueSheet }}" style="cursor:pointer;margin:6px 14px 0;background:rgba(240,169,43,.14);border:1px solid rgba(240,169,43,.4);color:#F0A92B;border-radius:12px;padding:9px 13px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-shrink:0;">
-        <span style="width:7px;height:7px;border-radius:50%;background:#F0A92B;animation:pulse 1.6s infinite;"></span>{{ offlineLine }}
+      <div onClick="{{ openQueueSheet }}" class="ws-press" style="cursor:pointer;margin:6px 14px 0;background:rgba(240,169,43,.14);border:1px solid rgba(240,169,43,.4);color:#F0A92B;border-radius:12px;padding:9px 13px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-shrink:0;animation:{{ offBannerAnim }};">
+        <span style="width:7px;height:7px;border-radius:50%;background:#F0A92B;animation:pulse 1.6s infinite;flex-shrink:0;"></span>{{ offlineLine }}
       </div>
     </sc-if>
 
@@ -46,20 +128,20 @@
       <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}">
         <div style="flex:1;display:flex;flex-direction:column;animation:{{ enterAnim }};">
           <div style="display:flex;align-items:center;gap:11px;padding:4px 6px 18px;">
-            <div style="width:38px;height:38px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">{{ staffInitials }}</div>
-            <div style="min-width:0;">
+            <div style="width:38px;height:38px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;animation:{{ staffAvatarAnim }};">{{ staffInitials }}</div>
+            <div style="min-width:0;animation:{{ staffNameAnim }};">
               <div style="font-size:14px;font-weight:800;">{{ staffName }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#9B99A3;">{{ staffAr }}</span></div>
-              <div style="font-size:11px;color:#9B99A3;">Rainbow St · {{ scansToday }} scans today</div>
+              <div style="font-size:11px;color:#9B99A3;">{{ idleSubLine }}</div>
             </div>
-            <div onClick="{{ endShift }}" style="cursor:pointer;margin-inline-start:auto;border:1px solid rgba(244,242,238,.18);color:#9B99A3;font-size:10.5px;font-weight:700;border-radius:999px;padding:6px 12px;" style-hover="color:#F4F2EE;border-color:rgba(244,242,238,.4)">{{ t.endShift }}</div>
+            <div onClick="{{ endShift }}" class="ws-ghost" style="cursor:pointer;margin-inline-start:auto;border:1px solid rgba(244,242,238,.18);color:#9B99A3;font-size:10.5px;font-weight:700;border-radius:999px;padding:6px 12px;white-space:nowrap;">{{ t.endShift }}</div>
           </div>
           <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
-            <div onClick="{{ scanDefault }}" style="cursor:pointer;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #2A2A30, #1B1B1F);border:2.5px solid rgba(232,128,36,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:transform .2s,border-color .2s;" style-hover="transform:scale(1.04);border-color:#E88024">
+            <div onClick="{{ scanDefault }}" class="ws-scan" style="cursor:pointer;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #2A2A30, #1B1B1F);border:2.5px solid rgba(232,128,36,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
               <div style="width:44px;height:44px;border:3px solid #E88024;border-radius:11px;position:relative;"><div style="position:absolute;left:6px;right:6px;top:50%;height:2.5px;background:#E88024;"></div></div>
-              <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;">{{ t.ready }}</div>
-              <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11.5px;color:#9B99A3;">جاهز للمسح</div>
+              <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:16px;">{{ t.ready }}</div>
+              <div style="font-size:11.5px;color:#9B99A3;">{{ t.readyAlt }}</div>
             </div>
-            <div onClick="{{ openManual }}" style="cursor:pointer;border:1.5px solid rgba(244,242,238,.2);color:#F4F2EE;font-weight:700;font-size:12.5px;border-radius:999px;padding:11px 22px;" style-hover="border-color:#E88024;color:#E88024">{{ t.manual }}</div>
+            <div onClick="{{ openManual }}" class="ws-ghost" style="cursor:pointer;border:1.5px solid rgba(244,242,238,.2);color:#F4F2EE;font-weight:700;font-size:12.5px;border-radius:999px;padding:11px 22px;text-align:center;">{{ t.manual }}</div>
           </div>
           <div style="padding-top:14px;">
             <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;margin-bottom:9px;">{{ t.yourCards }}</div>
@@ -67,7 +149,7 @@
               <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(30,92,67,.25);border:1px solid rgba(47,174,102,.35);color:#7BD8A5;font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;"><span style="width:7px;height:7px;border-radius:50%;background:#2FAE66;"></span>Daraj Coffee</span>
               <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(27,36,64,.4);border:1px solid rgba(120,140,200,.3);color:#A9B6E0;font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;"><span style="width:7px;height:7px;border-radius:50%;background:#6E82C4;"></span>Layl Lounge</span>
             </div>
-            <div style="font-size:10.5px;color:#8E8C96;margin-top:9px;">{{ t.onlyYours }}</div>
+            <div style="font-size:10.5px;color:#8E8C96;margin-top:9px;line-height:1.55;">{{ t.onlyYours }}</div>
           </div>
         </div>
       </sc-if>
@@ -75,7 +157,7 @@
       <sc-if value="{{ isScan }}" hint-placeholder-val="{{ false }}">
         <div style="flex:1;display:flex;flex-direction:column;">
           <div style="flex:1;position:relative;border-radius:20px;overflow:hidden;background:radial-gradient(420px 300px at 50% 40%, #26262B, #121214);">
-            <div style="position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,rgba(232,128,36,.8),transparent);animation:scanLine 2.2s ease-in-out infinite;"></div>
+            <div style="position:absolute;left:10%;right:10%;height:2px;top:7%;background:linear-gradient(90deg,transparent,rgba(232,128,36,.85),transparent);box-shadow:0 0 18px rgba(232,128,36,.55);animation:{{ sweepAnim }};"></div>
             <div style="position:absolute;top:22px;left:22px;width:26px;height:26px;border-top:3.5px solid #E88024;border-inline-start:3.5px solid #E88024;border-start-start-radius:8px;"></div>
             <div style="position:absolute;top:22px;right:22px;width:26px;height:26px;border-top:3.5px solid #E88024;border-inline-end:3.5px solid #E88024;border-start-end-radius:8px;"></div>
             <div style="position:absolute;bottom:22px;left:22px;width:26px;height:26px;border-bottom:3.5px solid #E88024;border-inline-start:3.5px solid #E88024;border-end-start-radius:8px;"></div>
@@ -83,10 +165,10 @@
             <sc-if value="{{ resolving }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;left:18px;right:18px;bottom:18px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);border-radius:16px;padding:14px;animation:fadeUp .3s both;">
                 <div style="display:flex;align-items:center;gap:11px;">
-                  <div style="width:36px;height:36px;border-radius:50%;background:#2A2A30;animation:shimmer 1.2s infinite;"></div>
+                  <div class="ws-shine" style="width:36px;height:36px;border-radius:50%;flex-shrink:0;"></div>
                   <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
-                    <div style="height:11px;width:60%;border-radius:6px;background:#2A2A30;animation:shimmer 1.2s infinite;"></div>
-                    <div style="height:9px;width:40%;border-radius:6px;background:#2A2A30;animation:shimmer 1.2s .15s infinite;"></div>
+                    <div class="ws-shine" style="height:11px;width:60%;border-radius:6px;"></div>
+                    <div class="ws-shine" style="height:9px;width:40%;border-radius:6px;"></div>
                   </div>
                 </div>
                 <div style="font-size:10.5px;color:#9B99A3;margin-top:10px;">{{ t.resolving }}</div>
@@ -97,97 +179,110 @@
       </sc-if>
 
       <sc-if value="{{ isMember }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:1;display:flex;flex-direction:column;animation:{{ enterAnim }};">
-          <div style="display:flex;align-items:center;gap:10px;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:16px;padding:12px 14px;">
-            <div style="width:38px;height:38px;border-radius:50%;background:{{ scCardColor }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;flex-shrink:0;">{{ scMemberInitials }}</div>
+        <div style="flex:1;display:flex;flex-direction:column;animation:{{ matAnim }};">
+          <div style="display:flex;align-items:center;gap:10px;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:16px;padding:12px 14px;animation:{{ hdrAnim }};">
+            <div style="width:38px;height:38px;border-radius:50%;background:{{ scCardColor }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:14px;flex-shrink:0;">{{ scMemberInitials }}</div>
             <div style="min-width:0;flex:1;">
               <div style="font-size:14.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ scMemberName }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#9B99A3;font-size:12px;">{{ scMemberAr }}</span></div>
               <div style="font-size:11px;color:#9B99A3;">{{ scCardLine }}</div>
             </div>
-            <div onClick="{{ toIdle }}" style="cursor:pointer;color:#8E8C96;font-size:17px;padding:4px 6px;" style-hover="color:#F4F2EE">✕</div>
+            <div onClick="{{ toIdle }}" class="ws-x" style="cursor:pointer;color:#8E8C96;font-size:17px;padding:4px 6px;flex-shrink:0;">✕</div>
           </div>
 
           <sc-if value="{{ hasTabs }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;gap:8px;margin-top:12px;">
+            <div style="display:flex;gap:8px;margin-top:12px;animation:{{ tabsAnim }};">
               <sc-for list="{{ tabItems }}" as="tb" hint-placeholder-count="2">
-                <div onClick="{{ tb.go }}" style="cursor:pointer;flex:1;text-align:center;border-radius:12px;padding:11px 0;font-size:13px;font-weight:800;border:1.5px solid {{ tb.br }};background:{{ tb.bg }};color:{{ tb.fg }};transition:all .2s;">{{ tb.label }}</div>
+                <div onClick="{{ tb.go }}" class="ws-tab" style="cursor:pointer;flex:1;text-align:center;border-radius:12px;padding:11px 0;font-size:13px;font-weight:800;border:1.5px solid {{ tb.br }};background:{{ tb.bg }};color:{{ tb.fg }};">{{ tb.label }}</div>
               </sc-for>
             </div>
           </sc-if>
 
-          <div style="flex:1;display:flex;flex-direction:column;padding-top:14px;">
+          <div style="flex:1;display:flex;flex-direction:column;padding-top:14px;animation:{{ heroAnim }};">
             <sc-if value="{{ bStamps }}" hint-placeholder-val="{{ true }}">
               <sc-if value="{{ modeCollect }}" hint-placeholder-val="{{ true }}">
                 <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
-                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:40px;font-variant-numeric:tabular-nums;">{{ stampCount }}<span style="color:#8E8C96;font-size:22px;"> / {{ goal }}</span></div>
-                  <div style="display:flex;justify-content:center;align-items:center;gap:13px;flex-wrap:wrap;max-width:280px;">
+                  <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:40px;font-variant-numeric:tabular-nums;animation:{{ stampNumAnim }};">{{ stampCount }}<span style="color:#8E8C96;font-size:22px;"> / {{ goal }}</span></div>
+                  <div style="display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;max-width:204px;animation:{{ gridSettleAnim }};">
                     <sc-for list="{{ stampCells }}" as="stc" hint-placeholder-count="8">
-                      <span style="font-size:27px;line-height:1;display:inline-block;transform:translateY({{ stc.dy }});filter:{{ stc.filter }};animation:{{ stc.anim }};">☕</span>
+                      <span style="position:relative;display:inline-block;line-height:0;transform:translateY({{ stc.dy }});animation:{{ stc.enter }};">
+                        <span style="position:absolute;inset:-7px;border-radius:50%;background:radial-gradient(circle, rgba(232,128,36,.55), rgba(232,128,36,0) 70%);opacity:0;animation:{{ stc.halo }};"></span>
+                        <span style="position:relative;display:inline-block;transform:rotate({{ stc.rot }});">
+                          <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:{{ stc.bg }};border:{{ stc.border }};box-shadow:{{ stc.punch }};animation:{{ stc.anim }};">{{ stc.glyph }}</span>
+                        </span>
+                      </span>
                     </sc-for>
                   </div>
-                  <div style="font-size:12px;color:#9B99A3;">{{ stampHint }}</div>
+                  <div style="font-size:12px;color:#9B99A3;text-align:center;max-width:270px;line-height:1.5;">{{ stampHint }}</div>
                 </div>
-                <div onClick="{{ addStamp }}" style="cursor:pointer;background:{{ collectBg }};color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ addStampLabel }}</div>
+                <div onClick="{{ addStamp }}" class="ws-cta" style="cursor:pointer;background:{{ collectBg }};color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;animation:{{ ctaAnim }};">{{ addStampLabel }}</div>
               </sc-if>
               <sc-if value="{{ modeRedeem }}" hint-placeholder-val="{{ false }}">
                 <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;">
                   <sc-if value="{{ stampsReady }}" hint-placeholder-val="{{ true }}">
-                    <div style="width:64px;height:64px;border-radius:50%;background:rgba(232,128,36,.15);border:2px solid #E88024;display:flex;align-items:center;justify-content:center;font-size:26px;">☕</div>
-                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;">Free drink of your choice</div>
-                    <div style="font-size:12px;color:#9B99A3;">{{ goal }} / {{ goal }} — the card resets after redeeming</div>
+                    <div style="position:relative;width:64px;height:64px;border-radius:50%;background:rgba(232,128,36,.15);border:2px solid #E88024;display:flex;align-items:center;justify-content:center;box-shadow:0 0 26px rgba(232,128,36,.22);animation:{{ popAnim }};">{{ stampHeroGlyph }}</div>
+                    <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:20px;">{{ t.freeDrink }}</div>
+                    <div style="font-size:12px;color:#9B99A3;max-width:260px;line-height:1.5;">{{ stampsResetLine }}</div>
                   </sc-if>
                   <sc-if value="{{ stampsNotReady }}" hint-placeholder-val="{{ false }}">
-                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;color:#9B99A3;">{{ shortfallLine }}</div>
-                    <div style="font-size:12px;color:#8E8C96;">Nothing to redeem yet — keep collecting.</div>
+                    <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:20px;color:#9B99A3;">{{ shortfallLine }}</div>
+                    <div style="font-size:12px;color:#8E8C96;max-width:250px;line-height:1.5;">{{ t.nothingYet }}</div>
                   </sc-if>
                 </div>
-                <div onClick="{{ redeemStamps }}" style="cursor:{{ redeemCursor }};background:{{ redeemStampsBg }};color:{{ redeemStampsFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;transition:transform .2s;">{{ redeemStampsLabel }}</div>
+                <div onClick="{{ redeemStamps }}" class="{{ redeemStampsCls }}" style="cursor:{{ redeemCursor }};background:{{ redeemStampsBg }};color:{{ redeemStampsFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;animation:{{ ctaAnim }};">{{ redeemStampsLabel }}</div>
               </sc-if>
             </sc-if>
 
             <sc-if value="{{ bAmount }}" hint-placeholder-val="{{ false }}">
               <div style="text-align:center;padding:6px 0 2px;">
                 <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;">{{ amtTopLabel }}</div>
-                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:38px;font-variant-numeric:tabular-nums;margin-top:2px;">{{ amtTopValue }}</div>
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:38px;font-variant-numeric:tabular-nums;margin-top:2px;">{{ amtTopValue }}</div>
               </div>
               <sc-if value="{{ modeCollect }}" hint-placeholder-val="{{ true }}">
                 <div style="text-align:center;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:14px;padding:12px;margin-top:10px;">
                   <div style="font-size:11px;color:#9B99A3;">{{ t.bill }}</div>
-                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">JOD {{ amtDisplay }}</div>
+                  <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;animation:{{ amtBumpAnim }};">{{ amtDisplay }}</div>
                   <div style="font-size:12.5px;font-weight:800;color:#7BD8A5;margin-top:3px;animation:{{ previewAnim }};">{{ collectPreview }}</div>
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;">
                   <sc-for list="{{ keypad }}" as="kp" hint-placeholder-count="12">
-                    <div onClick="{{ kp.tap }}" style="cursor:pointer;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:12px;padding:13px 0;text-align:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;transition:background .15s;" style-hover="background:#26262B">{{ kp.k }}</div>
+                    <div onClick="{{ kp.tap }}" class="ws-key" style="cursor:pointer;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:12px;padding:13px 0;text-align:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:17px;">{{ kp.k }}</div>
                   </sc-for>
                 </div>
-                <div onClick="{{ collectAmount }}" style="cursor:pointer;background:{{ collectBg }};color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:15px 0;text-align:center;margin-top:12px;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ collectAmtLabel }}</div>
+                <div onClick="{{ collectAmount }}" class="{{ collectAmtCls }}" style="cursor:{{ collectAmtCursor }};background:{{ collectAmtBg }};color:{{ collectAmtFg }};font-weight:800;font-size:15px;border-radius:14px;padding:15px 0;text-align:center;margin-top:12px;animation:{{ ctaAnim }};">{{ collectAmtLabel }}</div>
               </sc-if>
               <sc-if value="{{ modeRedeem }}" hint-placeholder-val="{{ false }}">
                 <sc-if value="{{ isCashback }}" hint-placeholder-val="{{ true }}">
                   <div style="flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center;">
-                    <div style="text-align:center;font-size:12px;color:#9B99A3;">{{ cbRedeemHint }}</div>
+                    <div style="text-align:center;font-size:12px;color:#9B99A3;line-height:1.5;">{{ cbRedeemHint }}</div>
                     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
                       <sc-for list="{{ cbQuick }}" as="cq" hint-placeholder-count="3">
-                        <div onClick="{{ cq.pick }}" style="cursor:pointer;border:1.5px solid {{ cq.br }};background:{{ cq.bg }};color:{{ cq.fg }};font-weight:800;font-size:13px;border-radius:999px;padding:10px 18px;font-variant-numeric:tabular-nums;transition:all .2s;">{{ cq.label }}</div>
+                        <div onClick="{{ cq.pick }}" class="{{ cq.cls }}" style="cursor:{{ cq.cur }};border:1.5px solid {{ cq.br }};background:{{ cq.bg }};color:{{ cq.fg }};font-weight:800;font-size:13px;border-radius:999px;padding:10px 18px;font-variant-numeric:tabular-nums;box-shadow:{{ cq.glow }};animation:{{ cq.enter }};">{{ cq.label }}</div>
                       </sc-for>
                     </div>
-                    <div style="text-align:center;font-size:11px;color:#8E8C96;">{{ cbMinLine }}</div>
+                    <div style="text-align:center;font-size:11px;color:#8E8C96;line-height:1.5;">{{ cbMinLine }}</div>
                   </div>
-                  <div onClick="{{ redeemCash }}" style="cursor:{{ redeemCursor }};background:{{ cbRedeemBg }};color:{{ cbRedeemFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;">{{ cbRedeemLabel }}</div>
+                  <div onClick="{{ redeemCash }}" class="{{ cbRedeemCls }}" style="cursor:{{ redeemCursor }};background:{{ cbRedeemBg }};color:{{ cbRedeemFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;animation:{{ ctaAnim }};">{{ cbRedeemLabel }}</div>
                 </sc-if>
                 <sc-if value="{{ isPoints }}" hint-placeholder-val="{{ false }}">
                   <div style="flex:1;display:flex;flex-direction:column;gap:9px;justify-content:center;">
-                    <div style="text-align:center;font-size:12px;color:#9B99A3;">{{ t.nothingPre }}</div>
+                    <div style="text-align:center;font-size:12px;color:#9B99A3;line-height:1.5;">{{ t.nothingPre }}</div>
                     <sc-for list="{{ ptRungs }}" as="pr" hint-placeholder-count="2">
-                      <div onClick="{{ pr.pick }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:{{ pr.bg }};border:1.5px solid {{ pr.br }};border-radius:14px;padding:13px 14px;transition:all .2s;opacity:{{ pr.op }};">
-                        <span style="width:18px;height:18px;border-radius:50%;border:2px solid {{ pr.ring }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="width:8px;height:8px;border-radius:50%;background:{{ pr.dot }};"></span></span>
-                        <div style="flex:1;min-width:0;"><div style="font-size:13.5px;font-weight:800;">{{ pr.name }}</div><div style="font-size:11px;color:{{ pr.subColor }};">{{ pr.sub }}</div></div>
-                        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;font-variant-numeric:tabular-nums;">{{ pr.cost }}</div>
+                      <div onClick="{{ pr.pick }}" class="{{ pr.cls }}" style="cursor:{{ pr.cur }};display:flex;align-items:center;gap:11px;background:{{ pr.bg }};border:1.5px solid {{ pr.br }};border-radius:14px;padding:13px 14px;box-shadow:{{ pr.glow }};animation:{{ pr.enter }};">
+                        <span style="width:18px;height:18px;border-radius:50%;border:2px solid {{ pr.ring }};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .2s;"><span style="width:8px;height:8px;border-radius:50%;background:{{ pr.dot }};transition:background .2s;"></span></span>
+                        <div style="flex:1;min-width:0;">
+                          <div style="font-size:13.5px;font-weight:800;">{{ pr.name }}</div>
+                          <div style="font-size:11px;color:{{ pr.subColor }};">{{ pr.sub }}</div>
+                          <sc-if value="{{ pr.short }}" hint-placeholder-val="{{ false }}">
+                            <div style="margin-top:6px;height:4px;border-radius:99px;background:rgba(244,242,238,.09);overflow:hidden;">
+                              <div style="height:100%;border-radius:99px;background:linear-gradient(90deg,#F0A92B,#E88024);--gw:{{ pr.pct }};width:{{ pr.pct }};animation:{{ pr.barAnim }};"></div>
+                            </div>
+                          </sc-if>
+                        </div>
+                        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:15px;font-variant-numeric:tabular-nums;flex-shrink:0;">{{ pr.cost }}</div>
                       </div>
                     </sc-for>
                   </div>
-                  <div onClick="{{ redeemPts }}" style="cursor:{{ redeemCursor }};background:{{ ptRedeemBg }};color:{{ ptRedeemFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;">{{ ptRedeemLabel }}</div>
+                  <div onClick="{{ redeemPts }}" class="{{ ptRedeemCls }}" style="cursor:{{ redeemCursor }};background:{{ ptRedeemBg }};color:{{ ptRedeemFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;animation:{{ ctaAnim }};">{{ ptRedeemLabel }}</div>
                 </sc-if>
               </sc-if>
             </sc-if>
@@ -195,79 +290,116 @@
             <sc-if value="{{ bCoupon }}" hint-placeholder-val="{{ false }}">
               <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;">
                 <sc-if value="{{ couponFresh }}" hint-placeholder-val="{{ true }}">
-                  <div style="width:64px;height:64px;border-radius:50%;background:rgba(232,128,36,.15);border:2px dashed #E88024;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;color:#E88024;">1×</div>
-                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;">One free dessert</div>
-                  <div style="font-size:12px;color:#9B99A3;">Expires 29 AUG · one per customer · no undo</div>
+                  <div style="width:64px;height:64px;border-radius:50%;background:rgba(232,128,36,.15);border:2px dashed #E88024;display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:18px;color:#E88024;box-shadow:0 0 26px rgba(232,128,36,.2);animation:{{ popAnim }};">1×</div>
+                  <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:22px;">{{ t.couponTitle }}</div>
+                  <div style="font-size:12px;color:#9B99A3;max-width:260px;line-height:1.5;">{{ t.couponSub }}</div>
                 </sc-if>
                 <sc-if value="{{ couponUsed }}" hint-placeholder-val="{{ false }}">
-                  <div style="width:64px;height:64px;border-radius:50%;background:rgba(226,86,58,.14);border:2px solid #E2563A;display:flex;align-items:center;justify-content:center;font-size:24px;color:#E2563A;">✕</div>
-                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;color:#F0A92B;">Already used — Jul 12, 14:02</div>
-                  <div style="font-size:12.5px;color:#9B99A3;line-height:1.6;max-width:250px;">Coupons are one-shot. Offer the stamp card instead — same QR, one tap.</div>
+                  <div style="width:64px;height:64px;border-radius:50%;background:rgba(226,86,58,.14);border:2px solid #E2563A;display:flex;align-items:center;justify-content:center;font-size:24px;color:#E2563A;animation:{{ popAnim }};">✕</div>
+                  <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:20px;color:#F0A92B;">{{ t.couponUsedTitle }}</div>
+                  <div style="font-size:12.5px;color:#9B99A3;line-height:1.6;max-width:250px;">{{ t.couponUsedSub }}</div>
                 </sc-if>
               </div>
-              <div onClick="{{ redeemCoupon }}" style="cursor:{{ redeemCursor }};background:{{ cpRedeemBg }};color:{{ cpRedeemFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;">{{ cpRedeemLabel }}</div>
+              <div onClick="{{ redeemCoupon }}" class="{{ cpRedeemCls }}" style="cursor:{{ redeemCursor }};background:{{ cpRedeemBg }};color:{{ cpRedeemFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;animation:{{ ctaAnim }};">{{ cpRedeemLabel }}</div>
               <sc-if value="{{ couponUsed }}" hint-placeholder-val="{{ false }}">
-                <div onClick="{{ crossSellStamp }}" style="cursor:pointer;background:transparent;border:1.5px solid rgba(47,174,102,.4);color:#7BD8A5;font-weight:800;font-size:13px;border-radius:14px;padding:13px 0;text-align:center;margin-top:8px;transition:all .2s;" style-hover="border-color:#2FAE66;background:rgba(47,174,102,.08)">{{ t.crossSellStamp }}</div>
+                <div onClick="{{ crossSellStamp }}" class="ws-cta" style="cursor:pointer;background:transparent;border:1.5px solid rgba(47,174,102,.4);color:#7BD8A5;font-weight:800;font-size:13px;border-radius:14px;padding:13px 0;text-align:center;margin-top:8px;animation:{{ ctaAnim2 }};">{{ t.crossSellStamp }}</div>
               </sc-if>
             </sc-if>
 
             <sc-if value="{{ bVip }}" hint-placeholder-val="{{ false }}">
-              <div style="flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center;">
-                <div style="text-align:center;margin-bottom:4px;">
-                  <span style="display:inline-flex;align-items:center;gap:8px;background:{{ vipTierBg }};color:{{ vipTierFg }};font-size:12px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:7px 18px;text-transform:uppercase;animation:{{ popAnim }};">{{ vipTier }}</span>
-                  <div style="font-size:11px;color:#9B99A3;margin-top:7px;">{{ vipProgressLine }}</div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:11px;justify-content:center;">
+                <div style="position:relative;margin:2px 4px 0;">
+                  <div style="position:absolute;top:17px;inset-inline-start:36px;inset-inline-end:36px;height:4px;border-radius:99px;background:rgba(244,242,238,.1);">
+                    <div style="height:100%;border-radius:99px;background:{{ vipFillColor }};--cf:{{ vipFrom }};--ct:{{ vipTo }};width:{{ vipTo }};animation:{{ vipClimbAnim }};"></div>
+                  </div>
+                  <div style="position:relative;display:flex;justify-content:space-between;align-items:flex-start;">
+                    <sc-for list="{{ vipSteps }}" as="vs" hint-placeholder-count="3">
+                      <div style="width:72px;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                        <div style="width:38px;height:38px;border-radius:50%;background:{{ vs.bg }};border:2px solid {{ vs.br }};color:{{ vs.fg }};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;box-shadow:{{ vs.glow }};animation:{{ vs.anim }};">{{ vs.icon }}</div>
+                        <div style="font-size:9.5px;font-weight:900;letter-spacing:.07em;color:{{ vs.labelFg }};text-transform:uppercase;text-align:center;">{{ vs.label }}</div>
+                        <div style="font-size:9px;font-weight:800;color:{{ vs.hereFg }};text-align:center;height:11px;">{{ vs.here }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
                 </div>
+                <div style="text-align:center;font-size:11.5px;color:#9B99A3;line-height:1.5;">{{ vipProgressLine }}</div>
+                <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8E8C96;text-transform:uppercase;">{{ vipPerksLabel }}</div>
                 <sc-for list="{{ vipPerks }}" as="vp" hint-placeholder-count="3">
-                  <div style="display:flex;align-items:center;gap:10px;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:12px;padding:12px 14px;">
-                    <span style="color:#7BD8A5;font-weight:900;font-size:14px;">✓</span>
+                  <div style="display:flex;align-items:center;gap:10px;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:12px;padding:11px 14px;animation:{{ vp.anim }};">
+                    <span style="color:#7BD8A5;font-weight:900;font-size:14px;flex-shrink:0;">✓</span>
                     <span style="font-size:13px;font-weight:600;">{{ vp.p }}</span>
                   </div>
                 </sc-for>
-                <div style="text-align:center;font-size:11px;color:#8E8C96;margin-top:4px;">{{ t.noRedeemVip }}</div>
+                <div style="text-align:center;font-size:11px;color:#8E8C96;margin-top:2px;line-height:1.5;">{{ t.noRedeemVip }}</div>
               </div>
-              <div onClick="{{ vipCheckin }}" style="cursor:pointer;background:{{ collectBg }};color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ vipBtnLabel }}</div>
+              <div onClick="{{ vipCheckin }}" class="ws-cta" style="cursor:pointer;background:{{ collectBg }};color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;animation:{{ ctaAnim }};">{{ vipBtnLabel }}</div>
             </sc-if>
 
             <sc-if value="{{ bChallenge }}" hint-placeholder-val="{{ false }}">
-              <div style="flex:1;display:flex;flex-direction:column;gap:12px;justify-content:center;">
-                <sc-if value="{{ chActive }}" hint-placeholder-val="{{ true }}">
-                  <div style="text-align:center;">
-                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:36px;font-variant-numeric:tabular-nums;">{{ chVisits }}<span style="color:#8E8C96;font-size:19px;"> / {{ chGoal }}</span></div>
-                    <div style="font-size:12.5px;font-weight:700;color:#F4F2EE;margin-top:6px;">{{ chWindowLine }}</div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:14px;justify-content:center;align-items:center;">
+                <div style="position:relative;width:150px;height:150px;flex-shrink:0;">
+                  <svg viewBox="0 0 150 150" style="width:150px;height:150px;display:block;transform:rotate(-90deg);">
+                    <circle cx="75" cy="75" r="62" style="fill:none;stroke:rgba(244,242,238,.11);stroke-width:10;"></circle>
+                    <circle cx="75" cy="75" r="62" style="fill:none;stroke:{{ chRingColor }};stroke-width:10;stroke-linecap:round;--rf:{{ chRingFrom }};--rt:{{ chRingTo }};stroke-dasharray:{{ chRingFull }};stroke-dashoffset:{{ chRingTo }};animation:{{ chRingAnim }};transition:stroke .4s;"></circle>
+                  </svg>
+                  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">
+                    <sc-if value="{{ chActive }}" hint-placeholder-val="{{ true }}">
+                      <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:36px;font-variant-numeric:tabular-nums;line-height:1;animation:{{ chNumAnim }};">{{ chVisits }}<span style="color:#8E8C96;font-size:19px;"> / {{ chGoal }}</span></div>
+                      <div style="font-size:9.5px;font-weight:800;letter-spacing:.08em;color:#8E8C96;text-transform:uppercase;">{{ t.visitsWord }}</div>
+                    </sc-if>
+                    <sc-if value="{{ chComplete }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:38px;line-height:1;animation:{{ popAnim }};">🎉</div>
+                    </sc-if>
                   </div>
+                </div>
+                <sc-if value="{{ chActive }}" hint-placeholder-val="{{ true }}">
+                  <div style="text-align:center;font-size:12.5px;font-weight:700;color:#F4F2EE;line-height:1.5;max-width:270px;">{{ chWindowLine }}</div>
                   <div style="text-align:center;background:rgba(240,169,43,.1);border:1px solid rgba(240,169,43,.32);color:#F0A92B;border-radius:12px;padding:9px 14px;font-size:11.5px;font-weight:700;">{{ chDeadlineLine }}</div>
                 </sc-if>
                 <sc-if value="{{ chComplete }}" hint-placeholder-val="{{ false }}">
                   <div style="text-align:center;">
-                    <div style="width:64px;height:64px;margin:0 auto;border-radius:50%;background:rgba(47,174,102,.15);border:2px solid #2FAE66;display:flex;align-items:center;justify-content:center;font-size:26px;animation:{{ popAnim }};">🎉</div>
-                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;margin-top:10px;">{{ t.challengeDoneTitle }}</div>
-                    <div style="font-size:11.5px;color:#9B99A3;margin-top:4px;max-width:250px;">{{ t.challengeDoneSub }}</div>
+                    <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ t.challengeDoneTitle }}</div>
+                    <div style="font-size:11.5px;color:#9B99A3;margin-top:5px;max-width:250px;line-height:1.55;">{{ t.challengeDoneSub }}</div>
                   </div>
                 </sc-if>
               </div>
-              <div onClick="{{ countVisit }}" style="cursor:{{ chBtnCursor }};background:{{ chBtnBg }};color:{{ chBtnFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ chBtnLabel }}</div>
+              <div onClick="{{ countVisit }}" class="{{ chBtnCls }}" style="cursor:{{ chBtnCursor }};background:{{ chBtnBg }};color:{{ chBtnFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;animation:{{ ctaAnim }};">{{ chBtnLabel }}</div>
             </sc-if>
 
             <sc-if value="{{ bVerdict }}" hint-placeholder-val="{{ false }}">
               <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;">
-                <div style="width:88px;height:88px;border-radius:50%;background:{{ vdBg }};border:3px solid {{ vdBorder }};display:flex;align-items:center;justify-content:center;font-size:38px;color:{{ vdBorder }};animation:{{ popAnim }};">{{ vdMark }}</div>
-                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;color:{{ vdBorder }};">{{ vdTitle }}</div>
-                <div style="font-size:13px;color:#9B99A3;line-height:1.6;max-width:260px;">{{ vdSub }}</div>
+                <div style="position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center;">
+                  <div style="position:absolute;inset:0;border-radius:50%;background:{{ vdBg }};border:3px solid {{ vdBorder }};animation:{{ vdFloodAnim }};"></div>
+                  <div style="position:absolute;inset:0;border-radius:50%;border:3px solid {{ vdBorder }};opacity:0;animation:{{ vdRippleAnim }};"></div>
+                  <sc-if value="{{ vdOk }}" hint-placeholder-val="{{ true }}">
+                    <svg viewBox="0 0 88 88" style="position:relative;width:88px;height:88px;display:block;">
+                      <path d="M26 45 L38.5 57.5 L63 30" style="fill:none;stroke:{{ vdBorder }};stroke-width:6;stroke-linecap:round;stroke-linejoin:round;--md:66;stroke-dasharray:66;stroke-dashoffset:0;animation:{{ vdDrawAnim }};"></path>
+                    </svg>
+                  </sc-if>
+                  <sc-if value="{{ vdWarn }}" hint-placeholder-val="{{ false }}">
+                    <svg viewBox="0 0 88 88" style="position:relative;width:88px;height:88px;display:block;">
+                      <path d="M44 24 L44 50" style="fill:none;stroke:{{ vdBorder }};stroke-width:6.5;stroke-linecap:round;--md:26;stroke-dasharray:26;stroke-dashoffset:0;animation:{{ vdDrawAnim }};"></path>
+                      <circle cx="44" cy="62" r="4" style="fill:{{ vdBorder }};animation:{{ vdDotAnim }};transform-origin:44px 62px;"></circle>
+                    </svg>
+                  </sc-if>
+                </div>
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:24px;color:{{ vdBorder }};line-height:1.25;">{{ vdTitle }}</div>
+                <div style="font-size:13px;color:#9B99A3;line-height:1.6;max-width:264px;">{{ vdSub }}</div>
               </div>
               <sc-if value="{{ showRenewBtn }}" hint-placeholder-val="{{ false }}">
-                <div onClick="{{ renewMembership }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;margin-bottom:8px;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ t.renewBtn }}</div>
+                <div onClick="{{ renewMembership }}" class="ws-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;margin-bottom:8px;animation:{{ ctaAnim }};">{{ t.renewBtn }}</div>
               </sc-if>
-              <div onClick="{{ toIdle }}" style="cursor:pointer;background:#26262B;border:1px solid rgba(244,242,238,.14);color:#F4F2EE;font-weight:800;font-size:14px;border-radius:14px;padding:15px 0;text-align:center;" style-hover="background:#2E2E34">{{ t.nextCustomer }}</div>
+              <div onClick="{{ toIdle }}" class="ws-cta" style="cursor:pointer;background:#26262B;border:1px solid rgba(244,242,238,.14);color:#F4F2EE;font-weight:800;font-size:14px;border-radius:14px;padding:15px 0;text-align:center;animation:{{ ctaAnim2 }};">{{ t.nextCustomer }}</div>
             </sc-if>
 
             <sc-if value="{{ bRefusal }}" hint-placeholder-val="{{ false }}">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;animation:{{ refusalShake }};">
                 <div style="width:88px;height:88px;border-radius:50%;background:rgba(226,86,58,.12);border:3px solid #E2563A;display:flex;align-items:center;justify-content:center;font-size:34px;color:#E2563A;animation:{{ popAnim }};">✕</div>
-                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;">{{ rfTitle }}</div>
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:22px;">{{ rfTitle }}</div>
                 <div style="font-size:13px;color:#9B99A3;line-height:1.65;max-width:270px;">{{ rfWhy }}</div>
-                <div style="background:rgba(232,128,36,.1);border:1px solid rgba(232,128,36,.35);color:#F09A4D;border-radius:12px;padding:11px 16px;font-size:12.5px;font-weight:700;max-width:280px;line-height:1.5;">{{ rfDo }}</div>
+                <div style="background:rgba(232,128,36,.1);border:1px solid rgba(232,128,36,.35);color:#F09A4D;border-radius:12px;padding:11px 16px;font-size:12.5px;font-weight:700;max-width:280px;line-height:1.5;animation:{{ rfDoAnim }};">{{ rfDo }}</div>
               </div>
-              <div onClick="{{ toIdle }}" style="cursor:pointer;background:#26262B;border:1px solid rgba(244,242,238,.14);color:#F4F2EE;font-weight:800;font-size:14px;border-radius:14px;padding:15px 0;text-align:center;" style-hover="background:#2E2E34">{{ t.nextCustomer }}</div>
+              <div onClick="{{ toIdle }}" class="ws-cta" style="cursor:pointer;background:#26262B;border:1px solid rgba(244,242,238,.14);color:#F4F2EE;font-weight:800;font-size:14px;border-radius:14px;padding:15px 0;text-align:center;animation:{{ ctaAnim2 }};">{{ t.nextCustomer }}</div>
             </sc-if>
           </div>
         </div>
@@ -275,31 +407,34 @@
     </div>
 
     <sc-if value="{{ hasFlash }}" hint-placeholder-val="{{ false }}">
-      <div style="position:absolute;inset:0;z-index:80;background:rgba(16,16,19,.88);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:30px;animation:flashIn .35s cubic-bezier(.22,.61,.36,1) both;">
-        <div style="width:96px;height:96px;border-radius:50%;background:rgba(47,174,102,.15);border:3.5px solid {{ flashColor }};display:flex;align-items:center;justify-content:center;font-size:42px;color:{{ flashColor }};">{{ flashMark }}</div>
-        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;">{{ flashTitle }}</div>
-        <div style="font-size:13.5px;color:#9B99A3;line-height:1.6;">{{ flashSub }}</div>
+      <div style="position:absolute;inset:0;z-index:80;background:rgba(16,16,19,.88);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:30px;animation:{{ flashAnim }};">
+        <div style="position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <div style="position:absolute;inset:0;border-radius:50%;border:3px solid {{ flashColor }};opacity:0;animation:{{ flashRippleAnim }};"></div>
+          <div style="position:relative;width:96px;height:96px;border-radius:50%;background:{{ flashTint }};border:3.5px solid {{ flashColor }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:42px;color:{{ flashColor }};animation:{{ flashMarkAnim }};">{{ flashMark }}</div>
+        </div>
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:23px;line-height:1.3;animation:{{ flashTitleAnim }};">{{ flashTitle }}</div>
+        <div style="font-size:13.5px;color:#9B99A3;line-height:1.6;animation:{{ flashSubAnim }};">{{ flashSub }}</div>
       </div>
     </sc-if>
 
     <sc-if value="{{ hasUndo }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;left:0;right:0;bottom:64px;z-index:70;display:flex;justify-content:center;pointer-events:none;">
-        <div onClick="{{ undoLast }}" style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:7px;background:#26262B;border:1px solid rgba(244,242,238,.18);color:#F4F2EE;font-size:12.5px;font-weight:800;border-radius:999px;padding:9px 16px;box-shadow:0 8px 20px rgba(0,0,0,.35);animation:flashIn .25s both;" style-hover="border-color:#E88024;color:#F09A4D">↺ {{ t.undo }}</div>
+        <div onClick="{{ undoLast }}" class="ws-undo" style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:7px;background:#26262B;border:1px solid rgba(244,242,238,.18);color:#F4F2EE;font-size:12.5px;font-weight:800;border-radius:999px;padding:9px 16px;box-shadow:0 8px 20px rgba(0,0,0,.35);animation:flashIn .25s cubic-bezier(.22,.61,.36,1) both;">↺ {{ t.undo }}</div>
       </div>
     </sc-if>
 
     <sc-if value="{{ queueSheetOpen }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.96);display:flex;flex-direction:column;padding:26px 22px 22px;gap:12px;animation:flashIn .3s both;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;">{{ t.queueTitle }}</div>
-          <div onClick="{{ closeQueueSheet }}" style="cursor:pointer;color:#8E8C96;font-size:18px;padding:4px 6px;" style-hover="color:#F4F2EE">✕</div>
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:17px;">{{ t.queueTitle }}</div>
+          <div onClick="{{ closeQueueSheet }}" class="ws-x" style="cursor:pointer;color:#8E8C96;font-size:18px;padding:4px 6px;">✕</div>
         </div>
         <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-height:0;">
           <sc-if value="{{ queueEmpty }}" hint-placeholder-val="{{ true }}">
-            <div style="text-align:center;color:#8E8C96;font-size:12px;padding:36px 10px;">{{ t.queueEmptyLine }}</div>
+            <div style="text-align:center;color:#8E8C96;font-size:12px;padding:36px 10px;line-height:1.5;">{{ t.queueEmptyLine }}</div>
           </sc-if>
           <sc-for list="{{ queueItems }}" as="qi" hint-placeholder-count="4">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:12px;padding:10px 13px;flex-shrink:0;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:12px;padding:10px 13px;flex-shrink:0;animation:{{ qi.anim }};">
               <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ qi.member }}</div><div style="font-size:10.5px;color:#9B99A3;">{{ qi.action }}</div></div>
               <div style="font-size:10px;color:#8E8C96;white-space:nowrap;">{{ qi.time }}</div>
             </div>
@@ -311,27 +446,28 @@
 
     <sc-if value="{{ pinOpen }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.94);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px;animation:flashIn .3s both;">
-        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;">{{ t.pinTitle }}</div>
-        <div style="font-size:11.5px;color:#9B99A3;">{{ t.pinSub }}</div>
-        <div style="display:flex;gap:12px;">
-          <sc-for list="{{ pinDots }}" as="pd" hint-placeholder-count="4"><span style="width:14px;height:14px;border-radius:50%;background:{{ pd.bg }};border:1.5px solid rgba(244,242,238,.4);transition:background .15s;"></span></sc-for>
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ t.pinTitle }}</div>
+        <div style="font-size:11.5px;color:#9B99A3;text-align:center;max-width:270px;line-height:1.5;">{{ t.pinSub }}</div>
+        <div style="position:relative;display:flex;gap:12px;align-items:center;justify-content:center;padding:10px 18px;">
+          <div style="position:absolute;inset:0;border-radius:999px;border:2px solid #2FAE66;opacity:0;animation:{{ pinRippleAnim }};"></div>
+          <sc-for list="{{ pinDots }}" as="pd" hint-placeholder-count="4"><span style="width:14px;height:14px;border-radius:50%;background:{{ pd.bg }};border:1.5px solid {{ pd.br }};transition:background .15s,border-color .15s;animation:{{ pd.anim }};"></span></sc-for>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,64px);gap:10px;margin-top:6px;">
+        <div style="display:grid;grid-template-columns:repeat(3,64px);gap:10px;margin-top:2px;">
           <sc-for list="{{ pinKeys }}" as="pk" hint-placeholder-count="9">
-            <div onClick="{{ pk.tap }}" style="cursor:pointer;height:52px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;" style-hover="background:#26262B">{{ pk.k }}</div>
+            <div onClick="{{ pk.tap }}" class="ws-key" style="cursor:pointer;height:52px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:18px;">{{ pk.k }}</div>
           </sc-for>
         </div>
-        <div onClick="{{ pinCancel }}" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:4px;" style-hover="color:#F4F2EE">{{ t.cancel }}</div>
+        <div onClick="{{ pinCancel }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:4px;padding:4px 10px;">{{ t.cancel }}</div>
       </div>
     </sc-if>
 
     <sc-if value="{{ manualOpen }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.94);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px;animation:flashIn .3s both;">
-        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;">{{ t.manualTitle }}</div>
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ t.manualTitle }}</div>
         <div style="font-size:11.5px;color:#9B99A3;text-align:center;max-width:280px;">{{ t.manualSub }}</div>
         <div style="display:flex;gap:6px;animation:{{ manualShake }};">
           <sc-for list="{{ manualCells }}" as="mc" hint-placeholder-count="8">
-            <span style="width:25px;height:32px;border-radius:8px;background:#1B1B1F;border:1.5px solid {{ mc.br }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;">{{ mc.v }}</span>
+            <span style="width:25px;height:32px;border-radius:8px;background:#1B1B1F;border:1.5px solid {{ mc.br }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:14px;">{{ mc.v }}</span>
           </sc-for>
         </div>
         <sc-if value="{{ manualError }}" hint-placeholder-val="{{ false }}">
@@ -339,27 +475,27 @@
         </sc-if>
         <div style="display:grid;grid-template-columns:repeat(3,64px);gap:9px;margin-top:2px;">
           <sc-for list="{{ manualKeys }}" as="mk" hint-placeholder-count="12">
-            <div onClick="{{ mk.tap }}" style="cursor:{{ mk.cur }};height:48px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;visibility:{{ mk.vis }};" style-hover="background:#26262B">{{ mk.k }}</div>
+            <div onClick="{{ mk.tap }}" class="{{ mk.cls }}" style="cursor:{{ mk.cur }};height:48px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:17px;visibility:{{ mk.vis }};">{{ mk.k }}</div>
           </sc-for>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:280px;margin-top:2px;">
           <sc-for list="{{ manualHints }}" as="mh" hint-placeholder-count="3">
-            <div style="background:rgba(232,128,36,.08);border:1px solid rgba(232,128,36,.25);color:#F09A4D;border-radius:10px;padding:6px 10px;font-size:10.5px;font-weight:700;text-align:center;">{{ mh.label }}</div>
+            <div onClick="{{ mh.fill }}" class="ws-press" style="cursor:pointer;background:rgba(232,128,36,.08);border:1px solid rgba(232,128,36,.25);color:#F09A4D;border-radius:10px;padding:6px 10px;font-size:10.5px;font-weight:700;text-align:center;animation:{{ mh.anim }};">{{ mh.label }}</div>
           </sc-for>
         </div>
-        <div onClick="{{ manualCancel }}" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:2px;" style-hover="color:#F4F2EE">{{ t.cancel }}</div>
+        <div onClick="{{ manualCancel }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:2px;padding:4px 10px;">{{ t.cancel }}</div>
       </div>
     </sc-if>
 
     <sc-if value="{{ shiftOpen }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px 30px 26px;animation:flashIn .3s both;text-align:center;overflow-y:auto;">
         <sc-if value="{{ showShiftSummary }}" hint-placeholder-val="{{ true }}">
-          <div style="width:56px;height:56px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;flex-shrink:0;">{{ staffInitials }}</div>
-          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;flex-shrink:0;">{{ t.shiftDone }}</div>
+          <div style="width:56px;height:56px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;flex-shrink:0;animation:{{ shiftAvatarAnim }};">{{ staffInitials }}</div>
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:22px;flex-shrink:0;">{{ t.shiftDone }}</div>
           <div style="display:flex;gap:22px;flex-shrink:0;">
-            <div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">{{ shiftScans }}</div><div style="font-size:10.5px;color:#9B99A3;">scans</div></div>
-            <div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">{{ shiftStamps }}</div><div style="font-size:10.5px;color:#9B99A3;">stamps</div></div>
-            <div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">{{ shiftRewards }}</div><div style="font-size:10.5px;color:#9B99A3;">rewards</div></div>
+            <sc-for list="{{ shiftTotals }}" as="sT" hint-placeholder-count="3">
+              <div style="animation:{{ sT.anim }};"><div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">{{ sT.n }}</div><div style="font-size:10.5px;color:#9B99A3;">{{ sT.label }}</div></div>
+            </sc-for>
           </div>
           <div style="width:100%;max-width:280px;text-align:start;flex-shrink:0;">
             <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;margin-bottom:8px;">{{ t.lastActions }}</div>
@@ -368,28 +504,31 @@
                 <div style="text-align:center;color:#8E8C96;font-size:11.5px;padding:14px 4px;">{{ t.noActionsYet }}</div>
               </sc-if>
               <sc-for list="{{ shiftLog }}" as="sl" hint-placeholder-count="6">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:10px;padding:8px 11px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:10px;padding:8px 11px;animation:{{ sl.anim }};">
                   <div style="min-width:0;"><div style="font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ sl.member }}</div><div style="font-size:10px;color:#9B99A3;">{{ sl.action }}</div></div>
                   <div style="font-size:9.5px;color:#8E8C96;white-space:nowrap;">{{ sl.time }}</div>
                 </div>
               </sc-for>
             </div>
           </div>
-          <div style="font-size:12px;color:#9B99A3;max-width:240px;line-height:1.6;flex-shrink:0;">{{ t.shiftNote }}</div>
-          <div onClick="{{ startHandover }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 26px;flex-shrink:0;" style-hover="background:#C96A14">{{ t.handOver }}</div>
+          <div style="font-size:12px;color:#9B99A3;max-width:250px;line-height:1.6;flex-shrink:0;">{{ t.shiftNote }}</div>
+          <div onClick="{{ startHandover }}" class="ws-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 26px;flex-shrink:0;">{{ t.handOver }}</div>
         </sc-if>
         <sc-if value="{{ showHandoverPicker }}" hint-placeholder-val="{{ false }}">
-          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;flex-shrink:0;">{{ t.handoverPickTitle }}</div>
-          <div style="font-size:11.5px;color:#9B99A3;max-width:250px;flex-shrink:0;">{{ t.handoverPickSub }}</div>
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;flex-shrink:0;">{{ t.handoverPickTitle }}</div>
+          <div style="font-size:11.5px;color:#9B99A3;max-width:250px;flex-shrink:0;line-height:1.55;">{{ t.handoverPickSub }}</div>
           <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:260px;margin-top:6px;flex-shrink:0;">
             <sc-for list="{{ staffChoices }}" as="sf" hint-placeholder-count="2">
-              <div onClick="{{ sf.pick }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);border-radius:14px;padding:12px 14px;transition:border-color .2s;" style-hover="border-color:#E88024">
-                <div style="width:36px;height:36px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex-shrink:0;">{{ sf.initials }}</div>
-                <div style="min-width:0;text-align:start;"><div style="font-size:13.5px;font-weight:800;">{{ sf.name }}</div><div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#9B99A3;">{{ sf.ar }} · Rainbow St</div></div>
+              <div onClick="{{ sf.pick }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:#1B1B1F;border:1px solid {{ sf.br }};border-radius:14px;padding:12px 14px;animation:{{ sf.anim }};">
+                <div style="width:36px;height:36px;border-radius:50%;background:{{ sf.avBg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex-shrink:0;">{{ sf.initials }}</div>
+                <div style="min-width:0;text-align:start;flex:1;"><div style="font-size:13.5px;font-weight:800;">{{ sf.name }}</div><div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#9B99A3;">{{ sf.sub }}</div></div>
+                <sc-if value="{{ sf.isYou }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:9.5px;font-weight:800;color:#F09A4D;border:1px solid rgba(232,128,36,.4);border-radius:999px;padding:3px 8px;flex-shrink:0;">{{ t.onShift }}</div>
+                </sc-if>
               </div>
             </sc-for>
           </div>
-          <div onClick="{{ cancelHandover }}" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:4px;flex-shrink:0;" style-hover="color:#F4F2EE">{{ t.cancel }}</div>
+          <div onClick="{{ cancelHandover }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:4px;flex-shrink:0;padding:4px 10px;">{{ t.cancel }}</div>
         </sc-if>
       </div>
     </sc-if>
@@ -400,79 +539,290 @@
     <div style="display:flex;align-items:center;gap:10px;">
       <svg viewBox="213.44 0 314.91 314.51" preserveAspectRatio="xMidYMid meet" style="width:26px;height:26px;display:block;"><path fill="#E88024" d="M385.82,261.53c11.27,40.31,54.39,63.14,94.51,48.85,34.32-12.22,54.43-48.93,46.34-84.45-2.49-10.95-7.28-20.68-13.75-28.87-7.72-9.83-17.8-17.42-29.19-22.15-14.53-6.08-31.13-7.48-47.48-2.91-6.99,1.96-13.43,4.85-19.26,8.55-.24.14-.45.28-.66.41-5.71,3.89-8.03,11.74-4.13,18.55,3.1,5.41,9.72,7.93,15.71,6.22,1.09-.31,2.09-.74,3.02-1.29.08,0,.12-.03.16-.07.09-.03.16-.07.21-.13.03.02.05-.01.06-.04.15-.09.3-.18.45-.27h.05c3.56-2.28,7.55-4.07,11.84-5.27,13.78-3.85,27.83-.84,38.56,6.98,7.92,5.75,14.02,14.08,16.86,24.23.12.42.23.83.33,1.26,5.88,23.53-8.02,47.59-31.53,54.16-23.51,6.57-47.87-6.79-55.04-29.96-.21-.84-.93-3.39-1.2-4.31l-23.45-84.05,87.12-24.31c40.31-11.27,63.14-54.39,48.85-94.51-12.22-34.32-48.93-54.43-84.45-46.34-10.95,2.49-20.68,7.28-28.87,13.75-9.83,7.72-17.42,17.8-22.15,29.19-6.08,14.53-7.48,31.13-2.91,47.48,1.96,6.99,4.85,13.43,8.55,19.26.14.24.27.45.41.66,3.89,5.71,11.74,8.03,18.55,4.13,5.41-3.1,7.93-9.72,6.22-15.71-.31-1.09-.74-2.09-1.29-3.02,0-.08-.03-.12-.07-.16-.03-.09-.07-.16-.13-.21.02-.03-.01-.05-.04-.06-.09-.15-.18-.3-.27-.45v-.05c-2.28-3.56-4.07-7.55-5.27-11.84-3.85-13.78-.84-27.83,6.98-38.56,5.75-7.92,14.08-14.02,24.23-16.86.42-.12.83-.23,1.26-.33,23.53-5.88,47.59,8.02,54.16,31.53,6.57,23.51-6.8,47.87-29.96,55.04-.84.21-3.39.93-4.31,1.2l-84.05,23.45-24.31-87.12c-11.27-40.31-54.39-63.14-94.51-48.85-34.32,12.22-54.43,48.93-46.34,84.45,2.49,10.95,7.28,20.68,13.75,28.87,7.72,9.83,17.8,17.42,29.19,22.15,14.53,6.08,31.13,7.48,47.48,2.91,6.99-1.95,13.43-4.85,19.26-8.55.24-.14.45-.27.66-.41,5.71-3.89,8.03-11.74,4.13-18.55-3.1-5.41-9.72-7.93-15.71-6.22-1.09.31-2.09.74-3.02,1.29-.08,0-.12.03-.16.07-.09.03-.16.07-.21.13-.03-.02-.05.01-.06.04-.15.09-.3.18-.45.28h-.05c-3.56,2.28-7.55,4.07-11.84,5.27-13.78,3.85-27.83.84-38.56-6.98-7.92-5.75-14.02-14.08-16.86-24.23-.12-.42-.23-.83-.33-1.26-5.88-23.53,8.02-47.59,31.53-54.16,23.51-6.57,47.87,6.8,55.04,29.96.21.84.93,3.39,1.2,4.31l23.45,84.05-87.12,24.31c-40.31,11.27-63.14,54.39-48.85,94.51,12.22,34.32,48.93,54.43,84.45,46.34,10.95-2.49,20.68-7.28,28.87-13.75,9.83-7.72,17.42-17.8,22.15-29.19,6.08-14.53,7.48-31.13,2.91-47.48-1.95-6.99-4.85-13.43-8.55-19.26-.14-.24-.27-.45-.41-.66-3.89-5.71-11.74-8.03-18.55-4.13-5.41,3.1-7.93,9.72-6.22,15.71.31,1.09.74,2.09,1.29,3.02,0,.08.03.12.07.16.03.09.07.16.13.21-.02.03.01.05.04.06.09.15.18.3.27.45v.05c2.28,3.56,4.07,7.55,5.27,11.84,3.85,13.78.84,27.83-6.98,38.56-5.75,7.92-14.08,14.02-24.23,16.86-.42.12-.83.23-1.26.33-23.53,5.88-47.59-8.02-54.16-31.53-6.57-23.51,6.8-47.87,29.96-55.04.84-.21,3.39-.93,4.31-1.2l84.05-23.45,24.31,87.12Z"></path></svg>
       <div>
-        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;line-height:1;">The staff scanner</div>
-        <div style="font-size:11px;color:#93887A;margin-top:3px;">One screen · nine card types · 3 seconds</div>
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:16px;line-height:1;">The staff scanner</div>
+        <div style="font-size:11px;color:#93887A;margin-top:3px;">One screen · 9 card types · ٩ أنواع · 3 seconds</div>
       </div>
     </div>
     <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
-      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">Scan a customer</div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">Scan a customer · 9 types</div>
       <div style="display:flex;flex-direction:column;gap:7px;">
         <sc-for list="{{ demoScans }}" as="dsc" hint-placeholder-count="9">
-          <div onClick="{{ dsc.go }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ dsc.br }};background:{{ dsc.bg }};border-radius:11px;padding:9px 12px;transition:all .2s;" style-hover="border-color:#E88024">
-            <span style="width:9px;height:9px;border-radius:3px;background:{{ dsc.dot }};flex-shrink:0;"></span>
+          <div onClick="{{ dsc.go }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ dsc.br }};background:{{ dsc.bg }};border-radius:11px;padding:9px 11px;animation:{{ dsc.anim }};">
+            <span style="width:28px;height:28px;border-radius:9px;background:{{ dsc.discBg }};border:1px solid {{ dsc.discBr }};color:{{ dsc.dot }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:{{ dsc.glyphSize }};letter-spacing:-.02em;flex-shrink:0;">{{ dsc.glyph }}</span>
             <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#241C16;">{{ dsc.label }}</div><div style="font-size:10.5px;color:#93887A;">{{ dsc.sub }}</div></div>
           </div>
         </sc-for>
       </div>
     </div>
     <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;">
-      <div style="flex:1;"><div style="font-size:13px;font-weight:800;">Kill the internet</div><div style="font-size:11px;color:#93887A;margin-top:2px;">Collections queue · redemptions lock</div></div>
-      <div onClick="{{ toggleOffline }}" style="cursor:pointer;width:42px;height:24px;border-radius:99px;background:{{ offSwBg }};position:relative;transition:background .25s;flex-shrink:0;">
-        <div style="position:absolute;top:3px;inset-inline-start:{{ offSwKnob }};width:18px;height:18px;border-radius:50%;background:#FFFFFF;transition:inset-inline-start .25s;box-shadow:0 1px 3px rgba(0,0,0,.25);"></div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:800;">Kill the internet</div><div style="font-size:11px;color:#93887A;margin-top:2px;">{{ offSwSub }}</div></div>
+      <div onClick="{{ toggleOffline }}" class="ws-switch" style="cursor:pointer;width:42px;height:24px;border-radius:99px;background:{{ offSwBg }};position:relative;flex-shrink:0;">
+        <div class="ws-knob" style="position:absolute;top:3px;inset-inline-start:{{ offSwKnob }};width:18px;height:18px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,.25);"></div>
       </div>
     </div>
     <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;">
-      <div style="flex:1;"><div style="font-size:13px;font-weight:800;">Switch language</div><div style="font-size:11px;color:#93887A;margin-top:2px;">Flips the phone to Arabic-first RTL</div></div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:800;">Switch language</div><div style="font-size:11px;color:#93887A;margin-top:2px;">{{ langSubLine }}</div></div>
       <div style="display:flex;gap:6px;flex-shrink:0;">
-        <div onClick="{{ setLangEn }}" style="cursor:pointer;border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:800;background:{{ enBg }};color:{{ enFg }};transition:all .2s;">EN</div>
-        <div onClick="{{ setLangAr }}" style="cursor:pointer;border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:800;background:{{ arBg }};color:{{ arFg }};font-family:'IBM Plex Sans Arabic',sans-serif;transition:all .2s;">عربي</div>
+        <div onClick="{{ setLangEn }}" class="ws-press" style="cursor:pointer;border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:800;background:{{ enBg }};color:{{ enFg }};border:1px solid {{ enBr }};">EN</div>
+        <div onClick="{{ setLangAr }}" class="ws-press" style="cursor:pointer;border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:800;background:{{ arBg }};color:{{ arFg }};border:1px solid {{ arBr }};font-family:'IBM Plex Sans Arabic',sans-serif;">عربي</div>
       </div>
     </div>
     <div style="display:flex;gap:10px;">
       <a href="Wasla Dashboard.dc.html" style="flex:1;display:block;background:#26262B;color:#F4F2EE;border-radius:14px;padding:13px 10px;font-size:12px;font-weight:700;text-align:center;">← Dashboard</a>
       <a href="Wasla Customer.dc.html" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#241C16;border-radius:14px;padding:13px 10px;font-size:12px;font-weight:700;text-align:center;">Customer side →</a>
     </div>
+    <div onClick="{{ resetDemo }}" class="ws-link" style="cursor:pointer;text-align:center;border:1px dashed {{ resetBr }};color:{{ resetFg }};border-radius:12px;padding:9px 10px;font-size:11px;font-weight:700;">{{ resetLabel }}</div>
   </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;offlineStart&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
 class Component extends DCLogic {
-  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinTaps: 0, flash: null, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد', staffInitials: 'AZ' };
+  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinTaps: 0, flash: null, flashOut: false, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ', ramp: 1, scanSeq: 0, stampSeq: 0, amtSeq: 0, chSeq: 0, chFrom: 0, staffSeq: 0, vipSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false };
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  language · the map is real {en, ar} pairs, never a reordered concatenation
+  // ────────────────────────────────────────────────────────────────────────────
+  /** The one-word question every string in this file asks. */
+  L(en, ar) { return (this.state && this.state.lang === 'ar') ? ar : en; }
+  tmap() {
+    return {
+      endShift: { en: 'End shift', ar: 'إنهاء المناوبة' },
+      ready: { en: 'Ready to scan', ar: 'جاهز للمسح' },
+      readyAlt: { en: 'جاهز للمسح', ar: 'Ready to scan' },
+      manual: { en: 'Type the code instead', ar: 'أدخل الرمز يدوياً' },
+      yourCards: { en: 'Your cards', ar: 'بطاقاتك' },
+      onlyYours: { en: 'The scanner only knows the cards assigned to you — anything else politely refuses.', ar: 'الماسح يعرف البطاقات المسندة إليك فقط — وما عداها يرفضه بلطف.' },
+      resolving: { en: 'Reading the pass… never a blank screen', ar: 'جارٍ قراءة البطاقة… ولا شاشة فارغة أبداً' },
+      bill: { en: 'Bill amount', ar: 'قيمة الفاتورة' },
+      nothingPre: { en: 'Nothing preselected — the customer picks.', ar: 'لا شيء محدد مسبقاً — الزبون هو من يختار.' },
+      noRedeemVip: { en: 'VIP has no redeem — the tier is the reward.', ar: 'بطاقة VIP بلا استبدال — المستوى نفسه هو المكافأة.' },
+      nextCustomer: { en: 'Next customer', ar: 'الزبون التالي' },
+      pinTitle: { en: 'Manager PIN', ar: 'رمز المدير' },
+      pinSub: { en: 'Redeems ask for a PIN — collections never do.', ar: 'الاستبدال يطلب رمزاً — أما الجمع فلا.' },
+      cancel: { en: 'Cancel', ar: 'إلغاء' },
+      shiftDone: { en: 'Shift summary', ar: 'ملخص المناوبة' },
+      shiftNote: { en: 'The count starts fresh for the next teammate — the history stays on the dashboard.', ar: 'العدّاد يبدأ من الصفر للزميل التالي — والسجل الكامل يبقى في لوحة التحكم.' },
+      handOver: { en: 'Hand the phone over', ar: 'سلّم الجهاز' },
+      onShift: { en: 'On shift', ar: 'على المناوبة' },
+      manualTitle: { en: 'Enter the code', ar: 'أدخل الرمز' },
+      manualSub: { en: 'Type the 8 digits printed under the QR', ar: 'اكتب الأرقام الثمانية المطبوعة تحت رمز الـ QR' },
+      manualNoMatch: { en: 'No member with this code', ar: 'لا يوجد عضو بهذا الرمز' },
+      renewBtn: { en: 'Renew · JOD 25', ar: 'تجديد · 25 ديناراً' },
+      undo: { en: 'Undo', ar: 'تراجع' },
+      crossSellStamp: { en: '+ Add a stamp instead', ar: '+ أضف ختماً بدلاً منه' },
+      crossSellFlashTitle: { en: 'Switched to the stamp card', ar: 'تحوّلنا إلى بطاقة الأختام' },
+      crossSellFlashSub: { en: 'Same QR, one tap.', ar: 'نفس الرمز، لمسة واحدة.' },
+      challengeDoneTitle: { en: 'Challenge complete', ar: 'اكتمل التحدي' },
+      challengeDoneSub: { en: 'Free lunch unlocked — the next challenge starts fresh.', ar: 'غداء مجاني — والتحدي التالي يبدأ من جديد.' },
+      challengeDoneBtn: { en: 'Done — nothing left to count', ar: 'تم — لا شيء لتسجيله' },
+      countVisitLabel: { en: '+ Count this visit', ar: '+ سجّل هذه الزيارة' },
+      visitsWord: { en: 'visits', ar: 'زيارة' },
+      lastActions: { en: 'Last actions', ar: 'آخر العمليات' },
+      noActionsYet: { en: 'No actions yet this shift', ar: 'لا عمليات في هذه المناوبة بعد' },
+      handoverPickTitle: { en: 'Who’s taking over?', ar: 'من سيكمل المناوبة؟' },
+      handoverPickSub: { en: 'Pick the next teammate — the counters reset for them.', ar: 'اختر الزميل التالي — وتُصفَّر العدّادات باسمه.' },
+      queueTitle: { en: 'Queued while offline', ar: 'بانتظار المزامنة' },
+      queueEmptyLine: { en: 'Nothing queued right now', ar: 'لا شيء بالانتظار الآن' },
+      queueSyncNote: { en: 'Syncs automatically the moment the till is back online', ar: 'تتم المزامنة تلقائياً لحظة عودة الاتصال' },
+      freeDrink: { en: 'Free drink of your choice', ar: 'مشروب مجاني من اختيارك' },
+      nothingYet: { en: 'Nothing to redeem yet — keep collecting.', ar: 'لا شيء للاستبدال بعد — تابعوا الجمع.' },
+      couponTitle: { en: 'One free dessert', ar: 'حلوى مجانية واحدة' },
+      couponSub: { en: 'Expires 29 AUG · one per customer · no undo', ar: 'تنتهي 29 آب · واحدة لكل زبون · بلا تراجع' },
+      couponUsedTitle: { en: 'Already used — Jul 12, 14:02', ar: 'استُخدم — 12 تموز، 14:02' },
+      couponUsedSub: { en: 'Coupons are one-shot. Offer the stamp card instead — same QR, one tap.', ar: 'الكوبون يُستخدم مرة واحدة فقط. اعرض بطاقة الأختام بدلاً منه — نفس الرمز، لمسة واحدة.' }
+    };
+  }
+  /** The tmap resolved down to plain strings for the active language. */
+  labels() {
+    const k = (this.state && this.state.lang === 'ar') ? 'ar' : 'en';
+    const src = this.tmap(), out = {};
+    Object.keys(src).forEach(n => { out[n] = src[n][k]; });
+    return out;
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  session persistence · ONE blob under ONE key, cleared only by "Reset demo"
+  // ────────────────────────────────────────────────────────────────────────────
+  scanKey() { return 'wasla_demo_scanner_state'; }
+  _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  _lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  /** Debounced — every mutating action calls it; a burst of taps costs one write. */
+  saveScan() {
+    clearTimeout(this._sv);
+    this._sv = setTimeout(() => {
+      const s = this.state || {};
+      try {
+        this._lsSet(this.scanKey(), JSON.stringify({ v: 1,
+          lang: s.lang, scansToday: s.scansToday, sStamps: s.sStamps, sRewards: s.sRewards,
+          sessionLog: (s.sessionLog || []).slice(0, 20),
+          staffName: s.staffName, staffAr: s.staffAr, staffInitials: s.staffInitials,
+          couponDone: s.couponDone, renewedMembership: s.renewedMembership,
+          chVisits: s.chVisits, chDone: s.chDone,
+          stamps: s.stamps, cbBal: s.cbBal, pts: s.pts,
+          rVisits: s.rVisits, rTier: s.rTier,
+          offline: s.offline, queued: s.queued, queueLog: (s.queueLog || []).slice(0, 20) }));
+      } catch (e) {}
+    }, 120);
+  }
+  /** Pure: reads the blob and returns a sanitised patch, or null. A bad blob is ignored, never thrown. */
+  readScan() {
+    const raw = this._lsGet(this.scanKey());
+    if (!raw) return null;
+    let b = null;
+    try { b = JSON.parse(raw); } catch (e) { return null; }
+    if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return null;
+    const p = {};
+    const int = (x, lo, hi) => (typeof x === 'number' && isFinite(x)) ? Math.max(lo, Math.min(hi, Math.round(x))) : null;
+    const num = (x, lo, hi) => (typeof x === 'number' && isFinite(x)) ? Math.max(lo, Math.min(hi, x)) : null;
+    const log = (v) => Array.isArray(v) ? v.filter(l => l && typeof l === 'object' && typeof l.scen === 'string' && typeof l.k === 'string').slice(0, 20).map(l => ({ scen: l.scen, k: l.k, v: l.v, ts: 0, old: true })) : null;
+    if (b.lang === 'en' || b.lang === 'ar') p.lang = b.lang;
+    [['scansToday', 0, 9999], ['sStamps', 0, 9999], ['sRewards', 0, 9999], ['queued', 0, 999], ['pts', 0, 999999], ['rVisits', 0, 999], ['chVisits', 0, 99]].forEach(([k, lo, hi]) => { const n = int(b[k], lo, hi); if (n !== null) p[k] = n; });
+    { const n = int(b.stamps, 0, 8); if (n !== null) p.stamps = n; }
+    { const n = num(b.cbBal, 0, 99999); if (n !== null) p.cbBal = +n.toFixed(2); }
+    ['staffName', 'staffAr', 'staffInitials'].forEach(k => { if (typeof b[k] === 'string' && b[k]) p[k] = b[k].slice(0, 40); });
+    ['couponDone', 'renewedMembership', 'chDone', 'offline'].forEach(k => { if (typeof b[k] === 'boolean') p[k] = b[k]; });
+    if (b.rTier === 'Silver' || b.rTier === 'Gold') p.rTier = b.rTier;
+    { const l = log(b.sessionLog); if (l) p.sessionLog = l; }
+    { const l = log(b.queueLog); if (l) p.queueLog = l; }
+    // an offline queue with nothing left offline is a contradiction — drop it rather than lie
+    if (p.offline === false) { p.queued = 0; p.queueLog = []; }
+    return Object.keys(p).length ? p : null;
+  }
+  /** Folds the blob straight into `state` at CONSTRUCTION: the host installs `__host` only after
+      the constructor returns (so setState is a silent no-op before that), and componentDidMount is
+      conditional in this runtime — it can be deferred, re-fired, or skipped entirely. */
+  bootRestore() {
+    let p = null;
+    try { p = this.readScan(); } catch (e) { p = null; }
+    if (!p) return false;
+    this.state = { ...this.state, ...p };
+    return true;
+  }
+  __restored = this.bootRestore();
+  /** Clears ONLY this scanner's blob — no other demo key is touched. */
+  resetScanner() {
+    clearTimeout(this._sv); clearTimeout(this._rt); clearTimeout(this._wt);
+    try { localStorage.removeItem(this.scanKey()); } catch (e) {}
+    this.__restored = false;
+    const h = this.__host || this;
+    h.__wsWelcomed = true;   // a reset is not a return — no welcome-back on the way out
+    h.__wsRampKey = null;
+    this.setState({ lang: 'en', screen: 'idle', scenario: null, resolving: false, mode: 'collect',
+      stamps: 6, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinTaps: 0,
+      flash: null, flashOut: false, offline: false, queued: 0, queueLog: [], queueSheetOpen: false,
+      cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9,
+      manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null,
+      chVisits: 3, chDone: false, chFrom: 0, sessionLog: [], shiftOpen: false, handoverPick: false,
+      staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ',
+      ramp: 1, stampSeq: 0, amtSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false });
+  }
+  /** The welcome-back beat, armed from the ONE path this runtime guarantees: render. Latched on the
+      HOST so it survives a logic hot-swap and fires exactly once, not once per render. */
+  armWelcome() {
+    if (!this.__restored) return;
+    const h = this.__host || this;
+    if (h.__wsWelcomed) return;
+    h.__wsWelcomed = true;
+    clearTimeout(this._wt);
+    this._wt = setTimeout(() => {
+      const A = (this.__host && this.__host.logic) || this;
+      if (A && typeof A.flashNow === 'function') A.flashNow('↺', '#F0A92B', A.L('Welcome back', 'أهلاً بعودتك'), A.L('This shift picked up exactly where you left it.', 'المناوبة تكمل من حيث توقفت تماماً.'));
+    }, 850);
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  the count-up ramp · one 0→1 easing, keyed, armed from renderVals
+  // ────────────────────────────────────────────────────────────────────────────
+  /** Seeds `ramp` to 0 in place for the CURRENT render (renderVals reads `this.state` by reference,
+      and setState during render is not available to us) and then drives it to 1 off rAF. The key is
+      latched on the HOST, so one arm per screen entry, never one per render. */
+  armRamp(key) {
+    const h = this.__host || this;
+    if (h.__wsRampKey === key) return;
+    h.__wsRampKey = key;
+    if (h.__wsRaf) { try { cancelAnimationFrame(h.__wsRaf); } catch (e) {} h.__wsRaf = null; }
+    if (!key) return;
+    if (this.state) this.state.ramp = 0;
+    if (typeof requestAnimationFrame !== 'function') { if (this.state) this.state.ramp = 1; return; }
+    const t0 = Date.now();
+    const step = () => {
+      if (h.__wsRampKey !== key) { h.__wsRaf = null; return; }
+      const A = h.logic || this;
+      const p = Math.min(1, (Date.now() - t0) / 640);
+      A.setState({ ramp: 1 - Math.pow(1 - p, 3) });
+      h.__wsRaf = p < 1 ? requestAnimationFrame(step) : null;
+    };
+    h.__wsRaf = requestAnimationFrame(step);
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  lifecycle
+  // ────────────────────────────────────────────────────────────────────────────
   componentDidMount() { this.poke(); }
+  componentWillUnmount() {
+    clearTimeout(this._pt); clearTimeout(this._ft); clearTimeout(this._fo); clearTimeout(this._s1);
+    clearTimeout(this._s2); clearTimeout(this._ut); clearTimeout(this._mt); clearTimeout(this._sv);
+    clearTimeout(this._wt); clearTimeout(this._rt); clearTimeout(this._pk);
+    const h = this.__host || this;
+    if (h.__wsRaf) { try { cancelAnimationFrame(h.__wsRaf); } catch (e) {} h.__wsRaf = null; }
+    h.__wsRampKey = null;
+  }
   poke() { clearTimeout(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = setTimeout(() => this.setState({ settled: true }), 2600); }
   componentDidUpdate() {
     const s = this.state;
-    const cur = [s.screen, s.scenario, s.mode, s.stamps, s.amount, s.selRw, s.cbSel, s.couponDone, !!s.pin, !!s.flash, s.offline, s.shiftOpen, s.lang, s.resolving, s.pts, s.cbBal, s.rTier, s.chVisits, s.chDone, s.handoverPick, s.queueSheetOpen].join('|');
+    const cur = [s.screen, s.scenario, s.mode, s.stamps, s.amount, s.selRw, s.cbSel, s.couponDone, !!s.pin, !!s.flash, s.offline, s.shiftOpen, s.lang, s.resolving, s.pts, s.cbBal, s.rTier, s.chVisits, s.chDone, s.handoverPick, s.queueSheetOpen, s.manualOpen, s.staffName].join('|');
     if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
     this._lastSig = cur;
   }
-  flashNow(mark, color, title, sub, after) { clearTimeout(this._ft); this.setState({ flash: { mark, color, title, sub } }); this._ft = setTimeout(() => { this.setState({ flash: null }); if (after) after(); }, 1700); }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  moments
+  // ────────────────────────────────────────────────────────────────────────────
+  /** Two-phase: the overlay holds, then fades — the dismissal is a beat, not a cut. */
+  flashNow(mark, color, title, sub) {
+    clearTimeout(this._ft); clearTimeout(this._fo);
+    this.setState({ flash: { mark, color, title, sub }, flashOut: false });
+    this._fo = setTimeout(() => this.setState({ flashOut: true }), 1420);
+    this._ft = setTimeout(() => this.setState({ flash: null, flashOut: false }), 1740);
+  }
   scanTo(scenario) {
-    clearTimeout(this._ut);
-    this.setState({ screen: 'scan', resolving: false, scenario, mode: scenario === 'coupon' ? 'redeem' : 'collect', amount: '', selRw: null, cbSel: null, pin: null, undo: null });
-    clearTimeout(this._s1); clearTimeout(this._s2);
+    clearTimeout(this._ut); clearTimeout(this._s1); clearTimeout(this._s2);
+    this.setState(s => ({ screen: 'scan', resolving: false, scenario, mode: scenario === 'coupon' ? 'redeem' : 'collect',
+      amount: '', selRw: null, cbSel: null, pin: null, pinTaps: 0, undo: null,
+      scanSeq: s.scanSeq + 1, stampSeq: 0, amtSeq: 0,
+      chFrom: 0, chSeq: s.chSeq + 1, vipClimb: false, vipSeq: s.vipSeq + 1 }));
     this._s1 = setTimeout(() => this.setState({ resolving: true }), 450);
-    this._s2 = setTimeout(() => { this.setState({ screen: 'member', resolving: false, scansToday: this.state.scansToday + 1 }); this.logAction(this.scenInfo(scenario).m[0], 'Scanned · مسح'); }, 1400);
+    this._s2 = setTimeout(() => {
+      const A = (this.__host && this.__host.logic) || this;
+      A.setState({ screen: 'member', resolving: false, scansToday: A.state.scansToday + 1 });
+      A.logAction(scenario, 'scan');
+    }, 1400);
   }
   askPin(tag) { this.setState({ pin: tag, pinTaps: 0 }); }
   finishPin() {
-    const tag = this.state.pin; this.setState({ pin: null });
-    const member = this.scenInfo(this.state.scenario).m[0];
-    if (tag === 'stamps') { this.setState({ stamps: 0, sRewards: this.state.sRewards + 1, mode: 'collect' }); this.flashNow('☕', '#2FAE66', 'Reward redeemed', 'Free drink — a fresh card is already counting.'); this.logAction(member, 'Redeemed · reward'); }
-    if (tag === 'cash') { const v = this.state.cbSel; const newBal = +(this.state.cbBal - v).toFixed(2); this.setState({ cbBal: newBal, cbSel: null }); this.flashNow('✓', '#2FAE66', 'JOD ' + v.toFixed(2) + ' off the bill', 'New balance JOD ' + newBal.toFixed(2) + ' — spend it like money.'); this.logAction(member, 'Redeemed · JOD ' + v.toFixed(2)); }
-    if (tag === 'pts') { const r = this.rungs()[this.state.selRw]; const newPts = this.state.pts - r.cost; this.setState({ pts: newPts, selRw: null }); this.flashNow('✓', '#2FAE66', r.name, r.cost + ' pts spent · ' + newPts + ' left.'); this.logAction(member, 'Redeemed · ' + r.name); }
-    if (tag === 'coupon') { this.setState({ couponDone: true }); this.flashNow('1×', '#2FAE66', 'Dessert is theirs', 'The coupon is spent — it can never fire twice.'); this.logAction(member, 'Redeemed · coupon'); }
-    if (tag === 'renew') { this.setState({ renewedMembership: true }); this.flashNow('✓', '#2FAE66', 'Membership renewed', 'Active again — same pass, fresh year. · فعّالة من جديد'); this.logAction(member, 'Renewed · membership'); }
+    const st = this.state, tag = st.pin, scen = st.scenario;
+    this.setState({ pin: null, pinTaps: 0 });
+    if (tag === 'stamps') { this.setState({ stamps: 0, sRewards: st.sRewards + 1, mode: 'collect', stampSeq: 0 }); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L('Free drink — a fresh card is already counting.', 'مشروب مجاني — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward'); }
+    if (tag === 'cash') { const v = st.cbSel; const nb = +(st.cbBal - v).toFixed(2); this.setState({ cbBal: nb, cbSel: null }); this.flashNow('✓', '#2FAE66', this.L('JOD ' + v.toFixed(2) + ' off the bill', 'خُصم ' + v.toFixed(2) + ' ديناراً من الفاتورة'), this.L('New balance JOD ' + nb.toFixed(2) + ' — it spends like money.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — يُصرف كالنقود.')); this.logAction(scen, 'redCash', v); }
+    if (tag === 'pts') { const i = st.selRw; const r = this.rungs()[i]; const np = st.pts - r.cost; this.setState({ pts: np, selRw: null }); this.flashNow('✓', '#2FAE66', this.rungName(i), this.L(r.cost + ' pts spent · ' + np + ' left.', 'صُرفت ' + r.cost + ' نقطة · بقي ' + np + ' نقطة.')); this.logAction(scen, 'redPts', i); }
+    if (tag === 'coupon') { this.setState({ couponDone: true }); this.flashNow('1×', '#2FAE66', this.L('The dessert is theirs', 'الحلوى من نصيبها'), this.L('The coupon is spent — it can never fire twice.', 'الكوبون استُهلك — ولا يمكن أن يُصرف مرتين.')); this.logAction(scen, 'redCoupon'); }
+    if (tag === 'renew') { this.setState({ renewedMembership: true }); this.flashNow('✓', '#2FAE66', this.L('Membership renewed', 'تم تجديد الاشتراك'), this.L('Active again — same pass, fresh year.', 'فعّال من جديد — نفس البطاقة وسنة جديدة.')); this.logAction(scen, 'renew'); }
+    this.saveScan();
   }
-  rungs() { return [{ name: 'Free espresso', cost: 250 }, { name: 'A dozen ka\'ak', cost: 500 }]; }
+  rungs() { return [{ en: 'Free espresso', ar: 'إسبريسو مجاني', cost: 250 }, { en: 'A dozen ka’ak', ar: 'دزينة كعك', cost: 500 }]; }
+  rungName(i) { const r = this.rungs()[i]; return r ? this.L(r.en, r.ar) : ''; }
   armUndo(type, amount, wasOffline) { clearTimeout(this._ut); this.setState({ undo: { type, amount, wasOffline } }); this._ut = setTimeout(() => this.setState({ undo: null }), 8000); }
   undoLast() {
-    const u = this.state.undo; if (!u) return;
+    const st = this.state, u = st.undo;
+    if (!u) return;
     clearTimeout(this._ut);
-    const member = this.scenInfo(this.state.scenario).m[0];
-    if (u.type === 'stamp') { this.setState({ stamps: Math.max(0, this.state.stamps - 1), sStamps: Math.max(0, this.state.sStamps - 1), queued: u.wasOffline ? Math.max(0, this.state.queued - 1) : this.state.queued, undo: null }); this.flashNow('↺', '#F0A92B', 'تم التصحيح · Corrected', '−1 stamp · ختم واحد أُزيل'); this.logAction(member, 'Undo · stamp'); }
-    else if (u.type === 'cash') { this.setState({ cbBal: +(this.state.cbBal - u.amount).toFixed(2), queued: u.wasOffline ? Math.max(0, this.state.queued - 1) : this.state.queued, undo: null }); this.flashNow('↺', '#F0A92B', 'تم التصحيح · Corrected', '− JOD ' + u.amount.toFixed(2) + ' · خُصم من الرصيد'); this.logAction(member, 'Undo · cashback'); }
-    else if (u.type === 'pts') { this.setState({ pts: Math.max(0, this.state.pts - u.amount), queued: u.wasOffline ? Math.max(0, this.state.queued - 1) : this.state.queued, undo: null }); this.flashNow('↺', '#F0A92B', 'تم التصحيح · Corrected', '− ' + u.amount + ' pts · نقاط أُزيلت'); this.logAction(member, 'Undo · points'); }
+    const scen = st.scenario;
+    const q = u.wasOffline ? Math.max(0, st.queued - 1) : st.queued;
+    const title = this.L('Corrected', 'تم التصحيح');
+    if (u.type === 'stamp') { this.setState({ stamps: Math.max(0, st.stamps - 1), sStamps: Math.max(0, st.sStamps - 1), queued: q, undo: null, stampSeq: 0 }); this.flashNow('↺', '#F0A92B', title, this.L('−1 stamp — the card is back where it was.', 'ختم واحد أُزيل — والبطاقة عادت كما كانت.')); this.logAction(scen, 'undoStamp'); }
+    else if (u.type === 'cash') { this.setState({ cbBal: +(st.cbBal - u.amount).toFixed(2), queued: q, undo: null }); this.flashNow('↺', '#F0A92B', title, this.L('− JOD ' + u.amount.toFixed(2) + ' off the wallet again.', 'خُصم ' + u.amount.toFixed(2) + ' ديناراً من الرصيد مجدداً.')); this.logAction(scen, 'undoCash'); }
+    else if (u.type === 'pts') { this.setState({ pts: Math.max(0, st.pts - u.amount), queued: q, undo: null }); this.flashNow('↺', '#F0A92B', title, this.L('− ' + u.amount + ' pts taken back.', 'أُزيلت ' + u.amount + ' نقطة.')); this.logAction(scen, 'undoPts'); }
+    this.saveScan();
   }
   manualCodes() { return { '01142201': 'stamps', '01775533': 'cashback', '01924410': 'points' }; }
   finishManual() {
@@ -482,30 +832,110 @@ class Component extends DCLogic {
     if (scen) { this.setState({ manualOpen: false, manualCode: '' }); this.scanTo(scen); }
     else { this.setState({ manualError: true }); clearTimeout(this._mt); this._mt = setTimeout(() => this.setState({ manualCode: '', manualError: false }), 900); }
   }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  shared data
+  // ────────────────────────────────────────────────────────────────────────────
   scenInfo(scen) {
     return {
-      stamps: { m: ['Sara Al-Amin', 'سارة الأمين', 'SA'], card: 'Daraj Coffee · Stamp card', color: '#1E5C43' },
-      cashback: { m: ['Khaled Mansour', 'خالد منصور', 'KM'], card: 'Zaytoun Kitchen · Cashback', color: '#5C6B2F' },
-      points: { m: ['Salma Oweis', 'سلمى عويس', 'SO'], card: 'Sukkar Bakery · Points', color: '#B14A32' },
-      coupon: { m: ['Nadia Farhat', 'نادية فرحات', 'NF'], card: 'Daraj Coffee · Coupon', color: '#1E5C43' },
-      vip: { m: ['Rania Qasem', 'رانيا قاسم', 'RQ'], card: 'Layl Lounge · VIP tiers', color: '#1B2440' },
-      discount: { m: ['Ruba Zureikat', 'روبا زريقات', 'RZ'], card: 'Zaytoun Kitchen · Discount', color: '#5C6B2F' },
-      membership: { m: ['Anas Freihat', 'أنس فريحات', 'AF'], card: 'Ghaim Studio · Membership', color: '#4E6E8E' },
-      challenge: { m: ['Huda Barakat', 'هدى بركات', 'HB'], card: 'Daraj Coffee · Challenge', color: '#7A4FA3' },
-      foreign: { m: ['Unknown pass', 'بطاقة غريبة', '؟'], card: 'Marmar Lounge — not your account', color: '#6B6760' }
-    }[scen] || { m: ['', '', ''], card: '', color: '#26262B' };
+      stamps: { m: ['Sara Al-Amin', 'سارة الأمين', 'SA'], card: 'Daraj Coffee · Stamp card', cardAr: 'مقهى درج · بطاقة أختام', color: '#1E5C43' },
+      cashback: { m: ['Khaled Mansour', 'خالد منصور', 'KM'], card: 'Zaytoun Kitchen · Cashback', cardAr: 'مطبخ زيتون · استرداد نقدي', color: '#5C6B2F' },
+      points: { m: ['Salma Oweis', 'سلمى عويس', 'SO'], card: 'Sukkar Bakery · Points', cardAr: 'مخبز سكّر · نقاط', color: '#B14A32' },
+      coupon: { m: ['Nadia Farhat', 'نادية فرحات', 'NF'], card: 'Daraj Coffee · Coupon', cardAr: 'مقهى درج · كوبون', color: '#1E5C43' },
+      vip: { m: ['Rania Qasem', 'رانيا قاسم', 'RQ'], card: 'Layl Lounge · VIP tiers', cardAr: 'صالة ليل · مستويات VIP', color: '#1B2440' },
+      discount: { m: ['Ruba Zureikat', 'روبا زريقات', 'RZ'], card: 'Zaytoun Kitchen · Discount', cardAr: 'مطبخ زيتون · بطاقة خصم', color: '#5C6B2F' },
+      membership: { m: ['Anas Freihat', 'أنس فريحات', 'AF'], card: 'Ghaim Studio · Membership', cardAr: 'استوديو غيم · اشتراك', color: '#4E6E8E' },
+      challenge: { m: ['Huda Barakat', 'هدى بركات', 'HB'], card: 'Daraj Coffee · Challenge', cardAr: 'مقهى درج · بطاقة تحدٍّ', color: '#7A4FA3' },
+      foreign: { m: ['Unknown pass', 'بطاقة غير معروفة', '؟'], card: 'Marmar Lounge — not your account', cardAr: 'صالة مرمر — ليست ضمن حسابك', color: '#6B6760' }
+    }[scen] || { m: ['', '', ''], card: '', cardAr: '', color: '#26262B' };
   }
-  toAr(n) { const d = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩']; return String(n).split('').map(c => d[+c] ?? c).join(''); }
-  timeAgo(ts) { const sec = Math.max(0, Math.round((Date.now() - ts) / 1000)); if (sec < 5) return 'just now · الآن'; if (sec < 60) return sec + 's ago · قبل ' + sec + 'ث'; const m = Math.round(sec / 60); return m + 'm ago · قبل ' + m + 'د'; }
-  logAction(member, action) { this.setState(s => ({ sessionLog: [{ member, action, ts: Date.now() }, ...s.sessionLog].slice(0, 20) })); }
-  pushQueue(member, action) { this.setState(s => ({ queueLog: [{ member, action, ts: Date.now() }, ...s.queueLog].slice(0, 20) })); }
-  staffList() { return [{ name: 'Ahmad Zoubi', ar: 'أحمد', initials: 'AZ' }, { name: 'Rasha Kilani', ar: 'رشا', initials: 'RK' }]; }
-  pickStaff(idx) { clearTimeout(this._ut); const p = this.staffList()[idx]; this.setState({ staffName: p.name, staffAr: p.ar, staffInitials: p.initials, shiftOpen: false, handoverPick: false, scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', undo: null }); }
+  memberName(scen) { const m = this.scenInfo(scen).m; return this.L(m[0], m[1]); }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  the stamp system · ONE glyph, three cell states
+  // ────────────────────────────────────────────────────────────────────────────
+  /** Mixes a hex toward white — the stamped disc gets a touch of lift so a deep brand green still
+      reads as a disc against the #101013 shell. */
+  lift(hex, f) {
+    const n = parseInt(hex.slice(1), 16), mix = (c) => Math.round(c + (255 - c) * f);
+    return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(c => mix(c).toString(16).padStart(2, '0')).join('');
+  }
+  /** The coffee glyph for the Daraj stamp card — the single source of truth for every size it is
+      drawn at (32px grid cell, 64px redeem hero, 96px flash). Built as React elements rather than
+      markup because the template renders a valid element straight through, and an HTML string would
+      arrive as escaped text. Geometric, one weight, round joins, one steam curl. */
+  stampGlyph(px, color, sw) {
+    const R = (typeof React !== 'undefined' && React) ? React : null;
+    if (!R) return null;
+    const w = sw || 1.9;
+    const line = { fill: 'none', stroke: color || '#FFFFFF', strokeWidth: w, strokeLinecap: 'round', strokeLinejoin: 'round' };
+    const thin = (f) => ({ ...line, strokeWidth: +(w * f).toFixed(2) });
+    // the drawing's real bbox is x 3.1→18.8, y 2.6→20.7 — the handle bulges right and the saucer
+    // bows down, so the viewBox origin is nudged to put THAT box in the middle rather than the
+    // path coordinates. Without it the cup sits visibly left of centre at flash size.
+    return R.createElement('svg', { viewBox: '-1.05 -0.35 24 24', width: px, height: px, style: { display: 'block', flexShrink: 0, overflow: 'visible' } },
+      R.createElement('path', { key: 'steam', d: 'M11.2 2.6c1.8 1.4-1.8 2.7 0 4.1', style: thin(.85) }),
+      R.createElement('path', { key: 'cup', d: 'M4.9 9.6h9.9v3.8a4.95 4.95 0 0 1-9.9 0z', style: line }),
+      R.createElement('path', { key: 'handle', d: 'M14.8 10.7h1.6a2.4 2.4 0 0 1 0 4.8h-.8', style: thin(.88) }),
+      R.createElement('path', { key: 'saucer', d: 'M3.1 19.4c3.9 1.7 9.8 1.7 13.7 0', style: thin(.92) })
+    );
+  }
+  /** Deterministic per-index tilt in −6°..+6° — the same cell always leans the same way, so the
+      card looks hand-stamped rather than randomised on every render. */
+  stampTilt(i) { return (((i * 5 + 2) % 13) - 6) + 'deg'; }
+  /** Log rows are stored as keys, never as sentences — so the log re-reads itself in Arabic too. */
+  actionText(k, v) {
+    switch (k) {
+      case 'scan': return this.L('Scanned', 'مسح');
+      case 'stamp': return this.L('Stamp added', 'أُضيف ختم');
+      case 'undoStamp': return this.L('Undo · stamp', 'تراجع · ختم');
+      case 'undoCash': return this.L('Undo · cashback', 'تراجع · استرداد');
+      case 'undoPts': return this.L('Undo · points', 'تراجع · نقاط');
+      case 'colCash': return this.L('Collected · JOD ' + v, 'جمع · ' + v + ' ديناراً');
+      case 'colPts': return this.L('Collected · ' + v + ' pts', 'جمع · ' + v + ' نقطة');
+      case 'redReward': return this.L('Redeemed · reward', 'استبدال · مكافأة');
+      case 'redCash': return this.L('Redeemed · JOD ' + Number(v).toFixed(2), 'استبدال · ' + Number(v).toFixed(2) + ' ديناراً');
+      case 'redPts': return this.L('Redeemed · ', 'استبدال · ') + this.rungName(v);
+      case 'redCoupon': return this.L('Redeemed · coupon', 'استبدال · كوبون');
+      case 'renew': return this.L('Renewed · membership', 'تجديد · اشتراك');
+      case 'visit': return this.L('Visit logged', 'سُجّلت زيارة');
+      case 'tierUp': return this.L('Tier up · Gold', 'ترقية · ذهبية');
+      case 'chVisit': return this.L('Challenge visit', 'زيارة تحدٍّ');
+      case 'chDone': return this.L('Challenge complete', 'اكتمل التحدي');
+      case 'qStamp': return this.L('Stamp added', 'أُضيف ختم');
+      case 'qCash': return this.L('JOD ' + v + ' cashback', v + ' ديناراً استرداد');
+      case 'qPts': return this.L(v + ' pts', v + ' نقطة');
+      default: return '';
+    }
+  }
+  timeAgo(l) {
+    if (!l || !l.ts || l.old) return this.L('Earlier', 'سابقاً');
+    const sec = Math.max(0, Math.round((Date.now() - l.ts) / 1000));
+    if (sec < 5) return this.L('just now', 'الآن');
+    if (sec < 60) return this.L(sec + 's ago', 'قبل ' + sec + ' ث');
+    const m = Math.round(sec / 60);
+    return this.L(m + 'm ago', 'قبل ' + m + ' د');
+  }
+  logAction(scen, k, v) { this.setState(s => ({ sessionLog: [{ scen, k, v, ts: Date.now() }, ...s.sessionLog].slice(0, 20) })); this.saveScan(); }
+  pushQueue(scen, k, v) { this.setState(s => ({ queueLog: [{ scen, k, v, ts: Date.now() }, ...s.queueLog].slice(0, 20) })); this.saveScan(); }
+  staffList() { return [{ name: 'Ahmad Zoubi', ar: 'أحمد الزعبي', initials: 'AZ' }, { name: 'Rasha Kilani', ar: 'رشا كيلاني', initials: 'RK' }]; }
+  pickStaff(idx) {
+    clearTimeout(this._ut);
+    const p = this.staffList()[idx];
+    this.setState(s => ({ staffName: p.name, staffAr: p.ar, staffInitials: p.initials, shiftOpen: false, handoverPick: false,
+      scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', scenario: null, undo: null, staffSeq: s.staffSeq + 1 }));
+    const h = this.__host || this;
+    h.__wsRampKey = null;   // the totals are a new person's now — let them count up again
+    this.saveScan();
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
   renderVals() {
+    this.armWelcome();
     const st = this.state, EN = st.lang === 'en';
     const AN = (n, du, dl) => st.settled ? 'none' : n + ' ' + du + ' cubic-bezier(.22,.61,.36,1) ' + (dl || '0s') + ' both';
-    const t = { endShift: 'End shift · نهاية المناوبة', ready: 'Ready to scan', manual: 'Type the code · أدخل الرمز يدوياً', yourCards: 'Your cards · بطاقاتك', onlyYours: 'The scanner only knows the cards assigned to you — anything else politely refuses.', resolving: 'Reading the pass… never a blank screen · جارٍ القراءة', bill: 'Bill amount · قيمة الفاتورة', nothingPre: 'Nothing preselected — the customer picks. · لا شيء محدد مسبقاً', noRedeemVip: 'VIP has no redeem — the tier is the reward.', nextCustomer: 'Next customer · الزبون التالي', pinTitle: 'Manager PIN · رمز المدير', pinSub: 'Redeems ask for a PIN — collections never do.', cancel: 'Cancel · إلغاء', shiftDone: 'Shift summary · ملخص المناوبة', shiftNote: 'The count starts fresh for the next teammate — history stays on the dashboard.', handOver: 'Hand the phone over', manualTitle: 'Enter the code · أدخل الرمز', manualSub: 'Type the 8 digits under the QR · اكتب الأرقام الثمانية تحت الرمز', manualNoMatch: 'No member with this code · لا يوجد عضو بهذا الرمز', renewBtn: 'Renew · JOD 25 · تجديد', undo: 'تراجع · Undo', crossSellStamp: '+ Add a stamp instead · ختم بدلاً منه', crossSellFlashTitle: 'Switched to the stamp card · تحويل لبطاقة الختم', crossSellFlashSub: 'Same QR, one tap · نفس الرمز، لمسة واحدة', challengeDoneTitle: 'Challenge complete · اكتمل التحدي', challengeDoneSub: 'Free lunch unlocked — next challenge starts fresh · فازت بغداء مجاني', challengeDoneBtn: 'Done — nothing to count · تم', countVisitLabel: '+ Count this visit · تسجيل الزيارة', lastActions: 'Last actions · آخر العمليات', noActionsYet: 'No actions yet this shift · لا عمليات بعد', handoverPickTitle: 'Who\'s taking over? · من سيكمل المناوبة؟', handoverPickSub: 'Pick the next teammate — counters reset for them. · اختر الزميل التالي', queueTitle: 'Queued while offline · قائمة الانتظار', queueEmptyLine: 'Nothing queued right now · لا شيء بالانتظار', queueSyncNote: 'Syncs automatically when the till is back · تتم المزامنة تلقائياً' };
-    if (!EN) { const flip = str => { const parts = str.split(' · '); return parts.length === 2 ? parts[1] + ' · ' + parts[0] : str; }; Object.keys(t).forEach(k => { t[k] = flip(t[k]); }); }
+    const SEED = (seq, a, b, du, dl) => (seq % 2 ? b : a) + ' ' + du + ' cubic-bezier(.22,.61,.36,1) ' + (dl || '0s') + ' both';
+    const t = this.labels();
     const scen = st.scenario;
     const SCEN = this.scenInfo(scen);
     const isStampsS = scen === 'stamps', isCash = scen === 'cashback', isPts = scen === 'points';
@@ -515,138 +945,379 @@ class Component extends DCLogic {
     const amt = parseFloat(st.amount) || 0;
     const rungs = this.rungs();
     const tierIdx = st.rTier === 'Gold' ? 1 : 0;
-    const demoDefs = [
-      ['stamps', 'Sara — a stamp is one tap', 'Stamp card · 6/8, two from a reward', '#1E5C43'],
-      ['cashback', 'Khaled — cashback is money', 'JOD 3.20 balance · partial redeem · min JOD 2', '#5C6B2F'],
-      ['points', 'Salma — the redeem ladder', 'points · nothing preselected, shortfalls shown', '#B14A32'],
-      ['coupon', 'Nadia — a one-shot coupon', 'asks twice · try scanning her twice', '#E88024'],
-      ['vip', 'Rania — VIP, collect only', '11 visits · one more to GOLD', '#1B2440'],
-      ['discount', 'Ruba — a verdict, not a transaction', 'discount card · valid', '#2FAE66'],
-      ['membership', 'Anas — lapsed membership', 'verdict · expired 12 days ago', '#F0A92B'],
-      ['challenge', 'Huda — a challenge has a clock · بطاقة التحدي', '3/5 visits this month · 9-day window', '#7A4FA3'],
-      ['foreign', 'A stranger\'s card', 'another account · polite refusal', '#E2563A']
+    const brand = SCEN.color;   // the stamped disc is the card's own brand colour
+    const jod = (n) => this.L('JOD ' + n, n + ' ديناراً');
+    const ptsWord = (n) => this.L(n + ' pts', n + ' نقطة');
+
+    // ── the count-up ramp: exactly one target per screen, re-armed on entry ──
+    const rampKey = st.shiftOpen && !st.handoverPick ? 'shift'
+      : (st.screen === 'member' && (isCash || isPts)) ? 'amt:' + scen
+      : st.screen === 'idle' ? 'idle' : '';
+    this.armRamp(rampKey);
+    const RP = rampKey ? st.ramp : 1;
+    const rampIdle = rampKey === 'idle' ? RP : 1;
+    const rampAmt = rampKey.slice(0, 4) === 'amt:' ? RP : 1;
+    const rampShift = rampKey === 'shift' ? RP : 1;
+
+    // ── VIP ladder geometry · Silver 0% · Gold 50% · Royal 100% ──
+    const GOLD_AT = 12, ROYAL_AT = 30;
+    const vipPct = (visits, idx) => idx ? 50 + 50 * Math.min(1, Math.max(0, (visits - GOLD_AT) / (ROYAL_AT - GOLD_AT))) : 50 * Math.min(1, visits / GOLD_AT);
+    const vipTo = vipPct(st.rVisits, tierIdx).toFixed(1) + '%';
+    const tierDefs = [
+      { en: 'Silver', ar: 'فضية', icon: '☆', color: '#AEB7C2', bg: 'rgba(174,183,194,.16)', glow: '0 0 0 5px rgba(174,183,194,.10), 0 0 20px rgba(174,183,194,.22)' },
+      { en: 'Gold', ar: 'ذهبية', icon: '★', color: '#E8B824', bg: 'rgba(232,184,36,.18)', glow: '0 0 0 5px rgba(232,184,36,.12), 0 0 22px rgba(232,184,36,.30)' },
+      { en: 'Royal', ar: 'ملكية', icon: '♛', color: '#B98BE0', bg: 'rgba(185,139,224,.16)', glow: '0 0 0 5px rgba(185,139,224,.12), 0 0 22px rgba(185,139,224,.26)' }
     ];
+
+    // ── the challenge countdown ring · r = 62 ──
+    const RC = 389.6;
+    const ringOff = (v) => (RC * (1 - Math.min(1, Math.max(0, v / st.chGoal)))).toFixed(1);
+
+    const demoDefs = [
+      ['stamps', 'Sara — a stamp is one tap', 'Stamp card · 6/8, two from a reward', '#1E5C43', '•••', '13px'],
+      ['cashback', 'Khaled — cashback is money', 'JOD 3.20 balance · partial redeem · min JOD 2', '#5C6B2F', '5%', '11.5px'],
+      ['points', 'Salma — the redeem ladder', 'points · nothing preselected, shortfalls shown', '#B14A32', '250', '10px'],
+      ['coupon', 'Nadia — a one-shot coupon', 'asks twice · try scanning her twice', '#E88024', '1×', '12.5px'],
+      ['vip', 'Rania — VIP, collect only', '11 visits · one more to GOLD', '#1B2440', '★', '14px'],
+      ['discount', 'Ruba — a verdict, not a transaction', 'discount card · valid', '#2FAE66', '−15%', '9px'],
+      ['membership', 'Anas — lapsed membership', 'verdict · expired 12 days ago', '#F0A92B', 'ID', '11px'],
+      ['challenge', 'Huda — a challenge has a clock', '3/5 visits this month · 9-day window', '#7A4FA3', '3/5', '10.5px'],
+      ['foreign', 'A stranger’s card', 'another account · polite refusal', '#E2563A', '⚠', '13px']
+    ];
+    const tint = (hex, a) => 'rgba(' + parseInt(hex.slice(1, 3), 16) + ',' + parseInt(hex.slice(3, 5), 16) + ',' + parseInt(hex.slice(5, 7), 16) + ',' + a + ')';
+
     return {
       dir: EN ? 'ltr' : 'rtl', t,
-      enterAnim: AN('fadeUp', '.45s'), popAnim: AN('popIn', '.45s'), previewAnim: 'none',
+      enterAnim: AN('fadeUp', '.45s'), popAnim: AN('popIn', '.45s'),
+      // ── scan cinema · header → hero → tabs → CTA ──
+      matAnim: AN('cardMat', '.42s'), hdrAnim: AN('slideDown', '.4s', '.02s'),
+      tabsAnim: AN('fadeUp', '.4s', '.13s'), heroAnim: AN('fadeUp', '.42s', '.09s'),
+      ctaAnim: AN('fadeUp', '.4s', '.2s'), ctaAnim2: AN('fadeUp', '.4s', '.27s'),
+      sweepAnim: SEED(st.scanSeq, 'sweepA', 'sweepB', '1.25s'),
       isIdle: st.screen === 'idle', isScan: st.screen === 'scan', isMember: st.screen === 'member', resolving: st.resolving,
-      scansToday: st.scansToday,
+      idleSubLine: this.L('Rainbow St · ' + Math.round(st.scansToday * rampIdle) + ' scans today', 'شارع الرينبو · ' + Math.round(st.scansToday * rampIdle) + ' عملية مسح اليوم'),
+      staffAvatarAnim: st.staffSeq ? SEED(st.staffSeq, 'bumpA', 'bumpB', '.42s') : AN('popIn', '.4s'),
+      staffNameAnim: st.staffSeq ? SEED(st.staffSeq, 'nameA', 'nameB', '.45s', '.06s') : 'none',
       scanDefault: () => this.scanTo('stamps'),
+      // ── manual entry ──
       openManual: () => this.setState({ manualOpen: true, manualCode: '', manualError: false }),
       manualCancel: () => { clearTimeout(this._mt); this.setState({ manualOpen: false, manualCode: '', manualError: false }); },
       manualOpen: st.manualOpen, manualError: st.manualError,
       manualCells: Array.from({ length: 8 }, (_, i) => ({ v: st.manualCode[i] || '', br: st.manualError ? '#E2563A' : (i < st.manualCode.length ? '#E88024' : 'rgba(244,242,238,.15)') })),
       manualShake: st.manualError ? 'shakeX .4s cubic-bezier(.22,.61,.36,1) both' : 'none',
       manualKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map(k => ({
-        k, vis: k ? 'visible' : 'hidden', cur: k ? 'pointer' : 'default',
-        tap: () => { if (!k) return; this.setState(s => { let code = s.manualCode; if (k === '⌫') code = code.slice(0, -1); else if (code.length < 8) code += k; if (code.length === 8) setTimeout(() => this.finishManual(), 200); return { manualCode: code, manualError: false }; }); }
+        k, vis: k ? 'visible' : 'hidden', cur: k ? 'pointer' : 'default', cls: k ? 'ws-key' : '',
+        tap: () => { if (!k) return; this.setState(s => { let code = s.manualCode; if (k === '⌫') code = code.slice(0, -1); else if (code.length < 8) code += k; if (code.length === 8) { clearTimeout(this._mt); this._mt = setTimeout(() => this.finishManual(), 200); } return { manualCode: code, manualError: false }; }); }
       })),
       manualHints: [
-        { label: 'Sara · stamps · سارة · ختم — 0114 2201' },
-        { label: 'Khaled · cashback · خالد · كاش باك — 0177 5533' },
-        { label: 'Salma · points · سلمى · نقاط — 0192 4410' }
-      ],
+        ['01142201', this.L('Sara · stamps', 'سارة · أختام')],
+        ['01775533', this.L('Khaled · cashback', 'خالد · استرداد')],
+        ['01924410', this.L('Salma · points', 'سلمى · نقاط')]
+      ].map(([code, who], i) => ({
+        label: who + ' — ' + code.slice(0, 4) + ' ' + code.slice(4),
+        anim: AN('fadeUp', '.34s', (0.1 + 0.05 * i) + 's'),
+        fill: () => { this.setState({ manualCode: code, manualError: false }); clearTimeout(this._mt); this._mt = setTimeout(() => this.finishManual(), 220); }
+      })),
       toIdle: () => { clearTimeout(this._ut); this.setState({ screen: 'idle', scenario: null, undo: null }); },
-      offline: st.offline, offlineLine: 'Offline — ' + st.queued + ' collection' + (st.queued === 1 ? '' : 's') + ' queued · redeems locked · يعمل دون إنترنت',
-      toggleOffline: () => this.setState({ offline: !st.offline, queued: st.offline ? 0 : st.queued, queueLog: st.offline ? [] : st.queueLog }),
+      // ── offline ──
+      offline: st.offline,
+      offlineLine: this.L('Offline — ' + st.queued + (st.queued === 1 ? ' collection' : ' collections') + ' queued · redeems locked', 'دون إنترنت — ' + st.queued + ' عملية جمع بالانتظار · الاستبدال مقفل'),
+      offBannerAnim: AN('slideDown', '.35s'),
+      offSwSub: 'Collections queue · redemptions lock',
+      toggleOffline: () => { this.setState({ offline: !st.offline, queued: st.offline ? 0 : st.queued, queueLog: st.offline ? [] : st.queueLog, queueSheetOpen: false }); this.saveScan(); },
       offSwBg: st.offline ? '#F0A92B' : '#D8D0C2', offSwKnob: st.offline ? '21px' : '3px',
       queueSheetOpen: st.queueSheetOpen,
       openQueueSheet: () => this.setState({ queueSheetOpen: true }),
       closeQueueSheet: () => this.setState({ queueSheetOpen: false }),
       queueEmpty: st.queueLog.length === 0,
-      queueItems: st.queueLog.slice(0, 6).map(q => ({ member: q.member, action: q.action, time: this.timeAgo(q.ts) })),
-      enBg: EN ? '#E88024' : 'transparent', enFg: EN ? '#FFFFFF' : '#93887A',
-      arBg: !EN ? '#E88024' : 'transparent', arFg: !EN ? '#FFFFFF' : '#93887A',
-      setLangEn: () => this.setState({ lang: 'en' }), setLangAr: () => this.setState({ lang: 'ar' }),
-      scMemberName: SCEN.m[0], scMemberAr: SCEN.m[1], scMemberInitials: SCEN.m[2], scCardLine: SCEN.card, scCardColor: SCEN.color,
+      queueItems: st.queueLog.slice(0, 6).map((q, i) => ({ member: this.memberName(q.scen), action: this.actionText(q.k, q.v), time: this.timeAgo(q), anim: AN('fadeUp', '.32s', (0.04 + 0.05 * i) + 's') })),
+      // ── language ──
+      langSubLine: 'Flips the phone to Arabic-first RTL',
+      enBg: EN ? '#E88024' : 'transparent', enFg: EN ? '#FFFFFF' : '#93887A', enBr: EN ? '#E88024' : '#E7E0D5',
+      arBg: !EN ? '#E88024' : 'transparent', arFg: !EN ? '#FFFFFF' : '#93887A', arBr: !EN ? '#E88024' : '#E7E0D5',
+      setLangEn: () => { this.setState({ lang: 'en' }); this.saveScan(); },
+      setLangAr: () => { this.setState({ lang: 'ar' }); this.saveScan(); },
+      // ── member header ──
+      scMemberName: EN ? SCEN.m[0] : SCEN.m[1], scMemberAr: EN ? SCEN.m[1] : SCEN.m[0],
+      scMemberInitials: SCEN.m[2], scCardLine: this.L(SCEN.card, SCEN.cardAr), scCardColor: SCEN.color,
       hasTabs, tabItems: [
-        { label: 'Collect · جمع', key: 'collect', c: '#2FAE66' },
-        { label: 'Redeem · استبدال', key: 'redeem', c: '#E88024' }
+        { label: this.L('Collect', 'جمع'), key: 'collect', c: '#2FAE66' },
+        { label: this.L('Redeem', 'استبدال'), key: 'redeem', c: '#E88024' }
       ].map(x => ({ label: x.label, go: () => this.setState({ mode: x.key, selRw: null, cbSel: null }), br: st.mode === x.key ? x.c : 'rgba(244,242,238,.14)', bg: st.mode === x.key ? (x.key === 'collect' ? 'rgba(47,174,102,.16)' : 'rgba(232,128,36,.16)') : 'transparent', fg: st.mode === x.key ? (x.key === 'collect' ? '#7BD8A5' : '#F09A4D') : '#9B99A3' })),
       modeCollect: st.mode === 'collect', modeRedeem: st.mode === 'redeem',
       collectBg: '#2FAE66',
-      // stamps
+      // ── stamps ──
       bStamps: isStampsS, stampCount: st.stamps, goal: st.goal,
-      stampCells: Array.from({ length: st.goal }, (_, i) => ({ dy: i % 2 ? '5px' : '-5px', filter: i < st.stamps ? 'drop-shadow(0 2px 3px rgba(0,0,0,.4))' : 'grayscale(1) opacity(.28)', anim: i === st.stamps - 1 ? AN('stampPop', '.45s') : 'none' })),
-      stampHint: full ? 'Full card — switch to Redeem.' : (st.goal - st.stamps) + ' to a free drink · always preview before acting',
-      addStampLabel: st.offline ? '+ Add a stamp (queues offline)' : '+ Add a stamp · ختم',
-      addStamp: () => { if (full) { this.setState({ mode: 'redeem' }); return; } const member = SCEN.m[0]; this.setState({ stamps: st.stamps + 1, sStamps: st.sStamps + 1, queued: st.offline ? st.queued + 1 : st.queued }); this.armUndo('stamp', 1, st.offline); this.flashNow('☕', '#2FAE66', 'Stamp ' + (st.stamps + 1) + ' of ' + st.goal, st.offline ? 'Queued — lands the second the till is back online.' : (st.stamps + 1 >= st.goal ? 'Full card! The reward is ready to redeem.' : 'Sara sees it on her lock screen right now.')); this.logAction(member, 'Stamp added'); if (st.offline) this.pushQueue(member, 'Stamp added'); },
-      stampsReady: full, stampsNotReady: !full, shortfallLine: st.stamps + ' / ' + st.goal + ' — ' + (st.goal - st.stamps) + ' short',
+      stampCells: Array.from({ length: st.goal }, (_, i) => {
+        const stamped = i < st.stamps;
+        return {
+          dy: i % 2 ? '5px' : '-5px',
+          rot: stamped ? this.stampTilt(i) : '0deg',
+          bg: stamped ? 'linear-gradient(158deg, ' + this.lift(brand, .17) + ', ' + brand + ')' : 'transparent',
+          border: stamped ? '1.5px solid ' + this.lift(brand, .34) : '1.5px dashed rgba(244,242,238,.35)',
+          punch: stamped ? 'inset 0 0 0 2.5px rgba(0,0,0,.2), 0 2px 6px rgba(0,0,0,.42)' : 'none',
+          glyph: stamped ? this.stampGlyph(19, '#FFFFFF', 1.9) : null,
+          enter: AN('popIn', '.34s', (0.08 + 0.035 * i) + 's'),
+          anim: (i === st.stamps - 1 && st.stampSeq > 0) ? AN('stampPunch', '.45s') : 'none',
+          halo: (i === st.stamps && !full) ? 'nextGlow 2.2s ease-in-out infinite' : 'none'
+        };
+      }),
+      stampHeroGlyph: this.stampGlyph(30, '#E88024', 1.9),
+      stampNumAnim: st.stampSeq > 0 ? SEED(st.stampSeq, 'bumpA', 'bumpB', '.34s') : 'none',
+      gridSettleAnim: st.stampSeq > 0 ? SEED(st.stampSeq, 'gridA', 'gridB', '.36s') : 'none',
+      stampHint: full ? this.L('Full card — switch to Redeem.', 'البطاقة مكتملة — انتقل إلى الاستبدال.')
+        : this.L((st.goal - st.stamps) + ' to a free drink · always preview before acting', (st.goal - st.stamps) + ' للحصول على مشروب مجاني · راجع دائماً قبل التنفيذ'),
+      addStampLabel: st.offline ? this.L('+ Add a stamp (queues offline)', '+ إضافة ختم (يُحفظ للمزامنة)') : this.L('+ Add a stamp', '+ إضافة ختم'),
+      addStamp: () => {
+        if (full) { this.setState({ mode: 'redeem' }); return; }
+        const n = st.stamps + 1;
+        this.setState(s => ({ stamps: n, sStamps: s.sStamps + 1, queued: s.offline ? s.queued + 1 : s.queued, stampSeq: s.stampSeq + 1 }));
+        this.armUndo('stamp', 1, st.offline);
+        this.flashNow('stamp', '#2FAE66', this.L('Stamp ' + n + ' of ' + st.goal, 'الختم ' + n + ' من ' + st.goal),
+          st.offline ? this.L('Queued — it lands the second the till is back online.', 'محفوظ — يصل لحظة عودة الاتصال.')
+            : (n >= st.goal ? this.L('Full card! The reward is ready to redeem.', 'اكتملت البطاقة! المكافأة جاهزة للاستبدال.')
+              : this.L(SCEN.m[0].split(' ')[0] + ' sees it on her lock screen right now.', SCEN.m[1].split(' ')[0] + ' ترى الختم على شاشة هاتفها الآن.')));
+        this.logAction(scen, 'stamp');
+        if (st.offline) this.pushQueue(scen, 'qStamp');
+        this.saveScan();
+      },
+      stampsReady: full, stampsNotReady: !full,
+      stampsResetLine: this.L(st.goal + ' / ' + st.goal + ' — the card resets after redeeming', st.goal + ' / ' + st.goal + ' — تُصفَّر البطاقة بعد الاستبدال'),
+      shortfallLine: this.L(st.stamps + ' / ' + st.goal + ' — ' + (st.goal - st.stamps) + ' short', st.stamps + ' / ' + st.goal + ' — ناقص ' + (st.goal - st.stamps)),
       redeemCursor: st.offline ? 'not-allowed' : 'pointer',
       redeemStampsBg: full && !st.offline ? '#E88024' : '#26262B', redeemStampsFg: full && !st.offline ? '#FFFFFF' : '#8E8C96',
-      redeemStampsLabel: st.offline ? 'Redeem locked offline — why: no double-spend' : (full ? 'Redeem the free drink (PIN)' : 'Nothing to redeem yet'),
+      redeemStampsCls: full && !st.offline ? 'ws-cta' : 'ws-cta ws-off',
+      redeemStampsLabel: st.offline ? this.L('Redeem locked offline — no double-spend', 'الاستبدال مقفل دون إنترنت — منعاً للصرف المزدوج')
+        : (full ? this.L('Redeem the free drink (PIN)', 'استبدال المشروب المجاني (رمز)') : this.L('Nothing to redeem yet', 'لا شيء للاستبدال بعد')),
       redeemStamps: () => { if (!full || st.offline) return; this.askPin('stamps'); },
-      // amount types
+      // ── amount types ──
       bAmount: isCash || isPts, isCashback: isCash, isPoints: isPts,
-      amtTopLabel: isCash ? 'Wallet balance · الرصيد' : 'Points balance · النقاط',
-      amtTopValue: isCash ? 'JOD ' + st.cbBal.toFixed(2) : st.pts + ' pts',
-      amtDisplay: st.amount || '0',
-      collectPreview: isCash ? '+ JOD ' + (amt * 0.05).toFixed(2) + ' back (5%)' : '+ ' + Math.round(amt * 10) + ' pts',
-      keypad: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map(k => ({ k, tap: () => { let a = st.amount; if (k === '⌫') a = a.slice(0, -1); else if (k === '.') { if (!a.includes('.')) a = (a || '0') + '.'; } else if (a.replace('.', '').length < 5) a += k; this.setState({ amount: a }); } })),
-      collectAmtLabel: amt > 0 ? (isCash ? 'Add JOD ' + (amt * 0.05).toFixed(2) + ' to the wallet' : 'Add ' + Math.round(amt * 10) + ' points') + (st.offline ? ' (queues)' : '') : 'Type the bill first',
-      collectAmount: () => { if (amt <= 0) return; const member = SCEN.m[0]; if (isCash) { const back = +(amt * 0.05).toFixed(2); this.setState({ cbBal: +(st.cbBal + back).toFixed(2), amount: '', queued: st.offline ? st.queued + 1 : st.queued }); this.armUndo('cash', back, st.offline); this.flashNow('✓', '#2FAE66', '+ JOD ' + back.toFixed(2), st.offline ? 'Queued for sync.' : 'New balance JOD ' + (st.cbBal + back).toFixed(2) + ' — on his pass already.'); this.logAction(member, 'Collected · JOD ' + back.toFixed(2)); if (st.offline) this.pushQueue(member, 'JOD ' + back.toFixed(2) + ' cashback'); } else { const addPts = Math.round(amt * 10); this.setState({ pts: st.pts + addPts, amount: '', queued: st.offline ? st.queued + 1 : st.queued }); this.armUndo('pts', addPts, st.offline); this.flashNow('✓', '#2FAE66', '+ ' + addPts + ' pts', st.offline ? 'Queued for sync.' : 'Balance ' + (st.pts + addPts) + ' pts.'); this.logAction(member, 'Collected · ' + addPts + ' pts'); if (st.offline) this.pushQueue(member, addPts + ' pts'); } },
-      cbRedeemHint: 'Balance JOD ' + st.cbBal.toFixed(2) + ' — spend all of it or part of it.',
-      cbQuick: [1, 2, st.cbBal].map((v, i) => { const val = i === 2 ? st.cbBal : v; const ok = val <= st.cbBal; return { label: i === 2 ? 'All · JOD ' + st.cbBal.toFixed(2) : 'JOD ' + val.toFixed(2), pick: () => ok && this.setState({ cbSel: val }), br: st.cbSel === val ? '#E88024' : 'rgba(244,242,238,.16)', bg: st.cbSel === val ? 'rgba(232,128,36,.16)' : 'transparent', fg: ok ? (st.cbSel === val ? '#F09A4D' : '#F4F2EE') : '#5D5B66' }; }),
-      cbMinLine: st.cbBal < 2 ? 'Below the JOD 2 minimum — kindly refused, balance keeps growing.' : 'House rule: redeem from JOD 2.',
+      amtTopLabel: isCash ? this.L('Wallet balance', 'رصيد المحفظة') : this.L('Points balance', 'رصيد النقاط'),
+      amtTopValue: isCash ? jod((st.cbBal * rampAmt).toFixed(2)) : ptsWord(Math.round(st.pts * rampAmt)),
+      amtDisplay: jod(st.amount || '0'),
+      amtBumpAnim: st.amtSeq > 0 ? SEED(st.amtSeq, 'bumpA', 'bumpB', '.28s') : 'none',
+      previewAnim: st.amtSeq > 0 ? SEED(st.amtSeq, 'pvA', 'pvB', '.34s') : 'none',
+      collectPreview: isCash ? this.L('+ JOD ' + (amt * 0.05).toFixed(2) + ' back (5%)', '+ ' + (amt * 0.05).toFixed(2) + ' ديناراً استرداداً (5%)') : this.L('+ ' + Math.round(amt * 10) + ' pts', '+ ' + Math.round(amt * 10) + ' نقطة'),
+      keypad: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map(k => ({ k, tap: () => this.setState(s => { let a = s.amount; if (k === '⌫') a = a.slice(0, -1); else if (k === '.') { if (!a.includes('.')) a = (a || '0') + '.'; } else if (a.replace('.', '').length < 5) a += k; return { amount: a, amtSeq: s.amtSeq + 1 }; }) })),
+      collectAmtLabel: amt <= 0 ? this.L('Type the bill first', 'أدخل قيمة الفاتورة أولاً')
+        : ((isCash ? this.L('Add JOD ' + (amt * 0.05).toFixed(2) + ' to the wallet', 'أضف ' + (amt * 0.05).toFixed(2) + ' ديناراً إلى المحفظة') : this.L('Add ' + Math.round(amt * 10) + ' points', 'أضف ' + Math.round(amt * 10) + ' نقطة'))
+          + (st.offline ? this.L(' (queues)', ' (يُحفظ للمزامنة)') : '')),
+      collectAmtCls: amt > 0 ? 'ws-cta' : 'ws-cta ws-off',
+      collectAmtCursor: amt > 0 ? 'pointer' : 'not-allowed',
+      collectAmtBg: amt > 0 ? '#2FAE66' : '#26262B', collectAmtFg: amt > 0 ? '#FFFFFF' : '#8E8C96',
+      collectAmount: () => {
+        if (amt <= 0) return;
+        if (isCash) {
+          const back = +(amt * 0.05).toFixed(2), nb = +(st.cbBal + back).toFixed(2);
+          this.setState(s => ({ cbBal: nb, amount: '', amtSeq: 0, queued: s.offline ? s.queued + 1 : s.queued }));
+          this.armUndo('cash', back, st.offline);
+          this.flashNow('✓', '#2FAE66', this.L('+ JOD ' + back.toFixed(2), '+ ' + back.toFixed(2) + ' ديناراً'), st.offline ? this.L('Queued for sync.', 'محفوظ للمزامنة.') : this.L('New balance JOD ' + nb.toFixed(2) + ' — already on his pass.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — على بطاقته فوراً.'));
+          this.logAction(scen, 'colCash', back.toFixed(2));
+          if (st.offline) this.pushQueue(scen, 'qCash', back.toFixed(2));
+        } else {
+          const add = Math.round(amt * 10), np = st.pts + add;
+          this.setState(s => ({ pts: np, amount: '', amtSeq: 0, queued: s.offline ? s.queued + 1 : s.queued }));
+          this.armUndo('pts', add, st.offline);
+          this.flashNow('✓', '#2FAE66', this.L('+ ' + add + ' pts', '+ ' + add + ' نقطة'), st.offline ? this.L('Queued for sync.', 'محفوظ للمزامنة.') : this.L('Balance ' + np + ' pts.', 'الرصيد ' + np + ' نقطة.'));
+          this.logAction(scen, 'colPts', add);
+          if (st.offline) this.pushQueue(scen, 'qPts', add);
+        }
+        this.saveScan();
+      },
+      cbRedeemHint: this.L('Balance JOD ' + st.cbBal.toFixed(2) + ' — spend all of it or part of it.', 'الرصيد ' + st.cbBal.toFixed(2) + ' ديناراً — اصرفه كاملاً أو جزءاً منه.'),
+      cbQuick: [1, 2, st.cbBal].map((v, i) => {
+        const val = i === 2 ? st.cbBal : v, ok = val <= st.cbBal, sel = st.cbSel === val;
+        return {
+          label: i === 2 ? this.L('All · JOD ' + st.cbBal.toFixed(2), 'الكل · ' + st.cbBal.toFixed(2) + ' ديناراً') : this.L('JOD ' + val.toFixed(2), val.toFixed(2) + ' ديناراً'),
+          pick: () => ok && this.setState({ cbSel: sel ? null : val }),
+          br: sel ? '#E88024' : (ok ? 'rgba(47,174,102,.3)' : 'rgba(244,242,238,.1)'),
+          bg: sel ? 'rgba(232,128,36,.16)' : 'transparent',
+          fg: ok ? (sel ? '#F09A4D' : '#F4F2EE') : '#5D5B66',
+          glow: sel ? '0 0 0 3px rgba(232,128,36,.14)' : (ok ? '0 0 14px rgba(47,174,102,.10)' : 'none'),
+          cls: ok ? 'ws-press' : 'ws-press ws-off', cur: ok ? 'pointer' : 'not-allowed',
+          enter: AN('popIn', '.34s', (0.14 + 0.05 * i) + 's')
+        };
+      }),
+      cbMinLine: st.cbBal < 2 ? this.L('Below the JOD 2 minimum — kindly refused, the balance keeps growing.', 'أقل من الحد الأدنى (ديناران) — رفض بلطف، والرصيد يستمر بالنمو.') : this.L('House rule: redeem from JOD 2 up.', 'قاعدة المحل: الاستبدال من ديناريْن فما فوق.'),
       cbRedeemBg: st.cbSel && !st.offline && st.cbBal >= 2 ? '#E88024' : '#26262B', cbRedeemFg: st.cbSel && !st.offline && st.cbBal >= 2 ? '#FFFFFF' : '#8E8C96',
-      cbRedeemLabel: st.offline ? 'Redeem locked offline' : st.cbBal < 2 ? 'Below minimum — keep collecting' : st.cbSel ? 'Take JOD ' + st.cbSel.toFixed(2) + ' off the bill (PIN)' : 'Pick an amount — nothing preselected',
+      cbRedeemCls: st.cbSel && !st.offline && st.cbBal >= 2 ? 'ws-cta' : 'ws-cta ws-off',
+      cbRedeemLabel: st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت')
+        : st.cbBal < 2 ? this.L('Below minimum — keep collecting', 'أقل من الحد الأدنى — تابعوا الجمع')
+          : st.cbSel ? this.L('Take JOD ' + st.cbSel.toFixed(2) + ' off the bill (PIN)', 'اخصم ' + st.cbSel.toFixed(2) + ' ديناراً من الفاتورة (رمز)')
+            : this.L('Pick an amount — nothing preselected', 'اختر المبلغ — لا شيء محدد مسبقاً'),
       redeemCash: () => { if (!st.cbSel || st.offline || st.cbBal < 2) return; this.askPin('cash'); },
-      ptRungs: rungs.map((r, i) => { const ok = r.cost <= st.pts; const sel = st.selRw === i; return { name: r.name, cost: r.cost, sub: ok ? (sel ? 'Selected by the customer' : 'Affordable') : 'Needs ' + (r.cost - st.pts) + ' more', subColor: ok ? '#7BD8A5' : '#F0A92B', pick: () => ok && this.setState({ selRw: sel ? null : i }), bg: sel ? 'rgba(232,128,36,.14)' : '#1B1B1F', br: sel ? '#E88024' : 'rgba(244,242,238,.09)', ring: sel ? '#E88024' : 'rgba(244,242,238,.35)', dot: sel ? '#E88024' : 'transparent', op: ok ? 1 : 0.55 }; }),
+      // ── the redeem ladder · ready-glow above, shortfall bar below ──
+      ptRungs: rungs.map((r, i) => {
+        const ok = r.cost <= st.pts, sel = st.selRw === i;
+        return {
+          name: this.rungName(i), cost: r.cost,
+          sub: ok ? (sel ? this.L('Selected by the customer', 'اختارها الزبون') : this.L('Affordable now', 'الرصيد يكفي')) : this.L('Needs ' + (r.cost - st.pts) + ' more', 'تحتاج ' + (r.cost - st.pts) + ' نقطة إضافية'),
+          subColor: ok ? '#7BD8A5' : '#F0A92B',
+          pick: () => ok && this.setState({ selRw: sel ? null : i }),
+          bg: sel ? 'rgba(232,128,36,.14)' : '#1B1B1F',
+          br: sel ? '#E88024' : (ok ? 'rgba(47,174,102,.28)' : 'rgba(244,242,238,.09)'),
+          ring: sel ? '#E88024' : (ok ? 'rgba(47,174,102,.55)' : 'rgba(244,242,238,.22)'),
+          dot: sel ? '#E88024' : 'transparent',
+          glow: sel ? '0 0 0 3px rgba(232,128,36,.14)' : (ok ? '0 0 20px rgba(47,174,102,.10)' : 'none'),
+          cls: ok ? 'ws-press' : 'ws-press ws-off', cur: ok ? 'pointer' : 'not-allowed',
+          short: !ok, pct: Math.min(100, Math.round(st.pts / r.cost * 100)) + '%',
+          barAnim: AN('growW', '.7s', (0.3 + 0.08 * i) + 's'),
+          enter: AN('fadeUp', '.4s', (0.16 + 0.07 * i) + 's')
+        };
+      }),
       ptRedeemBg: st.selRw != null && !st.offline ? '#E88024' : '#26262B', ptRedeemFg: st.selRw != null && !st.offline ? '#FFFFFF' : '#8E8C96',
-      ptRedeemLabel: st.offline ? 'Redeem locked offline' : st.selRw != null ? 'Redeem ' + rungs[st.selRw].name + ' (PIN)' : 'The customer picks first',
+      ptRedeemCls: st.selRw != null && !st.offline ? 'ws-cta' : 'ws-cta ws-off',
+      ptRedeemLabel: st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت')
+        : st.selRw != null ? this.L('Redeem ' + this.rungName(st.selRw) + ' (PIN)', 'استبدال ' + this.rungName(st.selRw) + ' (رمز)')
+          : this.L('The customer picks first', 'الزبون يختار أولاً'),
       redeemPts: () => { if (st.selRw == null || st.offline) return; this.askPin('pts'); },
-      // coupon
+      // ── coupon ──
       bCoupon: scen === 'coupon', couponFresh: !st.couponDone, couponUsed: st.couponDone,
       cpRedeemBg: !st.couponDone && !st.offline ? '#E88024' : '#26262B', cpRedeemFg: !st.couponDone && !st.offline ? '#FFFFFF' : '#8E8C96',
-      cpRedeemLabel: st.couponDone ? 'Nothing to redeem — it\'s spent' : st.offline ? 'Redeem locked offline' : 'Redeem — we\'ll ask twice',
+      cpRedeemCls: !st.couponDone && !st.offline ? 'ws-cta' : 'ws-cta ws-off',
+      cpRedeemLabel: st.couponDone ? this.L('Nothing to redeem — it’s spent', 'لا شيء للاستبدال — استُهلك')
+        : st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت') : this.L('Redeem — we’ll ask twice', 'استبدال — سنسأل مرتين'),
       redeemCoupon: () => { if (st.couponDone || st.offline) return; this.askPin('coupon'); },
-      crossSellStamp: () => { this.scanTo('stamps'); this.flashNow('☕', '#2FAE66', t.crossSellFlashTitle, t.crossSellFlashSub); },
-      // vip
-      bVip: scen === 'vip', vipTier: st.rTier, vipTierBg: tierIdx ? 'rgba(232,184,36,.16)' : 'rgba(174,183,194,.14)', vipTierFg: tierIdx ? '#E8B824' : '#AEB7C2',
-      vipProgressLine: tierIdx ? 'Gold since today · 12 visits' : st.rVisits + ' visits · 1 more to GOLD',
-      vipPerks: (tierIdx ? ['Skip the line, always', '15% off the bill', 'Gold nights — rooftop Thursdays'] : ['Members-only offers', 'Birthday dessert on the house']).map(p => ({ p })),
-      vipBtnLabel: '✓ Check in · تسجيل زيارة',
-      vipCheckin: () => { const member = SCEN.m[0]; if (tierIdx) { this.flashNow('★', '#E8B824', 'Visit logged', 'Rania keeps her Gold perks.'); this.logAction(member, 'Visit logged'); return; } const v = st.rVisits + 1; if (v >= 12) { this.setState({ rVisits: v, rTier: 'Gold' }); this.flashNow('★', '#E8B824', 'SILVER → GOLD', 'Tier-up lands on her pass with a little ceremony.'); this.logAction(member, 'Tier up · Gold'); } else { this.setState({ rVisits: v }); this.flashNow('✓', '#2FAE66', 'Visit ' + v, 'One more to Gold.'); this.logAction(member, 'Visit logged'); } },
-      // challenge (collect-only, like vip)
+      crossSellStamp: () => { this.scanTo('stamps'); this.flashNow('stamp', '#2FAE66', t.crossSellFlashTitle, t.crossSellFlashSub); },
+      // ── VIP · the tier ladder ──
+      bVip: scen === 'vip',
+      vipSteps: tierDefs.map((d, i) => {
+        const reached = i <= tierIdx, cur = i === tierIdx;
+        return {
+          icon: d.icon, label: this.L(d.en, d.ar),
+          bg: reached ? d.bg : '#1B1B1F', br: reached ? d.color : 'rgba(244,242,238,.15)', fg: reached ? d.color : '#5D5B66',
+          glow: cur ? d.glow : 'none', labelFg: reached ? '#F4F2EE' : '#6E6C77',
+          here: cur ? this.L('NOW', 'الآن') : (i === tierIdx + 1 ? this.L('NEXT', 'التالي') : ''),
+          hereFg: cur ? d.color : '#6E6C77',
+          anim: AN('popIn', '.4s', (0.12 + 0.07 * i) + 's')
+        };
+      }),
+      vipFillColor: tierDefs[tierIdx].color,
+      vipFrom: st.vipClimb ? st.vipFromPct : '0%', vipTo,
+      vipClimbAnim: SEED(st.vipSeq, 'climbA', 'climbB', '.9s', '.14s'),
+      vipProgressLine: tierIdx ? this.L('Gold since today · ' + st.rVisits + ' visits', 'ذهبية منذ اليوم · ' + st.rVisits + ' زيارة')
+        : this.L(st.rVisits + ' visits · ' + (GOLD_AT - st.rVisits) + ' more to GOLD', st.rVisits + ' زيارة · ' + (GOLD_AT - st.rVisits) + ' للوصول إلى الذهبية'),
+      vipPerksLabel: this.L(tierDefs[tierIdx].en + ' perks · active now', 'مزايا ' + tierDefs[tierIdx].ar + ' · فعّالة الآن'),
+      vipPerks: (tierIdx
+        ? [this.L('Skip the line, always', 'أولوية دائمة بلا انتظار'), this.L('15% off the bill', 'خصم 15% على الفاتورة'), this.L('Gold nights — rooftop Thursdays', 'ليالي الذهبية — سطح كل خميس')]
+        : [this.L('Members-only offers', 'عروض للأعضاء فقط'), this.L('Birthday dessert on the house', 'حلوى عيد الميلاد على الحساب')]
+      ).map((p, i) => ({ p, anim: AN('fadeUp', '.36s', (0.2 + 0.06 * i) + 's') })),
+      vipBtnLabel: this.L('✓ Check in', '✓ تسجيل زيارة'),
+      vipCheckin: () => {
+        if (tierIdx) { this.flashNow('★', '#E8B824', this.L('Visit logged', 'سُجّلت الزيارة'), this.L('Rania keeps every Gold perk.', 'رانيا تحتفظ بكل مزايا الذهبية.')); this.logAction(scen, 'visit'); this.saveScan(); return; }
+        const v = st.rVisits + 1;
+        if (v >= GOLD_AT) {
+          this.setState(s => ({ rVisits: v, rTier: 'Gold', vipClimb: true, vipFromPct: vipTo, vipSeq: s.vipSeq + 1 }));
+          this.flashNow('★', '#E8B824', this.L('SILVER → GOLD', 'فضية ← ذهبية'), this.L('The tier-up lands on her pass with a little ceremony.', 'الترقية تصل إلى بطاقتها باحتفال صغير.'));
+          this.logAction(scen, 'tierUp');
+        } else {
+          this.setState(s => ({ rVisits: v, vipSeq: s.vipSeq + 1, vipClimb: true, vipFromPct: vipTo }));
+          this.flashNow('✓', '#2FAE66', this.L('Visit ' + v, 'الزيارة ' + v), this.L((GOLD_AT - v) + ' more to Gold.', 'بقي ' + (GOLD_AT - v) + ' للوصول إلى الذهبية.'));
+          this.logAction(scen, 'visit');
+        }
+        this.saveScan();
+      },
+      // ── challenge · the countdown ring ──
       bChallenge: scen === 'challenge', chActive: scen === 'challenge' && !st.chDone, chComplete: scen === 'challenge' && st.chDone,
       chVisits: st.chVisits, chGoal: st.chGoal,
-      chWindowLine: st.chVisits + ' of ' + st.chGoal + ' visits this month · ' + this.toAr(st.chVisits) + ' من ' + this.toAr(st.chGoal),
-      chDeadlineLine: 'Ends in ' + st.chDays + ' days · ينتهي بعد ' + this.toAr(st.chDays) + ' أيام',
+      chRingFull: RC, chRingFrom: ringOff(st.chFrom), chRingTo: ringOff(st.chVisits),
+      chRingColor: st.chDone ? '#2FAE66' : '#F0A92B',
+      chRingAnim: SEED(st.chSeq, 'ringA', 'ringB', '.85s', '.2s'),
+      chNumAnim: st.chSeq > 0 ? SEED(st.chSeq, 'bumpA', 'bumpB', '.34s', '.2s') : 'none',
+      chWindowLine: this.L(st.chVisits + ' of ' + st.chGoal + ' visits this month', st.chVisits + ' من ' + st.chGoal + ' زيارات هذا الشهر'),
+      chDeadlineLine: this.L('Ends in ' + st.chDays + ' days', 'ينتهي بعد ' + st.chDays + ' أيام'),
       chBtnCursor: st.chDone ? 'not-allowed' : 'pointer',
       chBtnBg: st.chDone ? '#26262B' : '#2FAE66', chBtnFg: st.chDone ? '#8E8C96' : '#FFFFFF',
+      chBtnCls: st.chDone ? 'ws-cta ws-off' : 'ws-cta',
       chBtnLabel: st.chDone ? t.challengeDoneBtn : t.countVisitLabel,
       countVisit: () => {
         if (st.chDone) return;
-        const member = SCEN.m[0];
         const v = st.chVisits + 1;
-        if (v >= st.chGoal) { this.setState({ chVisits: v, chDone: true }); this.flashNow('🎉', '#2FAE66', 'Challenge complete — free lunch · اكتمل التحدي', 'Huda unlocked the reward · هدى فازت بالمكافأة'); this.logAction(member, 'Challenge complete'); }
-        else { this.setState({ chVisits: v }); this.flashNow('✓', '#2FAE66', 'Visit ' + v + ' of ' + st.chGoal, (st.chGoal - v) + ' to go · ' + this.toAr(st.chGoal - v) + ' متبقية'); this.logAction(member, 'Visit counted'); }
+        this.setState(s => ({ chVisits: v, chFrom: s.chVisits, chSeq: s.chSeq + 1, chDone: v >= s.chGoal }));
+        if (v >= st.chGoal) { this.flashNow('🎉', '#2FAE66', t.challengeDoneTitle, this.L('Huda unlocked the free lunch.', 'هدى فازت بالغداء المجاني.')); this.logAction(scen, 'chDone'); }
+        else { this.flashNow('✓', '#2FAE66', this.L('Visit ' + v + ' of ' + st.chGoal, 'الزيارة ' + v + ' من ' + st.chGoal), this.L((st.chGoal - v) + ' to go.', 'بقيت ' + (st.chGoal - v) + ' زيارات.')); this.logAction(scen, 'chVisit'); }
+        this.saveScan();
       },
-      // verdicts
+      // ── verdicts · the mark draws itself ──
       bVerdict: scen === 'discount' || scen === 'membership',
+      vdOk: scen === 'discount' || membershipRenewed, vdWarn: !(scen === 'discount' || membershipRenewed),
       showRenewBtn: scen === 'membership' && !st.renewedMembership,
       renewMembership: () => this.askPin('renew'),
-      vdMark: (scen === 'discount' || membershipRenewed) ? '✓' : '!', vdBg: (scen === 'discount' || membershipRenewed) ? 'rgba(47,174,102,.12)' : 'rgba(240,169,43,.12)', vdBorder: (scen === 'discount' || membershipRenewed) ? '#2FAE66' : '#F0A92B',
-      vdTitle: scen === 'discount' ? 'Valid — 15% off' : (membershipRenewed ? 'Active — renewed today · فعّالة — جُدّدت اليوم' : 'Expired 12 days ago'),
-      vdSub: scen === 'discount' ? 'Apply it at the till. No tabs, no typing — the card is a verdict.' : (membershipRenewed ? 'Renewed just now — same pass, active again. · جُدّدت الآن — نفس البطاقة فعّالة من جديد.' : 'Lapsed Jul 18. Renewal is JOD 25 at the counter — one tap re-activates the same pass.'),
-      // refusal
-      bRefusal: scen === 'foreign', rfTitle: 'Not your card to scan', rfWhy: 'This pass belongs to Marmar Lounge — a different Wasla account. Nothing was charged, nothing was stamped.', rfDo: 'What to do: send the customer to Marmar staff — or ask Yara to assign you the card if this is a mistake.',
-      // flash + pin + shift
-      hasFlash: !!st.flash, flashMark: (st.flash || {}).mark || '✓', flashColor: (st.flash || {}).color || '#2FAE66', flashTitle: (st.flash || {}).title || '', flashSub: (st.flash || {}).sub || '',
-      pinOpen: !!st.pin, pinDots: [0, 1, 2, 3].map(i => ({ bg: i < st.pinTaps ? '#E88024' : 'transparent' })),
-      pinKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k => ({ k, tap: () => this.setState(s => { if (!s.pin || s.pinTaps >= 4) return null; const n = s.pinTaps + 1; if (n >= 4) setTimeout(() => this.finishPin(), 220); return { pinTaps: n }; }) })),
-      pinCancel: () => this.setState({ pin: null, pinTaps: 0 }),
+      vdBg: (scen === 'discount' || membershipRenewed) ? 'rgba(47,174,102,.12)' : 'rgba(240,169,43,.12)',
+      vdBorder: (scen === 'discount' || membershipRenewed) ? '#2FAE66' : '#F0A92B',
+      vdFloodAnim: AN('flood', '.42s'), vdRippleAnim: AN('ringOut', '.7s', '.16s'),
+      vdDrawAnim: AN('drawMark', '.55s', '.14s'), vdDotAnim: AN('popIn', '.3s', '.5s'),
+      vdTitle: scen === 'discount' ? this.L('Valid — 15% off', 'سارية — خصم 15%')
+        : (membershipRenewed ? this.L('Active — renewed today', 'فعّال — جُدّد اليوم') : this.L('Expired 12 days ago', 'انتهى قبل 12 يوماً')),
+      vdSub: scen === 'discount' ? this.L('Apply it at the till. No tabs, no typing — the card is a verdict.', 'طبّق الخصم على الصندوق. لا تبويبات ولا كتابة — البطاقة حكم لا معاملة.')
+        : (membershipRenewed ? this.L('Renewed just now — same pass, active again.', 'جُدّد للتو — نفس البطاقة، فعّالة من جديد.')
+          : this.L('Lapsed Jul 18. Renewal is JOD 25 at the counter — one tap re-activates the same pass.', 'انتهى في 18 تموز. التجديد 25 ديناراً على الصندوق — لمسة واحدة تعيد تفعيل نفس البطاقة.')),
+      // ── refusal ──
+      bRefusal: scen === 'foreign',
+      refusalShake: AN('nudge', '.5s', '.18s'),
+      rfDoAnim: AN(EN ? 'typeInLtr' : 'typeInRtl', '.55s', '.42s'),
+      rfTitle: this.L('Not your card to scan', 'ليست بطاقتك لتمسحها'),
+      rfWhy: this.L('This pass belongs to Marmar Lounge — a different Wasla account. Nothing was charged, nothing was stamped.', 'هذه البطاقة تخص صالة مرمر — حساب آخر في وصلة. لم يُخصم شيء ولم يُختم شيء.'),
+      rfDo: this.L('What to do: send the customer to Marmar staff — or ask Yara to assign you the card if this is a mistake.', 'ما العمل: وجّه الزبون إلى فريق مرمر — أو اطلب من يارا إسناد البطاقة إليك إن كان هذا خطأً.'),
+      // ── flash ──
+      // 'stamp' is a token, not a character — the flash draws the real glyph at flash size
+      hasFlash: !!st.flash,
+      flashMark: (st.flash || {}).mark === 'stamp' ? this.stampGlyph(46, (st.flash || {}).color || '#2FAE66', 1.85) : ((st.flash || {}).mark || '✓'),
+      flashColor: (st.flash || {}).color || '#2FAE66',
+      flashTitle: (st.flash || {}).title || '', flashSub: (st.flash || {}).sub || '',
+      flashTint: tint((st.flash || {}).color || '#2FAE66', .15),
+      flashAnim: st.flashOut ? 'flashOut .3s cubic-bezier(.22,.61,.36,1) both' : 'flashIn .35s cubic-bezier(.22,.61,.36,1) both',
+      flashMarkAnim: 'popIn .42s cubic-bezier(.22,.61,.36,1) both',
+      flashRippleAnim: 'ringOut .75s cubic-bezier(.22,.61,.36,1) both',
+      flashTitleAnim: 'fadeUp .38s cubic-bezier(.22,.61,.36,1) .08s both',
+      flashSubAnim: 'fadeUp .38s cubic-bezier(.22,.61,.36,1) .15s both',
+      // ── PIN ──
+      pinOpen: !!st.pin,
+      pinDots: [0, 1, 2, 3].map(i => ({
+        bg: i < st.pinTaps ? '#E88024' : 'transparent',
+        br: i < st.pinTaps ? '#E88024' : 'rgba(244,242,238,.4)',
+        anim: i === st.pinTaps - 1 ? 'dotPop .3s cubic-bezier(.22,.61,.36,1) both' : 'none'
+      })),
+      pinRippleAnim: st.pinTaps >= 4 ? 'ringOut .45s cubic-bezier(.22,.61,.36,1) both' : 'none',
+      pinKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k => ({ k, tap: () => this.setState(s => { if (!s.pin || s.pinTaps >= 4) return null; const n = s.pinTaps + 1; if (n >= 4) { clearTimeout(this._pk); this._pk = setTimeout(() => this.finishPin(), 260); } return { pinTaps: n }; }) })),
+      pinCancel: () => { clearTimeout(this._pk); this.setState({ pin: null, pinTaps: 0 }); },
+      // ── shift + handover ──
       staffName: st.staffName, staffAr: st.staffAr, staffInitials: st.staffInitials,
       endShift: () => this.setState({ shiftOpen: true, handoverPick: false }), shiftOpen: st.shiftOpen,
       showShiftSummary: st.shiftOpen && !st.handoverPick, showHandoverPicker: st.shiftOpen && st.handoverPick,
-      shiftScans: st.scansToday, shiftStamps: st.sStamps, shiftRewards: st.sRewards,
+      shiftAvatarAnim: AN('popIn', '.42s'),
+      shiftTotals: [
+        [st.scansToday, this.L('scans', 'مسح')],
+        [st.sStamps, this.L('stamps', 'أختام')],
+        [st.sRewards, this.L('rewards', 'مكافآت')]
+      ].map(([n, label], i) => ({ n: Math.round(n * rampShift), label, anim: AN('fadeUp', '.4s', (0.06 + 0.06 * i) + 's') })),
       shiftLogEmpty: st.sessionLog.length === 0,
-      shiftLog: st.sessionLog.slice(0, 6).map(l => ({ member: l.member, action: l.action, time: this.timeAgo(l.ts) })),
+      shiftLog: st.sessionLog.slice(0, 6).map((l, i) => ({ member: this.memberName(l.scen), action: this.actionText(l.k, l.v), time: this.timeAgo(l), anim: AN('fadeUp', '.34s', (0.14 + 0.05 * i) + 's') })),
       startHandover: () => this.setState({ handoverPick: true }),
       cancelHandover: () => this.setState({ handoverPick: false }),
-      staffChoices: this.staffList().map((p, i) => ({ name: p.name, ar: p.ar, initials: p.initials, pick: () => this.pickStaff(i) })),
+      staffChoices: this.staffList().map((p, i) => {
+        const isYou = p.name === st.staffName;
+        return { name: p.name, initials: p.initials, sub: p.ar + this.L(' · Rainbow St', ' · شارع الرينبو'),
+          isYou, br: isYou ? 'rgba(232,128,36,.35)' : 'rgba(244,242,238,.1)', avBg: isYou ? '#E88024' : '#4E6E8E',
+          anim: AN('fadeUp', '.38s', (0.1 + 0.07 * i) + 's'), pick: () => this.pickStaff(i) };
+      }),
       hasUndo: !!st.undo && st.screen === 'member', undoLast: () => this.undoLast(),
-      demoScans: demoDefs.map(([key, label, sub, dot]) => ({ label, sub, dot, go: () => this.scanTo(key), br: st.scenario === key && st.screen !== 'idle' ? '#E88024' : '#E7E0D5', bg: st.scenario === key && st.screen !== 'idle' ? '#FDF4EC' : '#FFFFFF' }))
+      // ── the demo rail ──
+      demoScans: demoDefs.map(([key, label, sub, dot, glyph, glyphSize], i) => ({
+        label, sub, dot, glyph, glyphSize,
+        discBg: tint(dot, .10), discBr: tint(dot, .3),
+        go: () => this.scanTo(key),
+        anim: AN('fadeUp', '.34s', (0.04 + 0.03 * i) + 's'),
+        br: st.scenario === key && st.screen !== 'idle' ? '#E88024' : '#E7E0D5',
+        bg: st.scenario === key && st.screen !== 'idle' ? '#FDF4EC' : '#FFFFFF'
+      })),
+      resetLabel: st.resetArm ? 'Tap again to wipe this demo session' : 'Reset demo · مسح جلسة العرض',
+      resetBr: st.resetArm ? '#E2563A' : '#DCD3C4', resetFg: st.resetArm ? '#E2563A' : '#93887A',
+      resetDemo: () => {
+        if (!st.resetArm) { this.setState({ resetArm: true }); clearTimeout(this._rt); this._rt = setTimeout(() => this.setState({ resetArm: false }), 4000); return; }
+        clearTimeout(this._rt);
+        this.resetScanner();
+      }
     };
   }
 }

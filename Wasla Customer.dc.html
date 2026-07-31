@@ -17,15 +17,85 @@
   input:focus{outline:2px solid rgba(232,128,36,.45);outline-offset:1px;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
   @keyframes popIn{0%{opacity:0;transform:scale(.86);}60%{transform:scale(1.03);}100%{opacity:1;transform:scale(1);}}
-  @keyframes stampPop{0%{transform:scale(0) rotate(-30deg);}70%{transform:scale(1.3) rotate(6deg);}100%{transform:scale(1) rotate(0);}}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
-  @keyframes notifDown{from{opacity:0;transform:translateY(-46px) scale(.96);}to{opacity:1;transform:none;}}
   @keyframes scanLine{0%,100%{top:12%;}50%{top:84%;}}
-  @keyframes pillUp{0%{opacity:0;transform:translate(-50%,18px) scale(.9);}100%{opacity:1;transform:translate(-50%,0) scale(1);}}
   @keyframes glowPulse{0%,100%{box-shadow:0 0 0 1px rgba(232,128,36,.25),0 10px 30px rgba(232,128,36,.28);}50%{box-shadow:0 0 0 1px rgba(232,128,36,.4),0 14px 44px rgba(232,128,36,.45);}}
   @keyframes burstPop{0%{transform:scale(0);opacity:0;}55%{transform:scale(1.18);opacity:1;}75%{transform:scale(.94);}100%{transform:scale(1);opacity:1;}}
   @keyframes confettiFall{0%{transform:translateY(-30px) rotate(0deg);opacity:0;}12%{opacity:1;}100%{transform:translateY(420px) rotate(340deg);opacity:0;}}
   @keyframes fadeScrim{from{opacity:0;}to{opacity:1;}}
+
+  /* ── scene transitions · TWO names per beat so a repeat actually replays (a CSS
+       animation only restarts when its NAME changes). Direction rides --sx, which the
+       logic flips for RTL, so "forward" is always *inward from the leading edge*. ── */
+  @keyframes sceneIn1{from{opacity:0;transform:translateX(var(--sx,30px));}to{opacity:1;transform:none;}}
+  @keyframes sceneIn2{from{opacity:0;transform:translateX(var(--sx,30px));}to{opacity:1;transform:none;}}
+  @keyframes sheetUp1{from{opacity:0;transform:translateY(38px);}to{opacity:1;transform:none;}}
+  @keyframes sheetUp2{from{opacity:0;transform:translateY(38px);}to{opacity:1;transform:none;}}
+  @keyframes scrimIn1{from{opacity:0;}to{opacity:1;}}
+  @keyframes scrimIn2{from{opacity:0;}to{opacity:1;}}
+  /* wallet fan-in */
+  @keyframes fanIn1{from{opacity:0;transform:translateY(28px) scale(.972);}to{opacity:1;transform:none;}}
+  @keyframes fanIn2{from{opacity:0;transform:translateY(28px) scale(.972);}to{opacity:1;transform:none;}}
+  @keyframes reveal1{from{opacity:0;max-height:0;transform:translateY(-9px);}to{opacity:1;max-height:260px;transform:none;}}
+  @keyframes reveal2{from{opacity:0;max-height:0;transform:translateY(-9px);}to{opacity:1;max-height:260px;transform:none;}}
+  /* the pass */
+  @keyframes cardPop1{0%{opacity:0;transform:scale(.9);}62%{transform:scale(1.018);}100%{opacity:1;transform:scale(1);}}
+  @keyframes cardPop2{0%{opacity:0;transform:scale(.9);}62%{transform:scale(1.018);}100%{opacity:1;transform:scale(1);}}
+  @keyframes settle1{0%{transform:none;}34%{transform:scale(.977);}100%{transform:none;}}
+  @keyframes settle2{0%{transform:none;}34%{transform:scale(.977);}100%{transform:none;}}
+  /* punch-in · lands like a rubber stamp: comes in oversized, over-compresses, settles.
+     The rotation here is the punch's own kick — the per-index tilt lives on the OUTER
+     span so the two transforms never fight. Seeded pair, so a repeat replays. */
+  @keyframes stampPunch1{0%{opacity:0;transform:scale(1.35) rotate(-10deg);}52%{opacity:1;transform:scale(.95) rotate(4deg);}76%{transform:scale(1.03) rotate(-1.5deg);}100%{opacity:1;transform:scale(1) rotate(0);}}
+  @keyframes stampPunch2{0%{opacity:0;transform:scale(1.35) rotate(-10deg);}52%{opacity:1;transform:scale(.95) rotate(4deg);}76%{transform:scale(1.03) rotate(-1.5deg);}100%{opacity:1;transform:scale(1) rotate(0);}}
+  @keyframes stampNext{0%,100%{opacity:.34;transform:scale(1);}50%{opacity:.8;transform:scale(1.09);}}
+  @keyframes shimmerSweep{0%{transform:translateX(-130%);}54%{transform:translateX(240%);}100%{transform:translateX(240%);}}
+  @keyframes glowGreen{0%,100%{box-shadow:0 0 0 1px rgba(47,174,102,.28),0 8px 22px rgba(47,174,102,.3);}50%{box-shadow:0 0 0 1px rgba(47,174,102,.5),0 13px 34px rgba(47,174,102,.52);}}
+  /* camera cinema */
+  @keyframes cornerPulse{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:1;transform:scale(1.07);}}
+  @keyframes lockSnap{0%{opacity:.45;transform:scale(1.16);}100%{opacity:1;transform:scale(1);}}
+  @keyframes qrSweep{0%{transform:translateY(-130%);opacity:0;}16%{opacity:1;}84%{opacity:1;}100%{transform:translateY(230%);opacity:0;}}
+  @keyframes pillSpring{0%{opacity:0;transform:translate(-50%,22px) scale(.8);}60%{opacity:1;transform:translate(-50%,-4px) scale(1.07);}80%{transform:translate(-50%,2px) scale(.985);}100%{opacity:1;transform:translate(-50%,0) scale(1);}}
+  /* notification banner · spring in, slide out */
+  @keyframes notifSpring{0%{opacity:0;transform:translateY(-56px) scale(.94);}62%{opacity:1;transform:translateY(6px) scale(1.015);}82%{transform:translateY(-2px) scale(.998);}100%{opacity:1;transform:translateY(0) scale(1);}}
+  @keyframes notifExit{from{opacity:1;transform:translateY(0) scale(1);}to{opacity:0;transform:translateY(-52px) scale(.94);}}
+  /* lock screen */
+  @keyframes lockWake{from{opacity:0;transform:scale(1.04);}to{opacity:1;transform:none;}}
+  @keyframes lockCard{0%{opacity:0;transform:translateY(34px) scale(.94);}64%{opacity:1;transform:translateY(-5px) scale(1.012);}100%{opacity:1;transform:translateY(0) scale(1);}}
+  /* stepper */
+  @keyframes stepPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,128,36,.45);}70%{box-shadow:0 0 0 7px rgba(232,128,36,0);}}
+
+  /* ── interaction kit · real classes, because hover/press cannot live in inline style ── */
+  .wl-press{transition:transform .16s cubic-bezier(.22,.61,.36,1),box-shadow .22s,background .25s,border-color .22s,color .2s;}
+  .wl-press:active{transform:scale(.955);}
+  .wl-cta{transition:transform .2s cubic-bezier(.22,.61,.36,1),box-shadow .22s,background .25s,filter .2s;}
+  .wl-cta:hover{transform:translateY(-2px);}
+  .wl-cta:active{transform:translateY(-1px) scale(.975);}
+  .wl-pill{transition:filter .2s,box-shadow .22s;}
+  .wl-pill:hover{filter:brightness(1.06);box-shadow:0 14px 32px rgba(0,0,0,.5);}
+  .wl-ghost{transition:border-color .2s,color .2s,background .2s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .wl-ghost:hover{border-color:#E88024 !important;color:#E88024 !important;}
+  .wl-ghost:active{transform:scale(.93);}
+  .wl-row{transition:background .16s;}
+  .wl-row:hover{background:#FDF4EC !important;}
+  .wl-drow{transition:background .16s;}
+  .wl-drow:hover{background:#3A3A3C !important;}
+  .wl-inp{transition:border-color .2s,box-shadow .2s,background .2s;}
+  .wl-inp:focus{border-color:#E88024 !important;box-shadow:0 0 0 3px rgba(232,128,36,.15);outline:none !important;background:#FFFCF8 !important;}
+  .wl-card{transition:transform .3s cubic-bezier(.22,.61,.36,1),box-shadow .3s,filter .3s;}
+  .wl-card:hover{transform:translateY(-4px);}
+  .wl-off{cursor:not-allowed !important;}
+  .wl-off:hover{transform:none !important;}
+  .wl-off:active{transform:none !important;}
+  .wl-steprow{transition:background .2s;}
+  .wl-steprow:hover{background:#FAF6EF !important;}
+  .wl-steprow:hover .wl-stepdisc{transform:scale(1.09);}
+  .wl-stepdisc{transition:background .3s,color .3s,transform .2s cubic-bezier(.22,.61,.36,1);}
+  .wl-link{transition:color .18s,opacity .18s;}
+  .wl-link:hover{color:#E88024 !important;opacity:1 !important;}
+  .wl-play{transition:transform .18s cubic-bezier(.22,.61,.36,1),background .25s,box-shadow .25s;}
+  .wl-play:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(36,28,22,.16);}
+  .wl-play:active{transform:scale(.98);}
 </style>
 </helmet>
 <div dir="{{ dir }}" style="min-height:100vh;background:radial-gradient(1200px 600px at 0% 0%, rgba(232,128,36,.07), transparent 60%), radial-gradient(1000px 500px at 100% 0%, rgba(40,38,34,.06), transparent 55%), #F3EFE9;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:34px;padding:34px 22px 60px;">
@@ -41,21 +111,39 @@
     </div>
 
     <sc-if value="{{ hasNotif }}" hint-placeholder-val="{{ false }}">
-      <div onClick="{{ tapNotif }}" style="cursor:pointer;position:absolute;top:46px;left:12px;right:12px;z-index:60;background:rgba(28,28,32,.82);backdrop-filter:blur(14px);border-radius:18px;padding:12px 14px;color:#FFFFFF;animation:notifDown .4s cubic-bezier(.22,.61,.36,1) both;box-shadow:0 14px 34px rgba(0,0,0,.3);">
+      <div onClick="{{ tapNotif }}" style="cursor:pointer;position:absolute;top:46px;left:12px;right:12px;z-index:60;background:rgba(28,28,32,.82);backdrop-filter:blur(14px);border-radius:18px;padding:9px 14px 12px;color:#FFFFFF;animation:{{ notifAnim }};box-shadow:0 14px 34px rgba(0,0,0,.3);">
+        <div style="width:32px;height:3.5px;border-radius:99px;background:rgba(255,255,255,.32);margin:0 auto 7px;"></div>
         <div style="display:flex;align-items:center;gap:9px;">
           <div style="width:26px;height:26px;border-radius:7px;background:{{ notifColor }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;color:#FFFFFF;flex-shrink:0;">{{ notifInitial }}</div>
           <div style="min-width:0;flex:1;">
-            <div style="display:flex;justify-content:space-between;gap:8px;"><span style="font-size:12px;font-weight:700;">{{ notifTitle }}</span><span style="font-size:10px;opacity:.6;">now</span></div>
+            <div style="display:flex;justify-content:space-between;gap:8px;"><span style="font-size:12px;font-weight:700;">{{ notifTitle }}</span><span style="font-size:10px;opacity:.6;">{{ nowWord }}</span></div>
             <div style="font-size:12px;line-height:1.4;opacity:.95;margin-top:2px;">{{ notifBody }}</div>
           </div>
         </div>
       </div>
     </sc-if>
 
-    <div style="flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column;position:relative;">
+    <sc-if value="{{ isLock }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:70;border-radius:37px;overflow:hidden;background:radial-gradient(520px 420px at 50% 18%, #2A2620, #0A0A0C 72%);display:flex;flex-direction:column;align-items:center;padding:78px 18px 26px;animation:lockWake .45s cubic-bezier(.22,.61,.36,1) both;">
+        <div style="font-size:13px;font-weight:600;color:rgba(244,242,238,.72);letter-spacing:.02em;">{{ lockDate }}</div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:76px;line-height:1.05;color:#F4F2EE;letter-spacing:-.02em;font-variant-numeric:tabular-nums;" dir="ltr">9:41</div>
+        <div onClick="{{ lockTap }}" class="wl-press" style="cursor:pointer;margin-top:32px;width:100%;background:rgba(30,30,34,.72);backdrop-filter:blur(16px);border-radius:20px;padding:13px 15px;color:#FFFFFF;box-shadow:0 18px 44px rgba(0,0,0,.45);animation:lockCard .6s cubic-bezier(.22,.61,.36,1) .32s both;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:30px;height:30px;border-radius:8px;background:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;flex-shrink:0;">D</div>
+            <div style="min-width:0;flex:1;">
+              <div style="display:flex;justify-content:space-between;gap:8px;"><span style="font-size:12.5px;font-weight:700;">Daraj Coffee</span><span style="font-size:10px;opacity:.6;">{{ nowWord }}</span></div>
+              <div style="font-size:12.5px;line-height:1.45;opacity:.95;margin-top:2px;">{{ lockBody }}</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:auto;font-size:10.5px;color:rgba(244,242,238,.42);text-align:center;line-height:1.6;">{{ lockFoot }}</div>
+      </div>
+    </sc-if>
+
+    <div style="flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;display:flex;flex-direction:column;position:relative;">
       <sc-if value="{{ isCounter }}" hint-placeholder-val="{{ true }}">
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px;animation:{{ enterAnim }};">
-          <div style="font-size:11px;font-weight:800;letter-spacing:.14em;color:#9B99A3;text-transform:uppercase;">The counter at Daraj Coffee</div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.14em;color:#9B99A3;text-transform:uppercase;">{{ counterLabel }}</div>
           <div style="width:230px;background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.4);animation:{{ popAnim }};">
             <div style="background:linear-gradient(135deg,#1E5C43,#154232);padding:14px;text-align:center;color:#FFFFFF;">
               <div style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;margin:0 auto 8px;">D</div>
@@ -71,40 +159,41 @@
               <div style="font-size:8px;color:#93887A;letter-spacing:.06em;margin-top:10px;">wasla.app/j/daraj · no app needed · بدون تطبيق</div>
             </div>
           </div>
-          <div onClick="{{ goCamera }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:999px;padding:13px 26px;animation:glowPulse 3s ease-in-out infinite;transition:transform .2s;" style-hover="transform:translateY(-2px)">Open the camera</div>
+          <div onClick="{{ goCamera }}" class="wl-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:999px;padding:13px 26px;animation:glowPulse 3s ease-in-out infinite;">{{ counterCta }}</div>
         </div>
       </sc-if>
 
       <sc-if value="{{ isCamera }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:1;display:flex;flex-direction:column;background:#0B0B0D;position:relative;overflow:hidden;">
-          <span onClick="{{ goBack }}" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;" style-hover="border-color:#E88024;color:#E88024">‹</span>
+        <div style="flex:1;display:flex;flex-direction:column;background:#0B0B0D;position:relative;overflow:hidden;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
+          <span onClick="{{ goBack }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
           <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative;">
             <div style="position:absolute;inset:26px;border-radius:20px;overflow:hidden;background:radial-gradient(420px 300px at 50% 40%, #2E2E34, #141416);">
-              <div style="position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,rgba(232,128,36,.8),transparent);animation:scanLine 2.6s ease-in-out infinite;"></div>
+              <div style="position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,rgba(232,128,36,.8),transparent);animation:{{ scanAnim }};"></div>
             </div>
-            <div style="position:relative;width:150px;background:#FFFFFF;border-radius:9px;padding:12px 10px;text-align:center;box-shadow:0 20px 44px rgba(0,0,0,.5);">
+            <div style="position:relative;width:150px;background:#FFFFFF;border-radius:9px;padding:12px 10px;text-align:center;box-shadow:{{ camQrShadow }};overflow:hidden;transition:box-shadow .4s cubic-bezier(.22,.61,.36,1);">
               <div style="font-size:9px;font-weight:800;color:#1E5C43;">DARAJ COFFEE</div>
               <div style="display:inline-grid;grid-template-columns:repeat(17,4px);grid-auto-rows:4px;margin-top:8px;">
                 <sc-for list="{{ qrCells }}" as="q2" hint-placeholder-count="0"><div style="background:{{ q2.c }};"></div></sc-for>
               </div>
+              <div style="position:absolute;left:0;right:0;top:0;height:44%;background:linear-gradient(180deg,rgba(255,214,10,0),rgba(255,214,10,.55),rgba(255,255,255,.85),rgba(255,214,10,0));pointer-events:none;animation:{{ sweepAnim }};"></div>
             </div>
-            <div style="position:absolute;top:40px;left:44px;width:26px;height:26px;border-top:3.5px solid #E88024;border-inline-start:3.5px solid #E88024;border-start-start-radius:8px;"></div>
-            <div style="position:absolute;top:40px;right:44px;width:26px;height:26px;border-top:3.5px solid #E88024;border-inline-end:3.5px solid #E88024;border-start-end-radius:8px;"></div>
-            <div style="position:absolute;bottom:40px;left:44px;width:26px;height:26px;border-bottom:3.5px solid #E88024;border-inline-start:3.5px solid #E88024;border-end-start-radius:8px;"></div>
-            <div style="position:absolute;bottom:40px;right:44px;width:26px;height:26px;border-bottom:3.5px solid #E88024;border-inline-end:3.5px solid #E88024;border-end-end-radius:8px;"></div>
+            <div style="position:absolute;top:40px;left:44px;width:26px;height:26px;border-top:3.5px solid {{ camCorner }};border-inline-start:3.5px solid {{ camCorner }};border-start-start-radius:8px;animation:{{ cornerAnim }};"></div>
+            <div style="position:absolute;top:40px;right:44px;width:26px;height:26px;border-top:3.5px solid {{ camCorner }};border-inline-end:3.5px solid {{ camCorner }};border-start-end-radius:8px;animation:{{ cornerAnim }};"></div>
+            <div style="position:absolute;bottom:40px;left:44px;width:26px;height:26px;border-bottom:3.5px solid {{ camCorner }};border-inline-start:3.5px solid {{ camCorner }};border-end-start-radius:8px;animation:{{ cornerAnim }};"></div>
+            <div style="position:absolute;bottom:40px;right:44px;width:26px;height:26px;border-bottom:3.5px solid {{ camCorner }};border-inline-end:3.5px solid {{ camCorner }};border-end-end-radius:8px;animation:{{ cornerAnim }};"></div>
             <sc-if value="{{ camReady }}" hint-placeholder-val="{{ false }}">
-              <div onClick="{{ goSignup }}" style="cursor:pointer;position:absolute;bottom:56px;left:50%;transform:translateX(-50%);background:#FFD60A;color:#241C16;font-weight:800;font-size:13px;border-radius:999px;padding:11px 20px;display:flex;align-items:center;gap:8px;animation:pillUp .45s cubic-bezier(.22,.61,.36,1) both;box-shadow:0 10px 26px rgba(0,0,0,.4);white-space:nowrap;">
-                <span style="width:16px;height:16px;border-radius:5px;border:2px solid #241C16;display:inline-block;"></span>Open “wasla.app” →
+              <div onClick="{{ goSignup }}" class="wl-pill" style="cursor:pointer;position:absolute;bottom:56px;left:50%;transform:translateX(-50%);background:#FFD60A;color:#241C16;font-weight:800;font-size:13px;border-radius:999px;padding:11px 20px;display:flex;align-items:center;gap:8px;animation:pillSpring .58s cubic-bezier(.22,.61,.36,1) both;box-shadow:0 10px 26px rgba(0,0,0,.4);white-space:nowrap;">
+                <span style="width:16px;height:16px;border-radius:5px;border:2px solid #241C16;display:inline-block;flex-shrink:0;"></span>{{ camPill }}
               </div>
             </sc-if>
           </div>
-          <div style="text-align:center;color:#8E8C96;font-size:11px;padding:0 0 18px;">No app — the camera is the whole install.</div>
+          <div style="text-align:center;color:#8E8C96;font-size:11px;padding:0 0 18px;">{{ camFoot }}</div>
         </div>
       </sc-if>
 
       <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:1;background:#FFFFFF;display:flex;flex-direction:column;animation:{{ enterAnim }};">
-          <span onClick="{{ goBack }}" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;" style-hover="border-color:#E88024;color:#E88024">‹</span>
+        <div style="flex:1;background:#FFFFFF;display:flex;flex-direction:column;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
+          <span onClick="{{ goBack }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
           <div style="background:linear-gradient(135deg,#1E5C43,#154232);padding:24px 20px 20px;text-align:center;color:#FFFFFF;">
             <div style="width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;margin:0 auto 10px;animation:{{ popAnim }};">D</div>
             <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;">{{ suTitle }}</div>
@@ -113,15 +202,18 @@
           <div style="padding:22px 20px;display:flex;flex-direction:column;gap:13px;">
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <div style="font-size:12.5px;font-weight:700;color:#5D5348;">{{ suJoinLine }}</div>
-              <div onClick="{{ toggleLang }}" style="cursor:pointer;border:1px solid #E7E0D5;border-radius:999px;padding:5px 13px;font-size:11px;font-weight:700;color:#5D5348;" style-hover="border-color:#E88024;color:#C96A14">{{ langLabel }}</div>
+              <div onClick="{{ toggleLang }}" class="wl-ghost wl-press" style="cursor:pointer;border:1px solid #E7E0D5;border-radius:999px;padding:5px 13px;font-size:11px;font-weight:700;color:#5D5348;">{{ langLabel }}</div>
             </div>
-            <div><div style="font-size:11px;font-weight:700;color:#93887A;margin-bottom:5px;">{{ fName }}</div>
-              <input value="{{ formName }}" onChange="{{ setFormName }}" style="width:100%;border:1px solid #D8D0C2;border-radius:11px;padding:13px 14px;font-size:14.5px;background:#FFFFFF;"></div>
-            <div><div style="font-size:11px;font-weight:700;color:#93887A;margin-bottom:5px;">{{ fPhone }}</div>
-              <input value="{{ formPhone }}" onChange="{{ setFormPhone }}" style="width:100%;border:1px solid #D8D0C2;border-radius:11px;padding:13px 14px;font-size:14.5px;background:#FFFFFF;font-variant-numeric:tabular-nums;"></div>
+            <div><div style="font-size:11px;font-weight:700;color:#93887A;margin-bottom:5px;display:flex;align-items:center;gap:6px;"><span>{{ fName }}</span><sc-if value="{{ okName }}" hint-placeholder-val="{{ false }}"><span style="color:#2FAE66;font-size:12px;font-weight:900;animation:popIn .34s cubic-bezier(.22,.61,.36,1) both;">✓</span></sc-if></div>
+              <input value="{{ formName }}" onChange="{{ setFormName }}" class="wl-inp" style="width:100%;border:1px solid {{ nameBorder }};border-radius:11px;padding:13px 14px;font-size:14.5px;background:#FFFFFF;"></div>
+            <div><div style="font-size:11px;font-weight:700;color:#93887A;margin-bottom:5px;display:flex;align-items:center;gap:6px;"><span>{{ fPhone }}</span><sc-if value="{{ okPhone }}" hint-placeholder-val="{{ false }}"><span style="color:#2FAE66;font-size:12px;font-weight:900;animation:popIn .34s cubic-bezier(.22,.61,.36,1) both;">✓</span></sc-if></div>
+              <input value="{{ formPhone }}" onChange="{{ setFormPhone }}" class="wl-inp" style="width:100%;border:1px solid {{ phoneBorder }};border-radius:11px;padding:13px 14px;font-size:14.5px;background:#FFFFFF;font-variant-numeric:tabular-nums;" dir="ltr"></div>
             <div><div style="font-size:11px;font-weight:700;color:#93887A;margin-bottom:5px;">{{ fDrink }} <span style="font-weight:500;">{{ fDrinkHint }}</span></div>
-              <input value="{{ formDrink }}" onChange="{{ setFormDrink }}" style="width:100%;border:1px solid #D8D0C2;border-radius:11px;padding:13px 14px;font-size:14.5px;background:#FFFFFF;"></div>
-            <div onClick="{{ submitSignup }}" style="cursor:pointer;background:#1E5C43;color:#FFFFFF;font-weight:800;font-size:15px;border-radius:999px;padding:15px 0;text-align:center;margin-top:6px;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ suCta }}</div>
+              <input value="{{ formDrink }}" onChange="{{ setFormDrink }}" class="wl-inp" style="width:100%;border:1px solid #D8D0C2;border-radius:11px;padding:13px 14px;font-size:14.5px;background:#FFFFFF;"></div>
+            <div onClick="{{ submitSignup }}" class="{{ ctaClass }}" style="cursor:{{ ctaCursor }};background:{{ ctaBg }};color:{{ ctaFg }};font-weight:800;font-size:15px;border-radius:999px;padding:15px 0;text-align:center;margin-top:6px;">{{ suCta }}</div>
+            <sc-if value="{{ showReason }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;font-size:10.5px;font-weight:600;color:#B4753A;margin-top:-6px;animation:fadeUp .3s cubic-bezier(.22,.61,.36,1) both;">{{ suReason }}</div>
+            </sc-if>
             <div style="text-align:center;font-size:10.5px;color:#93887A;line-height:1.6;">{{ suFoot }}</div>
           </div>
           <div style="margin-top:auto;display:flex;align-items:center;justify-content:center;gap:7px;padding:14px;color:#93887A;font-size:10px;">
@@ -132,35 +224,35 @@
       </sc-if>
 
       <sc-if value="{{ isSuccess }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px;background:#FFFFFF;animation:{{ enterAnim }};">
-          <span onClick="{{ goBack }}" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid #E7E0D5;color:#5D5348;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;" style-hover="border-color:#E88024;color:#E88024">‹</span>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px;background:#FFFFFF;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
+          <span onClick="{{ goBack }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid #E7E0D5;color:#5D5348;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
           <div style="width:70px;height:70px;border-radius:50%;background:#E7F6EE;color:#1E7D47;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;animation:{{ popAnim }};">✓</div>
           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;text-align:center;">{{ okTitle }}</div>
           <div style="font-size:13px;color:#5D5348;text-align:center;line-height:1.6;max-width:250px;">{{ okSub }}</div>
-          <div onClick="{{ addApple }}" style="cursor:pointer;background:#000000;color:#FFFFFF;font-weight:700;font-size:14px;border-radius:12px;padding:14px 26px;display:flex;align-items:center;gap:9px;margin-top:10px;transition:transform .2s;" style-hover="transform:translateY(-2px)"> Add to Apple Wallet</div>
-          <div onClick="{{ addGoogle }}" style="cursor:pointer;background:#FFFFFF;border:1.5px solid #D8D0C2;color:#241C16;font-weight:700;font-size:14px;border-radius:999px;padding:13px 26px;display:flex;align-items:center;gap:9px;transition:transform .2s;" style-hover="transform:translateY(-2px)">Add to Google Wallet</div>
+          <div onClick="{{ addApple }}" class="wl-cta" style="cursor:pointer;background:#000000;color:#FFFFFF;font-weight:700;font-size:14px;border-radius:12px;padding:14px 26px;display:flex;align-items:center;gap:9px;margin-top:10px;"> {{ addAppleLabel }}</div>
+          <div onClick="{{ addGoogle }}" class="wl-cta" style="cursor:pointer;background:#FFFFFF;border:1.5px solid #D8D0C2;color:#241C16;font-weight:700;font-size:14px;border-radius:999px;padding:13px 26px;display:flex;align-items:center;gap:9px;">{{ addGoogleLabel }}</div>
           <div style="font-size:10.5px;color:#93887A;">{{ okNote }}</div>
-          <div onClick="{{ scanAgain }}" style="cursor:pointer;font-size:11px;font-weight:700;color:#C96A14;margin-top:-4px;">Scan again — as a returning member ↻</div>
+          <div onClick="{{ scanAgain }}" class="wl-link" style="cursor:pointer;font-size:11px;font-weight:700;color:#C96A14;margin-top:-4px;">{{ scanAgainLabel }}</div>
         </div>
       </sc-if>
 
       <sc-if value="{{ isSheet }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:1;display:flex;flex-direction:column;background:rgba(20,20,22,.6);backdrop-filter:blur(4px);">
+        <div style="flex:1;display:flex;flex-direction:column;background:rgba(20,20,22,.6);backdrop-filter:blur(4px);animation:{{ scrimAnim }};">
           <div style="flex:1;"></div>
-          <div style="background:#F2F2F6;border-radius:22px 22px 0 0;padding:14px 16px 26px;animation:{{ enterAnim }};">
+          <div style="background:#F2F2F6;border-radius:22px 22px 0 0;padding:14px 16px 26px;animation:{{ sheetAnim }};">
             <div style="display:flex;justify-content:space-between;align-items:center;padding:2px 4px 14px;">
-              <span onClick="{{ backToSuccess }}" style="cursor:pointer;color:#007AFF;font-size:15px;">Cancel</span>
-              <span style="font-weight:700;font-size:15px;">Add Pass</span>
-              <span onClick="{{ confirmAdd }}" style="cursor:pointer;color:#007AFF;font-size:15px;font-weight:700;">Add</span>
+              <span onClick="{{ backToSuccess }}" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:15px;">{{ cancelWord }}</span>
+              <span style="font-weight:700;font-size:15px;">{{ addPassTitle }}</span>
+              <span onClick="{{ confirmAdd }}" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:15px;font-weight:700;">{{ addWord }}</span>
             </div>
             <div style="border-radius:14px;background:linear-gradient(150deg,#1E5C43,#154232);color:#FFFFFF;padding:14px 15px 16px;box-shadow:0 14px 34px rgba(0,0,0,.25);">
               <div style="display:flex;align-items:center;gap:9px;">
                 <div style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;">D</div>
                 <div style="font-size:12px;font-weight:700;">Daraj Coffee</div>
-                <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">STAMPS</div><div style="font-size:13px;font-weight:700;">0 / 8</div></div>
+                <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ stampsWord }}</div><div style="font-size:13px;font-weight:700;" dir="ltr">0 / 8</div></div>
               </div>
               <div style="display:flex;justify-content:center;gap:10px;margin:15px 0;">
-                <sc-for list="{{ sheetStamps }}" as="sh" hint-placeholder-count="8"><span style="font-size:18px;filter:grayscale(1) opacity(.35);transform:translateY({{ sh.dy }});display:inline-block;">☕</span></sc-for>
+                <sc-for list="{{ sheetStamps }}" as="sh" hint-placeholder-count="8"><span style="{{ sh.box }}"><span style="{{ sh.disc }}"></span></span></sc-for>
               </div>
               <div style="background:#FFFFFF;border-radius:9px;padding:8px;display:flex;justify-content:center;">
                 <div style="display:grid;grid-template-columns:repeat(17,3px);grid-auto-rows:3px;">
@@ -168,110 +260,180 @@
                 </div>
               </div>
             </div>
-            <div style="text-align:center;font-size:11px;color:#8E8C96;margin-top:12px;">Wasla · Tala Hospitality Group</div>
+            <div style="text-align:center;font-size:11px;color:#8E8C96;margin-top:12px;">{{ sheetFoot }}</div>
           </div>
         </div>
       </sc-if>
 
       <sc-if value="{{ isWallet }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:1;display:flex;flex-direction:column;padding:16px 14px 20px;animation:{{ enterAnim }};overflow:hidden;">
+        <div style="flex:1;display:flex;flex-direction:column;padding:16px 14px 20px;--sx:{{ slideFrom }};animation:{{ enterAnim }};overflow:hidden;">
           <div style="display:flex;justify-content:space-between;align-items:center;color:#F4F2EE;padding:2px 6px 14px;">
             <div style="display:flex;align-items:center;gap:9px;">
-              <span onClick="{{ goBack }}" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;" style-hover="border-color:#E88024;color:#E88024">‹</span>
-              <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;">Wallet</span>
+              <span onClick="{{ goBack }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;">‹</span>
+              <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;">{{ walletWord }}</span>
             </div>
-            <span style="font-size:10px;color:#8E8C96;letter-spacing:.06em;">4 CARDS · 0 APPS</span>
+            <span style="font-size:10px;color:#8E8C96;letter-spacing:.06em;">{{ walletCount }}</span>
           </div>
           <sc-for list="{{ walletCards }}" as="wc" hint-placeholder-count="4">
-            <div onClick="{{ wc.pick }}" style="cursor:pointer;border-radius:14px;background:linear-gradient(150deg,{{ wc.c }},{{ wc.c2 }});color:#FFFFFF;padding:13px 15px;margin-top:{{ wc.mt }};position:relative;box-shadow:0 -8px 28px rgba(0,0,0,.45);transition:transform .3s cubic-bezier(.22,.61,.36,1);" style-hover="transform:translateY(-4px)">
+            <div onClick="{{ wc.pick }}" class="wl-card" style="cursor:pointer;border-radius:14px;background:linear-gradient(150deg,{{ wc.c }},{{ wc.c2 }});color:#FFFFFF;padding:13px 15px;margin-top:{{ wc.mt }};position:relative;box-shadow:0 -8px 28px rgba(0,0,0,.45);animation:{{ wc.anim }};">
               <div style="display:flex;align-items:center;gap:9px;">
                 <div style="width:25px;height:25px;border-radius:50%;background:rgba(255,255,255,.94);color:{{ wc.c }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;flex-shrink:0;">{{ wc.i }}</div>
                 <div style="min-width:0;"><div style="font-size:12px;font-weight:700;">{{ wc.name }}</div><div style="font-size:9px;opacity:.75;">{{ wc.merchant }}</div></div>
                 <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8px;letter-spacing:.08em;opacity:.75;">{{ wc.tagLabel }}</div><div style="font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;">{{ wc.tagValue }}</div></div>
               </div>
               <sc-if value="{{ wc.open }}" hint-placeholder-val="{{ false }}">
-                <div style="margin-top:13px;animation:fadeUp .35s cubic-bezier(.22,.61,.36,1) both;">
+                <div style="margin-top:13px;overflow:hidden;animation:{{ revealAnim }};">
                   <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:23px;">{{ wc.hero }}</div>
+                  <sc-if value="{{ wc.hasMini }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:center;gap:5px;margin-top:7px;flex-wrap:wrap;">
+                      <sc-for list="{{ wc.mini }}" as="mc" hint-placeholder-count="8"><span style="{{ mc.box }}"><span style="{{ mc.disc }}"></span></span></sc-for>
+                    </div>
+                  </sc-if>
                   <div style="font-size:10.5px;opacity:.85;margin-top:3px;line-height:1.5;">{{ wc.line }}</div>
-                  <div style="display:flex;align-items:center;gap:8px;margin-top:11px;background:#FFFFFF;border-radius:8px;padding:7px 10px;">
-                    <div style="display:grid;grid-template-columns:repeat(17,2.2px);grid-auto-rows:2.2px;">
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:11px;background:#FFFFFF;border-radius:8px;padding:7px 10px;animation:{{ revealQrAnim }};">
+                    <div style="display:grid;grid-template-columns:repeat(17,2.2px);grid-auto-rows:2.2px;flex-shrink:0;">
                       <sc-for list="{{ qrCells }}" as="wq" hint-placeholder-count="0"><div style="background:{{ wq.c }};"></div></sc-for>
                     </div>
-                    <div style="color:#5D5348;font-size:8.5px;line-height:1.5;">One QR, every till.<br><span style="letter-spacing:.05em;">{{ wc.memberCaption }}</span></div>
+                    <div style="color:#5D5348;font-size:8.5px;line-height:1.5;">{{ oneQrLine }}<br><span style="letter-spacing:.05em;" dir="ltr">{{ wc.memberCaption }}</span></div>
                   </div>
                 </div>
               </sc-if>
             </div>
           </sc-for>
-          <div style="margin-top:auto;padding-top:16px;text-align:center;font-size:10.5px;color:#8E8C96;line-height:1.6;">Rainbow St to Abdali — the whole high street,<br>one swipe from the lock screen.</div>
+          <div style="margin-top:auto;padding-top:16px;text-align:center;line-height:1.6;">
+            <div style="font-size:11px;font-weight:700;color:#C9C4BC;">{{ walletStackCaption }}</div>
+            <div style="font-size:10.5px;color:#8E8C96;margin-top:5px;">{{ walletFootCaption }}</div>
+          </div>
         </div>
       </sc-if>
 
       <sc-if value="{{ isPass }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:1;display:flex;flex-direction:column;padding:16px 14px 20px;animation:{{ enterAnim }};">
-          <div style="display:flex;justify-content:space-between;align-items:center;color:#F4F2EE;padding:2px 6px 14px;">
+        <div style="flex:1;display:flex;flex-direction:column;padding:16px 14px 20px;min-height:0;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
+          <div style="display:flex;justify-content:space-between;align-items:center;color:#F4F2EE;padding:2px 6px 14px;flex-shrink:0;">
             <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;">{{ walletTitle }}</span>
-            <span onClick="{{ flipCard }}" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.5);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;" style-hover="border-color:#E88024;color:#E88024">i</span>
+            <span onClick="{{ flipCard }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.5);color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;">i</span>
           </div>
-          <sc-if value="{{ frontSide }}" hint-placeholder-val="{{ true }}">
-            <sc-if value="{{ isApplePass }}" hint-placeholder-val="{{ true }}">
-              <div style="border-radius:14px;background:linear-gradient(150deg,#1E5C43,#154232);color:#FFFFFF;padding:15px 16px 17px;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ popAnim }};">
-                <div style="display:flex;align-items:center;gap:9px;">
-                  <div style="width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;">D</div>
-                  <div style="font-size:12.5px;font-weight:700;">Daraj Coffee</div>
-                  <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ passHeadLabel }}</div><div style="font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;">{{ passHeadValue }}</div></div>
+          <div style="flex:1;min-height:0;position:relative;perspective:1500px;">
+            <div style="position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.61,.36,1);transform:{{ flipT }};">
+              <div aria-hidden="{{ backSide }}" style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;pointer-events:{{ frontPE }};">
+                <div style="animation:{{ settleAnim }};flex-shrink:0;">
+                  <sc-if value="{{ isApplePass }}" hint-placeholder-val="{{ true }}">
+                    <div style="border-radius:14px;background:linear-gradient(150deg,#1E5C43,#154232);color:#FFFFFF;padding:15px 16px 17px;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};position:relative;overflow:hidden;">
+                      <div style="display:flex;align-items:center;gap:9px;">
+                        <div style="width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;">D</div>
+                        <div style="font-size:12.5px;font-weight:700;">Daraj Coffee</div>
+                        <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ passHeadLabel }}</div><div style="font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;color:{{ passHeadColor }};">{{ passHeadValue }}</div></div>
+                      </div>
+                      <sc-if value="{{ rewardReady }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:absolute;top:0;bottom:0;left:0;width:44%;z-index:3;pointer-events:none;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,214,10,.16),rgba(255,255,255,.24),rgba(255,255,255,0));animation:shimmerSweep 3.4s cubic-bezier(.4,0,.5,1) infinite;"></div>
+                      </sc-if>
+                      <sc-if value="{{ giftOn }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin:13px -16px 0;background:linear-gradient(90deg,#E88024,#C96A14);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.04em;animation:{{ popAnim }};">A GIFT RIDES THIS CARD · هدية عيد ميلادك<span style="font-family:'IBM Plex Sans Arabic',sans-serif;"></span></div>
+                      </sc-if>
+                      <div style="margin:14px -16px 12px;position:relative;aspect-ratio:375/123;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                        <div style="display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;max-width:148px;">
+                          <sc-for list="{{ passStamps }}" as="ps" hint-placeholder-count="8">
+                            <span style="{{ ps.box }}">
+                              <span style="{{ ps.disc }}">
+                                <sc-if value="{{ ps.hasGlyph }}" hint-placeholder-val="{{ false }}">
+                                  <svg viewBox="0 0 24 24" fill="none" style="{{ ps.svg }}">
+                                    <sc-if value="{{ ps.hasBody }}" hint-placeholder-val="{{ false }}">
+                                      <path d="{{ ps.d }}" fill="{{ ps.ink }}" stroke="{{ ps.ink }}" strokeWidth="{{ ps.gw }}" strokeLinejoin="round"></path>
+                                    </sc-if>
+                                    <sc-if value="{{ ps.hasLines }}" hint-placeholder-val="{{ false }}">
+                                      <path d="{{ ps.s }}" fill="none" stroke="{{ ps.ink }}" strokeWidth="{{ ps.sw }}" strokeLinecap="round" strokeLinejoin="round"></path>
+                                    </sc-if>
+                                  </svg>
+                                </sc-if>
+                              </span>
+                            </span>
+                          </sc-for>
+                        </div>
+                      </div>
+                      <div style="display:flex;gap:14px;margin-bottom:13px;position:relative;z-index:1;">
+                        <div style="min-width:0;flex:1;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ rewardWord }}</div><div style="font-size:11.5px;font-weight:600;line-height:1.35;">{{ passRewardLine }}</div></div>
+                        <div><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ memberWord }}</div><div style="font-size:11.5px;font-weight:600;">{{ memberFirst }}</div></div>
+                      </div>
+                      <div style="background:#FFFFFF;border-radius:9px;padding:9px;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;z-index:1;">
+                        <div style="display:grid;grid-template-columns:repeat(17,3.6px);grid-auto-rows:3.6px;">
+                          <sc-for list="{{ qrCells }}" as="q4" hint-placeholder-count="0"><div style="background:{{ q4.c }};"></div></sc-for>
+                        </div>
+                        <div style="font-size:7.5px;color:#5D5348;letter-spacing:.06em;display:flex;gap:4px;align-items:baseline;"><span>{{ memberWord }}</span><span dir="ltr">· 0114 2291</span></div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ isGooglePass }}" hint-placeholder-val="{{ false }}">
+                    <div style="border-radius:20px;background:#1E5C43;color:#FFFFFF;padding:18px 18px 20px;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};position:relative;overflow:hidden;">
+                      <div style="display:flex;align-items:center;gap:9px;">
+                        <div style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;">D</div>
+                        <div style="font-size:12px;font-weight:600;">Daraj Coffee</div>
+                      </div>
+                      <sc-if value="{{ rewardReady }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:absolute;top:0;bottom:0;left:0;width:44%;z-index:3;pointer-events:none;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,214,10,.16),rgba(255,255,255,.24),rgba(255,255,255,0));animation:shimmerSweep 3.4s cubic-bezier(.4,0,.5,1) infinite;"></div>
+                      </sc-if>
+                      <div style="margin-top:15px;"><div style="font-size:11px;opacity:.8;">{{ gStampCard }}</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:19px;margin-top:2px;">{{ gTitleLine }}</div></div>
+                      <div style="display:flex;gap:22px;margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.25);position:relative;z-index:1;">
+                        <div><div style="font-size:9.5px;opacity:.75;">{{ rewardWord }}</div><div style="font-size:12px;font-weight:600;">{{ passRewardLine }}</div></div>
+                        <div><div style="font-size:9.5px;opacity:.75;">{{ memberWord }}</div><div style="font-size:12px;font-weight:600;">{{ memberFirst }}</div></div>
+                      </div>
+                      <div style="background:#FFFFFF;border-radius:12px;padding:10px;margin-top:15px;display:flex;justify-content:center;position:relative;z-index:1;">
+                        <div style="display:grid;grid-template-columns:repeat(17,3.8px);grid-auto-rows:3.8px;">
+                          <sc-for list="{{ qrCells }}" as="q5" hint-placeholder-count="0"><div style="background:{{ q5.c }};"></div></sc-for>
+                        </div>
+                      </div>
+                      <div style="text-align:center;font-size:9.5px;opacity:.7;margin-top:9px;">قهوة الدرج</div>
+                    </div>
+                  </sc-if>
                 </div>
-                <sc-if value="{{ giftOn }}" hint-placeholder-val="{{ false }}">
-                  <div style="margin:13px -16px 0;background:linear-gradient(90deg,#E88024,#C96A14);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.04em;animation:{{ popAnim }};">A GIFT RIDES THIS CARD · هدية عيد ميلادك<span style="font-family:'IBM Plex Sans Arabic',sans-serif;"></span></div>
-                </sc-if>
-                <div style="margin:14px -16px 12px;position:relative;aspect-ratio:375/123;overflow:hidden;display:flex;align-items:center;justify-content:center;">
-                  <div style="display:flex;justify-content:center;align-items:center;gap:11px;flex-wrap:wrap;max-width:250px;">
-                    <sc-for list="{{ passStamps }}" as="ps" hint-placeholder-count="8">
-                      <span style="font-size:23px;line-height:1;display:inline-block;transform:translateY({{ ps.dy }});filter:{{ ps.filter }};animation:{{ ps.anim }};">☕</span>
+                <div style="margin-top:auto;display:flex;flex-direction:column;gap:9px;padding-top:18px;flex-shrink:0;">
+                  <div style="text-align:center;font-size:10.5px;color:#8E8C96;letter-spacing:.06em;text-transform:uppercase;font-weight:800;">{{ tillLabel }}</div>
+                  <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap;">
+                    <div onClick="{{ simStamp }}" class="wl-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 18px;">{{ stampBtnLabel }}</div>
+                    <sc-if value="{{ rewardReady }}" hint-placeholder-val="{{ false }}">
+                      <div style="animation:{{ popAnim }};">
+                        <div onClick="{{ simRedeem }}" class="wl-cta" style="cursor:pointer;background:#2FAE66;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 18px;animation:glowGreen 2.6s ease-in-out infinite;">{{ redeemLabel }}</div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+              <div aria-hidden="{{ frontSide }}" style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);pointer-events:{{ backPE }};">
+                <div style="height:100%;overflow-y:auto;overflow-x:hidden;">
+                  <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.45);">
+                    <div style="padding:14px 18px;border-bottom:1px solid #F1EBE1;display:flex;justify-content:space-between;align-items:center;">
+                      <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14.5px;">Daraj Coffee</span>
+                      <span onClick="{{ flipCard }}" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:13px;font-weight:600;">{{ doneWord }}</span>
+                    </div>
+                    <sc-for list="{{ backRowsA }}" as="br" hint-placeholder-count="2">
+                      <div style="padding:12px 18px;border-bottom:1px solid #F5F0E8;">
+                        <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ br.k }}</div>
+                        <div style="font-size:13px;font-weight:600;color:{{ br.color }};margin-top:3px;line-height:1.5;">{{ br.v }}</div>
+                      </div>
+                    </sc-for>
+                    <div onClick="{{ openShare }}" class="wl-row" style="cursor:pointer;padding:12px 18px;border-bottom:1px solid #F5F0E8;">
+                      <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ referralK }}</div>
+                      <div style="font-size:13px;font-weight:600;color:#C96A14;margin-top:3px;line-height:1.5;">{{ referralV }} →</div>
+                    </div>
+                    <sc-for list="{{ backRowsB }}" as="br2" hint-placeholder-count="3">
+                      <div onClick="{{ br2.action }}" class="{{ br2.cls }}" style="padding:12px 18px;border-bottom:1px solid #F5F0E8;cursor:{{ br2.cursor }};">
+                        <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ br2.k }}</div>
+                        <div style="font-size:13px;font-weight:600;color:{{ br2.color }};margin-top:3px;line-height:1.5;">{{ br2.v }}</div>
+                      </div>
+                    </sc-for>
+                    <div style="padding:12px 18px 4px;">
+                      <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ historyK }}</div>
+                    </div>
+                    <sc-for list="{{ historyRows }}" as="hr" hint-placeholder-count="5">
+                      <div style="padding:7px 18px;border-bottom:1px solid #F5F0E8;display:flex;justify-content:space-between;align-items:baseline;gap:12px;background:{{ hr.bg }};">
+                        <span style="font-size:11.5px;font-weight:{{ hr.fw }};color:#241C16;line-height:1.4;">{{ hr.line }}</span>
+                        <span style="font-size:10px;color:#93887A;white-space:nowrap;flex-shrink:0;">{{ hr.time }}</span>
+                      </div>
                     </sc-for>
                   </div>
                 </div>
-                <div style="display:flex;gap:14px;margin-bottom:13px;">
-                  <div style="min-width:0;flex:1;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">REWARD</div><div style="font-size:11.5px;font-weight:600;line-height:1.35;">{{ passRewardLine }}</div></div>
-                  <div><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">MEMBER</div><div style="font-size:11.5px;font-weight:600;">{{ memberFirst }}</div></div>
-                </div>
-                <div style="background:#FFFFFF;border-radius:9px;padding:9px;display:flex;flex-direction:column;align-items:center;gap:5px;">
-                  <div style="display:grid;grid-template-columns:repeat(17,3.6px);grid-auto-rows:3.6px;">
-                    <sc-for list="{{ qrCells }}" as="q4" hint-placeholder-count="0"><div style="background:{{ q4.c }};"></div></sc-for>
-                  </div>
-                  <div style="font-size:7.5px;color:#5D5348;letter-spacing:.06em;">MEMBER · 0114 2291</div>
-                </div>
-              </div>
-            </sc-if>
-            <sc-if value="{{ isGooglePass }}" hint-placeholder-val="{{ false }}">
-              <div style="border-radius:20px;background:#1E5C43;color:#FFFFFF;padding:18px 18px 20px;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ popAnim }};">
-                <div style="display:flex;align-items:center;gap:9px;">
-                  <div style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;">D</div>
-                  <div style="font-size:12px;font-weight:600;">Daraj Coffee</div>
-                </div>
-                <div style="margin-top:15px;"><div style="font-size:11px;opacity:.8;">Stamp Card</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:19px;margin-top:2px;">{{ gTitleLine }}</div></div>
-                <div style="display:flex;gap:22px;margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.25);">
-                  <div><div style="font-size:9.5px;opacity:.75;">REWARD</div><div style="font-size:12px;font-weight:600;">{{ passRewardLine }}</div></div>
-                  <div><div style="font-size:9.5px;opacity:.75;">MEMBER</div><div style="font-size:12px;font-weight:600;">{{ memberFirst }}</div></div>
-                </div>
-                <div style="background:#FFFFFF;border-radius:12px;padding:10px;margin-top:15px;display:flex;justify-content:center;">
-                  <div style="display:grid;grid-template-columns:repeat(17,3.8px);grid-auto-rows:3.8px;">
-                    <sc-for list="{{ qrCells }}" as="q5" hint-placeholder-count="0"><div style="background:{{ q5.c }};"></div></sc-for>
-                  </div>
-                </div>
-                <div style="text-align:center;font-size:9.5px;opacity:.7;margin-top:9px;">قهوة الدرج</div>
-              </div>
-            </sc-if>
-            <div style="margin-top:auto;display:flex;flex-direction:column;gap:9px;padding-top:18px;">
-              <div style="text-align:center;font-size:10.5px;color:#8E8C96;letter-spacing:.06em;text-transform:uppercase;font-weight:800;">At the till · عند الكاشير</div>
-              <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap;">
-                <div onClick="{{ simStamp }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 18px;transition:transform .2s;" style-hover="transform:translateY(-2px)">{{ stampBtnLabel }}</div>
-                <sc-if value="{{ rewardReady }}" hint-placeholder-val="{{ false }}">
-                  <div onClick="{{ simRedeem }}" style="cursor:pointer;background:#2FAE66;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 18px;animation:{{ popAnim }};">Redeem the reward</div>
-                </sc-if>
               </div>
             </div>
-          </sc-if>
+          </div>
           <sc-if value="{{ redeemFlash }}" hint-placeholder-val="{{ false }}">
             <div style="position:absolute;inset:0;z-index:40;background:rgba(8,10,9,.86);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px;animation:fadeScrim .3s both;border-radius:37px;overflow:hidden;">
               <sc-for list="{{ confetti }}" as="cf" hint-placeholder-count="12">
@@ -279,74 +441,41 @@
               </sc-for>
               <div style="width:86px;height:86px;border-radius:50%;background:#2FAE66;display:flex;align-items:center;justify-content:center;font-size:42px;color:#FFFFFF;box-shadow:0 0 0 12px rgba(47,174,102,.18),0 20px 50px rgba(47,174,102,.4);animation:burstPop .55s cubic-bezier(.22,.61,.36,1) both;">✓</div>
               <div style="text-align:center;animation:fadeUp .5s .15s both;">
-                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;color:#FFFFFF;">On the house.</div>
-                <div style="font-size:13px;color:#B8E6C9;margin-top:5px;">Free drink of your choice — {{ memberFirst }} earned it.</div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;color:#FFFFFF;">{{ flashTitle }}</div>
+                <div style="font-size:13px;color:#B8E6C9;margin-top:5px;">{{ flashSub }}</div>
               </div>
               <div style="background:#FFFFFF;border-radius:12px;padding:11px 18px;text-align:center;animation:fadeUp .5s .28s both;">
-                <div style="font-size:10px;font-weight:800;letter-spacing:.1em;color:#93887A;">SHOW THIS AT THE TILL</div>
-                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;color:#1E5C43;margin-top:2px;">REWARD · فلات وايت</div>
+                <div style="font-size:10px;font-weight:800;letter-spacing:.1em;color:#93887A;">{{ flashShow }}</div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;color:#1E5C43;margin-top:2px;">{{ flashReward }}</div>
               </div>
-              <div style="font-size:10.5px;color:#8E8C96;animation:fadeUp .5s .4s both;">A fresh card starts counting the moment it's poured.</div>
-            </div>
-          </sc-if>
-          <sc-if value="{{ backSide }}" hint-placeholder-val="{{ false }}">
-            <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ popAnim }};">
-              <div style="padding:14px 18px;border-bottom:1px solid #F1EBE1;display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14.5px;">Daraj Coffee</span>
-                <span onClick="{{ flipCard }}" style="cursor:pointer;color:#007AFF;font-size:13px;font-weight:600;">Done</span>
-              </div>
-              <sc-for list="{{ backRowsA }}" as="br" hint-placeholder-count="2">
-                <div style="padding:12px 18px;border-bottom:1px solid #F5F0E8;">
-                  <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ br.k }}</div>
-                  <div style="font-size:13px;font-weight:600;color:{{ br.color }};margin-top:3px;line-height:1.5;">{{ br.v }}</div>
-                </div>
-              </sc-for>
-              <div onClick="{{ openShare }}" style="cursor:pointer;padding:12px 18px;border-bottom:1px solid #F5F0E8;transition:background .15s;" style-hover="background:#FDF4EC">
-                <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ referralK }}</div>
-                <div style="font-size:13px;font-weight:600;color:#C96A14;margin-top:3px;line-height:1.5;">{{ referralV }} →</div>
-              </div>
-              <sc-for list="{{ backRowsB }}" as="br2" hint-placeholder-count="3">
-                <div onClick="{{ br2.action }}" style="padding:12px 18px;border-bottom:1px solid #F5F0E8;cursor:{{ br2.cursor }};">
-                  <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ br2.k }}</div>
-                  <div style="font-size:13px;font-weight:600;color:{{ br2.color }};margin-top:3px;line-height:1.5;">{{ br2.v }}</div>
-                </div>
-              </sc-for>
-              <div style="padding:12px 18px 4px;">
-                <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">History · السجل</div>
-              </div>
-              <sc-for list="{{ historyRows }}" as="hr" hint-placeholder-count="5">
-                <div style="padding:7px 18px;border-bottom:1px solid #F5F0E8;display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
-                  <span style="font-size:11.5px;font-weight:600;color:#241C16;line-height:1.4;">{{ hr.line }}</span>
-                  <span style="font-size:10px;color:#93887A;white-space:nowrap;flex-shrink:0;">{{ hr.time }}</span>
-                </div>
-              </sc-for>
+              <div style="font-size:10.5px;color:#8E8C96;animation:fadeUp .5s .4s both;">{{ flashFoot }}</div>
             </div>
           </sc-if>
           <sc-if value="{{ shareSheet }}" hint-placeholder-val="{{ false }}">
-            <div style="position:absolute;inset:0;z-index:55;display:flex;flex-direction:column;background:rgba(8,10,9,.62);backdrop-filter:blur(4px);border-radius:37px;overflow:hidden;">
+            <div style="position:absolute;inset:0;z-index:55;display:flex;flex-direction:column;background:rgba(8,10,9,.62);backdrop-filter:blur(4px);border-radius:37px;overflow:hidden;animation:{{ scrimAnim }};">
               <div style="flex:1;"></div>
-              <div style="background:#1C1C1E;border-radius:20px 20px 0 0;padding:14px 16px 24px;animation:{{ enterAnim }};box-shadow:0 -14px 40px rgba(0,0,0,.5);">
+              <div style="background:#1C1C1E;border-radius:20px 20px 0 0;padding:14px 16px 24px;animation:{{ sheetAnim }};box-shadow:0 -14px 40px rgba(0,0,0,.5);">
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:2px 4px 12px;">
-                  <span onClick="{{ closeShare }}" style="cursor:pointer;color:#0A84FF;font-size:15px;">Cancel</span>
-                  <span style="font-weight:700;font-size:13.5px;color:#F4F2EE;">Share your Daraj card</span>
+                  <span onClick="{{ closeShare }}" class="wl-link" style="cursor:pointer;color:#0A84FF;font-size:15px;">{{ cancelWord }}</span>
+                  <span style="font-weight:700;font-size:13.5px;color:#F4F2EE;">{{ shareTitle }}</span>
                   <span style="width:44px;"></span>
                 </div>
-                <div style="text-align:center;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#8E8C96;margin:-6px 0 14px;">شارك بطاقتك</div>
+                <div style="text-align:center;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#8E8C96;margin:-6px 0 14px;">{{ shareTitleAlt }}</div>
                 <div style="background:#2C2C2E;border-radius:14px;overflow:hidden;">
-                  <div onClick="{{ shareWhatsapp }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #3A3A3C;" style-hover="background:#3A3A3C">
+                  <div onClick="{{ shareWhatsapp }}" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #3A3A3C;">
                     <span style="width:30px;height:30px;border-radius:9px;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">💬</span>
                     <span style="color:#F4F2EE;font-size:14px;font-weight:600;">WhatsApp</span>
                   </div>
-                  <div onClick="{{ shareMessages }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #3A3A3C;" style-hover="background:#3A3A3C">
+                  <div onClick="{{ shareMessages }}" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #3A3A3C;">
                     <span style="width:30px;height:30px;border-radius:9px;background:#2FAE66;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">✉️</span>
                     <span style="color:#F4F2EE;font-size:14px;font-weight:600;">Messages</span>
                   </div>
-                  <div onClick="{{ shareCopy }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;" style-hover="background:#3A3A3C">
+                  <div onClick="{{ shareCopy }}" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;">
                     <span style="width:30px;height:30px;border-radius:9px;background:#8E8C96;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🔗</span>
-                    <span style="color:#F4F2EE;font-size:14px;font-weight:600;">Copy code</span>
+                    <span style="color:#F4F2EE;font-size:14px;font-weight:600;">{{ copyCodeLabel }}</span>
                   </div>
                 </div>
-                <div style="text-align:center;font-size:10px;color:#6E6E73;margin-top:12px;letter-spacing:.04em;">{{ referralCode }}</div>
+                <div style="text-align:center;font-size:10px;color:#6E6E73;margin-top:12px;letter-spacing:.04em;" dir="ltr">{{ referralCode }}</div>
               </div>
             </div>
           </sc-if>
@@ -360,40 +489,182 @@
     <div style="display:flex;align-items:center;gap:10px;">
       <svg viewBox="213.44 0 314.91 314.51" preserveAspectRatio="xMidYMid meet" style="width:26px;height:26px;display:block;"><path fill="#E88024" d="M385.82,261.53c11.27,40.31,54.39,63.14,94.51,48.85,34.32-12.22,54.43-48.93,46.34-84.45-2.49-10.95-7.28-20.68-13.75-28.87-7.72-9.83-17.8-17.42-29.19-22.15-14.53-6.08-31.13-7.48-47.48-2.91-6.99,1.96-13.43,4.85-19.26,8.55-.24.14-.45.28-.66.41-5.71,3.89-8.03,11.74-4.13,18.55,3.1,5.41,9.72,7.93,15.71,6.22,1.09-.31,2.09-.74,3.02-1.29.08,0,.12-.03.16-.07.09-.03.16-.07.21-.13.03.02.05-.01.06-.04.15-.09.3-.18.45-.27h.05c3.56-2.28,7.55-4.07,11.84-5.27,13.78-3.85,27.83-.84,38.56,6.98,7.92,5.75,14.02,14.08,16.86,24.23.12.42.23.83.33,1.26,5.88,23.53-8.02,47.59-31.53,54.16-23.51,6.57-47.87-6.79-55.04-29.96-.21-.84-.93-3.39-1.2-4.31l-23.45-84.05,87.12-24.31c40.31-11.27,63.14-54.39,48.85-94.51-12.22-34.32-48.93-54.43-84.45-46.34-10.95,2.49-20.68,7.28-28.87,13.75-9.83,7.72-17.42,17.8-22.15,29.19-6.08,14.53-7.48,31.13-2.91,47.48,1.96,6.99,4.85,13.43,8.55,19.26.14.24.27.45.41.66,3.89,5.71,11.74,8.03,18.55,4.13,5.41-3.1,7.93-9.72,6.22-15.71-.31-1.09-.74-2.09-1.29-3.02,0-.08-.03-.12-.07-.16-.03-.09-.07-.16-.13-.21.02-.03-.01-.05-.04-.06-.09-.15-.18-.3-.27-.45v-.05c-2.28-3.56-4.07-7.55-5.27-11.84-3.85-13.78-.84-27.83,6.98-38.56,5.75-7.92,14.08-14.02,24.23-16.86.42-.12.83-.23,1.26-.33,23.53-5.88,47.59,8.02,54.16,31.53,6.57,23.51-6.8,47.87-29.96,55.04-.84.21-3.39.93-4.31,1.2l-84.05,23.45-24.31-87.12c-11.27-40.31-54.39-63.14-94.51-48.85-34.32,12.22-54.43,48.93-46.34,84.45,2.49,10.95,7.28,20.68,13.75,28.87,7.72,9.83,17.8,17.42,29.19,22.15,14.53,6.08,31.13,7.48,47.48,2.91,6.99-1.95,13.43-4.85,19.26-8.55.24-.14.45-.27.66-.41,5.71-3.89,8.03-11.74,4.13-18.55-3.1-5.41-9.72-7.93-15.71-6.22-1.09.31-2.09.74-3.02,1.29-.08,0-.12.03-.16.07-.09.03-.16.07-.21.13-.03-.02-.05.01-.06.04-.15.09-.3.18-.45.28h-.05c-3.56,2.28-7.55,4.07-11.84,5.27-13.78,3.85-27.83.84-38.56-6.98-7.92-5.75-14.02-14.08-16.86-24.23-.12-.42-.23-.83-.33-1.26-5.88-23.53,8.02-47.59,31.53-54.16,23.51-6.57,47.87,6.8,55.04,29.96.21.84.93,3.39,1.2,4.31l23.45,84.05-87.12,24.31c-40.31,11.27-63.14,54.39-48.85,94.51,12.22,34.32,48.93,54.43,84.45,46.34,10.95-2.49,20.68-7.28,28.87-13.75,9.83-7.72,17.42-17.8,22.15-29.19,6.08-14.53,7.48-31.13,2.91-47.48-1.95-6.99-4.85-13.43-8.55-19.26-.14-.24-.27-.45-.41-.66-3.89-5.71-11.74-8.03-18.55-4.13-5.41,3.1-7.93,9.72-6.22,15.71.31,1.09.74,2.09,1.29,3.02,0,.08.03.12.07.16.03.09.07.16.13.21-.02.03.01.05.04.06.09.15.18.3.27.45v.05c2.28,3.56,4.07,7.55,5.27,11.84,3.85,13.78.84,27.83-6.98,38.56-5.75,7.92-14.08,14.02-24.23,16.86-.42.12-.83.23-1.26.33-23.53,5.88-47.59-8.02-54.16-31.53-6.57-23.51,6.8-47.87,29.96-55.04.84-.21,3.39-.93,4.31-1.2l84.05-23.45,24.31,87.12Z"></path></svg>
       <div>
-        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;line-height:1;">The customer side</div>
-        <div style="font-size:11px;color:#93887A;margin-top:3px;">Ten seconds to a member · no app</div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;line-height:1;">{{ panelTitle }}</div>
+        <div style="font-size:11px;color:#93887A;margin-top:3px;">{{ panelSub }}</div>
       </div>
     </div>
-    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:5px;">
-      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:6px;">The journey</div>
-      <sc-for list="{{ sceneChips }}" as="sc" hint-placeholder-count="5">
-        <div onClick="{{ sc.go }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:{{ sc.bg }};transition:background .2s;" style-hover="background:#FAF6EF">
-          <span style="width:22px;height:22px;border-radius:50%;background:{{ sc.numBg }};color:{{ sc.numFg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;">{{ sc.n }}</span>
-          <div style="min-width:0;"><div style="font-size:12.5px;font-weight:{{ sc.fw }};color:{{ sc.fg }};">{{ sc.label }}</div></div>
+
+    <div style="background:{{ playBg }};border:1px solid {{ playBorder }};border-radius:16px;padding:14px 16px;">
+      <div onClick="{{ togglePlay }}" class="wl-play" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;background:{{ playBtnBg }};color:{{ playBtnFg }};border-radius:11px;padding:12px 14px;font-weight:800;font-size:13px;">{{ playLabel }}</div>
+      <div style="font-size:10.5px;color:{{ playCapFg }};margin-top:10px;line-height:1.55;min-height:30px;">{{ playCaption }}</div>
+      <sc-if value="{{ isPlaying }}" hint-placeholder-val="{{ false }}">
+        <div style="height:3px;border-radius:99px;background:#EFE6D8;overflow:hidden;margin-top:2px;">
+          <div style="height:100%;border-radius:99px;background:#E88024;width:{{ playPct }};transition:width .6s cubic-bezier(.22,.61,.36,1);"></div>
         </div>
-      </sc-for>
+      </sc-if>
+    </div>
+
+    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:8px;">{{ journeyK }}</div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:5px;">
+        <div style="position:absolute;inset-inline-start:20px;top:20px;height:{{ stepTrackH }};width:2px;background:#EFEDE8;border-radius:99px;"></div>
+        <div style="position:absolute;inset-inline-start:20px;top:20px;height:{{ stepFillH }};width:2px;background:linear-gradient(180deg,#E88024,#C96A14);border-radius:99px;transition:height .5s cubic-bezier(.22,.61,.36,1);"></div>
+        <sc-for list="{{ sceneChips }}" as="sc" hint-placeholder-count="6">
+          <div onClick="{{ sc.go }}" class="wl-steprow" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:{{ sc.bg }};position:relative;z-index:1;">
+            <span class="wl-stepdisc" style="width:22px;height:22px;border-radius:50%;background:{{ sc.numBg }};color:{{ sc.numFg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;box-shadow:0 0 0 3px #FFFFFF;animation:{{ sc.pulse }};">{{ sc.n }}</span>
+            <div style="min-width:0;"><div style="font-size:12.5px;font-weight:{{ sc.fw }};color:{{ sc.fg }};">{{ sc.label }}</div></div>
+          </div>
+        </sc-for>
+      </div>
     </div>
     <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
-      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">Life with the card</div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">{{ momentsK }}</div>
       <div style="display:flex;flex-direction:column;gap:8px;">
         <sc-for list="{{ momentBtns }}" as="mb" hint-placeholder-count="3">
-          <div onClick="{{ mb.go }}" style="cursor:pointer;border:1.5px solid {{ mb.br }};color:{{ mb.fg }};background:{{ mb.bg }};font-weight:700;font-size:12.5px;border-radius:11px;padding:10px 13px;transition:all .2s;" style-hover="border-color:#E88024">{{ mb.label }}<div style="font-size:10.5px;font-weight:500;color:#93887A;margin-top:2px;">{{ mb.sub }}</div></div>
+          <div onClick="{{ mb.go }}" class="wl-ghost wl-press" style="cursor:pointer;border:1.5px solid {{ mb.br }};color:{{ mb.fg }};background:{{ mb.bg }};font-weight:700;font-size:12.5px;border-radius:11px;padding:10px 13px;">{{ mb.label }}<div style="font-size:10.5px;font-weight:500;color:#93887A;margin-top:2px;">{{ mb.sub }}</div></div>
         </sc-for>
       </div>
       <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.5;">{{ momentsHint }}</div>
     </div>
-    <a href="Wasla Dashboard.dc.html" style="display:block;background:#26262B;color:#F4F2EE;border-radius:14px;padding:14px 16px;font-size:12.5px;font-weight:700;text-align:center;">← The owner's dashboard</a>
+    <a href="Wasla Dashboard.dc.html" style="display:block;background:#26262B;color:#F4F2EE;border-radius:14px;padding:14px 16px;font-size:12.5px;font-weight:700;text-align:center;">{{ dashLink }}</a>
+    <div style="text-align:center;padding-bottom:4px;">
+      <span onClick="{{ resetDemo }}" class="wl-link" style="cursor:pointer;font-size:10.5px;font-weight:700;color:{{ resetFg }};letter-spacing:.03em;">{{ resetLabel }}</span>
+    </div>
   </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;ar&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;'en'|'ar'&quot;,&quot;section&quot;:&quot;Demo&quot;},&quot;startScene&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;counter&quot;,&quot;signup&quot;,&quot;pass&quot;],&quot;default&quot;:&quot;counter&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
 class Component extends DCLogic {
-  state = { walletSel: 0, redeemFlash: false, scene: this.props.startScene ?? 'counter', lang: this.props.lang ?? 'en', platform: 'apple', stamps: 5, goal: 8, gift: false, backSide: false, camReady: false, notif: null, form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white' }, settled: false, shareSheet: false, joined: false };
+  // ── state · `seen` seeds from the start scene so the stepper is honest on first paint ──
+  state = this.initState();
+  initState() {
+    const s0 = this.props.startScene ?? 'counter';
+    return {
+      walletSel: 0, redeemFlash: false, scene: s0, lang: this.props.lang ?? 'en', platform: 'apple',
+      stamps: 5, goal: 8, gift: false, backSide: false, camReady: false,
+      notif: null, notifOut: false, form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white' },
+      settled: false, shareSheet: false, joined: false,
+      navDir: 'fwd', navSeq: 0, stampSeq: 0, seen: { [s0]: true },
+      lock: false, playing: false, playIdx: 0, playCap: '',
+      refPending: false, refDone: false, histAdd: [], resetArm: false
+    };
+  }
+  /** ONE registry for every timer this component arms. Named handles still exist for
+      targeted cancels; the set is what makes "nothing survives unmount/stop" provable. */
+  _timers = new Set();
+  after(ms, fn) { const id = setTimeout(() => { this._timers.delete(id); try { fn(); } catch (e) { console.error(e); } }, ms); this._timers.add(id); return id; }
+  kill(id) { if (id != null) { clearTimeout(id); this._timers.delete(id); } }
+  killAll() { this._timers.forEach(id => clearTimeout(id)); this._timers.clear(); }
+  pendingTimers() { return this._timers.size; }
+
+  // ── session persistence · ONE key, v:1, defensive on the way in ──
+  custKey() { return 'wasla_demo_customer_state'; }
+  _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  _lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  save() {
+    this.kill(this._sv);
+    this._sv = this.after(140, () => {
+      const s = this.state || {}, f = s.form || {};
+      try {
+        this._lsSet(this.custKey(), JSON.stringify({ v: 1,
+          joined: !!s.joined, stamps: s.stamps, goal: s.goal, lang: s.lang, platform: s.platform,
+          walletSel: s.walletSel, gift: !!s.gift, refDone: !!s.refDone,
+          histAdd: (s.histAdd || []).slice(0, 4),
+          form: { name: f.name, phone: f.phone, drink: f.drink } }));
+      } catch (e) {}
+    });
+  }
+  clearSaved() { this.kill(this._sv); try { localStorage.removeItem(this.custKey()); } catch (e) {} }
+  /** Pure: a bad/foreign blob is ignored, never thrown. */
+  readSaved() {
+    const raw = this._lsGet(this.custKey());
+    if (!raw) return null;
+    let b = null; try { b = JSON.parse(raw); } catch (e) { return null; }
+    if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return null;
+    const num = (v, lo, hi) => (typeof v === 'number' && isFinite(v)) ? Math.max(lo, Math.min(hi, Math.round(v))) : null;
+    const p = {};
+    if (typeof b.joined === 'boolean') p.joined = b.joined;
+    if (typeof b.gift === 'boolean') p.gift = b.gift;
+    if (typeof b.refDone === 'boolean') p.refDone = b.refDone;
+    if (b.lang === 'en' || b.lang === 'ar') p.lang = b.lang;
+    if (b.platform === 'apple' || b.platform === 'google') p.platform = b.platform;
+    const g = num(b.goal, 1, 12); if (g !== null) p.goal = g;
+    const st = num(b.stamps, 0, 12); if (st !== null) p.stamps = st;
+    const ws = num(b.walletSel, 0, 3); if (ws !== null) p.walletSel = ws;
+    if (Array.isArray(b.histAdd)) p.histAdd = b.histAdd.filter(x => x && typeof x === 'object' && typeof x.id === 'string').slice(0, 4);
+    if (b.form && typeof b.form === 'object' && !Array.isArray(b.form)) {
+      const f = {};
+      ['name', 'phone', 'drink'].forEach(k => { if (typeof b.form[k] === 'string') f[k] = b.form[k].slice(0, 60); });
+      if (Object.keys(f).length) p.form = { ...(this.state.form || {}), ...f };
+    }
+    return Object.keys(p).length ? p : null;
+  }
+  /** Folds the blob into `state` at CONSTRUCTION. The host installs `__host` only after the
+      constructor returns (setState is a silent no-op before that), and componentDidMount is
+      conditional on this runtime — it can be deferred or skipped entirely on a logic swap. */
+  bootRestore() {
+    let p = null;
+    try { p = this.readSaved(); } catch (e) { p = null; }
+    if (!p) return false;
+    this.state = { ...this.state, ...p };
+    if (this.state.stamps > this.state.goal) this.state.stamps = this.state.goal;
+    this.state.seen = { ...this.state.seen, counter: true };
+    return true;
+  }
+  __restored = this.bootRestore();
+  /** The welcome-back nudge, armed from the ONE path this runtime guarantees: render.
+      renderVals() runs on every render with `__host` already installed, so the latch lives on
+      the HOST and survives a logic swap — that is what makes "exactly once" true, not likely. */
+  armWelcome() {
+    if (!this.__restored) return;
+    const h = this.__host || this;
+    if (h.__wcWelcomed) return;
+    h.__wcWelcomed = true;
+    this.kill(this._wt);
+    this._wt = this.after(900, () => {
+      const L = (this.__host && this.__host.logic) || this;
+      if (!L || !L.state) return;
+      const EN = L.state.lang === 'en';
+      L.notify('Daraj Coffee', EN
+        ? 'Welcome back — your card picked up where you left it.'
+        : 'أهلاً بعودتك — بطاقتك من حيث توقّفت.');
+    });
+  }
+  /** The referral payoff. Same discipline as armWelcome: state carries the intent
+      (`refPending`), the host carries the latch, so it fires once per share and never per render. */
+  armReferral() {
+    const st = this.state;
+    if (!st || !st.refPending || st.refDone) return;
+    const h = this.__host || this;
+    if (h.__wcRefArmed) return;
+    h.__wcRefArmed = true;
+    this.kill(this._rt);
+    this._rt = this.after(5000, () => {
+      const L = (this.__host && this.__host.logic) || this;
+      if (!L || !L.state || L.state.refDone) return;
+      const s = L.state, EN = s.lang === 'en', full = s.stamps >= s.goal, onPass = s.scene === 'pass';
+      L.setState({
+        refDone: true, refPending: false,
+        stamps: full ? s.stamps : s.stamps + 1,
+        stampSeq: (s.stampSeq || 0) + (full ? 0 : 1),
+        backSide: onPass ? false : s.backSide,
+        histAdd: [{ id: 'ref' }, ...(s.histAdd || [])].slice(0, 4)
+      });
+      L.notify('Daraj Coffee', EN
+        ? (full ? 'Noor joined with your code — a bonus stamp is banked for your next card 🎉 · انضمّت نور برمزك'
+                : 'Noor joined with your code — you\'re both 1 stamp ahead 🎉 · انضمّت نور برمزك')
+        : (full ? 'انضمّت نور برمزك — ختمك الإضافي محفوظ لبطاقتك القادمة 🎉'
+                : 'انضمّت نور برمزك — كلاكما متقدّم بختم 🎉'));
+      L.save();
+    });
+  }
+
   componentDidMount() { this.poke(); }
-  poke() { clearTimeout(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = setTimeout(() => this.setState({ settled: true }), 2600); }
+  componentWillUnmount() { this.killAll(); }
+  poke() { this.kill(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = this.after(2600, () => this.setState({ settled: true })); }
   componentDidUpdate() {
     const s = this.state;
-    const cur = [s.scene, s.lang, s.platform, s.stamps, s.gift, s.backSide, s.camReady, !!s.notif, s.walletSel, s.redeemFlash, s.shareSheet].join('|');
+    const cur = [s.scene, s.lang, s.platform, s.stamps, s.gift, s.backSide, s.camReady, !!s.notif, s.notifOut, s.walletSel, s.redeemFlash, s.shareSheet, s.navSeq, s.stampSeq, s.lock, s.playing, s.playIdx, s.refDone, (s.histAdd || []).length, s.resetArm].join('|');
     if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
     this._lastSig = cur;
   }
@@ -401,15 +672,295 @@ class Component extends DCLogic {
     if (!this._qr) { this._qr = []; let s = 7; for (let i = 0; i < 289; i++) { s = (s * 1103515245 + 12345) % 2147483648; const row = Math.floor(i / 17), col = i % 17; const finder = (row < 5 && col < 5) || (row < 5 && col > 11) || (row > 11 && col < 5); const on = finder ? ((row % 4 === 0 || col % 4 === 0 || (row > 0 && row < 4 && col > 0 && col < 4)) ? (row === 2 && col === 2) || row % 4 === 0 || col % 4 === 0 : false) : (s / 2147483648) < 0.46; this._qr.push({ c: on ? '#1C1C20' : 'transparent' }); } }
     return this._qr;
   }
-  notify(title, body) { clearTimeout(this._nt); this.setState({ notif: { title, body } }); this._nt = setTimeout(() => this.setState({ notif: null }), 3600); }
-  go(scene, extra) { this.setState({ scene, backSide: false, camReady: false, ...(extra || {}) }); if (scene === 'camera') { clearTimeout(this._ct); this._ct = setTimeout(() => this.setState({ camReady: true }), 1000); } }
+  firstName() { return ((this.state.form || {}).name || '').trim().split(' ')[0] || 'Sara'; }
+
+  /* ══ THE STAMP SYSTEM ═══════════════════════════════════════════════════
+     Shared with the Dashboard and Scanner. stampKey/stampGlyphs/hexA/hashHue are
+     pasted verbatim from the Dashboard (its reuse note invites exactly that), so a
+     Daraj coffee stamp is the same artwork on every surface. Only stampCell's sizes
+     and palette are re-tuned here, because this file draws stamps on a DARK pass face
+     rather than the Dashboard's paper.
+
+     A cell is two nested spans: the OUTER holds the deterministic per-index tilt
+     (−6°..+6°) so the row reads hand-stamped; the INNER holds the disc, its punched
+     inner ring and the punch animation (which itself rotates, so keeping the two
+     transforms on separate elements avoids a fight).
+
+       STAMPED = filled disc + glyph + inset darker ring
+       EMPTY   = 1.5px dashed ring at 35%, no glyph
+       NEXT-UP = empty ring + slow soft pulse
+       MINI (<16px) keeps disc + ring + tilt, drops the glyph
+     ══════════════════════════════════════════════════════════════════════ */
+  hashHue(seed) { let h = 5; const s = String(seed || ''); for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360; return h; }
+  stampKey(id) {
+    const LEGACY = { '✓': 'classic', '☕': 'coffee', '🍰': 'dessert', '🍔': 'burger', '✂️': 'salon', '✂': 'salon', '🌸': 'flower', '★': 'star', '🚗': 'drive' };
+    const k = LEGACY[id] || String(id || '');
+    return this.stampGlyphs()[k] ? k : 'coffee';
+  }
+  stampGlyphs() {
+    return {
+      coffee: {
+        d: 'M5 9.3 h11.4 a1 1 0 0 1 1 1.1 l-0.63 5.3 a3.7 3.7 0 0 1 -3.68 3.3 h-4.78 a3.7 3.7 0 0 1 -3.68 -3.3 l-0.63 -5.3 a1 1 0 0 1 1 -1.1 Z',
+        s: 'M17.2 11.4 h1 a2.1 2.1 0 0 1 0 4.2 h-0.75 M4.3 20.5 c4.9 1.5 10.5 1.5 15.4 0 M9.4 6.9 c1.4 -1 -1.4 -2.2 0 -3.2 M13.4 6.9 c1.4 -1 -1.4 -2.2 0 -3.2', sw: 1.55, gw: 0 },
+      dessert: {
+        d: 'M10.6 2.35 a1.4 1.4 0 1 1 2.8 0 a1.4 1.4 0 1 1 -2.8 0 Z M6.6 11.9 a3.3 3.3 0 0 1 1.3 -5.6 a4.35 4.35 0 0 1 8.2 0 a3.3 3.3 0 0 1 1.3 5.6 Z M5.8 12.6 h12.4 l-1.45 6.3 a2.3 2.3 0 0 1 -2.3 1.8 h-4.9 a2.3 2.3 0 0 1 -2.3 -1.8 Z',
+        s: '', sw: 0, gw: 0 },
+      burger: {
+        d: 'M4.3 10.6 a7.7 7.7 0 0 1 15.4 0 a0.95 0.95 0 0 1 -0.95 0.95 H5.25 a0.95 0.95 0 0 1 -0.95 -0.95 Z M4.5 13.1 h15 a1.4 1.4 0 0 1 0 2.8 h-15 a1.4 1.4 0 0 1 0 -2.8 Z M5.1 17.3 h13.8 a1.15 1.15 0 0 1 1.15 1.15 a2.75 2.75 0 0 1 -2.75 2.75 H6.7 a2.75 2.75 0 0 1 -2.75 -2.75 a1.15 1.15 0 0 1 1.15 -1.15 Z',
+        s: '', sw: 0, gw: 0 },
+      salon: {
+        d: 'M10.85 13 a1.15 1.15 0 1 1 2.3 0 a1.15 1.15 0 1 1 -2.3 0 Z',
+        s: 'M9.5 16.7 L18.4 4.4 M14.5 16.7 L5.6 4.4 M8.4 16.35 a2.05 2.05 0 1 1 0 4.1 a2.05 2.05 0 1 1 0 -4.1 M15.6 16.35 a2.05 2.05 0 1 1 0 4.1 a2.05 2.05 0 1 1 0 -4.1', sw: 1.65, gw: 0 },
+      flower: {
+        d: 'M8.7 7.1 a3.3 3.3 0 1 1 6.6 0 a3.3 3.3 0 1 1 -6.6 0 Z M13.36 10.49 a3.3 3.3 0 1 1 6.6 0 a3.3 3.3 0 1 1 -6.6 0 Z M11.58 15.96 a3.3 3.3 0 1 1 6.6 0 a3.3 3.3 0 1 1 -6.6 0 Z M5.82 15.96 a3.3 3.3 0 1 1 6.6 0 a3.3 3.3 0 1 1 -6.6 0 Z M4.04 10.49 a3.3 3.3 0 1 1 6.6 0 a3.3 3.3 0 1 1 -6.6 0 Z M9.9 12 a2.1 2.1 0 1 0 4.2 0 a2.1 2.1 0 1 0 -4.2 0 Z',
+        s: '', sw: 0, gw: 0 },
+      star: {
+        d: 'M12 3.3 L14.35 8.96 L20.46 9.45 L15.8 13.44 L17.23 19.4 L12 16.2 L6.77 19.4 L8.2 13.44 L3.54 9.45 L9.65 8.96 Z',
+        s: '', sw: 0, gw: 1.7 },
+      drive: {
+        d: 'M2.6 17.5 v-2.7 a2.1 2.1 0 0 1 1.12 -1.85 l1.18 -0.64 l2.1 -3.5 a3.3 3.3 0 0 1 2.83 -1.61 h4.34 a3.3 3.3 0 0 1 2.83 1.61 l2.1 3.5 l1.18 0.64 a2.1 2.1 0 0 1 1.12 1.85 v2.7 a1.15 1.15 0 0 1 -1.15 1.15 H3.75 a1.15 1.15 0 0 1 -1.15 -1.15 Z M5.1 18.6 a2.15 2.15 0 1 1 4.3 0 a2.15 2.15 0 1 1 -4.3 0 Z M14.6 18.6 a2.15 2.15 0 1 1 4.3 0 a2.15 2.15 0 1 1 -4.3 0 Z M10.15 8.75 L8.35 12.05 L15.65 12.05 L13.85 8.75 Z',
+        s: '', sw: 0, gw: 0 },
+      classic: {
+        d: '',
+        s: 'M4.9 12.7 L9.6 17.4 L19.1 6.4', sw: 3.1, gw: 0 }
+    };
+  }
+  stampGlyph(id) { return this.stampGlyphs()[this.stampKey(id)]; }
+  hexA(hex, a) {
+    const h = String(hex || '#000000').replace('#', '');
+    const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16) || 0;
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  /* The one cell builder → the inline styles + the two path strings the template needs.
+     DARK-FACE PALETTE: the Daraj pass is a deep green card, so a brand-green disc would
+     vanish into it. Earned cells are therefore a CREAM disc carrying the green glyph —
+     the reading of real ink pressed onto a card — with a darker-green inset ring for the
+     punched-in feel. Brand colour stays present, in the glyph, where it is legible. */
+  stampCell(o) {
+    const q = o || {};
+    const size = q.size || 22;
+    const on = !!q.filled;
+    const wantGlyph = q.glyph === undefined ? size >= 16 : !!q.glyph;
+    const g = (on && wantGlyph) ? this.stampGlyph(q.style) : { d: '', s: '', sw: 0, gw: 0 };
+    const rot = q.flat ? 0 : (((this.hashHue('stamp' + (q.seed === undefined ? 7 : q.seed)) + (q.i || 0) * 47) % 13) - 6);
+    const ringW = Math.max(1.1, Math.round(size * 0.09 * 10) / 10);
+    let disc = 'width:100%;height:100%;border-radius:50%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;';
+    const shadows = [];
+    if (on) {
+      disc += 'background:' + (q.disc || '#F6F3EC') + ';';
+      shadows.push('inset 0 0 0 ' + ringW + 'px ' + (q.inner || 'rgba(21,66,50,.22)'));
+    } else {
+      disc += 'background:transparent;border:1.5px dashed ' + (q.ring || '#FFFFFF') + ';opacity:.35;';
+    }
+    if (q.outer) shadows.push(q.outer);
+    if (shadows.length) disc += 'box-shadow:' + shadows.join(',') + ';';
+    if (q.anim) disc += 'animation:' + q.anim + ';';
+    else if (!on && q.next) disc += 'animation:stampNext 2.6s cubic-bezier(.22,.61,.36,1) infinite;';
+    const gs = Math.round(size * 0.6 * 10) / 10;
+    return {
+      box: 'width:' + size + 'px;height:' + size + 'px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;transform:rotate(' + rot + 'deg);',
+      disc, d: g.d, s: g.s, sw: g.sw, gw: g.gw, ink: q.ink || '#1E5C43',
+      hasGlyph: !!(g.d || g.s), hasBody: !!g.d, hasLines: !!g.s,
+      svg: 'width:' + gs + 'px;height:' + gs + 'px;display:block;overflow:visible;'
+    };
+  }
+  /* One row of cells for a given context — the only thing the three grids differ on. */
+  stampRow(filled, goal, opts) {
+    const o = opts || {};
+    return Array.from({ length: goal }, (_, i) => {
+      // only the cell that just landed carries the punch; `anim` is also surfaced on the
+      // cell so the seeded-name mechanism stays assertable from outside
+      const anim = (o.anim && i === filled - 1) ? o.anim : '';
+      const next = o.next !== false && i === filled;   // pass `next:false` for a static preview
+      return { ...this.stampCell({ ...o, i, filled: i < filled, next, anim }), anim: anim || 'none' };
+    });
+  }
+
+  // ── notifications · spring in, slide out ──
+  notify(title, body) {
+    this.kill(this._nt); this.kill(this._no);
+    this.setState({ notif: { title, body }, notifOut: false });
+    this._nt = this.after(3600, () => this.dismissNotif());
+  }
+  dismissNotif() {
+    this.kill(this._nt); this.kill(this._no);
+    if (!this.state.notif || this.state.notifOut) return;
+    this.setState({ notifOut: true });
+    this._no = this.after(260, () => this.setState({ notif: null, notifOut: false }));
+  }
+  dismissNotifNow() { this.kill(this._nt); this.kill(this._no); if (this.state.notif) this.setState({ notif: null, notifOut: false }); }
+
+  // ── navigation · every change bumps navSeq so the slide keyframe NAME flips and replays ──
+  go(scene, extra, dir) {
+    const back = dir === 'back';
+    this.setState((s) => ({
+      scene, backSide: false, camReady: false, lock: false,
+      navDir: back ? 'back' : 'fwd', navSeq: (s.navSeq || 0) + 1,
+      seen: { ...(s.seen || {}), [scene === 'sheet' ? 'success' : scene]: true },
+      ...(extra || {})
+    }));
+    this.kill(this._ct);
+    if (scene === 'camera') {
+      this._ct = this.after(1000, () => {
+        const L = (this.__host && this.__host.logic) || this;
+        if (L && L.state && L.state.scene === 'camera') L.setState({ camReady: true });
+      });
+    }
+  }
+  /** Any hand-driven interaction cancels autoplay. Autoplay's own steps run inside `_auto`,
+      so the demo never stops itself. */
+  userTouch() { if (this._auto) return; if (this.state.playing) this.stopPlay(); }
+
+  // ── the lock-screen moment (spec C6) ──
+  showLock() {
+    this.kill(this._lk);
+    this.dismissNotifNow();
+    this.setState({ lock: true });
+    this._lk = this.after(2600, () => this.setState({ lock: false }));
+  }
+  lockTap() { this.kill(this._lk); this.go('pass'); }
+
+  // ── the beats themselves, shared by the buttons and by autoplay ──
+  doSignup() {
+    const first = this.firstName(), EN = this.state.lang === 'en';
+    this.setState({ joined: true });
+    this.go('success');
+    this.notify('Daraj Coffee', (EN ? 'Welcome, ' : 'أهلاً ') + first + (EN ? ' — your card is ready.' : ' — بطاقتك جاهزة.'));
+    this.save();
+  }
+  doConfirmAdd() {
+    const first = this.firstName(), EN = this.state.lang === 'en';
+    this.setState({ joined: true });
+    this.go('pass', { platform: 'apple', stamps: 0, stampSeq: 0, gift: false });
+    this.notify('Daraj Coffee', (EN ? 'In your wallet. First coffee = first stamp, ' : 'في محفظتك. أول قهوة = أول ختم يا ') + first + '.');
+    this.save();
+  }
+  doRedeem() {
+    this.setState({ redeemFlash: true });
+    this.kill(this._rf);
+    this._rf = this.after(3200, () => {
+      const EN = this.state.lang === 'en', first = this.firstName();
+      this.setState({ redeemFlash: false, stamps: 0, stampSeq: 0 });
+      this.notify('Daraj Coffee', EN ? 'Enjoy, ' + first + '! A fresh card is already counting.' : 'صحتين يا ' + first + '! بطاقة جديدة بدأت العدّ.');
+      this.save();
+    });
+  }
+  simStamp = () => {
+    this.userTouch();
+    const st = this.state, first = this.firstName(), EN = st.lang === 'en';
+    if (st.stamps >= st.goal) {
+      this.notify('Daraj Coffee', EN ? 'Your reward is still waiting, ' + first + ' — redeem it at the till.' : 'مكافأتك ما زالت تنتظر يا ' + first + ' — استبدلها عند الكاشير.');
+      return;
+    }
+    const n = st.stamps + 1;
+    this.setState((s) => ({ stamps: n, scene: 'pass', backSide: false, stampSeq: (s.stampSeq || 0) + 1 }));
+    this.notify('Daraj Coffee', EN
+      ? (n >= st.goal ? first + ', your ' + st.goal + 'th coffee is on us — the reward is READY.' : 'Stamp added — ' + n + ' of ' + st.goal + ' · ' + (st.goal - n) + ' to your free drink.')
+      : (n >= st.goal ? 'يا ' + first + '، قهوتك رقم ' + st.goal + ' علينا — المكافأة جاهزة.' : 'أُضيف ختم — ' + n + ' من ' + st.goal + ' · بقي ' + (st.goal - n) + ' لمشروبك المجاني.'));
+    this.save();
+  };
+
+  // ── autoplay · a cancellable chain, one live timer at a time ──
+  playBeats() {
+    const EN = this.state.lang === 'en';
+    const T = (en, ar) => EN ? en : ar;
+    return [
+      [250,  T('Sara is at the counter — a poster, a QR, nothing to install.', 'سارة عند الكاشير — ملصق ورمز، ولا شيء لتثبيته.'), () => this.go('counter')],
+      [1900, T('She opens the camera. No app store, no download.', 'تفتح الكاميرا. بلا متجر تطبيقات، بلا تنزيل.'), () => this.go('camera')],
+      [2300, T('The QR locks on — one yellow pill, one tap.', 'الرمز يُلتقط — شريط أصفر واحد، ونقرة واحدة.'), () => {}],
+      [1600, T('A form short enough for the queue.', 'نموذج قصير بما يكفي للطابور.'), () => { this.go('signup'); this.setState({ form: { name: '', phone: '', drink: '' } }); this.typeFill([['name', 'Sara Al-Amin', 46], ['phone', '+962 79 555 0114', 40], ['drink', 'Flat white', 44]]); }],
+      [3600, T('Name and phone. That is the whole ask.', 'الاسم والهاتف. هذا كل المطلوب.'), () => {}],
+      [1700, T('She’s in — the card is ready.', 'انضمّت — البطاقة جاهزة.'), () => this.doSignup()],
+      [2300, T('Apple Wallet asks once.', 'تسأل Apple Wallet مرة واحدة.'), () => this.go('sheet', { platform: 'apple' })],
+      [2300, T('Added. It lives on the lock screen now.', 'أُضيفت. صارت على شاشة القفل.'), () => this.doConfirmAdd()],
+      [2400, T('A few weeks of coffees later…', 'وبعد بضعة أسابيع من القهوة…'), () => this.setState((s) => ({ stamps: 6, stampSeq: (s.stampSeq || 0) + 1 }))],
+      [2100, T('A stamp lands at the till — seven.', 'ختم يهبط عند الكاشير — سبعة.'), () => this.simStamp()],
+      [2200, T('Eight. The card is full.', 'ثمانية. البطاقة امتلأت.'), () => this.simStamp()],
+      [2400, T('Reward ready — the pass says so before she does.', 'المكافأة جاهزة — البطاقة تقولها قبلها.'), () => {}],
+      [1900, T('She redeems it at the till.', 'تستبدلها عند الكاشير.'), () => this.doRedeem()],
+      [4200, T('On the house. A fresh card is already counting.', 'على حسابنا. وبطاقة جديدة بدأت العدّ.'), () => {}]
+    ];
+  }
+  typeFill(list) {
+    this.kill(this._tf);
+    const step = (li, ci) => {
+      if (!this.state.playing || li >= list.length) return;
+      const field = list[li][0], text = list[li][1], ms = list[li][2];
+      if (ci > text.length) { step(li + 1, 0); return; }
+      this.setState((s) => ({ form: { ...s.form, [field]: text.slice(0, ci) } }));
+      this._tf = this.after(ms, () => step(li, ci + 1));
+    };
+    step(0, 0);
+  }
+  startPlay() {
+    this.kill(this._play); this.kill(this._tf); this.kill(this._lk);
+    this.dismissNotifNow();
+    this.setState({
+      playing: true, playIdx: 0, playCap: '',
+      lock: false, shareSheet: false, redeemFlash: false, backSide: false, gift: false,
+      stamps: 0, stampSeq: 0, joined: false, platform: 'apple', camReady: false,
+      form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white' }
+    });
+    this.playNext(0);
+  }
+  playNext(i) {
+    const beats = this.playBeats();
+    if (i >= beats.length) { this.kill(this._play); this._play = null; this.setState({ playing: false, playIdx: beats.length }); return; }
+    const wait = beats[i][0], cap = beats[i][1], fn = beats[i][2];
+    this._play = this.after(wait, () => {
+      if (!this.state.playing) return;
+      this.setState({ playCap: cap, playIdx: i + 1 });
+      this._auto = true;
+      try { fn(); } catch (e) { console.error(e); }
+      this._auto = false;
+      this.playNext(i + 1);
+    });
+  }
+  stopPlay() {
+    this.kill(this._play); this._play = null;
+    this.kill(this._tf); this._tf = null;
+    if (this.state && this.state.playing) this.setState({ playing: false, playIdx: 0, playCap: this.state.lang === 'en' ? 'Stopped — take it from here.' : 'توقّف العرض — تابع من هنا.' });
+  }
+  doReset() {
+    this.kill(this._play); this._play = null; this.kill(this._tf); this._tf = null;
+    this.kill(this._lk); this.kill(this._rt); this.kill(this._ra); this.kill(this._rf); this.kill(this._ct);
+    this.dismissNotifNow();
+    this.clearSaved();
+    const h = this.__host || this;
+    h.__wcWelcomed = true; h.__wcRefArmed = false;
+    this.__restored = false;
+    this.setState((s) => ({
+      walletSel: 0, redeemFlash: false, scene: 'counter', platform: 'apple', stamps: 5, goal: 8,
+      gift: false, backSide: false, camReady: false, shareSheet: false, joined: false,
+      navDir: 'fwd', navSeq: (s.navSeq || 0) + 1, stampSeq: 0, seen: { counter: true },
+      lock: false, playing: false, playIdx: 0, playCap: '',
+      refPending: false, refDone: false, histAdd: [], resetArm: false,
+      form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white' }
+    }));
+  }
+
   renderVals() {
+    this.armWelcome();
+    this.armReferral();
     const st = this.state, EN = st.lang === 'en';
+    const T = (en, ar) => EN ? en : ar;
     const AN = (n, du, dl) => st.settled ? 'none' : n + ' ' + du + ' cubic-bezier(.22,.61,.36,1) ' + (dl || '0s') + ' both';
-    const first = (st.form.name.trim() || 'Sara').split(' ')[0];
+    const HOUSE = ' cubic-bezier(.22,.61,.36,1) ';
+    const first = this.firstName();
     const full = st.stamps >= st.goal;
     const dark = st.scene === 'camera' || st.scene === 'pass' || st.scene === 'sheet' || st.scene === 'wallet';
-    const passStamps = Array.from({ length: st.goal }, (_, i) => ({ dy: i % 2 ? '5px' : '-5px', filter: i < st.stamps ? 'drop-shadow(0 2px 3px rgba(0,0,0,.3))' : 'grayscale(1) opacity(.32)', anim: i === st.stamps - 1 ? AN('stampPop', '.45s') : 'none' }));
+    // ── seeded animation names · a CSS animation only replays when its NAME changes, and
+    //    keying on navSeq (not on `settled`) means an unrelated setState cannot re-trigger an
+    //    entrance. Quiet state therefore holds the 100% frame instead of looping. ──
+    const seq = st.navSeq % 2 ? '1' : '2';
+    const stSeq = st.stampSeq % 2 ? '1' : '2';
+    const slidePx = ((st.navDir === 'back' ? -1 : 1) * (EN ? 1 : -1) * 30);
+    // ── the three stamp grids · one palette, three sizes ──
+    const DARAJ = { style: 'coffee', disc: '#F6F3EC', ink: '#1E5C43', inner: 'rgba(21,66,50,.24)', ring: '#FFFFFF', seed: 'daraj' };
+    const passStamps = this.stampRow(st.stamps, st.goal, {
+      ...DARAJ, size: 26, outer: '0 2px 7px rgba(0,0,0,.3)',
+      anim: st.stampSeq ? 'stampPunch' + stSeq + ' .45s' + HOUSE + 'both' : ''
+    });
     const fallbackHistory = [
       ['Today 08:41', 'Stamp 6 of 8 · Rainbow St · by Ahmad'],
       ['Tue 08:37', 'Stamp 5 of 8 · Rainbow St'],
@@ -417,107 +968,230 @@ class Component extends DCLogic {
       ['Jul 02', 'Birthday gift landed — free dessert, used same day'],
       ['Mar 04', 'Joined from the counter QR · Rainbow St']
     ];
+    // Months and numerals stay Western on purpose — real wallets do not localise digits.
+    const HIST_AR = {
+      'Stamp 6 of 8 · Rainbow St · by Ahmad': 'ختم 6 من 8 · شارع الرينبو · بيد أحمد',
+      'Stamp 5 of 8 · Rainbow St': 'ختم 5 من 8 · شارع الرينبو',
+      'Redeemed: free flat white — card reset': 'استُبدلت: فلات وايت مجاني — أُعيد ضبط البطاقة',
+      'Birthday gift landed — free dessert, used same day': 'وصلت هدية الميلاد — حلوى مجانية، استُخدمت بنفس اليوم',
+      'Joined from the counter QR · Rainbow St': 'انضمّت من رمز الكاشير · شارع الرينبو',
+      'Card full — 8 of 8, reward ready': 'البطاقة ممتلئة — 8 من 8، المكافأة جاهزة',
+      'Stamp 7 of 8 · Swefieh': 'ختم 7 من 8 · الصويفية',
+      'Joined from a friend’s referral link': 'انضمّت عبر رابط صديقة'
+    };
+    const TIME_AR = { 'Today 08:41': 'اليوم 08:41', 'Tue 08:37': 'الثلاثاء 08:37', 'Jul 18': '18 يوليو', 'Jul 02': '2 يوليو', 'Mar 04': '4 مارس', 'Today 09:12': 'اليوم 09:12', 'Mon 17:20': 'الاثنين 17:20', 'Feb 11': '11 فبراير' };
     const rawHistory = (typeof window !== 'undefined' && window.WASLA_DB && window.WASLA_DB.memberTimelines && window.WASLA_DB.memberTimelines['Sara Al-Amin']) || fallbackHistory;
-    const historyRows = rawHistory.slice(0, 5).map(row => ({ time: row[0], line: row[1] }));
+    const refRow = { time: T('Just now', 'الآن'), line: T('Noor joined from your code — bonus stamp', 'انضمّت نور برمزك — ختم إضافي'), bg: '#FDF6EE', fw: 700 };
+    const addedRows = (st.histAdd || []).map(x => (x && x.id === 'ref') ? refRow : null).filter(Boolean);
+    const historyRows = addedRows.concat(rawHistory.slice(0, 5).map(row => ({
+      time: EN ? row[0] : (TIME_AR[row[0]] || row[0]),
+      line: EN ? row[1] : (HIST_AR[row[1]] || row[1]),
+      bg: 'transparent', fw: 600
+    }))).slice(0, 6);
     const backTargetByScene = { camera: 'counter', signup: 'camera', success: 'signup', wallet: 'pass' };
-    const scenes = [['counter', 'The counter — a poster and a camera'], ['camera', 'The camera finds the QR'], ['signup', 'A form short enough for the queue'], ['success', 'Into the wallet'], ['pass', 'The card, alive on the phone'], ['wallet', 'One wallet, the whole high street']];
+    const scenes = [
+      ['counter', T('The counter — a poster and a camera', 'الكاشير — ملصق وكاميرا')],
+      ['camera', T('The camera finds the QR', 'الكاميرا تجد الرمز')],
+      ['signup', T('A form short enough for the queue', 'نموذج قصير بما يكفي للطابور')],
+      ['success', T('Into the wallet', 'إلى المحفظة')],
+      ['pass', T('The card, alive on the phone', 'البطاقة، حيّة على الهاتف')],
+      ['wallet', T('One wallet, the whole high street', 'محفظة واحدة، الشارع كله')]
+    ];
     const idx = Math.max(0, scenes.findIndex(x => x[0] === (st.scene === 'sheet' ? 'success' : st.scene)));
-    const sceneChips = scenes.map(([key, label], i) => ({ n: i + 1, label, go: () => this.go(key, key === 'pass' ? {} : {}), bg: idx === i ? '#FDF4EC' : 'transparent', numBg: i <= idx ? '#E88024' : '#EFEDE8', numFg: i <= idx ? '#FFFFFF' : '#93887A', fw: idx === i ? 800 : 600, fg: idx === i ? '#C96A14' : '#5D5348' }));
+    const sceneChips = scenes.map(([key, label], i) => {
+      const cur = idx === i, visited = !!(st.seen || {})[key], done = visited && i < idx;
+      return {
+        n: done ? '✓' : String(i + 1), label,
+        go: () => { this.userTouch(); this.go(key, {}, i < idx ? 'back' : 'fwd'); },
+        bg: cur ? '#FDF4EC' : 'transparent',
+        numBg: i <= idx ? '#E88024' : (visited ? '#F6DCBE' : '#EFEDE8'),
+        numFg: i <= idx ? '#FFFFFF' : (visited ? '#9A6B12' : '#93887A'),
+        fw: cur ? 800 : 600,
+        fg: cur ? '#C96A14' : (visited ? '#5D5348' : '#8A8177'),
+        pulse: cur ? 'stepPulse 2.4s ease-out infinite' : 'none'
+      };
+    });
     const onPass = st.scene === 'pass';
     const momentBtns = [
-      { label: 'A visit — staff add a stamp', sub: 'Lock-screen moment · the grid fills', go: () => { if (!onPass) { this.go('pass'); return; } this.simStamp(); } },
-      { label: 'Her birthday — Sept 14', sub: 'A gift ribbon rides the strip art', go: () => { if (!onPass) this.go('pass'); this.setState({ gift: !st.gift }); this.notify('Daraj Coffee', st.gift ? 'The gift was lovely — see you soon, ' + first + '.' : 'Happy birthday, ' + first + '! A gift is riding your card today.'); } },
-      { label: 'The weekend broadcast', sub: 'One message, every wallet, 10:00 sharp', go: () => { if (!onPass) this.go('pass'); this.notify('Daraj Coffee', 'Double stamps all Friday — see you on the stairs.'); } }
+      { label: T('A visit — staff add a stamp', 'زيارة — الطاقم يضيف ختماً'), sub: T('Lock-screen moment · the grid fills', 'لحظة على شاشة القفل · الشبكة تمتلئ'), go: () => { this.userTouch(); if (!onPass) { this.go('pass'); return; } this.simStamp(); } },
+      { label: T('Her birthday — Sept 14', 'عيد ميلادها — 14 سبتمبر'), sub: T('A gift ribbon rides the strip art', 'شريط هدية يركب صورة البطاقة'), go: () => { this.userTouch(); if (!onPass) this.go('pass'); this.setState({ gift: !st.gift }); this.notify('Daraj Coffee', st.gift ? T('The gift was lovely — see you soon, ' + first + '.', 'كانت الهدية جميلة — نراك قريباً يا ' + first + '.') : T('Happy birthday, ' + first + '! A gift is riding your card today.', 'كل عام وأنتِ بخير يا ' + first + '! هدية تركب بطاقتك اليوم.')); this.save(); } },
+      { label: T('The weekend broadcast', 'رسالة نهاية الأسبوع'), sub: T('One message, every wallet, 10:00 sharp', 'رسالة واحدة، كل المحافظ، 10:00 تماماً'), go: () => { this.userTouch(); this.showLock(); } }
     ].map(m => ({ ...m, br: '#E7E0D5', fg: '#241C16', bg: '#FFFFFF' }));
+    // ── signup validation ──
+    const nameOk = (st.form.name || '').trim().length >= 2;
+    const phoneDigits = ((st.form.phone || '').match(/\d/g) || []).length;
+    const phoneOk = phoneDigits >= 9;
+    const formOk = nameOk && phoneOk;
+    const beatCount = 14;
     return {
-      dir: EN ? 'ltr' : 'rtl', langLabel: EN ? 'عربي' : 'EN', toggleLang: () => this.setState({ lang: EN ? 'ar' : 'en' }),
-      enterAnim: AN('fadeUp', '.5s'), popAnim: AN('popIn', '.5s'), stampAnim: AN('stampPop', '.4s'),
+      dir: EN ? 'ltr' : 'rtl', langLabel: EN ? 'عربي' : 'EN',
+      toggleLang: () => { this.userTouch(); this.setState({ lang: EN ? 'ar' : 'en' }); this.save(); },
+      enterAnim: 'sceneIn' + seq + ' .44s' + HOUSE + 'both',
+      slideFrom: slidePx + 'px',
+      sheetAnim: 'sheetUp' + seq + ' .42s' + HOUSE + 'both',
+      scrimAnim: 'scrimIn' + seq + ' .3s ease-out both',
+      cardPopAnim: 'cardPop' + seq + ' .5s' + HOUSE + 'both',
+      settleAnim: st.stampSeq ? 'settle' + stSeq + ' .5s' + HOUSE + 'both' : 'none',
+      revealAnim: 'reveal' + (st.walletSel % 2 ? '1' : '2') + ' .4s' + HOUSE + 'both',
+      revealQrAnim: 'fadeUp .42s' + HOUSE + '.16s both',
+      popAnim: AN('popIn', '.5s'),
       qrCells: this.qr(),
       phoneBg: dark ? (st.scene === 'pass' ? '#111114' : '#0B0B0D') : '#F3EFE9',
       statusColor: dark ? '#F4F2EE' : '#241C16', homeBarColor: dark ? 'rgba(244,242,238,.4)' : 'rgba(36,28,22,.35)',
       isCounter: st.scene === 'counter', isCamera: st.scene === 'camera', isSignup: st.scene === 'signup', isSuccess: st.scene === 'success', isSheet: st.scene === 'sheet', isPass: st.scene === 'pass',
-      camReady: st.camReady, goCamera: () => this.go('camera'),
+      counterLabel: T('The counter at Daraj Coffee', 'كاشير قهوة الدرج'),
+      counterCta: T('Open the camera', 'افتح الكاميرا'),
+      camReady: st.camReady, goCamera: () => { this.userTouch(); this.go('camera'); },
+      camCorner: st.camReady ? '#FFD60A' : '#E88024',
+      cornerAnim: st.camReady ? 'lockSnap .42s' + HOUSE + 'both' : 'cornerPulse 2.4s ease-in-out infinite',
+      scanAnim: st.camReady ? 'none' : 'scanLine 2.6s ease-in-out infinite',
+      sweepAnim: st.camReady ? 'qrSweep .85s' + HOUSE + 'both' : 'none',
+      camQrShadow: st.camReady ? '0 0 0 3px rgba(255,214,10,.9),0 20px 44px rgba(0,0,0,.5)' : '0 20px 44px rgba(0,0,0,.5)',
+      camPill: T('Open “wasla.app” →', 'افتح “wasla.app” ←'),
+      camFoot: T('No app — the camera is the whole install.', 'بدون تطبيق — الكاميرا هي كل التثبيت.'),
       goSignup: () => {
+        this.userTouch();
         if (st.joined) {
-          clearTimeout(this._nt);
-          this.setState({ stamps: 6, goal: 8 });
-          this.go('pass');
-          this.notify('Daraj Coffee', 'Welcome back, ' + first + ' — 6/8 stamps · أهلاً بعودتك');
+          const back = Math.max(st.stamps, 6);
+          this.dismissNotifNow();
+          this.go('pass', { stamps: back, goal: 8 });
+          this.notify('Daraj Coffee', EN ? 'Welcome back, ' + first + ' — ' + back + '/8 stamps · أهلاً بعودتك' : 'أهلاً بعودتك يا ' + first + ' — ' + back + '/8 أختام');
           return;
         }
         this.go('signup');
       },
-      goBack: () => this.go(backTargetByScene[st.scene] || 'counter'),
-      tapNotif: () => { clearTimeout(this._nt); this.setState({ notif: null }); this.go('pass'); },
-      scanAgain: () => this.go('camera'),
-      suTitle: 'Join Daraj Coffee', suTitleAlt: 'انضم إلى قهوة الدرج — الثامن علينا',
+      goBack: () => { this.userTouch(); this.go(backTargetByScene[st.scene] || 'counter', {}, 'back'); },
+      tapNotif: () => { this.userTouch(); this.dismissNotif(); this.go('pass'); },
+      scanAgain: () => { this.userTouch(); this.go('camera'); },
+      scanAgainLabel: T('Scan again — as a returning member ↻', 'امسح مجدداً — كعضو عائد ↻'),
+      suTitle: T('Join Daraj Coffee', 'انضم إلى قهوة الدرج'), suTitleAlt: 'انضم إلى قهوة الدرج — الثامن علينا',
       suJoinLine: EN ? 'Buy 7, the 8th is on us.' : 'اشترِ ٧ والثامن علينا.',
       fName: EN ? 'Full name' : 'الاسم الكامل', fPhone: EN ? 'Phone' : 'رقم الهاتف', fDrink: EN ? 'Favourite drink' : 'مشروبك المفضل', fDrinkHint: EN ? '· Daraj asks this one' : '· سؤال من الدرج',
-      formName: st.form.name, setFormName: (e) => this.setState({ form: { ...st.form, name: e.target.value } }),
-      formPhone: st.form.phone, setFormPhone: (e) => this.setState({ form: { ...st.form, phone: e.target.value } }),
-      formDrink: st.form.drink, setFormDrink: (e) => this.setState({ form: { ...st.form, drink: e.target.value } }),
+      formName: st.form.name, setFormName: (e) => { this.userTouch(); this.setState({ form: { ...st.form, name: e.target.value } }); this.save(); },
+      formPhone: st.form.phone, setFormPhone: (e) => { this.userTouch(); this.setState({ form: { ...st.form, phone: e.target.value } }); this.save(); },
+      formDrink: st.form.drink, setFormDrink: (e) => { this.userTouch(); this.setState({ form: { ...st.form, drink: e.target.value } }); this.save(); },
+      okName: nameOk, okPhone: phoneOk,
+      nameBorder: nameOk ? '#B6DCC6' : '#D8D0C2', phoneBorder: phoneOk ? '#B6DCC6' : '#D8D0C2',
+      ctaBg: formOk ? '#1E5C43' : '#E6E1D8', ctaFg: formOk ? '#FFFFFF' : '#A79E92',
+      ctaCursor: formOk ? 'pointer' : 'not-allowed', ctaClass: formOk ? 'wl-cta wl-press' : 'wl-off',
+      showReason: !formOk,
+      suReason: !nameOk ? T('Add your name — two letters is enough.', 'أضف اسمك — حرفان يكفيان.') : T('A phone number with at least 9 digits.', 'رقم هاتف من 9 أرقام على الأقل.'),
       suCta: EN ? 'Get my card' : 'أعطني بطاقتي', suFoot: EN ? 'No app · no password · your card lives in your wallet' : 'بدون تطبيق · بدون كلمة سر · بطاقتك في محفظتك',
       suPowered: 'Powered by Wasla · تعمل بواصلة',
-      submitSignup: () => { this.setState({ joined: true }); this.go('success'); this.notify('Daraj Coffee', (EN ? 'Welcome, ' : 'أهلاً ') + first + (EN ? ' — your card is ready.' : ' — بطاقتك جاهزة.')); },
+      submitSignup: () => { this.userTouch(); if (!formOk) { this.notify('Daraj Coffee', T('Name and phone first — then the card is yours.', 'الاسم والهاتف أولاً — ثم البطاقة لك.')); return; } this.doSignup(); },
       okTitle: (EN ? 'You\'re in, ' : 'أهلاً بك، ') + first + '.', okSub: EN ? 'One tap left — put the card where it can never be forgotten.' : 'نقرة واحدة — ضع البطاقة حيث لا تُنسى أبداً.',
       okNote: EN ? 'Already a member? The same QR opens your card.' : 'عضو من قبل؟ نفس الرمز يفتح بطاقتك.',
-      addApple: () => this.go('sheet', { platform: 'apple' }),
-      addGoogle: () => { this.go('pass', { platform: 'google', stamps: 0 }); this.notify('Google Wallet', 'Daraj Coffee was saved to Google Wallet.'); },
-      backToSuccess: () => this.go('success'),
-      confirmAdd: () => { this.setState({ joined: true }); this.go('pass', { platform: 'apple', stamps: 0 }); this.notify('Daraj Coffee', (EN ? 'In your wallet. First coffee = first stamp, ' : 'في محفظتك. أول قهوة = أول ختم يا ') + first + '.'); },
-      sheetStamps: Array.from({ length: 8 }, (_, i) => ({ dy: i % 2 ? '4px' : '-4px' })),
-      walletTitle: st.platform === 'apple' ? 'Wallet' : 'Google Wallet',
+      addAppleLabel: T('Add to Apple Wallet', 'أضف إلى Apple Wallet'), addGoogleLabel: T('Add to Google Wallet', 'أضف إلى Google Wallet'),
+      addApple: () => { this.userTouch(); this.go('sheet', { platform: 'apple' }); },
+      addGoogle: () => { this.userTouch(); this.go('pass', { platform: 'google', stamps: 0, stampSeq: 0 }); this.notify('Google Wallet', T('Daraj Coffee was saved to Google Wallet.', 'حُفظت قهوة الدرج في Google Wallet.')); this.save(); },
+      backToSuccess: () => { this.userTouch(); this.go('success', {}, 'back'); },
+      confirmAdd: () => { this.userTouch(); this.doConfirmAdd(); },
+      cancelWord: T('Cancel', 'إلغاء'), addWord: T('Add', 'إضافة'), addPassTitle: T('Add Pass', 'إضافة بطاقة'),
+      stampsWord: T('STAMPS', 'الأختام'), sheetFoot: T('Wasla · Tala Hospitality Group', 'واصلة · مجموعة تالا للضيافة'),
+      // the Add-Pass preview is always the fresh 0/8 card, so every cell is an empty ring
+      sheetStamps: this.stampRow(0, 8, { ...DARAJ, size: 19, next: false }),
+      walletTitle: st.platform === 'apple' ? T('Wallet', 'المحفظة') : 'Google Wallet',
       isApplePass: st.platform === 'apple', isGooglePass: st.platform === 'google',
-      frontSide: !st.backSide, backSide: st.backSide, flipCard: () => this.setState({ backSide: !st.backSide }),
-      passHeadLabel: full ? 'REWARD' : 'STAMPS', passHeadValue: full ? 'READY' : st.stamps + ' / ' + st.goal,
+      frontSide: !st.backSide, backSide: st.backSide,
+      flipT: st.backSide ? 'rotateY(180deg)' : 'rotateY(0deg)',
+      frontPE: st.backSide ? 'none' : 'auto', backPE: st.backSide ? 'auto' : 'none',
+      flipCard: () => { this.userTouch(); this.setState({ backSide: !st.backSide }); },
+      passHeadLabel: full ? T('REWARD', 'المكافأة') : T('STAMPS', 'الأختام'),
+      passHeadValue: full ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal,
+      passHeadColor: full ? '#FFD60A' : '#FFFFFF',
+      rewardWord: T('REWARD', 'المكافأة'), memberWord: T('MEMBER', 'العضو'),
+      gStampCard: T('Stamp Card', 'بطاقة أختام'),
       passStamps, giftOn: st.gift,
-      passRewardLine: full ? 'Free drink — show this at the till' : 'Free drink at ' + st.goal + ' stamps',
-      memberFirst: st.form.name.trim() || 'Sara Al-Amin',
-      gTitleLine: full ? 'Reward ready' : st.stamps + ' of ' + st.goal + ' stamps',
-      rewardReady: full, stampBtnLabel: full ? 'Scan again (reward waits)' : '+ A stamp lands',
+      passRewardLine: full ? T('Free drink — show this at the till', 'مشروب مجاني — أظهر هذه عند الكاشير') : T('Free drink at ' + st.goal + ' stamps', 'مشروب مجاني عند ' + st.goal + ' أختام'),
+      memberFirst: (st.form.name || '').trim() || 'Sara Al-Amin',
+      gTitleLine: full ? T('Reward ready', 'المكافأة جاهزة') : T(st.stamps + ' of ' + st.goal + ' stamps', st.stamps + ' من ' + st.goal + ' أختام'),
+      rewardReady: full,
+      tillLabel: T('At the till · عند الكاشير', 'عند الكاشير · At the till'),
+      stampBtnLabel: full ? T('Scan again (reward waits)', 'امسح مجدداً (المكافأة تنتظر)') : T('+ A stamp lands', '+ يهبط ختم'),
+      redeemLabel: T('Redeem the reward', 'استبدل المكافأة'),
       simStamp: this.simStamp,
-      simRedeem: () => { this.setState({ redeemFlash: true }); clearTimeout(this._rf); this._rf = setTimeout(() => { this.setState({ redeemFlash: false, stamps: 0 }); this.notify('Daraj Coffee', (EN ? 'Enjoy, ' : 'صحتين يا ') + first + '! A fresh card is already counting.'); }, 3200); },
+      simRedeem: () => { this.userTouch(); this.doRedeem(); },
       redeemFlash: st.redeemFlash,
+      flashTitle: T('On the house.', 'على حسابنا.'),
+      flashSub: T('Free drink of your choice — ' + first + ' earned it.', 'مشروب مجاني من اختيارك — ' + first + ' استحقّته.'),
+      flashShow: T('SHOW THIS AT THE TILL', 'أظهر هذه عند الكاشير'),
+      flashReward: T('REWARD · فلات وايت', 'المكافأة · فلات وايت'),
+      flashFoot: T('A fresh card starts counting the moment it’s poured.', 'بطاقة جديدة تبدأ العدّ لحظة سكب القهوة.'),
       confetti: Array.from({ length: 14 }, (_, i) => ({ x: (6 + (i * 67) % 88) + '%', c: ['#E88024', '#2FAE66', '#F0C74A', '#7FA6C9'][i % 4], dur: (2.1 + (i % 5) * 0.25) + 's', delay: (0.08 * (i % 7)) + 's' })),
       isWallet: st.scene === 'wallet',
+      walletWord: T('Wallet', 'المحفظة'), walletCount: T('4 CARDS · 0 APPS', '4 بطاقات · 0 تطبيقات'),
+      oneQrLine: T('One QR, every till.', 'رمز واحد، كل الكاشيرات.'),
+      walletStackCaption: T('Four shops · one wallet · صفّ واحد', 'أربعة محال · محفظة واحدة · صفّ واحد'),
+      walletFootCaption: T('Rainbow St to Abdali — the whole high street, one swipe from the lock screen.', 'من الرينبو إلى العبدلي — الشارع كله، على بُعد سحبة من شاشة القفل.'),
       walletCards: [
-        { name: 'Daraj Coffee', merchant: 'Tala Group · Rainbow St', i: 'D', c: '#1E5C43', c2: '#123D2C', tagLabel: full ? 'REWARD' : 'STAMPS', tagValue: full ? 'READY' : st.stamps + ' / ' + st.goal, hero: full ? 'Reward ready' : st.stamps + ' of ' + st.goal, line: full ? 'Your free drink waits at the till.' : (st.goal - st.stamps) + ' stamps to your free drink — the 8th is on us.', memberCaption: 'MEMBER · 0114 2291' },
-        { name: 'Nara Care', merchant: 'Nara Pharmacy · Swefieh', i: 'N', c: '#0F5B63', c2: '#093A40', tagLabel: 'BALANCE', tagValue: 'JOD 4.50', hero: 'JOD 4.50', line: '7% of every bill comes back — spend it like cash from JOD 2.', memberCaption: 'MEMBER · 0452 7736' },
-        { name: 'Marmar Gold', merchant: 'Marmar Lounge · Abdali', i: 'M', c: '#26262B', c2: '#141417', tagLabel: 'TIER', tagValue: 'GOLD ★', hero: 'Gold', line: '2 visits from Royal — skip the line, 15% off, the corner booth.', memberCaption: 'GOLD · 2290 8814' },
-        { name: 'Qamar Eid Coupon', merchant: 'Qamar Sweets · downtown', i: 'Q', c: '#B14A32', c2: '#7C3121', tagLabel: 'EXPIRES', tagValue: '15 AUG', hero: 'Free knafeh slice', line: 'One use, then it retires itself. The scanner asks twice.', memberCaption: 'COUPON · 7743 0091' }
-      ].map((wc, i) => ({ ...wc, open: st.walletSel === i, mt: i === 0 ? '0' : (st.walletSel === i - 1 || (st.walletSel === i && false) ? '10px' : '-4px'), pick: () => { if (i === 0 && st.walletSel === i) { this.go('pass'); return; } this.setState({ walletSel: i }); } })),
+        { name: 'Daraj Coffee', merchant: T('Tala Group · Rainbow St', 'مجموعة تالا · شارع الرينبو'), i: 'D', c: '#1E5C43', c2: '#123D2C', tagLabel: full ? T('REWARD', 'المكافأة') : T('STAMPS', 'الأختام'), tagValue: full ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal, hero: full ? T('Reward ready', 'المكافأة جاهزة') : T(st.stamps + ' of ' + st.goal, st.stamps + ' من ' + st.goal), line: full ? T('Your free drink waits at the till.', 'مشروبك المجاني ينتظر عند الكاشير.') : T((st.goal - st.stamps) + ' stamps to your free drink — the 8th is on us.', 'بقي ' + (st.goal - st.stamps) + ' أختام لمشروبك المجاني — الثامن علينا.'), memberCaption: 'MEMBER · 0114 2291',
+          // mini row: under 16px, so disc + ring + tilt with the glyph dropped
+          mini: this.stampRow(st.stamps, st.goal, { ...DARAJ, size: 11, next: false }) },
+        { name: 'Nara Care', merchant: T('Nara Pharmacy · Swefieh', 'صيدلية نارا · الصويفية'), i: 'N', c: '#0F5B63', c2: '#093A40', tagLabel: T('BALANCE', 'الرصيد'), tagValue: 'JOD 4.50', hero: 'JOD 4.50', line: T('7% of every bill comes back — spend it like cash from JOD 2.', '7% من كل فاتورة تعود لك — أنفقها كنقد ابتداءً من دينارين.'), memberCaption: 'MEMBER · 0452 7736' },
+        { name: 'Marmar Gold', merchant: T('Marmar Lounge · Abdali', 'صالة مرمر · العبدلي'), i: 'M', c: '#26262B', c2: '#141417', tagLabel: T('TIER', 'الفئة'), tagValue: 'GOLD ★', hero: T('Gold', 'ذهبية'), line: T('2 visits from Royal — skip the line, 15% off, the corner booth.', 'زيارتان من الفئة الملكية — بلا طابور، خصم 15%، وطاولة الزاوية.'), memberCaption: 'GOLD · 2290 8814' },
+        { name: 'Qamar Eid Coupon', merchant: T('Qamar Sweets · downtown', 'حلويات قمر · وسط البلد'), i: 'Q', c: '#B14A32', c2: '#7C3121', tagLabel: T('EXPIRES', 'تنتهي'), tagValue: '15 AUG', hero: T('Free knafeh slice', 'قطعة كنافة مجانية'), line: T('One use, then it retires itself. The scanner asks twice.', 'استخدام واحد ثم تتقاعد وحدها. الماسح يسأل مرتين.'), memberCaption: 'COUPON · 7743 0091' }
+      ].map((wc, i) => ({ ...wc,
+        hasMini: !!wc.mini, mini: wc.mini || [],
+        open: st.walletSel === i,
+        mt: i === 0 ? '0' : (st.walletSel === i - 1 ? '10px' : '-4px'),
+        anim: 'fanIn' + seq + ' .52s' + HOUSE + (0.05 + i * 0.07).toFixed(2) + 's both',
+        pick: () => { this.userTouch(); if (i === 0 && st.walletSel === i) { this.go('pass'); return; } this.setState({ walletSel: i }); this.save(); } })),
       backRowsA: [
-        { k: 'Branches · الفروع', v: 'Rainbow St · Swefieh · Abdali Mall', color: '#241C16' },
-        { k: 'Latest message', v: 'Double stamps all Friday — see you on the stairs.', color: '#241C16' }
+        { k: T('Branches · الفروع', 'الفروع · Branches'), v: T('Rainbow St · Swefieh · Abdali Mall', 'شارع الرينبو · الصويفية · مول العبدلي'), color: '#241C16' },
+        { k: T('Latest message', 'آخر رسالة'), v: T('Double stamps all Friday — see you on the stairs.', 'أختام مضاعفة طوال الجمعة — نراكم على الدرج.'), color: '#241C16' }
       ],
-      referralK: 'Your referral code · بشّر صاحبك',
-      referralV: 'DARAJ-' + first.toUpperCase() + '-114 — share it, you both get a head start',
+      referralK: T('Your referral code · بشّر صاحبك', 'رمز الدعوة · بشّر صاحبك'),
+      referralV: T('DARAJ-' + first.toUpperCase() + '-114 — share it, you both get a head start', 'DARAJ-' + first.toUpperCase() + '-114 — شاركه، وتبدآن متقدّمَين'),
       referralCode: 'DARAJ-' + first.toUpperCase() + '-114',
-      openShare: () => this.setState({ shareSheet: true }),
+      openShare: () => { this.userTouch(); this.setState({ shareSheet: true }); },
       backRowsB: [
-        { k: 'Instagram', v: '@darajcoffee', color: '#007AFF', cursor: 'pointer', action: () => this.notify('Instagram', 'Opening @darajcoffee…') },
-        { k: 'WhatsApp', v: '+962 79 555 0100', color: '#007AFF', cursor: 'pointer', action: () => this.notify('WhatsApp', 'Starting a chat with Daraj Coffee…') },
-        { k: 'Terms', v: 'One stamp per visit · rewards never expire while the card is live', color: '#93887A', cursor: 'default', action: undefined }
+        { k: 'Instagram', v: '@darajcoffee', color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('Instagram', T('Opening @darajcoffee…', 'جارٍ فتح @darajcoffee…')); } },
+        { k: 'WhatsApp', v: '+962 79 555 0100', color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('WhatsApp', T('Starting a chat with Daraj Coffee…', 'بدء محادثة مع قهوة الدرج…')); } },
+        { k: T('Terms', 'الشروط'), v: T('One stamp per visit · rewards never expire while the card is live', 'ختم واحد لكل زيارة · المكافآت لا تنتهي ما دامت البطاقة حيّة'), color: '#93887A', cursor: 'default', cls: '', action: undefined }
       ],
-      historyRows,
+      historyK: T('History · السجل', 'السجل · History'), historyRows,
+      doneWord: T('Done', 'تم'),
       shareSheet: st.shareSheet,
-      closeShare: () => this.setState({ shareSheet: false }),
-      shareWhatsapp: () => { this.setState({ shareSheet: false }); this.notify('Daraj Coffee', 'Sent — when Noor joins you both get a head start · وصلت الدعوة'); },
-      shareMessages: () => { this.setState({ shareSheet: false }); this.notify('Daraj Coffee', 'Sent — when Noor joins you both get a head start · وصلت الدعوة'); },
-      shareCopy: () => { this.setState({ shareSheet: false }); this.notify('Daraj Coffee', 'Code copied — DARAJ-' + first.toUpperCase() + '-114'); },
-      hasNotif: !!st.notif, notifTitle: (st.notif || {}).title || '', notifBody: (st.notif || {}).body || '',
+      shareTitle: T('Share your Daraj card', 'شارك بطاقة الدرج'), shareTitleAlt: 'شارك بطاقتك',
+      copyCodeLabel: T('Copy code', 'انسخ الرمز'),
+      closeShare: () => { this.userTouch(); this.setState({ shareSheet: false }); },
+      shareWhatsapp: () => { this.userTouch(); this.setState({ shareSheet: false, refPending: !st.refDone }); this.notify('Daraj Coffee', T('Sent — when Noor joins you both get a head start · وصلت الدعوة', 'وصلت الدعوة — حين تنضم نور تبدآن متقدّمَين')); },
+      shareMessages: () => { this.userTouch(); this.setState({ shareSheet: false, refPending: !st.refDone }); this.notify('Daraj Coffee', T('Sent — when Noor joins you both get a head start · وصلت الدعوة', 'وصلت الدعوة — حين تنضم نور تبدآن متقدّمَين')); },
+      shareCopy: () => { this.userTouch(); this.setState({ shareSheet: false }); this.notify('Daraj Coffee', T('Code copied — DARAJ-' + first.toUpperCase() + '-114', 'نُسخ الرمز — DARAJ-' + first.toUpperCase() + '-114')); },
+      hasNotif: !!st.notif && !st.lock,
+      notifAnim: st.notifOut ? 'notifExit .26s cubic-bezier(.4,0,1,1) both' : 'notifSpring .5s' + HOUSE + 'both',
+      notifTitle: (st.notif || {}).title || '', notifBody: (st.notif || {}).body || '',
       notifInitial: ((st.notif || {}).title || 'D')[0], notifColor: ((st.notif || {}).title || '').includes('Google') ? '#4285F4' : '#1E5C43',
+      nowWord: T('now', 'الآن'),
+      isLock: st.lock,
+      lockDate: T('Friday, 14 September', 'الجمعة، 14 سبتمبر'),
+      lockBody: T('Double stamps all Friday — see you on the stairs.', 'أختام مضاعفة طوال الجمعة — نراكم على الدرج.'),
+      lockFoot: T('One message · every wallet · 10:00 sharp', 'رسالة واحدة · كل المحافظ · 10:00 تماماً'),
+      lockTap: () => { this.userTouch(); this.lockTap(); },
       sceneChips, momentBtns,
-      momentsHint: onPass ? 'Watch the top of the phone — every moment is a lock-screen event.' : 'Jump to step 5 first — the moments land on the card.'
+      panelTitle: T('The customer side', 'جهة الزبون'),
+      panelSub: T('Ten seconds to a member · no app', 'عشر ثوانٍ ليصبح عضواً · بدون تطبيق'),
+      journeyK: T('The journey', 'الرحلة'), momentsK: T('Life with the card', 'الحياة مع البطاقة'),
+      stepTrackH: '225px', stepFillH: Math.round((idx / (scenes.length - 1)) * 225) + 'px',
+      dashLink: T('← The owner’s dashboard', 'لوحة صاحب المحل →'),
+      isPlaying: st.playing,
+      playLabel: st.playing ? T('◼ Stop', '◼ إيقاف') : T('▶ Play the whole journey', '▶ شغّل الرحلة كاملة'),
+      playCaption: st.playCap || T('Hands off — Sara joins, collects, and redeems on her own.', 'بلا تدخّل — سارة تنضم وتجمع وتستبدل وحدها.'),
+      playCapFg: st.playing ? '#8A5A22' : '#93887A',
+      playBg: st.playing ? '#FDF4EC' : '#FFFFFF', playBorder: st.playing ? '#F0CFA6' : '#E7E0D5',
+      playBtnBg: st.playing ? '#26262B' : '#E88024', playBtnFg: '#FFFFFF',
+      playPct: Math.round((st.playIdx / beatCount) * 100) + '%',
+      togglePlay: () => { if (st.playing) { this.stopPlay(); } else { this.startPlay(); } },
+      resetLabel: st.resetArm ? T('Sure? Tap again', 'متأكد؟ اضغط مرة أخرى') : T('Reset demo', 'إعادة ضبط العرض'),
+      resetFg: st.resetArm ? '#C0392B' : '#A79E92',
+      resetDemo: () => {
+        this.userTouch();
+        if (!st.resetArm) { this.setState({ resetArm: true }); this.kill(this._ra); this._ra = this.after(3200, () => this.setState({ resetArm: false })); return; }
+        this.doReset();
+      },
+      momentsHint: onPass ? T('Watch the top of the phone — every moment is a lock-screen event.', 'راقب أعلى الهاتف — كل لحظة حدث على شاشة القفل.') : T('Jump to step 5 first — the moments land on the card.', 'انتقل إلى الخطوة 5 أولاً — اللحظات تهبط على البطاقة.')
     };
   }
-  simStamp = () => {
-    const st = this.state, first = (st.form.name.trim() || 'Sara').split(' ')[0];
-    if (st.stamps >= st.goal) { this.notify('Daraj Coffee', 'Your reward is still waiting, ' + first + ' — redeem it at the till.'); return; }
-    const n = st.stamps + 1;
-    this.setState({ stamps: n, scene: 'pass', backSide: false });
-    this.notify('Daraj Coffee', n >= st.goal ? first + ', your ' + st.goal + 'th coffee is on us — the reward is READY.' : 'Stamp added — ' + n + ' of ' + st.goal + ' · ' + (st.goal - n) + ' to your free drink.');
-  };
 }
 </script>
 </body>

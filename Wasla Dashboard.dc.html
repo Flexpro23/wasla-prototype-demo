@@ -17,7 +17,14 @@
   input:focus,textarea:focus{outline:2px solid rgba(232,128,36,.45);outline-offset:1px;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
   @keyframes popIn{0%{opacity:0;transform:scale(.86);}60%{transform:scale(1.03);}100%{opacity:1;transform:scale(1);}}
-  @keyframes stampPop{0%{transform:scale(0);}70%{transform:scale(1.25);}100%{transform:scale(1);}}
+  /* the stamp punch — a stamp lands hard, over-rotates, then settles square.
+     The per-index tilt lives on the WRAPPER, so these keyframes stay generic
+     and every cell can share them. Two identical names (…Pop / …PopB) exist
+     because a CSS animation only restarts when its NAME changes — the demo
+     loop alternates them so every beat replays. */
+  @keyframes stampPop{0%{opacity:0;transform:scale(1.35) rotate(10deg);}18%{opacity:1;}52%{transform:scale(.95) rotate(-3.5deg);}78%{transform:scale(1.035) rotate(1.5deg);}100%{opacity:1;transform:scale(1) rotate(0);}}
+  @keyframes stampPopB{0%{opacity:0;transform:scale(1.35) rotate(10deg);}18%{opacity:1;}52%{transform:scale(.95) rotate(-3.5deg);}78%{transform:scale(1.035) rotate(1.5deg);}100%{opacity:1;transform:scale(1) rotate(0);}}
+  @keyframes stampNext{0%,100%{opacity:.34;transform:scale(1);}50%{opacity:.8;transform:scale(1.09);}}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
   @keyframes confetti{0%{transform:translateY(-8vh) rotate(0);opacity:1;}100%{transform:translateY(105vh) rotate(720deg);opacity:.9;}}
   @keyframes slideRight{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:none;}}
@@ -223,7 +230,7 @@
 
     <div style="{{ contentStyle }}">
       <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-        <div style="padding:{{ padScreen }};animation:{{ enterAnim }};">
+        <div style="padding:{{ padScreen }};max-width:{{ screenMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
           <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:18px;">
             <div style="min-width:0;">
               <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};line-height:1.05;">{{ greeting }}</div>
@@ -253,7 +260,7 @@
               </sc-for>
             </div>
           </sc-if>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:26px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:26px;">
             <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
               <div class="wl-tile" style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:18px 20px;animation:{{ s.anim }};" style-hover="transform:translateY(-3px);box-shadow:0 16px 34px rgba(36,28,22,.12)">
                 <div style="font-size:11.5px;font-weight:600;color:#93887A;letter-spacing:.03em;text-transform:uppercase;">{{ s.label }}</div>
@@ -272,7 +279,7 @@
           <div style="display:grid;grid-template-columns:{{ homeGrid }};gap:22px;align-items:start;">
             <div>
               <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;margin-bottom:14px;">{{ t.yourCards }}</div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;">
                 <sc-for list="{{ cardTiles }}" as="c" hint-placeholder-count="5">
                   <div class="wl-card" onClick="{{ c.open }}" style="cursor:pointer;background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(36,28,22,.05);transition:transform .25s cubic-bezier(.22,.61,.36,1),box-shadow .25s;animation:{{ c.anim }};" style-hover="transform:translateY(-4px);box-shadow:0 18px 40px rgba(36,28,22,.13)">
                     <div style="background:linear-gradient(135deg,{{ c.color }},{{ c.color2 }});padding:16px 18px;display:flex;align-items:center;gap:12px;opacity:{{ c.stripOpacity }};transition:background .4s;">
@@ -339,7 +346,7 @@
       </sc-if>
 
       <sc-if value="{{ isWizard }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:{{ padScreen }};max-width:1180px;width:100%;margin:0 auto;">
+        <div style="padding:{{ padScreen }};max-width:{{ wizMax }};width:100%;margin:0 auto;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:26px;">
             <div onClick="{{ wizBack }}" style="cursor:pointer;font-size:13px;font-weight:700;color:#93887A;display:flex;align-items:center;gap:7px;flex-shrink:0;" style-hover="color:#C96A14">← {{ wizBackLabel }}</div>
             <div style="display:flex;align-items:center;gap:2px;flex-wrap:wrap;justify-content:flex-end;">
@@ -413,7 +420,7 @@
                         <div style="position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;gap:7px;">
                           <div style="display:flex;gap:4px;justify-content:center;">
                             <sc-for list="{{ ty.cells }}" as="ce" hint-placeholder-count="8">
-                              <div class="wz-pop" style="width:18px;height:18px;border-radius:50%;background:{{ ce.bg }};border:1.5px {{ ce.border }};display:flex;align-items:center;justify-content:center;font-size:9px;">{{ ce.g }}</div>
+                              <span class="wz-pop" style="display:inline-flex;"><span style="{{ ce.box }}"><span style="{{ ce.disc }}"><svg viewBox="0 0 24 24" style="{{ ce.svg }}"><path d="{{ ce.d }}" fill="{{ ce.ink }}" stroke="{{ ce.ink }}" strokeWidth="{{ ce.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ ce.s }}" fill="none" stroke="{{ ce.ink }}" strokeWidth="{{ ce.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></span></span>
                             </sc-for>
                           </div>
                           <div style="text-align:center;font-size:8px;color:rgba(255,255,255,.78);">3 to go — the 9th flat white is free</div>
@@ -553,9 +560,9 @@
                   </div>
                   <div style="margin:16px 0 12px;min-height:60px;display:flex;align-items:center;justify-content:center;">
                     <sc-if value="{{ dmIsStamps }}" hint-placeholder-val="{{ true }}">
-                      <div style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;max-width:250px;">
+                      <div style="display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;max-width:250px;">
                         <sc-for list="{{ dmStamps }}" as="ds" hint-placeholder-count="8">
-                          <span style="font-size:21px;line-height:1;display:inline-block;filter:{{ ds.filter }};transform:translateY({{ ds.dy }});animation:{{ ds.anim }};">{{ ds.mark }}</span>
+                          <span style="{{ ds.box }}"><span style="{{ ds.disc }}"><svg viewBox="0 0 24 24" style="{{ ds.svg }}"><path d="{{ ds.d }}" fill="{{ ds.ink }}" stroke="{{ ds.ink }}" strokeWidth="{{ ds.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ ds.s }}" fill="none" stroke="{{ ds.ink }}" strokeWidth="{{ ds.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></span>
                         </sc-for>
                       </div>
                     </sc-if>
@@ -691,12 +698,18 @@
                         <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;width:34px;text-align:center;font-variant-numeric:tabular-nums;">{{ wGoal }}</div>
                         <div onClick="{{ goalUp }}" style="cursor:pointer;width:34px;height:34px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
                       </div></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Stamp style — lands on every stamp</div>
-                      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-                        <sc-for list="{{ stampIcons }}" as="si" hint-placeholder-count="8">
-                          <div onClick="{{ si.pick }}" style="cursor:pointer;width:38px;height:38px;border-radius:50%;background:#FAF6EF;border:2.5px solid {{ si.ring }};display:flex;align-items:center;justify-content:center;font-size:17px;transition:transform .15s,border-color .2s;" style-hover="transform:scale(1.12)">{{ si.icon }}</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:10px;">{{ t.stStyleLabel }}</div>
+                      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+                        <sc-for list="{{ stampStyles }}" as="si" hint-placeholder-count="8">
+                          <div class="wl-press" onClick="{{ si.pick }}" title="{{ si.name }}" style="cursor:pointer;width:56px;display:flex;flex-direction:column;align-items:center;gap:7px;">
+                            <span style="{{ si.cell.box }}"><span style="{{ si.cell.disc }}"><svg viewBox="0 0 24 24" style="{{ si.cell.svg }}"><path d="{{ si.cell.d }}" fill="{{ si.cell.ink }}" stroke="{{ si.cell.ink }}" strokeWidth="{{ si.cell.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ si.cell.s }}" fill="none" stroke="{{ si.cell.ink }}" strokeWidth="{{ si.cell.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></span>
+                            <span style="font-size:10px;font-weight:{{ si.fw }};color:{{ si.fg }};text-align:center;line-height:1.25;transition:color .2s;">{{ si.name }}</span>
+                          </div>
                         </sc-for>
-                        <div onClick="{{ uploadStampToast }}" style="cursor:pointer;width:38px;height:38px;border-radius:50%;border:2px dashed #D8D0C2;display:flex;align-items:center;justify-content:center;color:#93887A;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">↑</div>
+                        <div class="wl-press" onClick="{{ uploadStampToast }}" title="{{ t.stStyleUpload }}" style="cursor:pointer;width:56px;display:flex;flex-direction:column;align-items:center;gap:7px;">
+                          <span style="width:42px;height:42px;border-radius:50%;border:2px dashed #D8D0C2;display:flex;align-items:center;justify-content:center;color:#93887A;font-size:16px;font-weight:700;transition:border-color .2s,color .2s;" style-hover="border-color:#E88024;color:#C96A14">↑</span>
+                          <span style="font-size:10px;font-weight:600;color:#93887A;text-align:center;line-height:1.25;">{{ t.stStyleUpload }}</span>
+                        </div>
                       </div></div>
                     <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">The reward at {{ wGoal }} stamps</div>
                       <input value="{{ wRewardRaw }}" onChange="{{ setWReward }}" placeholder="{{ rewardPlaceholder }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
@@ -906,9 +919,9 @@
                           <div style="position:absolute;inset:0;background:rgba(0,0,0,.2);"></div>
                         </sc-if>
                         <sc-if value="{{ isStampsType }}" hint-placeholder-val="{{ true }}">
-                          <div style="display:flex;justify-content:center;align-items:center;gap:11px;flex-wrap:wrap;max-width:242px;position:relative;">
+                          <div style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;max-width:250px;position:relative;">
                             <sc-for list="{{ wStamps }}" as="st" hint-placeholder-count="8">
-                              <span style="font-size:22px;line-height:1;display:inline-block;transform:translateY({{ st.dy }});filter:{{ st.filter }};color:rgba(255,255,255,.96);text-shadow:{{ st.shadow }};animation:{{ st.anim }};">{{ st.mark }}</span>
+                              <span style="{{ st.box }}"><span style="{{ st.disc }}"><svg viewBox="0 0 24 24" style="{{ st.svg }}"><path d="{{ st.d }}" fill="{{ st.ink }}" stroke="{{ st.ink }}" strokeWidth="{{ st.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ st.s }}" fill="none" stroke="{{ st.ink }}" strokeWidth="{{ st.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></span>
                             </sc-for>
                           </div>
                         </sc-if>
@@ -945,6 +958,13 @@
                         <div style="font-size:12px;font-weight:600;">{{ wName }}</div>
                       </div>
                       <div style="margin-top:16px;"><div style="font-size:11px;opacity:.8;">{{ wGTypeLabel }}</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:19px;margin-top:2px;">{{ wGTitle }}</div></div>
+                      <sc-if value="{{ isStampsType }}" hint-placeholder-val="{{ true }}">
+                        <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:13px;">
+                          <sc-for list="{{ wStampsG }}" as="gs1" hint-placeholder-count="8">
+                            <span style="{{ gs1.box }}"><span style="{{ gs1.disc }}"><svg viewBox="0 0 24 24" style="{{ gs1.svg }}"><path d="{{ gs1.d }}" fill="{{ gs1.ink }}" stroke="{{ gs1.ink }}" strokeWidth="{{ gs1.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ gs1.s }}" fill="none" stroke="{{ gs1.ink }}" strokeWidth="{{ gs1.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></span>
+                          </sc-for>
+                        </div>
+                      </sc-if>
                       <div style="display:flex;gap:22px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.25);">
                         <div><div style="font-size:9.5px;opacity:.75;">{{ wHeadLabel }}</div><div style="font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;">{{ wHeadValue }}</div></div>
                         <div style="min-width:0;"><div style="font-size:9.5px;opacity:.75;">REWARD</div><div style="font-size:12px;font-weight:600;line-height:1.35;">{{ wReward }}</div></div>
@@ -990,7 +1010,7 @@
             </div>
           </sc-if>
           <sc-if value="{{ wizStep5 }}" hint-placeholder-val="{{ false }}">
-            <div style="max-width:640px;margin:0 auto;animation:{{ stepAnim }};">
+            <div style="max-width:720px;margin:0 auto;animation:{{ stepAnim }};">
               <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
                 <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">{{ t.wSubmitTitle }}</div>
                 <div style="font-size:14px;color:#5D5348;margin-top:8px;">{{ t.wSubmitSub }}</div>
@@ -1070,7 +1090,7 @@
       </sc-if>
 
       <sc-if value="{{ isCard }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:{{ padScreen }};animation:{{ enterAnim }};">
+        <div style="padding:{{ padScreen }};max-width:{{ screenMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
           <div onClick="{{ goHome }}" style="cursor:pointer;font-size:13px;font-weight:700;color:#93887A;margin-bottom:20px;display:inline-flex;gap:7px;" style-hover="color:#C96A14">← {{ t.home }}</div>
           <sc-if value="{{ acReturned }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#FBE6E1;border:1.5px solid #E8A08D;border-radius:16px;padding:15px 20px;margin-bottom:18px;animation:{{ enterAnim }};">
@@ -1119,21 +1139,21 @@
               <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;min-width:0;">
                 <div style="padding:16px 20px;border-bottom:1px solid #F1EBE1;display:flex;align-items:center;justify-content:space-between;gap:10px;"><span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">{{ t.members }}</span><span style="font-size:11.5px;font-weight:700;color:#93887A;">{{ memCount }}</span></div>
                 <sc-for list="{{ acMemberRows }}" as="m" hint-placeholder-count="6">
-                  <div class="wl-row" onClick="{{ m.open }}" style="cursor:pointer;display:flex;align-items:center;gap:13px;padding:12px 20px;border-bottom:1px solid #F5F0E8;background:{{ m.bg }};transition:background .15s;animation:{{ m.anim }};" style-hover="background:#FAF6EF">
+                  <div class="wl-row" onClick="{{ m.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid #F5F0E8;background:{{ m.bg }};transition:background .15s;animation:{{ m.anim }};" style-hover="background:#FAF6EF">
                     <div style="width:34px;height:34px;border-radius:50%;background:#F0E7DB;color:#7A5A2E;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px;flex-shrink:0;">{{ m.initials }}</div>
                     <div style="min-width:0;flex:1;"><div style="font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ m.name }}</div><div style="font-size:11px;color:#93887A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ m.phone }}</div></div>
                     <div style="text-align:end;flex-shrink:0;">
                       <sc-if value="{{ m.hasDots }}" hint-placeholder-val="{{ true }}">
                         <div style="display:flex;align-items:center;gap:3px;justify-content:flex-end;">
                           <sc-for list="{{ m.dots }}" as="mdt" hint-placeholder-count="8">
-                            <span style="width:8px;height:8px;border-radius:50%;background:{{ mdt.bg }};border:1.5px solid {{ mdt.br }};flex-shrink:0;"></span>
+                            <span style="{{ mdt.box }}"><span style="{{ mdt.disc }}"></span></span>
                           </sc-for>
-                          <span style="font-size:10.5px;color:#93887A;margin-inline-start:5px;font-variant-numeric:tabular-nums;">{{ m.dotsLabel }}</span>
+                          <span style="font-size:11px;color:#93887A;margin-inline-start:6px;font-variant-numeric:tabular-nums;">{{ m.dotsLabel }}</span>
                         </div>
                       </sc-if>
                       <sc-if value="{{ m.hasBar }}" hint-placeholder-val="{{ false }}">
                         <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
-                          <div style="width:70px;height:7px;border-radius:99px;background:#F0EAE0;overflow:hidden;"><div class="wl-grow" style="height:100%;width:{{ m.barW }};border-radius:99px;background:linear-gradient(90deg,#E88024,#F09A4D);transition:width .9s cubic-bezier(.22,.61,.36,1);"></div></div>
+                          <div style="width:104px;height:7px;border-radius:99px;background:#F0EAE0;overflow:hidden;"><div class="wl-grow" style="height:100%;width:{{ m.barW }};border-radius:99px;background:linear-gradient(90deg,#E88024,#F09A4D);transition:width .9s cubic-bezier(.22,.61,.36,1);"></div></div>
                           <span style="font-size:11.5px;font-weight:700;color:#5D5348;white-space:nowrap;font-variant-numeric:tabular-nums;">{{ m.barLabel }}</span>
                         </div>
                       </sc-if>
@@ -1182,9 +1202,11 @@
                         <span style="color:#8E8C96;flex-shrink:0;">{{ t.mdProgress }}</span>
                         <span style="display:flex;align-items:center;gap:8px;min-width:0;justify-content:flex-end;">
                           <sc-if value="{{ mdProg.hasDots }}" hint-placeholder-val="{{ true }}">
-                            <sc-for list="{{ mdProg.dots }}" as="mpd" hint-placeholder-count="8">
-                              <span style="width:8px;height:8px;border-radius:50%;background:{{ mpd.bg }};border:1.5px solid {{ mpd.br }};flex-shrink:0;"></span>
-                            </sc-for>
+                            <span style="display:flex;align-items:center;justify-content:flex-end;gap:3px;flex-wrap:wrap;min-width:0;max-width:234px;">
+                              <sc-for list="{{ mdProg.dots }}" as="mpd" hint-placeholder-count="8">
+                                <span style="{{ mpd.box }}"><span style="{{ mpd.disc }}"><svg viewBox="0 0 24 24" style="{{ mpd.svg }}"><path d="{{ mpd.d }}" fill="{{ mpd.ink }}" stroke="{{ mpd.ink }}" strokeWidth="{{ mpd.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ mpd.s }}" fill="none" stroke="{{ mpd.ink }}" strokeWidth="{{ mpd.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></span>
+                              </sc-for>
+                            </span>
                           </sc-if>
                           <sc-if value="{{ mdProg.hasBar }}" hint-placeholder-val="{{ false }}">
                             <span style="width:70px;height:7px;border-radius:99px;background:#3A3B40;overflow:hidden;display:inline-block;flex-shrink:0;"><span class="wl-grow" style="display:block;height:100%;width:{{ mdProg.barW }};border-radius:99px;background:linear-gradient(90deg,#E88024,#F09A4D);transition:width .9s cubic-bezier(.22,.61,.36,1);"></span></span>
@@ -1254,7 +1276,7 @@
                     <span style="font-size:12px;color:#5D5348;line-height:1.55;animation:{{ anInsightAnim }};">{{ anFunnelRead }}</span>
                   </div>
                 </sc-if>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:16px;align-items:start;">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-top:16px;align-items:start;">
                   <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;">
                     <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14.5px;">{{ t.anRetTitle }}</div>
                     <div style="font-size:11px;color:#93887A;margin-top:2px;margin-bottom:16px;">{{ t.anRetSub }}</div>
@@ -1346,7 +1368,7 @@
 
           <sc-if value="{{ tabAddons }}" hint-placeholder-val="{{ false }}">
             <div style="animation:{{ tabAnim }};">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:16px;margin-top:20px;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:18px;margin-top:20px;max-width:{{ readMax }};">
               <sc-for list="{{ addonCards }}" as="ad" hint-placeholder-count="3">
                 <div class="wl-ad" style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:11px;animation:{{ ad.anim }};">
                   <div class="wl-adart" style="position:relative;height:82px;border-radius:13px;overflow:hidden;background:linear-gradient(145deg,{{ ad.c1 }},{{ ad.c2 }});opacity:{{ ad.artOpacity }};transition:opacity .3s;animation:{{ ad.artAnim }};">
@@ -1407,7 +1429,7 @@
           </sc-if>
 
           <sc-if value="{{ tabSignup }}" hint-placeholder-val="{{ false }}">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:20px;align-items:start;animation:{{ tabAnim }};">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;margin-top:20px;align-items:start;max-width:{{ tabMax }};animation:{{ tabAnim }};">
               <div style="display:flex;flex-direction:column;gap:16px;min-width:0;">
                 <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px;">
                   <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:4px;">{{ t.suPageTitle }}</div>
@@ -1496,7 +1518,7 @@
           </sc-if>
 
           <sc-if value="{{ tabEdit }}" hint-placeholder-val="{{ false }}">
-            <div style="margin-top:20px;max-width:1040px;animation:{{ tabAnim }};">
+            <div style="margin-top:20px;max-width:{{ tabMax }};animation:{{ tabAnim }};">
               <div style="font-size:11.5px;color:#93887A;line-height:1.55;margin-bottom:14px;">{{ t.edBandNote }}</div>
 
               <div style="background:#F2FAF5;border:1.5px solid #CDEBDA;border-radius:20px;padding:15px 16px 17px;animation:{{ edBandAnim1 }};">
@@ -1504,7 +1526,7 @@
                   <span style="display:inline-flex;align-items:center;gap:7px;background:#CDEBDA;color:#1E7D47;font-size:10px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:5px 12px;white-space:nowrap;text-transform:uppercase;flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:#2FAE66;flex-shrink:0;"></span>{{ edTierInstant }}</span>
                   <span style="font-size:12px;color:#3F6E52;line-height:1.5;min-width:0;">{{ edWhyInstant }}</span>
                 </div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(266px,1fr));gap:14px;align-items:start;">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start;">
                   <div style="background:#FFFFFF;border:1px solid #DCEEE4;border-radius:16px;padding:18px 20px;min-width:0;">
                     <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px;">{{ t.edLook }}</div>
                     <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:9px;">{{ t.edBrandColor }}</div>
@@ -1559,7 +1581,7 @@
                   <span style="display:inline-flex;align-items:center;gap:7px;background:#F5E0C6;color:#9A6B12;font-size:10px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:5px 12px;white-space:nowrap;text-transform:uppercase;flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:#C99A3E;flex-shrink:0;animation:pulse 2.4s infinite;"></span>{{ edTierQuick }}</span>
                   <span style="font-size:12px;color:#8A6B33;line-height:1.5;min-width:0;">{{ edWhyQuick }}</span>
                 </div>
-                <div style="background:#FFFFFF;border:1px solid #F2E4D0;border-radius:16px;padding:18px 20px;max-width:520px;">
+                <div style="background:#FFFFFF;border:1px solid #F2E4D0;border-radius:16px;padding:20px 24px;max-width:640px;">
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;">
                     <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">{{ t.edNameRules }}</div>
                     <span style="background:#F0E7DB;color:#7A5A2E;font-size:10.5px;font-weight:800;border-radius:999px;padding:4px 11px;white-space:nowrap;">{{ t.goesForReview }}</span>
@@ -1597,7 +1619,7 @@
                   <span style="display:inline-flex;align-items:center;gap:7px;background:#E4E0D8;color:#6B6760;font-size:10px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:5px 12px;white-space:nowrap;text-transform:uppercase;flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:#9E988C;flex-shrink:0;"></span>{{ edTierNever }}</span>
                   <span style="font-size:12px;color:#6B6760;line-height:1.5;min-width:0;">{{ edWhyNever }}</span>
                 </div>
-                <div style="background:#FFFFFF;border:1px solid #E7E4DD;border-radius:16px;padding:18px 20px;max-width:520px;">
+                <div style="background:#FFFFFF;border:1px solid #E7E4DD;border-radius:16px;padding:20px 24px;max-width:640px;">
                   <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px;">{{ t.edTypeTitle }}</div>
                   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13.5px;font-weight:700;color:#5D5348;background:#F6F4F0;border:1px dashed #D8D4CB;border-radius:12px;padding:11px 14px;">🔒 {{ acTypeName }}<span style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#93887A;font-weight:500;">{{ acTypeAr }}</span></div>
                   <div style="font-size:11.5px;color:#93887A;margin-top:10px;line-height:1.5;">{{ t.edTypeFoot }}</div>
@@ -1609,11 +1631,11 @@
       </sc-if>
 
       <sc-if value="{{ isMembers }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:{{ padScreen }};animation:{{ enterAnim }};">
+        <div style="padding:{{ padScreen }};max-width:{{ screenMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">{{ t.membersTitle }}</div>
           <div style="font-size:13.5px;color:#93887A;margin-top:6px;">{{ t.membersSub }}</div>
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px;">
-            <input value="{{ memDirQ }}" onChange="{{ setMemDirQ }}" placeholder="{{ t.membersFilterHint }}" style="flex:1;min-width:210px;max-width:330px;border:1px solid #D8D0C2;border-radius:999px;padding:10px 16px;font-size:13px;background:#FFFFFF;">
+            <input value="{{ memDirQ }}" onChange="{{ setMemDirQ }}" placeholder="{{ t.membersFilterHint }}" style="flex:1;min-width:210px;max-width:420px;border:1px solid #D8D0C2;border-radius:999px;padding:11px 18px;font-size:13px;background:#FFFFFF;">
             <span style="font-size:11.5px;font-weight:700;color:#93887A;font-variant-numeric:tabular-nums;">{{ memDirCount }}</span>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
@@ -1626,12 +1648,12 @@
               <div onClick="{{ mdc.pick }}" style="cursor:pointer;border:1.5px solid {{ mdc.br }};background:{{ mdc.bg }};color:{{ mdc.fg }};font-size:12.5px;font-weight:700;border-radius:999px;padding:8px 16px;transition:all .2s;">{{ mdc.label }}</div>
             </sc-for>
           </div>
-          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;margin-top:16px;max-width:940px;">
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;margin-top:16px;">
             <sc-for list="{{ memDirRows }}" as="mr" hint-placeholder-count="8">
-              <div class="wl-row" onClick="{{ mr.open }}" style="cursor:pointer;display:flex;align-items:center;gap:13px;padding:13px 20px;border-bottom:1px solid #F5F0E8;flex-wrap:wrap;background:{{ mr.rowBg }};transition:background .15s;animation:{{ mr.anim }};" style-hover="background:#FAF6EF">
+              <div class="wl-row" onClick="{{ mr.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid #F5F0E8;flex-wrap:wrap;background:{{ mr.rowBg }};transition:background .15s;animation:{{ mr.anim }};" style-hover="background:#FAF6EF">
                 <span class="wl-chk" data-on="{{ mr.selOn }}" onClick="{{ mr.toggleSel }}" style="cursor:pointer;width:18px;height:18px;border-radius:6px;border:2px solid {{ mr.chkBr }};background:{{ mr.chkBg }};color:#FFFFFF;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ mr.chkMark }}</span>
                 <div style="width:34px;height:34px;border-radius:50%;background:#F0E7DB;color:#7A5A2E;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px;flex-shrink:0;">{{ mr.initials }}</div>
-                <div style="min-width:0;width:150px;">
+                <div style="min-width:150px;flex:2 1 190px;max-width:340px;">
                   <div style="display:flex;align-items:center;gap:6px;">
                     <span style="font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ mr.name }}</span>
                     <sc-if value="{{ mr.isTop }}" hint-placeholder-val="{{ false }}">
@@ -1640,25 +1662,25 @@
                   </div>
                   <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#93887A;">{{ mr.ar }}</div>
                 </div>
-                <div style="font-size:11.5px;color:#93887A;min-width:132px;white-space:nowrap;display:flex;align-items:center;gap:9px;">
+                <div style="font-size:12px;color:#93887A;min-width:150px;flex:2 1 170px;max-width:320px;white-space:nowrap;display:flex;align-items:center;gap:9px;">
                   <span>{{ mr.phone }}</span>
                   <sc-if value="{{ mr.hasBirthday }}" hint-placeholder-val="{{ false }}">
                     <span style="background:#FDF4EC;color:#C96A14;font-size:10.5px;font-weight:700;border-radius:999px;padding:2px 9px;flex-shrink:0;">🎂 {{ mr.birthday }}</span>
                   </sc-if>
                 </div>
-                <span style="border:1px solid {{ mr.cardColor }};color:{{ mr.cardColor }};font-size:11px;font-weight:700;border-radius:999px;padding:4px 11px;white-space:nowrap;">{{ mr.card }}</span>
-                <div style="margin-inline-start:auto;text-align:end;flex-shrink:0;">
+                <div style="flex:1 1 130px;min-width:0;"><span style="display:inline-block;border:1px solid {{ mr.cardColor }};color:{{ mr.cardColor }};font-size:11.5px;font-weight:700;border-radius:999px;padding:5px 13px;white-space:nowrap;">{{ mr.card }}</span></div>
+                <div style="margin-inline-start:auto;text-align:end;flex-shrink:0;padding-inline-start:10px;">
                   <sc-if value="{{ mr.hasDots }}" hint-placeholder-val="{{ true }}">
-                    <div style="display:flex;align-items:center;gap:3px;justify-content:flex-end;">
+                    <div style="display:flex;align-items:center;gap:3.5px;justify-content:flex-end;">
                       <sc-for list="{{ mr.dots }}" as="pdt" hint-placeholder-count="8">
-                        <span style="width:8px;height:8px;border-radius:50%;background:{{ pdt.bg }};border:1.5px solid {{ pdt.br }};flex-shrink:0;"></span>
+                        <span style="{{ pdt.box }}"><span style="{{ pdt.disc }}"></span></span>
                       </sc-for>
-                      <span style="font-size:10.5px;color:#93887A;margin-inline-start:5px;font-variant-numeric:tabular-nums;">{{ mr.dotsLabel }}</span>
+                      <span style="font-size:11px;color:#93887A;margin-inline-start:7px;font-variant-numeric:tabular-nums;">{{ mr.dotsLabel }}</span>
                     </div>
                   </sc-if>
                   <sc-if value="{{ mr.hasBar }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
-                      <div style="width:74px;height:7px;border-radius:99px;background:#F0EAE0;overflow:hidden;"><div style="height:100%;width:{{ mr.barW }};border-radius:99px;background:linear-gradient(90deg,#E88024,#F09A4D);transition:width .9s cubic-bezier(.22,.61,.36,1);"></div></div>
+                      <div style="width:110px;height:7px;border-radius:99px;background:#F0EAE0;overflow:hidden;"><div style="height:100%;width:{{ mr.barW }};border-radius:99px;background:linear-gradient(90deg,#E88024,#F09A4D);transition:width .9s cubic-bezier(.22,.61,.36,1);"></div></div>
                       <span style="font-size:11.5px;font-weight:700;color:#5D5348;white-space:nowrap;font-variant-numeric:tabular-nums;">{{ mr.barLabel }}</span>
                     </div>
                   </sc-if>
@@ -1680,7 +1702,7 @@
       </sc-if>
 
       <sc-if value="{{ isActivity }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:{{ padScreen }};animation:{{ enterAnim }};">
+        <div style="padding:{{ padScreen }};max-width:{{ screenMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">Everything that happened.</div>
           <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Every stamp, reward and joiner — across all your cards.</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;">
@@ -1688,8 +1710,9 @@
               <div onClick="{{ fc.pick }}" style="cursor:pointer;border:1.5px solid {{ fc.br }};background:{{ fc.bg }};color:{{ fc.fg }};font-size:12.5px;font-weight:700;border-radius:999px;padding:8px 16px;transition:all .2s;">{{ fc.label }}</div>
             </sc-for>
           </div>
-          <div style="max-width:720px;">
+          <div style="display:grid;grid-template-columns:{{ actGrid }};gap:4px 22px;align-items:start;margin-top:4px;">
             <sc-for list="{{ actGroups }}" as="g" hint-placeholder-count="2">
+              <div style="min-width:0;">
               <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin:22px 0 10px;">{{ g.label }}</div>
               <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;overflow:hidden;">
                 <sc-for list="{{ g.items }}" as="a2" hint-placeholder-count="4">
@@ -1701,16 +1724,17 @@
                   </div>
                 </sc-for>
               </div>
+              </div>
             </sc-for>
           </div>
         </div>
       </sc-if>
 
       <sc-if value="{{ isBroadcasts }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:{{ padScreen }};animation:{{ enterAnim }};">
+        <div style="padding:{{ padScreen }};max-width:{{ screenMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">Reach every wallet — gently.</div>
           <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Write it once, watch it land on their lock screen before you send.</div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:26px;margin-top:24px;align-items:start;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:30px;margin-top:24px;align-items:start;max-width:{{ readMax }};">
             <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:22px;min-width:0;">
               <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Send from</div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
@@ -1794,11 +1818,11 @@
             </div>
             <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;overflow:hidden;">
               <sc-for list="{{ bcLog }}" as="lg" hint-placeholder-count="4">
-                <div class="wl-row" onClick="{{ lg.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid #F5F0E8;animation:{{ lg.anim }};">
+                <div class="wl-row" onClick="{{ lg.open }}" style="cursor:pointer;display:flex;align-items:center;gap:16px;padding:15px 24px;border-bottom:1px solid #F5F0E8;animation:{{ lg.anim }};">
                   <div style="width:30px;height:30px;border-radius:9px;background:{{ lg.color }};color:#FFF;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;font-family:'Nunito',sans-serif;flex-shrink:0;">{{ lg.initial }}</div>
                   <div style="min-width:0;flex:1;"><div style="font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lg.title }}</div><div style="font-size:11.5px;color:#93887A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lg.body }}</div></div>
                   <sc-if value="{{ lg.hasBar }}" hint-placeholder-val="{{ false }}">
-                    <div title="{{ lg.barTitle }}" style="width:74px;flex-shrink:0;">
+                    <div title="{{ lg.barTitle }}" style="width:100px;flex-shrink:0;">
                       <div style="height:6px;border-radius:99px;background:#F0EAE0;overflow:hidden;"><div class="wl-grow" style="height:100%;width:{{ lg.barW }};border-radius:99px;background:linear-gradient(90deg,#2FAE66,#7FCF9E);animation:{{ lg.barAnim }};"></div></div>
                       <div style="font-size:9.5px;color:#93887A;margin-top:3px;font-variant-numeric:tabular-nums;white-space:nowrap;">{{ lg.barLabel }}</div>
                     </div>
@@ -1807,7 +1831,7 @@
                   <sc-if value="{{ lg.cancellable }}" hint-placeholder-val="{{ false }}">
                     <span class="wl-press" onClick="{{ lg.cancel }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid #E2563A;color:#E2563A;font-size:11px;font-weight:800;border-radius:999px;padding:4px 12px;white-space:nowrap;flex-shrink:0;" style-hover="background:#FBE6E1">{{ t.bcCancel }}</span>
                   </sc-if>
-                  <div style="font-size:11px;color:#93887A;width:88px;text-align:end;white-space:nowrap;flex-shrink:0;">{{ lg.sent }}</div>
+                  <div style="font-size:11px;color:#93887A;width:118px;text-align:end;white-space:nowrap;flex-shrink:0;">{{ lg.sent }}</div>
                 </div>
               </sc-for>
               <sc-if value="{{ bcLogEmpty }}" hint-placeholder-val="{{ false }}">
@@ -1822,7 +1846,7 @@
       </sc-if>
 
       <sc-if value="{{ isStaff }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:{{ padScreen }};animation:{{ enterAnim }};">
+        <div style="padding:{{ padScreen }};max-width:{{ screenMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
           <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;">
             <div>
               <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">Every branch scans its own card.</div>
@@ -1840,7 +1864,7 @@
           </div>
 
           <sc-if value="{{ stfBranchView }}" hint-placeholder-val="{{ false }}">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:16px;margin-top:18px;animation:{{ stfViewAnim }};">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:18px;margin-top:18px;max-width:{{ readMax }};animation:{{ stfViewAnim }};">
               <sc-for list="{{ branchCards }}" as="brc" hint-placeholder-count="3">
                 <div class="wl-tile" onClick="{{ brc.open }}" style="cursor:pointer;background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:18px 20px 17px;min-width:0;animation:{{ brc.anim }};">
                   <div style="display:flex;align-items:center;gap:10px;">
@@ -1895,9 +1919,9 @@
           <div style="display:grid;grid-template-columns:{{ staffGrid }};gap:22px;margin-top:18px;align-items:start;animation:{{ stfViewAnim }};">
           <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;overflow:hidden;min-width:0;">
             <sc-for list="{{ staffRows }}" as="stf" hint-placeholder-count="5">
-              <div class="wl-row" onClick="{{ stf.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;padding:15px 22px;border-bottom:1px solid #F5F0E8;flex-wrap:wrap;background:{{ stf.bg }};animation:{{ stf.anim }};">
+              <div class="wl-row" onClick="{{ stf.open }}" style="cursor:pointer;display:flex;align-items:center;gap:16px;padding:16px 26px;border-bottom:1px solid #F5F0E8;flex-wrap:wrap;background:{{ stf.bg }};animation:{{ stf.anim }};">
                 <div style="width:38px;height:38px;border-radius:50%;background:#26262B;color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex-shrink:0;">{{ stf.initials }}</div>
-                <div style="min-width:0;width:170px;"><div style="font-size:14px;font-weight:700;">{{ stf.name }}</div><div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#93887A;">{{ stf.ar }}</div><div style="font-size:10.5px;color:{{ stf.lastFg }};margin-top:2px;">{{ stf.lastActive }}</div></div>
+                <div style="min-width:170px;flex:0 1 210px;"><div style="font-size:14px;font-weight:700;">{{ stf.name }}</div><div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#93887A;">{{ stf.ar }}</div><div style="font-size:10.5px;color:{{ stf.lastFg }};margin-top:2px;">{{ stf.lastActive }}</div></div>
                 <div style="background:#F0E7DB;color:#7A5A2E;font-size:11px;font-weight:700;border-radius:999px;padding:4px 12px;white-space:nowrap;">{{ stf.branch }}</div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:120px;">
                   <sc-for list="{{ stf.cardChips }}" as="cc" hint-placeholder-count="1">
@@ -1906,7 +1930,7 @@
                 </div>
                 <div style="text-align:end;flex-shrink:0;">
                   <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;font-variant-numeric:tabular-nums;">{{ stf.scansToday }}</div>
-                  <div style="width:74px;height:6px;border-radius:99px;background:#F0EAE0;overflow:hidden;margin:4px 0 0 auto;"><div class="wl-grow" style="height:100%;width:{{ stf.barW }};border-radius:99px;background:{{ stf.barBg }};animation:{{ stf.barAnim }};"></div></div>
+                  <div style="width:100px;height:6px;border-radius:99px;background:#F0EAE0;overflow:hidden;margin:4px 0 0 auto;"><div class="wl-grow" style="height:100%;width:{{ stf.barW }};border-radius:99px;background:{{ stf.barBg }};animation:{{ stf.barAnim }};"></div></div>
                   <div style="font-size:10px;color:#93887A;margin-top:3px;">{{ t.scansToday }}</div>
                 </div>
               </div>
@@ -2010,7 +2034,7 @@
       </sc-if>
 
       <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:{{ padScreen }};max-width:860px;animation:{{ enterAnim }};">
+        <div style="padding:{{ padScreen }};max-width:{{ readMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};margin-bottom:18px;">{{ t.settings }}</div>
           <div style="background:linear-gradient(135deg,#26262B,#1B1B1F);color:#F4F2EE;border-radius:18px;padding:18px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px;">
             <div style="flex:1;min-width:200px;">
@@ -2115,7 +2139,7 @@
               </div>
               <div style="border-top:1px solid #F5F0E8;margin-top:18px;padding-top:16px;">
                 <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:11px;">{{ t.planCompare }}</div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:11px;">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:13px;">
                   <sc-for list="{{ planTiers }}" as="pt" hint-placeholder-count="3">
                     <div class="wl-tile" style="background:{{ pt.bg }};border:1.5px solid {{ pt.br }};border-radius:15px;padding:14px 15px 13px;min-width:0;animation:{{ pt.anim }};">
                       <div style="display:flex;align-items:center;gap:8px;">
@@ -2650,13 +2674,113 @@ class Component extends DCLogic {
   };
   cfgDefaults(id) {
     return {
-      stamps: { icon: '✓', cap: '1 / visit' }, cashback: { rate: 5, min: 2, bexp: 'Never' },
+      stamps: { icon: 'coffee', cap: '1 / visit' }, cashback: { rate: 5, min: 2, bexp: 'Never' },
       points: { per: 10, ladder: [{ name: 'Free espresso', cost: 250 }, { name: 'A dozen ka\'ak', cost: 500 }] },
       discount: { pct: 15, fine: '' }, coupon: { offer: 'One free dessert', expiry: '1 month', qty: 'First 100' },
       vip: { tiers: [{ name: 'Silver', at: 0, perk: 'Members-only offers' }, { name: 'Gold', at: 15, perk: 'Skip the line + 15% off' }, { name: 'Royal', at: 40, perk: 'Private tastings, always' }] },
       challenge: { visits: 5, window: '2 weeks', prize: 'A free platter for the table', minv: 0 },
       membership: { validity: '1 year', benefit: 'Unlimited classes, all branches', fee: 25, rem: '1 week before' }
     }[id] || {};
+  }
+  /* ══ THE STAMP SYSTEM ═══════════════════════════════════════════════════
+     Every stamp this file draws comes from here — the wizard gallery tile, the
+     live demo pass, both wallet previews, the style picker, the members
+     directory, the card's members tab and the member panel. Three pieces:
+
+       stampKey(id)    normalises a stored style (incl. the old emoji values)
+       stampGlyph(id)  the 24×24 artwork: `d` = filled body, `s` = stroked
+                       detail lines, `sw` = that stroke's width, `gw` = an
+                       optional stroke ON the body (used to round the star tips)
+       stampCell(o)    one cell → the inline styles the template needs
+
+     A cell is two nested spans: the OUTER holds the deterministic per-index
+     tilt (−6°..+6°) so the row reads hand-stamped; the INNER holds the disc,
+     its punched inner ring and the punch animation (which itself rotates, so
+     keeping the two transforms on separate elements avoids a fight).
+
+     STAMPED = filled disc + white glyph + inset darker ring.
+     EMPTY   = 1.5px dashed ring at 35%, no glyph.
+     NEXT-UP = empty ring + slow soft pulse.
+     MINI (<16px, or glyph:false) keeps the disc, ring and tilt, drops the
+     glyph — so a directory row reads as tiny stamps, not plain dots.
+
+     Reuse note: stampKey/stampGlyph are pure and portable — the Customer and
+     Scanner files can paste those two verbatim and only re-tune stampCell's
+     sizes. ══════════════════════════════════════════════════════════════ */
+  stampKey(id) {
+    const LEGACY = { '✓': 'classic', '☕': 'coffee', '🍰': 'dessert', '🍔': 'burger', '✂️': 'salon', '✂': 'salon', '🌸': 'flower', '★': 'star', '🚗': 'drive' };
+    const k = LEGACY[id] || String(id || '');
+    return this.stampGlyphs()[k] ? k : 'coffee';
+  }
+  stampGlyphs() {
+    return {
+      coffee: {
+        d: 'M5 9.3 h11.4 a1 1 0 0 1 1 1.1 l-0.63 5.3 a3.7 3.7 0 0 1 -3.68 3.3 h-4.78 a3.7 3.7 0 0 1 -3.68 -3.3 l-0.63 -5.3 a1 1 0 0 1 1 -1.1 Z',
+        s: 'M17.2 11.4 h1 a2.1 2.1 0 0 1 0 4.2 h-0.75 M4.3 20.5 c4.9 1.5 10.5 1.5 15.4 0 M9.4 6.9 c1.4 -1 -1.4 -2.2 0 -3.2 M13.4 6.9 c1.4 -1 -1.4 -2.2 0 -3.2', sw: 1.55, gw: 0 },
+      dessert: {
+        d: 'M10.55 2.4 a1.45 1.45 0 1 1 2.9 0 a1.45 1.45 0 1 1 -2.9 0 Z M6.6 11.9 a3.3 3.3 0 0 1 1.3 -5.6 a5.6 5.6 0 0 1 8.2 0 a3.3 3.3 0 0 1 1.3 5.6 Z M5.8 12.6 h12.4 l-1.45 6.3 a2.3 2.3 0 0 1 -2.3 1.8 h-4.9 a2.3 2.3 0 0 1 -2.3 -1.8 Z',
+        s: '', sw: 0, gw: 0 },
+      burger: {
+        d: 'M4.3 10.6 a7.7 7.7 0 0 1 15.4 0 a0.95 0.95 0 0 1 -0.95 0.95 H5.25 a0.95 0.95 0 0 1 -0.95 -0.95 Z M4.5 13.1 h15 a1.4 1.4 0 0 1 0 2.8 h-15 a1.4 1.4 0 0 1 0 -2.8 Z M5.1 17.3 h13.8 a1.15 1.15 0 0 1 1.15 1.15 a2.75 2.75 0 0 1 -2.75 2.75 H6.7 a2.75 2.75 0 0 1 -2.75 -2.75 a1.15 1.15 0 0 1 1.15 -1.15 Z',
+        s: '', sw: 0, gw: 0 },
+      salon: {
+        d: 'M10.85 13 a1.15 1.15 0 1 1 2.3 0 a1.15 1.15 0 1 1 -2.3 0 Z',
+        s: 'M9.5 16.7 L18.4 4.4 M14.5 16.7 L5.6 4.4 M8.4 16.35 a2.05 2.05 0 1 1 0 4.1 a2.05 2.05 0 1 1 0 -4.1 M15.6 16.35 a2.05 2.05 0 1 1 0 4.1 a2.05 2.05 0 1 1 0 -4.1', sw: 1.65, gw: 0 },
+      flower: {
+        d: 'M9 7.1 a3 3 0 1 1 6 0 a3 3 0 1 1 -6 0 Z M13.66 10.49 a3 3 0 1 1 6 0 a3 3 0 1 1 -6 0 Z M11.88 15.96 a3 3 0 1 1 6 0 a3 3 0 1 1 -6 0 Z M6.12 15.96 a3 3 0 1 1 6 0 a3 3 0 1 1 -6 0 Z M4.34 10.49 a3 3 0 1 1 6 0 a3 3 0 1 1 -6 0 Z M8.7 12 a3.3 3.3 0 1 1 6.6 0 a3.3 3.3 0 1 1 -6.6 0 Z M10 12 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 Z',
+        s: '', sw: 0, gw: 0 },
+      star: {
+        d: 'M12 3.3 L14.35 8.96 L20.46 9.45 L15.8 13.44 L17.23 19.4 L12 16.2 L6.77 19.4 L8.2 13.44 L3.54 9.45 L9.65 8.96 Z',
+        s: '', sw: 0, gw: 1.7 },
+      drive: {
+        d: 'M2.6 17.5 v-2.7 a2.1 2.1 0 0 1 1.12 -1.85 l1.18 -0.64 l2.1 -3.5 a3.3 3.3 0 0 1 2.83 -1.61 h4.34 a3.3 3.3 0 0 1 2.83 1.61 l2.1 3.5 l1.18 0.64 a2.1 2.1 0 0 1 1.12 1.85 v2.7 a1.15 1.15 0 0 1 -1.15 1.15 H3.75 a1.15 1.15 0 0 1 -1.15 -1.15 Z M5.1 18.6 a2.15 2.15 0 1 1 4.3 0 a2.15 2.15 0 1 1 -4.3 0 Z M14.6 18.6 a2.15 2.15 0 1 1 4.3 0 a2.15 2.15 0 1 1 -4.3 0 Z M10.15 8.75 L8.35 12.05 L15.65 12.05 L13.85 8.75 Z',
+        s: '', sw: 0, gw: 0 },
+      classic: {
+        d: '',
+        s: 'M4.9 12.7 L9.6 17.4 L19.1 6.4', sw: 3.1, gw: 0 }
+    };
+  }
+  stampGlyph(id) { return this.stampGlyphs()[this.stampKey(id)]; }
+  /* the style a LIVE card stamps with. Data can carry `stampStyle` per card
+     (the wizard writes it as cfg.icon on creation); Daraj — the demo's coffee
+     ladder — falls back to Coffee, everything else to the same safe default.
+     The Customer + Scanner files should read the identical field. */
+  cardStampStyle(c) { return this.stampKey((c || {}).stampStyle || 'coffee'); }
+  /* a hex → rgba() so a disc can be tinted with the card's own colour */
+  hexA(hex, a) {
+    const h = String(hex || '#000000').replace('#', '');
+    const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16) || 0;
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  /* the one cell builder. Returns inline styles + the two path strings. */
+  stampCell(o) {
+    const q = o || {};
+    const size = q.size || 22;
+    const on = !!q.filled;
+    const wantGlyph = q.glyph === undefined ? size >= 16 : !!q.glyph;
+    const g = (on && wantGlyph) ? this.stampGlyph(q.style) : { d: '', s: '', sw: 0, gw: 0 };
+    const rot = q.flat ? 0 : (((this.hashHue('stamp' + (q.seed === undefined ? 7 : q.seed)) + (q.i || 0) * 47) % 13) - 6);
+    const ringW = Math.min(3, Math.max(1.1, Math.round(size * 0.09 * 10) / 10));
+    let disc = 'width:100%;height:100%;border-radius:50%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;';
+    const shadows = [];
+    if (on) {
+      disc += 'background:' + (q.disc || '#E88024') + ';';
+      shadows.push('inset 0 0 0 ' + ringW + 'px ' + (q.inner || 'rgba(0,0,0,.17)'));
+    } else {
+      disc += 'background:transparent;border:1.5px dashed ' + (q.ring || '#93887A') + ';opacity:.35;';
+    }
+    if (q.outer) shadows.push(q.outer);
+    if (shadows.length) disc += 'box-shadow:' + shadows.join(',') + ';';
+    if (q.anim) disc += 'animation:' + q.anim + ';';
+    else if (!on && q.next) disc += 'animation:stampNext 2.6s cubic-bezier(.22,.61,.36,1) infinite;';
+    const gs = Math.round(size * 0.6 * 10) / 10;
+    const shift = q.dy ? 'translateY(' + q.dy + 'px) ' : '';
+    return {
+      box: 'width:' + size + 'px;height:' + size + 'px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;transform:' + shift + 'rotate(' + rot + 'deg);'
+        + (q.shadow ? 'filter:drop-shadow(0 1px 4px rgba(0,0,0,.55));' : ''),
+      disc, d: g.d, s: g.s, sw: g.sw, gw: g.gw, ink: q.ink || '#FFFFFF',
+      svg: 'width:' + gs + 'px;height:' + gs + 'px;display:block;overflow:visible;'
+    };
   }
   renderVals() {
     const { account: Acc, cards, types, members, activity, staff, broadcasts } = this.db();
@@ -2825,6 +2949,8 @@ class Component extends DCLogic {
         wRecommended: 'Recommended', wRecOpen: 'Open it →',
         wRecLine: 'the closest fit to those two answers. Anything else is still one tap away.',
         wRecPending: 'Pick one from each row and we point at a tile.',
+        stName: { coffee: 'Coffee', dessert: 'Dessert', burger: 'Burger', salon: 'Salon', flower: 'Flower', star: 'Star', drive: 'Drive', classic: 'Classic' },
+        stStyleLabel: 'Stamp style — lands on every stamp', stStyleUpload: 'Upload your own',
         wRuns: { stamps: 'Rawi Coffee House runs this', cashback: 'Nara Pharmacy runs this', points: 'Qamar Sweets runs this', discount: 'Wared Flowers runs this', coupon: 'Qamar Sweets launched with this', vip: 'Marmar Lounge runs this', challenge: 'Petra Gym runs this', membership: 'Petra Gym runs this' },
         wWhatItIs: 'What it is', wAtCounter: 'At the counter', wGoodFor: 'Good for', wDesignThis: 'Design this card →',
         wImpactNote: 'Typical numbers from cards like this across Wasla — yours will write their own.',
@@ -3128,6 +3254,8 @@ class Component extends DCLogic {
         wRecommended: 'مقترحة', wRecOpen: 'افتحها ←',
         wRecLine: 'الأقرب لإجابتيك. وما عداها يبقى على بُعد ضغطة.',
         wRecPending: 'اختاري واحدة من كل صف ونشير إلى بطاقة.',
+        stName: { coffee: 'قهوة', dessert: 'حلوى', burger: 'برغر', salon: 'صالون', flower: 'وردة', star: 'نجمة', drive: 'سيارة', classic: 'كلاسيكي' },
+        stStyleLabel: 'شكل الختم — يهبط على كل ختم', stStyleUpload: 'ارفع ختمك',
         wRuns: { stamps: 'بيت راوي يستخدمها', cashback: 'صيدلية نارة تستخدمها', points: 'حلويات قمر تستخدمها', discount: 'ورد تستخدمها', coupon: 'حلويات قمر أطلقت بها', vip: 'مرمر لاونج يستخدمها', challenge: 'نادي البتراء يستخدمها', membership: 'نادي البتراء يستخدمها' },
         wWhatItIs: 'ما هي', wAtCounter: 'عند الكاونتر', wGoodFor: 'مناسبة لـ', wDesignThis: 'صمّم هذه البطاقة ←',
         wImpactNote: 'أرقام معتادة لبطاقات مشابهة عبر وصلة — بطاقتك ستكتب أرقامها.',
@@ -3346,7 +3474,11 @@ class Component extends DCLogic {
     const typeTiles = types.map((ty, i) => ({ ...ty, ...(TILE[ty.id] || TILE.stamps),
       cMid: ((TILE[ty.id] || TILE.stamps).c),
       isStamps: ty.id === 'stamps', isCashback: ty.id === 'cashback', isPoints: ty.id === 'points', isDiscount: ty.id === 'discount', isCoupon: ty.id === 'coupon', isVip: ty.id === 'vip', isChallenge: ty.id === 'challenge', isMembership: ty.id === 'membership',
-      cells: [1, 1, 1, 1, 1, 0, 0, 0].map(f => ({ bg: f ? 'rgba(255,255,255,.94)' : 'transparent', border: f ? 'solid transparent' : 'dashed rgba(255,255,255,.45)', g: f ? '☕' : '' })),
+      /* the gallery tile's mini pass — real stamps, white disc on the card art
+         with the glyph knocked out in the card's own colour */
+      cells: [1, 1, 1, 1, 1, 0, 0, 0].map((f, ci) => this.stampCell({ i: ci, seed: 4, size: 18, filled: !!f,
+        style: 'coffee', disc: 'rgba(255,255,255,.95)', ink: (TILE[ty.id] || TILE.stamps).c,
+        inner: 'rgba(0,0,0,.15)', ring: '#FFFFFF', next: ci === 5 })),
       ladder: [{ x: '20%', bg: '#FFFFFF' }, { x: '50%', bg: '#FFFFFF' }, { x: '96%', bg: 'rgba(255,255,255,.35)' }],
       steps: [1, 1, 1, 0, 0].map(f => ({ bg: f ? 'rgba(255,255,255,.94)' : 'transparent', border: f ? 'solid transparent' : 'dashed rgba(255,255,255,.4)', g: f ? '✓' : '' })),
       isRec: ty.id === recId, tileBr: ty.id === recId ? '#E88024' : '#E7E0D5',
@@ -3395,17 +3527,29 @@ class Component extends DCLogic {
     const appleBannerOn = hasBanner && wtype !== 'membership';
     const xWelcome = !!cfg.xwelcome;
     const stampsShown = Math.min(wiz.goal, 3 + (xWelcome ? 1 : 0));
-    const stampSeed = this.hashHue((cfg.icon || '✓') + '|' + wiz.goal + '|' + (xWelcome ? 'w' : ''));
-    const wStamps = Array.from({ length: wiz.goal }, (_, i) => ({
-      mark: cfg.icon || '✓', dy: i % 2 ? '5px' : '-5px',
-      filter: i < stampsShown ? 'drop-shadow(0 2px 3px rgba(0,0,0,.3))' : 'grayscale(1) opacity(.32)',
-      shadow: appleBannerOn ? '0 1px 4px rgba(0,0,0,.5)' : 'none',
-      anim: 'stampPop .36s cubic-bezier(.22,.61,.36,1) ' + ((stampSeed % 11) + i * 26) + 'ms both'
+    /* the style the wizard is drawing with — cfg.icon holds a style id now,
+       and stampKey() still understands the old emoji values from saved demos */
+    const wStampStyle = this.stampKey(cfg.icon);
+    const stampSeed = this.hashHue(wStampStyle + '|' + wiz.goal + '|' + (xWelcome ? 'w' : ''));
+    /* the Apple strip's stamp grid: white discs on the pass art, the glyph
+       knocked out in the brand colour, each one landing on its own beat */
+    const wStamps = Array.from({ length: wiz.goal }, (_, i) => this.stampCell({
+      i, seed: stampSeed, size: 22, filled: i < stampsShown, style: wStampStyle,
+      disc: 'rgba(255,255,255,.96)', ink: wiz.color, inner: 'rgba(0,0,0,.14)', ring: '#FFFFFF',
+      dy: i % 2 ? 3 : -3, shadow: appleBannerOn, next: i === stampsShown,
+      anim: i < stampsShown ? ('stampPop .42s cubic-bezier(.22,.61,.36,1) ' + ((stampSeed % 11) + i * 30) + 'ms both') : ''
+    }));
+    /* the Google pass shows a tighter, flatter row of the same stamps */
+    const wStampsG = Array.from({ length: Math.min(wiz.goal, 10) }, (_, i) => this.stampCell({
+      i, seed: stampSeed + 3, size: 16, filled: i < stampsShown, style: wStampStyle,
+      disc: 'rgba(255,255,255,.96)', ink: wiz.color, inner: 'rgba(0,0,0,.14)', ring: '#FFFFFF',
+      next: i === stampsShown,
+      anim: i < stampsShown ? ('stampPop .42s cubic-bezier(.22,.61,.36,1) ' + ((stampSeed % 11) + i * 30) + 'ms both') : ''
     }));
     const mkCfgChips = (list, key) => list.map(v => ({ label: v, pick: () => { setCfg({ [key]: v }); this.wnote((t.wNotes || {}).rules, 'edit'); }, br: cfg[key] === v ? '#E88024' : '#E7E0D5', bg: cfg[key] === v ? '#FDF4EC' : '#FFFFFF', fg: cfg[key] === v ? '#C96A14' : '#5D5348' }));
     const tierDots = ['#AEB7C2', '#E8B824', '#6E37A0', '#B87333'];
     const typeRows = {
-      stamps: [['Stamps to a reward', String(wiz.goal)], ['Stamp style', cfg.icon || '✓'], ['The reward', wReward], ['Earning guard', cfg.cap || '']],
+      stamps: [['Stamps to a reward', String(wiz.goal)], ['Stamp style', (t.stName || {})[wStampStyle] || wStampStyle], ['The reward', wReward], ['Earning guard', cfg.cap || '']],
       cashback: [['Cashback rate', cfg.rate + '%'], ['Redeem from', 'JOD ' + cfg.min], ['Balance expires', cfg.bexp || 'Never']],
       points: [['Points per JOD', '×' + cfg.per], ['The ladder', ladder.map(r => r.name + ' (' + r.cost + ')').join(' · ')]],
       discount: [['Standing discount', '−' + cfg.pct + '%'], ...((cfg.fine || '').trim() ? [['Fine print', cfg.fine]] : [])],
@@ -3442,9 +3586,14 @@ class Component extends DCLogic {
     if (wtype === 'stamps') {
       const cyc = wiz.goal + 3, got = Math.min(dT % cyc, wiz.goal);
       dmHeadValue = got + ' / ' + wiz.goal;
-      dmStamps = Array.from({ length: wiz.goal }, (_, i) => ({ mark: cfg.icon || '✓', dy: i % 2 ? '5px' : '-5px',
-        filter: i < got ? 'drop-shadow(0 2px 3px rgba(0,0,0,.3))' : 'grayscale(1) opacity(.28)',
-        anim: i === got - 1 ? reAnim('demoLand', '.5s', dT * 3 + 1) : 'none' }));
+      /* the live demo beats once a second — a CSS animation only replays when
+         its NAME changes, so the landing stamp alternates stampPop/stampPopB */
+      const landKf = (dT % 2) ? 'stampPopB' : 'stampPop';
+      dmStamps = Array.from({ length: wiz.goal }, (_, i) => this.stampCell({
+        i, seed: 11, size: 20, filled: i < got, style: wStampStyle,
+        disc: 'rgba(255,255,255,.96)', ink: wiz.color, inner: 'rgba(0,0,0,.14)', ring: '#FFFFFF',
+        dy: i % 2 ? 3 : -3, next: i === got,
+        anim: i === got - 1 ? (landKf + ' .5s cubic-bezier(.22,.61,.36,1) both') : '' }));
       dmSub = got >= wiz.goal ? t.wDemoReady : fill(t.wDemoToGo, { n: wiz.goal - got });
     } else if (wtype === 'cashback') {
       dmHeadValue = 'JOD ' + money(3.20 + (dT % 9) * 0.35);
@@ -3572,11 +3721,27 @@ class Component extends DCLogic {
     const stag = (nm, dur, i, seed, stepMs) => nm + ' ' + dur + ' cubic-bezier(.22,.61,.36,1) ' + ((Math.abs(seed) % 11) + i * (stepMs || 34)) + 'ms both';
     /* the members-directory progress renderer, shared with the card's own member list */
     const maxBal = members.reduce((n, m) => { const b = String(m.progress || '').match(/JOD\s*([\d.]+)/); return b ? Math.max(n, parseFloat(b[1]) || 0) : n; }, 0) || 1;
-    const progCell = (m) => {
+    /* progress cells are real stamps now: MINI (no glyph) in the two list
+       views, FULL (with the card's glyph) in the member panel. `opt.dark`
+       flips the ring/inner-shadow for the charcoal panel. */
+    const cardByName = (nm) => allCards.find(c => c.name === nm) || {};
+    const progCell = (m, o) => {
+      const q = o || {};
       const p = String(m.progress || ''), f = p.match(/(\d+)\s*\/\s*(\d+)/);
       if (f) { const got = +f[1], goal = +f[2], shown = Math.min(goal, 12), full = got >= goal;
+        const cd = cardByName(m.card);
+        const disc = full ? '#2FAE66' : (cd.color || '#E88024');
         return { hasDots: true, hasBar: false, showText: false, progressText: p, barW: '0%', barLabel: '',
-          dots: Array.from({ length: shown }, (_, i) => ({ bg: i < got ? (full ? '#2FAE66' : '#E88024') : 'transparent', br: i < got ? 'transparent' : '#D8D0C2' })),
+          dots: Array.from({ length: shown }, (_, i) => this.stampCell({
+            i, seed: String(m.name || '').length * 3 + goal, size: q.size || 11,
+            filled: i < got, glyph: !!q.glyph, style: this.cardStampStyle(cd),
+            disc, ink: '#FFFFFF',
+            inner: q.dark ? 'rgba(0,0,0,.3)' : 'rgba(0,0,0,.17)',
+            ring: q.dark ? '#F4F2EE' : '#93887A',
+            outer: q.dark ? '0 0 0 1px rgba(244,242,238,.16)' : '',
+            /* the next-up pulse only belongs on a FULL cell — fifteen pulsing
+               dots down a directory would be noise, not a cue */
+            next: !full && i === got && (q.size || 11) >= 16 })),
           dotsLabel: got + ' / ' + goal }; }
       const b = p.match(/JOD\s*([\d.]+)/);
       if (b) { const v = parseFloat(b[1]) || 0;
@@ -3607,7 +3772,7 @@ class Component extends DCLogic {
       { v: md.joined || '', k: t.mdSinceWord },
       ...(md.birthday ? [{ v: '🎂 ' + md.birthday, k: t.birthday }] : [])
     ].map((c, i) => ({ ...c, anim: stag('popIn', '.4s', i, mdSeed, 55) })) : [];
-    const mdProg = md ? progCell(md) : progCell({});
+    const mdProg = md ? progCell(md, { size: 18, glyph: true, dark: true }) : progCell({}, { size: 18, glyph: true, dark: true });
     const EX = (this.db().cardExtras || {})[ac.id];
     const fn = (EX || {}).funnel || {};
     // (a) funnel — staggered grow-in bars, count-ups, conversion captions between stages
@@ -4185,8 +4350,20 @@ class Component extends DCLogic {
       ovSelBar: ovBar(250, MOB ? '86px' : '24px', 'display:flex;align-items:center;gap:14px;background:#26262B;color:#F4F2EE;border-radius:999px;padding:11px 14px 11px 22px;box-shadow:0 18px 44px rgba(20,16,10,.38);animation:selBarUp .32s cubic-bezier(.22,.61,.36,1) both;'),
       ovToast: ovBar(310, MOB ? '82px' : '26px', 'background:#26262B;color:#F4F2EE;font-size:13px;font-weight:600;border-radius:999px;padding:12px 24px;box-shadow:0 14px 34px rgba(0,0,0,.3);animation:popIn .3s cubic-bezier(.22,.61,.36,1) both;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'),
       contentStyle: MOB ? 'flex:1;overflow-y:auto;min-height:0;' : 'flex:1;',
-      padScreen: MOB ? '20px 16px 40px' : '30px 32px 48px', h1Size: MOB ? '25px' : '32px',
-      homeGrid: MOB ? '1fr' : 'minmax(0,1fr) 320px', galleryGrid: MOB ? '1fr' : 'repeat(auto-fit,minmax(235px,1fr))', cardGrid: MOB ? '1fr' : 'minmax(0,1fr) 340px',
+      padScreen: MOB ? '20px 16px 40px' : '30px 36px 52px', h1Size: MOB ? '25px' : '32px',
+      /* ── desktop measure ──────────────────────────────────────────────────
+         Every screen root is fluid: it fills the viewport minus the fixed
+         236px sidebar, keeps generous 36px gutters, and only stops growing at
+         a very large cap so ultrawide monitors don't produce absurd line
+         lengths. Sections that are pure reading (settings, the activity log,
+         the broadcast composer) sit on a narrower measure inside that column.
+         In mobile preview every cap is 100% — the phone shell is the frame. */
+      screenMax: MOB ? '100%' : '1680px',
+      wizMax: MOB ? '100%' : '1480px',
+      tabMax: MOB ? '100%' : '1320px',
+      readMax: MOB ? '100%' : '1180px',
+      homeGrid: MOB ? '1fr' : 'minmax(0,1fr) minmax(300px,380px)', galleryGrid: MOB ? '1fr' : 'repeat(auto-fit,minmax(235px,1fr))', cardGrid: MOB ? '1fr' : 'minmax(0,1fr) minmax(320px,400px)',
+      actGrid: MOB ? '1fr' : 'repeat(auto-fit,minmax(430px,1fr))',
       mobileTitle: crumbs[st.screen] ? crumbs[st.screen].replace(/^.*\/ /, '') : 'Wasla',
       crumbRoot, crumbTail, hasCrumbTail: !!crumbTail,
       avatarOpen: st.avatarOpen, avatarRing: st.avatarOpen ? '#E88024' : 'transparent',
@@ -4290,7 +4467,16 @@ class Component extends DCLogic {
       wPrimaryLabel: model.hero[0], wPrimaryValue: model.hero[1], wPrimarySize: model.hero[2], wReward,
       wGTypeLabel: selType.name || '', wGTitle: model.g,
       isCashbackType: wtype === 'cashback', isPointsType: wtype === 'points', isDiscountType: wtype === 'discount', isCouponType: wtype === 'coupon', isVipType: wtype === 'vip', isChallengeType: wtype === 'challenge', isMembershipType: wtype === 'membership',
-      stampIcons: ['✓', '☕', '🍰', '🍔', '✂️', '🌸', '★', '🚗'].map(icon => ({ icon, ring: (cfg.icon || '✓') === icon ? '#E88024' : 'transparent', pick: () => { setCfg({ icon }); this.wnote((t.wNotes || {}).stamp, 'stamp'); } })),
+      wStampsG,
+      /* the picker: each glyph large in a disc tinted with the brand colour,
+         its bilingual name beneath, the chosen one filled solid + ringed */
+      stampStyles: Object.keys(this.stampGlyphs()).map(id => { const on = wStampStyle === id;
+        return { id, name: (t.stName || {})[id] || id, fg: on ? '#C96A14' : '#93887A', fw: on ? 800 : 600,
+          cell: this.stampCell({ flat: true, size: 42, filled: true, style: id,
+            disc: on ? wiz.color : this.hexA(wiz.color, .13), ink: on ? '#FFFFFF' : wiz.color,
+            inner: on ? 'rgba(0,0,0,.2)' : this.hexA(wiz.color, .2),
+            outer: on ? '0 0 0 3px rgba(232,128,36,.95)' : '' }),
+          pick: () => { setCfg({ icon: id }); this.wnote((t.wNotes || {}).stamp, 'stamp'); } }; }),
       uploadStampToast: () => this.say('Custom stamp art: drop a PNG here in production — it rides every stamp'),
       stampCapChips: mkCfgChips(['1 / visit', '2 / day', 'No limit'], 'cap'),
       cbRate: cfg.rate, cbRateUp: () => setCfg({ rate: Math.min(15, (cfg.rate || 5) + 1) }), cbRateDown: () => setCfg({ rate: Math.max(1, (cfg.rate || 5) - 1) }),
@@ -4452,7 +4638,7 @@ class Component extends DCLogic {
       stfFilterAnim: reAnim('popIn', '.4s', (stfBranch || 'x').length * 7 + 3),
       clearBranchFilter: () => this.setState({ staffBranch: '', staffView: 'staff' }),
       staffRows, staffEmpty: staffRows.length === 0,
-      staffGrid: MOB ? '1fr' : (staffPanelOpen ? 'minmax(0,1fr) 340px' : 'minmax(0,1fr)'),
+      staffGrid: MOB ? '1fr' : (staffPanelOpen ? 'minmax(0,1fr) minmax(320px,400px)' : 'minmax(0,1fr)'),
       hasStaffDetail: !!sd, sd: sd || {}, sdCardCount: sdCards.length, staffCardOpts,
       sdWeek, sdWeekRead, sdRecent, sdHasScans: !!sd && sdRecent.length > 0, sdNoScans: !!sd && sdRecent.length === 0,
       sdNoScansLine: sdIsNew ? t.stfNewInvite : t.stfNoScans,
@@ -4469,7 +4655,7 @@ class Component extends DCLogic {
       planName, planMeters, planTiers, planRenewLine,
       planChipDot: renewDays <= 7 ? '#E2563A' : renewDays <= 21 ? '#E88024' : '#2FAE66',
       planChipAnim: AN('popIn', '.45s', '.18s'),
-      langGrid: MOB ? '1fr' : 'minmax(0,1fr) minmax(0,300px)',
+      langGrid: MOB ? '1fr' : 'minmax(0,1fr) minmax(280px,380px)',
       langMock, langBarW: Math.round(lmGot / Math.max(lmGoal, 1) * 100) + '%',
       langMockAnim: reAnim('popIn', '.44s', langSeed),
       langBarAnim: reAnim('barGrow', '.62s', langSeed + 4),

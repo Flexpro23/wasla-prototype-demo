@@ -43,7 +43,7 @@ window.WASLA_DB = {
   },
   cards: [
     { id:"daraj", name:"Daraj Coffee", ar:"قهوة الدرج", type:"stamps", state:"live",
-      color:"#1E5C43", color2:"#154232", initial:"D",
+      color:"#1E5C43", color2:"#154232", initial:"D", stampStyle:"coffee",
       tagline:"Buy 7, the 8th is on us", taglineAr:"اشترِ ٧ والثامن علينا",
       members:1841, passes:1702, weekActivity:[38,52,44,61,58,72,66],
       stat1:{label:"Stamps today",v:"146"}, stat2:{label:"Rewards ready",v:"23"},
