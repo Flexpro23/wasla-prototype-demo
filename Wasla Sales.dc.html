@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<script src="wasla-data.js"></script>
+<style>
+  html,body{margin:0;padding:0;background:#F2EFEA;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#2C2C2C;}
+  a{color:#C96A14;text-decoration:none;} a:hover{color:#E88024;}
+  *{box-sizing:border-box;}
+  input,textarea{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#2C2C2C;}
+  input:focus,textarea:focus{outline:none;border-color:#E88024 !important;box-shadow:0 0 0 3px rgba(232,128,36,.12);}
+
+  /* ── entrances ── */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  @keyframes popIn{0%{opacity:0;transform:scale(.86);}62%{transform:scale(1.035);}100%{opacity:1;transform:scale(1);}}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:none;}}
+  @keyframes growW{from{width:0;}to{width:var(--gw);}}
+  @keyframes barRise{from{transform:scaleY(0);}to{transform:scaleY(1);}}
+  @keyframes lineGrow{from{transform:scaleY(0);}to{transform:scaleY(1);}}
+  @keyframes checkPop{0%{transform:scale(.5);}64%{transform:scale(1.16);}100%{transform:scale(1);}}
+
+  /* ── seeded pairs · a CSS animation only restarts when its NAME changes, so every beat that has
+        to replay on demand alternates between two IDENTICAL keyframes off a counter. The scene
+        transition reads its direction off --sx, so one pair covers forward and back. ── */
+  @keyframes sceneIn1{from{opacity:0;transform:translateX(var(--sx,26px));}to{opacity:1;transform:none;}}
+  @keyframes sceneIn2{from{opacity:0;transform:translateX(var(--sx,26px));}to{opacity:1;transform:none;}}
+  @keyframes rowInA{0%{opacity:0;transform:translateY(-10px) scale(.97);}66%{transform:translateY(2px) scale(1.012);}100%{opacity:1;transform:none;}}
+  @keyframes rowInB{0%{opacity:0;transform:translateY(-10px) scale(.97);}66%{transform:translateY(2px) scale(1.012);}100%{opacity:1;transform:none;}}
+  @keyframes msgPulseA{0%{transform:scale(.985);}56%{transform:scale(1.015);}100%{transform:scale(1);}}
+  @keyframes msgPulseB{0%{transform:scale(.985);}56%{transform:scale(1.015);}100%{transform:scale(1);}}
+  @keyframes stepPopA{0%{opacity:0;transform:translateY(9px);}100%{opacity:1;transform:none;}}
+  @keyframes stepPopB{0%{opacity:0;transform:translateY(9px);}100%{opacity:1;transform:none;}}
+
+  /* the rings read their own start/end off --rf / --rt, so one keyframe serves every ring */
+  @keyframes ringDraw{from{stroke-dashoffset:var(--rf);}to{stroke-dashoffset:var(--rt);}}
+
+  /* ── deliberate loops · the only motion that never stops ── */
+  @keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.32;}}
+  @keyframes waitPulse{0%,100%{opacity:.9;transform:scale(1);}50%{opacity:.42;transform:scale(.86);}}
+  @keyframes nodeGlow{0%{box-shadow:0 0 0 0 rgba(47,174,102,.5);}70%{box-shadow:0 0 0 9px rgba(47,174,102,0);}100%{box-shadow:0 0 0 0 rgba(47,174,102,0);}}
+  @keyframes toastIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+  /* ── the hover / press kit · style-hover works in this runtime but :active and :focus need real
+        classes anyway, so every interactive surface on this page is a class. Everything is styled
+        inline, so any property the kit must win back from an inline declaration (or from a filled
+        entrance animation) carries !important. Tuned for a LIGHT app — the phone chrome is dark,
+        the software is not. ── */
+  .ws-cta{transition:transform .2s cubic-bezier(.22,.61,.36,1),filter .2s,box-shadow .22s,background .22s,color .22s;}
+  .ws-cta:hover{transform:translateY(-2px) !important;filter:brightness(1.05);box-shadow:0 12px 24px rgba(232,128,36,.26);}
+  .ws-cta:active{transform:translateY(0) scale(.98) !important;filter:brightness(.96);}
+  .ws-row{transition:transform .18s cubic-bezier(.22,.61,.36,1),border-color .2s,box-shadow .2s,background .2s;}
+  .ws-row:hover{border-color:#E0B489 !important;box-shadow:0 8px 20px rgba(40,30,18,.09);background:#FFFDFA !important;}
+  .ws-row:active{transform:scale(.988) !important;}
+  .ws-chip{transition:border-color .2s,background .2s,color .2s,transform .15s cubic-bezier(.22,.61,.36,1);}
+  .ws-chip:hover{border-color:#E88024 !important;color:#C96A14 !important;}
+  .ws-chip:active{transform:scale(.94) !important;}
+  .ws-press{transition:transform .16s cubic-bezier(.22,.61,.36,1),background .2s,border-color .2s,color .2s;}
+  .ws-press:hover{border-color:#E88024 !important;}
+  .ws-press:active{transform:scale(.96) !important;}
+  .ws-tab{transition:color .22s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .ws-tab:hover{color:#C96A14 !important;}
+  .ws-tab:active{transform:scale(.94) !important;}
+  .ws-tile{transition:transform .2s cubic-bezier(.22,.61,.36,1),box-shadow .2s,border-color .2s,background .2s;}
+  .ws-tile:hover{transform:translateY(-2px) !important;border-color:#E88024 !important;box-shadow:0 10px 22px rgba(40,30,18,.11);}
+  .ws-tile:active{transform:translateY(0) scale(.99) !important;}
+  .ws-ghost{transition:color .2s,border-color .2s,background .2s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .ws-ghost:hover{color:#C96A14 !important;border-color:#E88024 !important;background:#FDF4EC !important;}
+  .ws-ghost:active{transform:scale(.96) !important;}
+  .ws-back{transition:background .18s,color .18s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .ws-back:hover{background:#F0EAE0 !important;color:#2C2C2C !important;}
+  .ws-back:active{transform:scale(.9) !important;}
+  .ws-link{transition:color .18s,border-color .18s,background .18s;}
+  .ws-link:hover{color:#E2563A !important;border-color:rgba(226,86,58,.55) !important;background:rgba(226,86,58,.06) !important;}
+  .ws-step{transition:transform .16s cubic-bezier(.22,.61,.36,1),background .2s,color .2s,border-color .2s;}
+  .ws-step:active{transform:scale(.97) !important;}
+  /* the disabled register — declared last so it wins the specificity tie against every rule above */
+  .ws-off,.ws-off:hover,.ws-off:active{transform:none !important;filter:none !important;box-shadow:none !important;background:inherit;}
+
+  /* ── reduced motion · every entrance here is fill-mode "both" and ends on its resting, VISIBLE
+        frame, so collapsing the duration lands the UI exactly where it would have settled. The
+        decorative infinite cues (pulseDot, waitPulse, nodeGlow) fall back to each element's own
+        static opacity / box-shadow once they stop looping, so nothing they gate disappears. ── */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001ms !important;animation-delay:0ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;transition-delay:0ms !important;scroll-behavior:auto !important;}
+  }
+</style>
+</helmet>
+<div dir="ltr" style="min-height:100vh;background:radial-gradient(1200px 600px at 0% 0%, rgba(232,128,36,.07), transparent 60%), radial-gradient(1000px 500px at 100% 0%, rgba(40,38,34,.06), transparent 55%), #F2EFEA;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:34px;padding:34px 22px 60px;">
+
+  <!-- ══════════════════════ THE PHONE ══════════════════════ -->
+  <div style="width:402px;max-width:96vw;height:830px;border-radius:48px;border:11px solid #1B1B1F;box-shadow:0 34px 80px rgba(20,16,10,.38);overflow:hidden;background:#F2EFEA;display:flex;flex-direction:column;position:relative;color:#2C2C2C;font-family:'Plus Jakarta Sans','IBM Plex Sans Arabic',system-ui,sans-serif;">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 26px 6px;flex-shrink:0;color:#2C2C2C;">
+      <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:13.5px;">9:41</div>
+      <div style="display:flex;align-items:center;gap:5px;">
+        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;"></span>
+        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;"></span>
+        <span style="width:20px;height:10px;border-radius:3px;border:1.5px solid currentColor;"></span>
+      </div>
+    </div>
+
+    <!-- app bar -->
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 16px 10px;flex-shrink:0;border-bottom:1px solid #E7E0D5;background:#FFFFFF;">
+      <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ goBack }}" class="ws-back" style="cursor:pointer;width:30px;height:30px;border-radius:50%;background:#F5F1E9;color:#6E6960;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex-shrink:0;line-height:1;">‹</div>
+      </sc-if>
+      <div style="min-width:0;flex:1;">
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:16px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ barTitle }}</div>
+        <div style="font-size:10.5px;color:#6E6960;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ barSub }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;flex-shrink:0;">
+        <div style="width:28px;height:28px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;">{{ meInitials }}</div>
+      </div>
+    </div>
+
+    <!-- ── the scrolling app ── -->
+    <div style="flex:1;overflow-y:auto;min-height:0;position:relative;">
+
+      <!-- ═══ TODAY ═══ -->
+      <sc-if value="{{ isToday }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:16px 16px 22px;display:flex;flex-direction:column;gap:14px;animation:{{ enterAnim }};">
+
+          <div>
+            <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:22px;line-height:1.2;">{{ greetLine }}</div>
+            <div style="font-size:11.5px;color:#6E6960;margin-top:4px;">{{ todayLine }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;">{{ greetAr }}</span></div>
+          </div>
+
+          <!-- quota ring -->
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:20px;padding:16px;display:flex;align-items:center;gap:16px;animation:{{ qCardAnim }};">
+            <div style="position:relative;width:92px;height:92px;flex-shrink:0;">
+              <svg viewBox="0 0 92 92" style="width:92px;height:92px;display:block;transform:rotate(-90deg);">
+                <circle cx="46" cy="46" r="39" style="fill:none;stroke:#EFE8DC;stroke-width:8;"></circle>
+                <circle cx="46" cy="46" r="39" style="fill:none;stroke:{{ qColor }};stroke-width:8;stroke-linecap:round;--rf:{{ qFull }};--rt:{{ qTo }};stroke-dasharray:{{ qFull }};stroke-dashoffset:{{ qTo }};animation:{{ qRingAnim }};transition:stroke .4s;"></circle>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:22px;line-height:1;color:{{ qColor }};font-variant-numeric:tabular-nums;">{{ qLabel }}</div>
+                <div style="font-size:7px;letter-spacing:.1em;color:#A79C8D;font-weight:800;margin-top:3px;">THIS MONTH</div>
+              </div>
+            </div>
+            <div style="min-width:0;flex:1;">
+              <div style="font-size:11px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;">Activations</div>
+              <div style="font-size:13px;font-weight:800;margin-top:5px;line-height:1.35;color:{{ qColor }};">{{ qHead }}</div>
+              <div style="font-size:11px;color:#6E6960;margin-top:6px;line-height:1.5;">{{ qNote }}</div>
+            </div>
+          </div>
+
+          <!-- three tiles -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+            <sc-for list="{{ todayTiles }}" as="tt" hint-placeholder-count="3">
+              <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:11px 9px;text-align:center;animation:{{ tt.anim }};">
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:17px;line-height:1.05;font-variant-numeric:tabular-nums;color:{{ tt.fg }};">{{ tt.value }}</div>
+                <div style="font-size:9px;font-weight:800;letter-spacing:.05em;color:#6E6960;text-transform:uppercase;margin-top:5px;line-height:1.3;">{{ tt.label }}</div>
+                <div style="font-size:9px;color:#A79C8D;margin-top:4px;line-height:1.35;">{{ tt.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- needs you today -->
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:20px;padding:15px 14px;animation:{{ needsCardAnim }};">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;">
+              <span style="font-size:11px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;">Needs you today</span>
+              <span style="margin-inline-start:auto;background:{{ needsBadgeBg }};color:{{ needsBadgeFg }};font-size:10px;font-weight:800;border-radius:999px;padding:2px 9px;font-variant-numeric:tabular-nums;">{{ needsCount }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <sc-for list="{{ needsRows }}" as="nr" hint-placeholder-count="3">
+                <div onClick="{{ nr.go }}" class="ws-row" style="cursor:pointer;display:flex;align-items:center;gap:10px;background:{{ nr.bg }};border:1.5px solid {{ nr.br }};border-radius:14px;padding:10px 12px;animation:{{ nr.anim }};">
+                  <span style="width:9px;height:9px;border-radius:50%;background:{{ nr.dot }};flex-shrink:0;animation:{{ nr.dotAnim }};"></span>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ nr.name }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#A79C8D;font-size:11px;">{{ nr.ar }}</span></div>
+                    <div style="font-size:10.5px;color:{{ nr.whyFg }};font-weight:700;margin-top:2px;">{{ nr.why }}</div>
+                  </div>
+                  <span style="background:{{ nr.byBg }};color:{{ nr.byFg }};font-size:9px;font-weight:800;border-radius:999px;padding:3px 8px;white-space:nowrap;flex-shrink:0;">{{ nr.by }}</span>
+                  <span style="color:#C9BFAF;font-size:15px;flex-shrink:0;line-height:1;">›</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ needsEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="border:1.5px dashed #E5DDD0;border-radius:14px;padding:20px 12px;text-align:center;font-size:11.5px;color:#A79C8D;line-height:1.5;">{{ needsEmptyLine }}</div>
+              </sc-if>
+            </div>
+            <div style="font-size:10px;color:#A79C8D;line-height:1.5;margin-top:11px;">{{ needsFoot }}</div>
+          </div>
+
+          <!-- quick actions -->
+          <div style="display:flex;gap:10px;">
+            <div onClick="{{ goAdd }}" class="ws-cta" style="cursor:pointer;flex:1;background:#E88024;color:#FFFFFF;border-radius:18px;padding:16px 12px;text-align:center;animation:{{ qa1Anim }};">
+              <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:15px;">+ Add a lead</div>
+              <div style="font-size:10px;opacity:.9;margin-top:3px;">Capture it before you leave</div>
+            </div>
+            <div onClick="{{ goInviteBlank }}" class="ws-cta" style="cursor:pointer;flex:1;background:#2C2C2C;color:#FFFFFF;border-radius:18px;padding:16px 12px;text-align:center;animation:{{ qa2Anim }};">
+              <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:15px;">Invite a client</div>
+              <div style="font-size:10px;opacity:.85;margin-top:3px;">One WhatsApp, one minute</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ═══ PIPELINE ═══ -->
+      <sc-if value="{{ isPipe }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;animation:{{ enterAnim }};">
+          <div style="position:sticky;top:0;z-index:8;background:#F2EFEA;padding:12px 0 10px;border-bottom:1px solid #EDE6DA;">
+            <div style="display:flex;gap:6px;overflow-x:auto;padding:0 14px 2px;">
+              <sc-for list="{{ stageChips }}" as="sg" hint-placeholder-count="6">
+                <div onClick="{{ sg.go }}" class="ws-chip" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;background:{{ sg.bg }};border:1.5px solid {{ sg.br }};color:{{ sg.fg }};border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;white-space:nowrap;flex-shrink:0;animation:{{ sg.anim }};">
+                  <span style="width:7px;height:7px;border-radius:50%;background:{{ sg.dot }};flex-shrink:0;"></span>{{ sg.label }}
+                  <span style="background:{{ sg.nBg }};color:{{ sg.nFg }};border-radius:999px;padding:1px 6px;font-size:9.5px;font-variant-numeric:tabular-nums;">{{ sg.n }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:10.5px;color:#6E6960;padding:9px 16px 0;line-height:1.45;">{{ pipeHead }}</div>
+          </div>
+
+          <div style="padding:12px 14px 22px;display:flex;flex-direction:column;gap:9px;">
+            <sc-for list="{{ pipeRows }}" as="pr" hint-placeholder-count="5">
+              <div onClick="{{ pr.open }}" class="ws-row" style="cursor:pointer;background:#FFFFFF;border:1.5px solid {{ pr.br }};border-radius:16px;padding:12px 13px;opacity:{{ pr.op }};animation:{{ pr.anim }};">
+                <div style="display:flex;align-items:flex-start;gap:8px;">
+                  <span style="width:9px;height:9px;border-radius:50%;background:{{ pr.dot }};flex-shrink:0;margin-top:4px;"></span>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:13.5px;font-weight:800;line-height:1.25;">{{ pr.name }}</div>
+                    <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#A79C8D;margin-top:1px;">{{ pr.ar }}</div>
+                  </div>
+                  <span style="background:{{ pr.byBg }};color:{{ pr.byFg }};font-size:9px;font-weight:800;border-radius:999px;padding:3px 8px;white-space:nowrap;flex-shrink:0;">{{ pr.by }}</span>
+                </div>
+                <div style="font-size:11px;color:#5D5348;margin-top:7px;">{{ pr.owner }}</div>
+                <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;">
+                  <span style="background:{{ pr.stBg }};color:{{ pr.stFg }};font-size:9.5px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ pr.stage }}</span>
+                  <sc-for list="{{ pr.areas }}" as="ar" hint-placeholder-count="1">
+                    <span style="background:#F4F0E8;color:#7A7166;font-size:9.5px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ ar.label }}</span>
+                  </sc-for>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid #F5F0E8;">
+                  <span style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap;">{{ pr.value }}</span>
+                  <span style="font-size:9.5px;color:{{ pr.ageFg }};font-weight:{{ pr.ageFw }};flex:1;min-width:0;">{{ pr.age }}</span>
+                  <sc-if value="{{ pr.hasAct }}" hint-placeholder-val="{{ true }}">
+                    <div onClick="{{ pr.act }}" title="{{ pr.actTip }}" class="ws-press" style="cursor:pointer;border:1.5px solid {{ pr.actBr }};background:{{ pr.actBg }};color:{{ pr.actFg }};font-size:{{ pr.actFs }};font-weight:900;border-radius:999px;padding:5px 11px;flex-shrink:0;white-space:nowrap;">{{ pr.actLabel }}</div>
+                  </sc-if>
+                </div>
+                <sc-if value="{{ pr.converted }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:8px;background:#FDF1DC;color:#9A6B12;border:1px solid #F6DDB0;font-size:8.5px;font-weight:800;border-radius:999px;padding:3px 9px;text-align:center;letter-spacing:.05em;">{{ pr.convLabel }}</div>
+                </sc-if>
+              </div>
+            </sc-for>
+            <sc-if value="{{ pipeEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1.5px dashed #E5DDD0;border-radius:16px;padding:30px 16px;text-align:center;font-size:12px;color:#A79C8D;line-height:1.6;">{{ pipeEmptyLine }}</div>
+            </sc-if>
+            <div style="font-size:10px;color:#A79C8D;line-height:1.55;padding:4px 2px;">{{ pipeFoot }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ═══ LEAD DETAIL ═══ -->
+      <sc-if value="{{ isLead }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:14px 14px 24px;display:flex;flex-direction:column;gap:12px;animation:{{ enterAnim }};">
+
+          <div style="background:#FFFFFF;border:1.5px solid #E88024;border-radius:20px;padding:15px 15px 14px;animation:{{ ldHeadAnim }};">
+            <div style="display:flex;align-items:flex-start;gap:9px;">
+              <div style="min-width:0;flex:1;">
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;line-height:1.2;">{{ ldName }}</div>
+                <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;color:#A79C8D;margin-top:2px;">{{ ldAr }}</div>
+              </div>
+              <span style="background:{{ ldStBg }};color:{{ ldStFg }};font-size:10px;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap;flex-shrink:0;">{{ ldStage }}</span>
+            </div>
+            <div style="font-size:11px;color:#5D5348;margin-top:8px;line-height:1.55;">{{ ldSubLine }}</div>
+            <sc-if value="{{ ldIsConverted }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:10px;background:#FDF1DC;color:#9A6B12;border:1px solid #F6DDB0;font-size:9.5px;font-weight:800;border-radius:999px;padding:4px 10px;text-align:center;letter-spacing:.04em;">{{ ldConvChip }}</div>
+            </sc-if>
+          </div>
+
+          <!-- stage chips · forward only -->
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:14px;animation:{{ ldStagesAnim }};">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;margin-bottom:10px;">Stage</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <sc-for list="{{ ldStages }}" as="sc" hint-placeholder-count="5">
+                <div onClick="{{ sc.pick }}" class="{{ sc.cls }}" style="cursor:{{ sc.cursor }};border:1.5px solid {{ sc.br }};background:{{ sc.bg }};color:{{ sc.fg }};opacity:{{ sc.op }};border-radius:999px;padding:7px 12px;font-size:10.5px;font-weight:800;white-space:nowrap;">{{ sc.label }}</div>
+              </sc-for>
+            </div>
+            <div style="font-size:10.5px;color:#6E6960;margin-top:10px;line-height:1.5;">{{ ldStageNote }}</div>
+          </div>
+
+          <!-- captured fields -->
+          <sc-for list="{{ ldGroups }}" as="gp" hint-placeholder-count="3">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:14px;animation:{{ gp.anim }};">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;margin-bottom:9px;">{{ gp.title }}</div>
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <sc-for list="{{ gp.rows }}" as="gr" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:baseline;gap:10px;">
+                    <span style="font-size:11px;color:#A79C8D;width:96px;flex-shrink:0;">{{ gr.k }}</span>
+                    <span style="font-size:11.5px;font-weight:700;flex:1;min-width:0;line-height:1.45;">{{ gr.v }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+
+          <!-- trail -->
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:14px;animation:{{ ldTrailAnim }};">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;margin-bottom:11px;">Activity</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <sc-for list="{{ ldTrail }}" as="tr" hint-placeholder-count="3">
+                <div style="display:flex;gap:9px;align-items:flex-start;animation:{{ tr.anim }};">
+                  <span style="width:8px;height:8px;border-radius:50%;background:{{ tr.dot }};flex-shrink:0;margin-top:4px;"></span>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:11.5px;line-height:1.5;">{{ tr.line }}</div>
+                    <div style="font-size:9.5px;color:#A79C8D;margin-top:2px;">{{ tr.t }}</div>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ ldTrailEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:11px;color:#A79C8D;line-height:1.5;">Nothing on the trail yet — the first ping, note or stage move starts it.</div>
+              </sc-if>
+            </div>
+          </div>
+
+          <!-- note -->
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:14px;animation:{{ ldNoteAnim }};">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;margin-bottom:9px;">The note</div>
+            <textarea value="{{ ldNote }}" onChange="{{ setLdNote }}" placeholder="What actually happens next — and when." rows="3" style="width:100%;border:1px solid #D8D0C2;border-radius:12px;padding:10px 12px;font-size:12px;resize:none;background:#FFFFFF;line-height:1.5;"></textarea>
+            <div onClick="{{ ldNoteSave }}" class="{{ ldNoteCls }}" style="cursor:{{ ldNoteCur }};background:{{ ldNoteBg }};color:{{ ldNoteFg }};font-size:12px;font-weight:800;border-radius:12px;padding:11px 0;text-align:center;margin-top:9px;">{{ ldNoteLabel }}</div>
+          </div>
+
+          <!-- follow-up -->
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:14px;animation:{{ ldFollowAnim }};">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;margin-bottom:10px;">Schedule a follow-up</div>
+            <div style="display:flex;gap:7px;">
+              <sc-for list="{{ ldFollowChips }}" as="fc" hint-placeholder-count="3">
+                <div onClick="{{ fc.pick }}" class="ws-chip" style="cursor:pointer;flex:1;text-align:center;border:1.5px solid {{ fc.br }};background:{{ fc.bg }};color:{{ fc.fg }};border-radius:12px;padding:10px 4px;font-size:11.5px;font-weight:800;">{{ fc.label }}</div>
+              </sc-for>
+            </div>
+            <div style="font-size:10.5px;color:#6E6960;margin-top:10px;line-height:1.5;">{{ ldFollowNote }}</div>
+          </div>
+
+          <!-- actions -->
+          <div style="display:flex;flex-direction:column;gap:8px;animation:{{ ldActionsAnim }};">
+            <div onClick="{{ ldPing }}" class="ws-cta" style="cursor:pointer;background:#2FAE66;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:15px;padding:14px 0;text-align:center;">Ping on WhatsApp</div>
+            <sc-if value="{{ ldCanConvert }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ ldConvert }}" class="ws-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:15px;padding:14px 0;text-align:center;">Convert — send the invite →</div>
+            </sc-if>
+            <div onClick="{{ ldEscalate }}" class="ws-ghost" style="cursor:pointer;border:1.5px solid {{ ldEscBr }};color:{{ ldEscFg }};background:#FFFFFF;font-weight:800;font-size:13px;border-radius:15px;padding:13px 0;text-align:center;">{{ ldEscLabel }}</div>
+            <div style="font-size:10px;color:#A79C8D;line-height:1.55;padding:2px 2px 0;">{{ ldFootNote }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ═══ ADD A LEAD ═══ -->
+      <sc-if value="{{ isAdd }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;animation:{{ enterAnim }};">
+
+          <div style="position:sticky;top:0;z-index:8;background:#F2EFEA;padding:13px 16px 11px;border-bottom:1px solid #EDE6DA;">
+            <div style="display:flex;align-items:center;gap:0;">
+              <sc-for list="{{ addSteps }}" as="as" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;flex:{{ as.flex }};min-width:0;">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;">
+                    <div style="width:24px;height:24px;border-radius:50%;background:{{ as.bg }};color:{{ as.fg }};border:1.5px solid {{ as.br }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;transition:background .3s,color .3s,border-color .3s;">{{ as.mark }}</div>
+                    <div style="font-size:8.5px;font-weight:800;color:{{ as.labFg }};white-space:nowrap;transition:color .3s;">{{ as.label }}</div>
+                  </div>
+                  <sc-if value="{{ as.hasLine }}" hint-placeholder-val="{{ true }}">
+                    <div style="flex:1;height:2px;background:#E7E0D5;margin:0 6px;position:relative;top:-9px;border-radius:2px;overflow:hidden;">
+                      <div style="height:100%;background:#E88024;width:{{ as.lineW }};transition:width .4s cubic-bezier(.22,.61,.36,1);"></div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding:14px 16px 22px;display:flex;flex-direction:column;gap:13px;">
+
+            <!-- step 1 · the business -->
+            <sc-if value="{{ addS0 }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:13px;animation:{{ addStepAnim }};">
+                <div style="font-size:11.5px;color:#6E6960;line-height:1.55;">The name on the account — and on every pass it will ever issue.</div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">Business name <span style="color:#E88024;">·</span> required</div>
+                  <input value="{{ afBiz }}" onChange="{{ setAfBiz }}" placeholder="e.g. Habibah Sweets" style="width:100%;border:1.5px solid {{ afBizBr }};border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;transition:border-color .25s;">
+                  <div style="font-size:10px;color:{{ afBizFg }};margin-top:5px;line-height:1.45;">{{ afBizNote }}</div>
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">Arabic name</div>
+                  <input value="{{ afAr }}" onChange="{{ setAfAr }}" placeholder="حلويات حبيبة" style="width:100%;border:1.5px solid #D8D0C2;border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;font-family:'IBM Plex Sans Arabic',sans-serif;">
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:7px;">Vertical</div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <sc-for list="{{ afVertChips }}" as="vc" hint-placeholder-count="7">
+                      <div onClick="{{ vc.pick }}" class="ws-chip" style="cursor:pointer;border:1.5px solid {{ vc.br }};background:{{ vc.bg }};color:{{ vc.fg }};border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;">{{ vc.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">City</div>
+                  <input value="{{ afCity }}" onChange="{{ setAfCity }}" placeholder="Amman" style="width:100%;border:1.5px solid #D8D0C2;border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;">
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:7px;">Areas <span style="color:#A79C8D;font-weight:600;">· tap as many as apply</span></div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <sc-for list="{{ afAreaChips }}" as="ac" hint-placeholder-count="6">
+                      <div onClick="{{ ac.pick }}" class="ws-chip" style="cursor:pointer;border:1.5px solid {{ ac.br }};background:{{ ac.bg }};color:{{ ac.fg }};border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;">{{ ac.mark }}{{ ac.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div>
+                  <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;">
+                    <span style="font-size:10.5px;font-weight:800;color:#5D5348;">Locations</span>
+                    <div style="margin-inline-start:auto;display:flex;align-items:center;gap:8px;">
+                      <div onClick="{{ afLocMinus }}" class="ws-press" style="cursor:pointer;width:28px;height:28px;border-radius:9px;border:1.5px solid #E7E0D5;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#6E6960;line-height:1;">−</div>
+                      <span style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:15px;min-width:16px;text-align:center;font-variant-numeric:tabular-nums;">{{ afLocN }}</span>
+                      <div onClick="{{ afLocPlus }}" class="ws-press" style="cursor:pointer;width:28px;height:28px;border-radius:9px;border:1.5px solid #E7E0D5;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#6E6960;line-height:1;">+</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:7px;">
+                    <sc-for list="{{ afLocRows }}" as="lr" hint-placeholder-count="1">
+                      <input value="{{ lr.v }}" onChange="{{ lr.set }}" placeholder="{{ lr.ph }}" style="width:100%;border:1.5px solid #D8D0C2;border-radius:12px;padding:10px 12px;font-size:12.5px;background:#FFFFFF;animation:{{ lr.anim }};">
+                    </sc-for>
+                  </div>
+                  <div style="font-size:10px;color:#A79C8D;margin-top:6px;line-height:1.45;">{{ afLocNote }}</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- step 2 · the owner -->
+            <sc-if value="{{ addS1 }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:13px;animation:{{ addStepAnim }};">
+                <div style="font-size:11.5px;color:#6E6960;line-height:1.55;">One owner, one phone. The invite goes there and nowhere else.</div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">Owner’s name <span style="color:#E88024;">·</span> required</div>
+                  <input value="{{ afOwner }}" onChange="{{ setAfOwner }}" placeholder="e.g. Nadia Habib" style="width:100%;border:1.5px solid {{ afOwnerBr }};border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;transition:border-color .25s;">
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">WhatsApp <span style="color:#E88024;">·</span> required</div>
+                  <input value="{{ afPhone }}" onChange="{{ setAfPhone }}" placeholder="+962 79 000 0000" style="width:100%;border:1.5px solid {{ afPhoneBr }};border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;font-variant-numeric:tabular-nums;transition:border-color .25s;">
+                  <div style="font-size:10px;color:{{ afPhoneFg }};margin-top:5px;line-height:1.45;font-weight:700;">{{ afPhoneNote }}</div>
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">Email</div>
+                  <input value="{{ afEmail }}" onChange="{{ setAfEmail }}" placeholder="owner@business.jo" style="width:100%;border:1.5px solid #D8D0C2;border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;">
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:7px;">Where did this come from?</div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <sc-for list="{{ afSourceChips }}" as="sr" hint-placeholder-count="5">
+                      <div onClick="{{ sr.pick }}" class="ws-chip" style="cursor:pointer;border:1.5px solid {{ sr.br }};background:{{ sr.bg }};color:{{ sr.fg }};border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;">{{ sr.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- step 3 · the deal -->
+            <sc-if value="{{ addS2 }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:13px;animation:{{ addStepAnim }};">
+                <div style="font-size:11.5px;color:#6E6960;line-height:1.55;">What they are buying, and when you will chase it.</div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:7px;">Card types they liked</div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <sc-for list="{{ afTypeChips }}" as="tc" hint-placeholder-count="8">
+                      <div onClick="{{ tc.pick }}" class="ws-chip" style="cursor:pointer;border:1.5px solid {{ tc.br }};background:{{ tc.bg }};color:{{ tc.fg }};border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;">{{ tc.mark }}{{ tc.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:7px;">Plan interest</div>
+                  <div style="display:flex;gap:6px;">
+                    <sc-for list="{{ afPlanChips }}" as="pc" hint-placeholder-count="3">
+                      <div onClick="{{ pc.pick }}" class="ws-chip" style="cursor:pointer;flex:1;text-align:center;border:1.5px solid {{ pc.br }};background:{{ pc.bg }};color:{{ pc.fg }};border-radius:12px;padding:10px 4px;font-size:11px;font-weight:800;line-height:1.35;">{{ pc.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">Expected value · JOD a month</div>
+                  <input value="{{ afValue }}" onChange="{{ setAfValue }}" placeholder="79" style="width:100%;border:1.5px solid #D8D0C2;border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;font-variant-numeric:tabular-nums;">
+                  <div style="font-size:10px;color:#A79C8D;margin-top:5px;line-height:1.45;">{{ afValueNote }}</div>
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:7px;">Follow up</div>
+                  <div style="display:flex;gap:7px;">
+                    <sc-for list="{{ afFollowChips }}" as="fh" hint-placeholder-count="3">
+                      <div onClick="{{ fh.pick }}" class="ws-chip" style="cursor:pointer;flex:1;text-align:center;border:1.5px solid {{ fh.br }};background:{{ fh.bg }};color:{{ fh.fg }};border-radius:12px;padding:10px 4px;font-size:11.5px;font-weight:800;">{{ fh.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">Notes</div>
+                  <textarea value="{{ afNotes }}" onChange="{{ setAfNotes }}" placeholder="What actually happens next — and when." rows="3" style="width:100%;border:1.5px solid #D8D0C2;border-radius:13px;padding:11px 13px;font-size:12.5px;resize:none;background:#FFFFFF;line-height:1.5;"></textarea>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="display:flex;align-items:flex-start;gap:8px;background:{{ addGateBg }};border:1px solid {{ addGateBr }};border-radius:14px;padding:11px 12px;">
+              <span style="width:8px;height:8px;border-radius:50%;background:{{ addGateDot }};flex-shrink:0;margin-top:4px;"></span>
+              <div style="font-size:10.5px;font-weight:700;color:{{ addGateFg }};line-height:1.5;flex:1;min-width:0;">{{ addGateLine }}</div>
+            </div>
+
+            <div style="display:flex;gap:9px;">
+              <sc-if value="{{ addBackShow }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ addBack }}" class="ws-ghost" style="cursor:pointer;flex:0 0 86px;border:1.5px solid #E7E0D5;background:#FFFFFF;color:#6E6960;font-weight:800;font-size:13px;border-radius:15px;padding:14px 0;text-align:center;">Back</div>
+              </sc-if>
+              <div onClick="{{ addNext }}" class="{{ addNextCls }}" style="cursor:{{ addNextCur }};flex:1;background:{{ addNextBg }};color:{{ addNextFg }};font-weight:800;font-size:13.5px;border-radius:15px;padding:14px 8px;text-align:center;">{{ addNextLabel }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ═══ INVITE A CLIENT ═══ -->
+      <sc-if value="{{ isInvite }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:15px 16px 24px;display:flex;flex-direction:column;gap:13px;animation:{{ enterAnim }};">
+
+          <div style="font-size:11.5px;color:#6E6960;line-height:1.55;">{{ ivLede }}</div>
+
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:12px;animation:{{ ivFormAnim }};">
+            <div>
+              <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">Business</div>
+              <input value="{{ ivBiz }}" onChange="{{ setIvBiz }}" placeholder="e.g. Al-Quds Falafel" style="width:100%;border:1.5px solid {{ ivBizBr }};border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;transition:border-color .25s;">
+            </div>
+            <div>
+              <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">Owner</div>
+              <input value="{{ ivOwner }}" onChange="{{ setIvOwner }}" placeholder="e.g. Abu Shadi" style="width:100%;border:1.5px solid {{ ivOwnerBr }};border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;transition:border-color .25s;">
+            </div>
+            <div>
+              <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:6px;">WhatsApp</div>
+              <input value="{{ ivPhone }}" onChange="{{ setIvPhone }}" placeholder="+962 79 000 0000" style="width:100%;border:1.5px solid {{ ivPhoneBr }};border-radius:13px;padding:12px 13px;font-size:14px;background:#FFFFFF;font-variant-numeric:tabular-nums;transition:border-color .25s;">
+            </div>
+            <div>
+              <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:7px;">Plan</div>
+              <div style="display:flex;gap:6px;">
+                <sc-for list="{{ ivPlanChips }}" as="ip" hint-placeholder-count="3">
+                  <div onClick="{{ ip.pick }}" class="ws-chip" style="cursor:pointer;flex:1;text-align:center;border:1.5px solid {{ ip.br }};background:{{ ip.bg }};color:{{ ip.fg }};border-radius:12px;padding:10px 4px;font-size:11px;font-weight:800;line-height:1.35;">{{ ip.label }}</div>
+                </sc-for>
+              </div>
+              <div style="font-size:10px;color:#A79C8D;margin-top:7px;line-height:1.5;">{{ ivPlanNote }}</div>
+            </div>
+          </div>
+
+          <!-- the message, as it will land -->
+          <div style="background:#E7F0E4;border-radius:20px;padding:15px 14px;animation:{{ ivPreviewAnim }};">
+            <div style="font-size:9.5px;font-weight:800;color:#4E6E50;letter-spacing:.06em;margin-bottom:10px;">WHATSAPP · {{ ivPhoneShown }}</div>
+            <div style="background:#FFFFFF;border-radius:4px 16px 16px 16px;padding:12px 14px;box-shadow:0 2px 6px rgba(30,50,30,.12);transform-origin:left top;animation:{{ ivBubbleAnim }};">
+              <div style="font-size:12px;line-height:1.65;">Marhaba {{ ivFirst }} 👋 Your <strong>{{ ivBizShown }}</strong> account on Wasla is ready. Set your password here — takes a minute, works from your phone:</div>
+              <div style="font-size:11.5px;color:#1D6FB8;margin-top:8px;font-weight:600;word-break:break-all;">wasla.app/start/{{ ivSlug }}</div>
+              <div style="text-align:end;font-size:9.5px;color:#93887A;margin-top:6px;">{{ ivStamp }}</div>
+            </div>
+            <div style="font-size:9.5px;color:#4E6E50;opacity:.85;margin-top:10px;line-height:1.5;">{{ ivPreviewNote }}</div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:8px;background:#FFFFFF;border:1px solid #E7E0D5;border-radius:14px;padding:11px 12px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:{{ ivGateDot }};flex-shrink:0;margin-top:4px;"></span>
+            <div style="font-size:10.5px;font-weight:700;color:{{ ivGateFg }};line-height:1.5;flex:1;min-width:0;">{{ ivGateLine }}</div>
+          </div>
+
+          <div onClick="{{ sendInvite }}" class="{{ ivBtnCls }}" style="cursor:{{ ivBtnCur }};background:{{ ivBtnBg }};color:{{ ivBtnFg }};font-weight:800;font-size:14.5px;border-radius:16px;padding:16px 0;text-align:center;animation:{{ ivSendAnim }};">{{ ivBtnLabel }}</div>
+
+          <sc-if value="{{ ivTracking }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:20px;padding:16px 15px;animation:{{ ivTrackAnim }};">
+              <div style="display:flex;align-items:baseline;gap:9px;margin-bottom:14px;">
+                <span style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;">Invite tracking</span>
+                <span style="margin-inline-start:auto;font-size:9.5px;font-weight:800;color:#9A6B12;white-space:nowrap;">{{ ivTrackChip }}</span>
+              </div>
+              <div style="display:flex;flex-direction:column;">
+                <sc-for list="{{ ivSteps }}" as="iv" hint-placeholder-count="3">
+                  <div style="display:flex;gap:11px;animation:{{ iv.anim }};">
+                    <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+                      <div style="width:22px;height:22px;border-radius:50%;background:{{ iv.bg }};border:2px solid {{ iv.br }};color:{{ iv.markFg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;line-height:1;transition:background .35s,border-color .35s,color .35s;animation:{{ iv.dotAnim }};">{{ iv.mark }}</div>
+                      <sc-if value="{{ iv.hasLine }}" hint-placeholder-val="{{ true }}">
+                        <div style="width:2px;flex:1;min-height:26px;background:linear-gradient(180deg,{{ iv.lineFrom }},{{ iv.lineTo }});transform-origin:top center;animation:{{ iv.lineAnim }};"></div>
+                      </sc-if>
+                    </div>
+                    <div style="min-width:0;flex:1;padding-bottom:14px;">
+                      <div style="font-size:12.5px;font-weight:800;color:{{ iv.fg }};transition:color .35s;">{{ iv.label }}</div>
+                      <div style="font-size:10.5px;color:#8C877F;margin-top:3px;line-height:1.55;">{{ iv.note }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:10px;color:#A79C8D;line-height:1.6;border-top:1px solid #F2EDE4;padding-top:11px;">{{ ivTrackFoot }}</div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ═══ ME ═══ -->
+      <sc-if value="{{ isMe }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:16px 16px 24px;display:flex;flex-direction:column;gap:13px;animation:{{ enterAnim }};">
+
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:20px;padding:18px 16px;display:flex;flex-direction:column;align-items:center;gap:13px;animation:{{ meCardAnim }};">
+            <div style="display:flex;align-items:center;gap:12px;align-self:stretch;">
+              <div style="width:46px;height:46px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:16px;flex-shrink:0;">{{ meInitials }}</div>
+              <div style="min-width:0;flex:1;">
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:17px;line-height:1.2;">{{ meName }}</div>
+                <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11.5px;color:#A79C8D;margin-top:2px;">{{ meAr }}</div>
+              </div>
+              <span style="background:#FDF4EC;color:#C96A14;font-size:10px;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap;flex-shrink:0;">{{ meRole }}</span>
+            </div>
+
+            <div style="position:relative;width:150px;height:150px;flex-shrink:0;">
+              <svg viewBox="0 0 150 150" style="width:150px;height:150px;display:block;transform:rotate(-90deg);">
+                <circle cx="75" cy="75" r="64" style="fill:none;stroke:#EFE8DC;stroke-width:11;"></circle>
+                <circle cx="75" cy="75" r="64" style="fill:none;stroke:{{ mqColor }};stroke-width:11;stroke-linecap:round;--rf:{{ mqFull }};--rt:{{ mqTo }};stroke-dasharray:{{ mqFull }};stroke-dashoffset:{{ mqTo }};animation:{{ mqRingAnim }};transition:stroke .4s;"></circle>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:36px;line-height:1;color:{{ mqColor }};font-variant-numeric:tabular-nums;">{{ mqNum }}</div>
+                <div style="font-size:11px;color:#A79C8D;font-weight:700;margin-top:3px;">of {{ mqGoal }} this month</div>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:9px;">
+              <span style="background:{{ mDeltaBg }};color:{{ mDeltaFg }};font-size:11px;font-weight:800;border-radius:999px;padding:5px 12px;white-space:nowrap;">{{ mDelta }}</span>
+              <span style="font-size:11px;color:#6E6960;">{{ mDeltaNote }}</span>
+            </div>
+            <div style="font-size:11px;color:#6E6960;text-align:center;line-height:1.55;">{{ mqNote }}</div>
+          </div>
+
+          <!-- leaderboard -->
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:20px;padding:15px 14px;animation:{{ lbCardAnim }};">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;margin-bottom:12px;">This month’s board</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <sc-for list="{{ lbRows }}" as="lb" hint-placeholder-count="3">
+                <div style="animation:{{ lb.anim }};">
+                  <div style="display:flex;align-items:center;gap:9px;">
+                    <span style="width:20px;font-size:11px;font-weight:800;color:#A79C8D;font-variant-numeric:tabular-nums;flex-shrink:0;">{{ lb.rank }}</span>
+                    <span style="width:26px;height:26px;border-radius:50%;background:{{ lb.avBg }};color:{{ lb.avFg }};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;">{{ lb.initials }}</span>
+                    <span style="font-size:12.5px;font-weight:{{ lb.fw }};flex:1;min-width:0;">{{ lb.name }}</span>
+                    <span style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-size:13px;font-weight:900;font-variant-numeric:tabular-nums;flex-shrink:0;">{{ lb.n }}</span>
+                  </div>
+                  <div style="height:6px;border-radius:99px;background:#F2EDE4;margin-top:6px;margin-inline-start:29px;overflow:hidden;">
+                    <div style="height:100%;border-radius:99px;background:{{ lb.barBg }};--gw:{{ lb.pct }};width:{{ lb.pct }};animation:{{ lb.barAnim }};"></div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:10px;color:#A79C8D;line-height:1.5;margin-top:11px;">{{ lbNote }}</div>
+          </div>
+
+          <!-- sparkline -->
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:20px;padding:15px 14px;animation:{{ spCardAnim }};">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;margin-bottom:12px;">Last 8 weeks</div>
+            <div style="display:flex;align-items:flex-end;gap:6px;height:78px;">
+              <sc-for list="{{ sparkBars }}" as="sb" hint-placeholder-count="8">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;">
+                  <div title="{{ sb.tip }}" style="width:100%;height:{{ sb.h }};background:{{ sb.bg }};border-radius:5px 5px 2px 2px;transform-origin:bottom center;animation:{{ sb.anim }};"></div>
+                  <div style="font-size:8px;color:#B5AB9C;font-weight:700;white-space:nowrap;">{{ sb.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:10px;color:#A79C8D;line-height:1.5;margin-top:11px;">{{ sparkNote }}</div>
+          </div>
+
+          <!-- her trail -->
+          <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:20px;padding:15px 14px;animation:{{ mtCardAnim }};">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;margin-bottom:12px;">Your recent activity</div>
+            <div style="display:flex;flex-direction:column;gap:11px;">
+              <sc-for list="{{ meTrail }}" as="mt" hint-placeholder-count="5">
+                <div onClick="{{ mt.go }}" class="ws-row" style="cursor:{{ mt.cur }};display:flex;gap:9px;align-items:flex-start;border:1px solid transparent;border-radius:10px;padding:2px 4px;animation:{{ mt.anim }};">
+                  <span style="width:8px;height:8px;border-radius:50%;background:{{ mt.dot }};flex-shrink:0;margin-top:4px;"></span>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:11.5px;line-height:1.5;">{{ mt.line }}</div>
+                    <div style="font-size:9.5px;color:#A79C8D;margin-top:2px;">{{ mt.t }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- toast -->
+      <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+        <div style="position:sticky;bottom:10px;z-index:40;margin:0 16px;background:#2C2C2C;color:#F4F2EE;border-radius:14px;padding:11px 14px;font-size:11.5px;font-weight:600;line-height:1.5;box-shadow:0 12px 28px rgba(20,16,10,.32);animation:{{ toastAnim }};">{{ toast }}</div>
+      </sc-if>
+    </div>
+
+    <!-- ── bottom tabs ── -->
+    <div style="position:relative;display:flex;background:#FFFFFF;border-top:1px solid #E7E0D5;flex-shrink:0;">
+      <div style="position:absolute;top:0;height:3px;width:25%;border-radius:0 0 3px 3px;background:#E88024;inset-inline-start:{{ indLeft }};opacity:{{ indOp }};transition:inset-inline-start .34s cubic-bezier(.22,.61,.36,1),opacity .25s;"></div>
+      <div onClick="{{ tabToday }}" class="ws-tab" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 0 9px;color:{{ t0Fg }};">
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid currentColor;position:relative;transform:scale({{ t0Sc }});transition:transform .28s cubic-bezier(.22,.61,.36,1);">
+          <div style="position:absolute;left:5.2px;top:2.6px;width:1.8px;height:5.2px;background:currentColor;border-radius:2px;transform-origin:0.9px 4.6px;transform:rotate(38deg);"></div>
+        </div>
+        <span style="font-size:9.5px;font-weight:{{ t0Fw }};">Today</span>
+      </div>
+      <div onClick="{{ tabPipe }}" class="ws-tab" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 0 9px;color:{{ t1Fg }};">
+        <div style="width:16px;display:flex;flex-direction:column;gap:2.6px;transform:scale({{ t1Sc }});transition:transform .28s cubic-bezier(.22,.61,.36,1);">
+          <div style="height:2.6px;width:100%;background:currentColor;border-radius:2px;"></div>
+          <div style="height:2.6px;width:68%;background:currentColor;border-radius:2px;"></div>
+          <div style="height:2.6px;width:38%;background:currentColor;border-radius:2px;"></div>
+        </div>
+        <span style="font-size:9.5px;font-weight:{{ t1Fw }};">Pipeline</span>
+      </div>
+      <div onClick="{{ tabAdd }}" class="ws-tab" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 0 9px;color:{{ t2Fg }};">
+        <div style="position:relative;width:16px;height:16px;transform:scale({{ t2Sc }});transition:transform .28s cubic-bezier(.22,.61,.36,1);">
+          <div style="position:absolute;top:6.7px;left:0;right:0;height:2.6px;background:currentColor;border-radius:2px;"></div>
+          <div style="position:absolute;left:6.7px;top:0;bottom:0;width:2.6px;background:currentColor;border-radius:2px;"></div>
+        </div>
+        <span style="font-size:9.5px;font-weight:{{ t2Fw }};">Add</span>
+      </div>
+      <div onClick="{{ tabMe }}" class="ws-tab" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 0 9px;color:{{ t3Fg }};">
+        <div style="position:relative;width:16px;height:16px;transform:scale({{ t3Sc }});transition:transform .28s cubic-bezier(.22,.61,.36,1);">
+          <div style="position:absolute;top:0;left:4.5px;width:7px;height:7px;border-radius:50%;background:currentColor;"></div>
+          <div style="position:absolute;bottom:1px;left:1px;width:14px;height:7.5px;border-radius:8px 8px 0 0;background:currentColor;"></div>
+        </div>
+        <span style="font-size:9.5px;font-weight:{{ t3Fw }};">Me</span>
+      </div>
+    </div>
+    <div style="background:#FFFFFF;padding-bottom:8px;flex-shrink:0;"><div style="width:110px;height:4px;border-radius:99px;background:rgba(44,44,44,.28);margin:0 auto;"></div></div>
+  </div>
+
+  <!-- ══════════════════════ THE SIDE PANEL ══════════════════════ -->
+  <div style="width:300px;max-width:96vw;display:flex;flex-direction:column;gap:14px;padding-top:6px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg viewBox="213.44 0 314.91 314.51" preserveAspectRatio="xMidYMid meet" style="width:26px;height:26px;display:block;"><path fill="#E88024" d="M385.82,261.53c11.27,40.31,54.39,63.14,94.51,48.85,34.32-12.22,54.43-48.93,46.34-84.45-2.49-10.95-7.28-20.68-13.75-28.87-7.72-9.83-17.8-17.42-29.19-22.15-14.53-6.08-31.13-7.48-47.48-2.91-6.99,1.96-13.43,4.85-19.26,8.55-.24.14-.45.28-.66.41-5.71,3.89-8.03,11.74-4.13,18.55,3.1,5.41,9.72,7.93,15.71,6.22,1.09-.31,2.09-.74,3.02-1.29.08,0,.12-.03.16-.07.09-.03.16-.07.21-.13.03.02.05-.01.06-.04.15-.09.3-.18.45-.27h.05c3.56-2.28,7.55-4.07,11.84-5.27,13.78-3.85,27.83-.84,38.56,6.98,7.92,5.75,14.02,14.08,16.86,24.23.12.42.23.83.33,1.26,5.88,23.53-8.02,47.59-31.53,54.16-23.51,6.57-47.87-6.79-55.04-29.96-.21-.84-.93-3.39-1.2-4.31l-23.45-84.05,87.12-24.31c40.31-11.27,63.14-54.39,48.85-94.51-12.22-34.32-48.93-54.43-84.45-46.34-10.95,2.49-20.68,7.28-28.87,13.75-9.83,7.72-17.42,17.8-22.15,29.19-6.08,14.53-7.48,31.13-2.91,47.48,1.96,6.99,4.85,13.43,8.55,19.26.14.24.27.45.41.66,3.89,5.71,11.74,8.03,18.55,4.13,5.41-3.1,7.93-9.72,6.22-15.71-.31-1.09-.74-2.09-1.29-3.02,0-.08-.03-.12-.07-.16-.03-.09-.07-.16-.13-.21.02-.03-.01-.05-.04-.06-.09-.15-.18-.3-.27-.45v-.05c-2.28-3.56-4.07-7.55-5.27-11.84-3.85-13.78-.84-27.83,6.98-38.56,5.75-7.92,14.08-14.02,24.23-16.86.42-.12.83-.23,1.26-.33,23.53-5.88,47.59,8.02,54.16,31.53,6.57,23.51-6.8,47.87-29.96,55.04-.84.21-3.39.93-4.31,1.2l-84.05,23.45-24.31-87.12c-11.27-40.31-54.39-63.14-94.51-48.85-34.32,12.22-54.43,48.93-46.34,84.45,2.49,10.95,7.28,20.68,13.75,28.87,7.72,9.83,17.8,17.42,29.19,22.15,14.53,6.08,31.13,7.48,47.48,2.91,6.99-1.95,13.43-4.85,19.26-8.55.24-.14.45-.27.66-.41,5.71-3.89,8.03-11.74,4.13-18.55-3.1-5.41-9.72-7.93-15.71-6.22-1.09.31-2.09.74-3.02,1.29-.08,0-.12.03-.16.07-.09.03-.16.07-.21.13-.03-.02-.05.01-.06.04-.15.09-.3.18-.45.28h-.05c-3.56,2.28-7.55,4.07-11.84,5.27-13.78,3.85-27.83.84-38.56-6.98-7.92-5.75-14.02-14.08-16.86-24.23-.12-.42-.23-.83-.33-1.26-5.88-23.53,8.02-47.59,31.53-54.16,23.51-6.57,47.87,6.8,55.04,29.96.21.84.93,3.39,1.2,4.31l23.45,84.05-87.12,24.31c-40.31,11.27-63.14,54.39-48.85,94.51,12.22,34.32,48.93,54.43,84.45,46.34,10.95-2.49,20.68-7.28,28.87-13.75,9.83-7.72,17.42-17.8,22.15-29.19,6.08-14.53,7.48-31.13,2.91-47.48-1.95-6.99-4.85-13.43-8.55-19.26-.14-.24-.27-.45-.41-.66-3.89-5.71-11.74-8.03-18.55-4.13-5.41,3.1-7.93,9.72-6.22,15.71.31,1.09.74,2.09,1.29,3.02,0,.08.03.12.07.16.03.09.07.16.13.21-.02.03.01.05.04.06.09.15.18.3.27.45v.05c2.28,3.56,4.07,7.55,5.27,11.84,3.85,13.78.84,27.83-6.98,38.56-5.75,7.92-14.08,14.02-24.23,16.86-.42.12-.83.23-1.26.33-23.53,5.88-47.59-8.02-54.16-31.53-6.57-23.51,6.8-47.87,29.96-55.04.84-.21,3.39-.93,4.31-1.2l84.05-23.45,24.31,87.12Z"></path></svg>
+      <div>
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:16px;line-height:1;">The rep in the field</div>
+        <div style="font-size:11px;color:#93887A;margin-top:3px;">Lina’s phone · her book, her quota, her Thursday</div>
+      </div>
+    </div>
+
+    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">Walk the rep’s day</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <sc-for list="{{ walkRows }}" as="wr" hint-placeholder-count="5">
+          <div onClick="{{ wr.go }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ wr.br }};background:{{ wr.bg }};border-radius:11px;padding:9px 11px;animation:{{ wr.anim }};">
+            <span style="width:26px;height:26px;border-radius:9px;background:{{ wr.discBg }};border:1px solid {{ wr.discBr }};color:{{ wr.dot }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:12px;flex-shrink:0;">{{ wr.glyph }}</span>
+            <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#2C2C2C;">{{ wr.label }}</div><div style="font-size:10.5px;color:#93887A;">{{ wr.sub }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:{{ syncDot }};flex-shrink:0;animation:{{ syncDotAnim }};"></span>
+        <div style="font-size:13px;font-weight:800;">It lands in the console</div>
+      </div>
+      <div style="font-size:11px;color:#6E6960;line-height:1.6;">{{ syncLine }}</div>
+      <div style="font-size:10.5px;color:#93887A;line-height:1.55;margin-top:8px;">A lead added on this phone, a stage moved on this phone, a note written on this phone — Omar opens the console and it is already on his board. Nothing else in his session is touched.</div>
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <a href="Wasla Console.dc.html" class="ws-tile" style="flex:1;display:block;background:#2C2C2C;color:#F4F2EE;border:1.5px solid #2C2C2C;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">← Console</a>
+      <a href="Wasla Dashboard.dc.html" class="ws-tile" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#2C2C2C;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">Dashboard</a>
+      <a href="Wasla Demo.dc.html" class="ws-tile" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#2C2C2C;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">Demo hub →</a>
+    </div>
+    <div onClick="{{ resetDemo }}" class="ws-link" style="cursor:pointer;text-align:center;border:1px dashed {{ resetBr }};color:{{ resetFg }};border-radius:12px;padding:9px 10px;font-size:11px;font-weight:700;">{{ resetLabel }}</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+// ── ONE clock anchor, the same morning the console runs on: 30 Jul 2026, 10:45. Every "how long
+//    since" and every "what time did that send" label on this phone derives from it, so the two
+//    surfaces can never drift out of step with each other. ──
+const CLOCK = { day: '30 Jul 2026', weekday: 'Thursday', month: 'July', y: 2026, mo: 6, d: 30, hh: 10, mm: 45 };
+const NOW_MIN = CLOCK.hh * 60 + CLOCK.mm;
+const clockLabel = (m) => Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0');
+const INVITE_STAMP = clockLabel(NOW_MIN - 33);
+const HOUSE = ' cubic-bezier(.22,.61,.36,1) ';
+
+// ── the persona · WASLA_DB.console.team[1] ──
+const ME = { name: 'Lina Kassab', ar: 'لينا قسام', initials: 'LK', first: 'Lina', role: 'Sales' };
+const QUOTA = 8;
+const STAGES = ['Cold', 'Invited', 'Demo booked', 'Negotiating', 'Won'];
+const STAGE_W = { 'Cold': 0.05, 'Invited': 0.15, 'Demo booked': 0.35, 'Negotiating': 0.60, 'Won': 1 };
+const STALE_DAYS = 7;
+const PLAN_PRICE = { 'Starter': 25, 'Growth': 79, 'Unlimited': 149 };
+const PLAN_BLURB = { 'Starter': '3 card slots · no broadcasts', 'Growth': '10 slots · 10 broadcasts a month', 'Unlimited': 'no caps · priority review' };
+const AREAS = ['Rainbow St', 'Swefieh', 'Abdali', 'Jabal Amman', 'Sweifieh Village', 'Madina St'];
+const VERTS = ['Café', 'Restaurant', 'Salon', 'Gym', 'Retail', 'Pharmacy', 'Other'];
+const SOURCES = ['Referral', 'Walk-in', 'Instagram', 'Outbound', 'Event'];
+const FOLLOWS = ['Today', 'Tomorrow', 'Next week'];
+const STAGE_STYLE = { 'Cold': ['#EFEDE8', '#8C877F'], 'Invited': ['#F0E7DB', '#7A5A2E'], 'Demo booked': ['#FDF4EC', '#C96A14'], 'Negotiating': ['#EDE9F5', '#5B4A8A'], 'Won': ['#E7F6EE', '#1E7D47'] };
+const STAGE_DOT = { 'Cold': '#C9BFAF', 'Invited': '#B99A6B', 'Demo booked': '#E88024', 'Negotiating': '#7B68AE', 'Won': '#2FAE66' };
+const TRAIL_DOT = { move: '#E88024', ping: '#2FAE66', escalate: '#E2563A', won: '#1E7D47', note: '#C9BFAF', invite: '#1D6FB8' };
+// seed detail for the five leads that ship in WASLA_DB — the SAME enrichment the console applies,
+// read-only on both sides so the two surfaces describe one board and never disagree about it
+const LEADX = {
+  'Louma Chocolate': { phone: '+962 79 555 0433', email: 'reem@louma.jo', vertical: 'Retail', areas: ['Abdali'], locs: ['Abdali Boulevard'], types: ['Points Card', 'Coupon'], plan: 'Growth', value: 79, source: 'Referral', follow: 'Tomorrow', touch: 2, seedTrail: [['2d ago', 'invite opened — no password yet', 'ping'], ['4d ago', 'moved Cold → Invited', 'move']] },
+  'Tuta Juice': { phone: '+962 78 555 0611', email: 'zain@tuta.jo', vertical: 'Café', areas: ['Swefieh', 'Rainbow St'], locs: ['Swefieh branch', 'Rainbow St kiosk'], types: ['Stamp Card'], plan: 'Starter', value: 25, source: 'Walk-in', follow: 'Thursday 11:00', touch: 1, seedTrail: [['Yesterday', 'demo booked for Thursday 11:00', 'move'], ['3d ago', 'walked in at the Swefieh branch — asked for the deck', 'note']] },
+  'Al-Quds Falafel': { phone: '+962 77 555 0290', email: 'abushadi@quds.jo', vertical: 'Restaurant', areas: ['Madina St'], locs: ['Madina St'], types: ['Stamp Card', 'Challenge Card'], plan: 'Starter', value: 25, source: 'Outbound', follow: 'Today', touch: 0, seedTrail: [['Today', 'first card submitted for review', 'won'], ['2d ago', 'moved Negotiating → Won', 'move']] },
+  'Baraka Style': { phone: '+962 79 555 0388', email: 'mona@baraka.jo', vertical: 'Salon', areas: ['Jabal Amman'], locs: ['Jabal Amman'], types: ['VIP Tiers'], plan: 'Starter', value: 25, source: 'Instagram', follow: 'After Eid', touch: 11, seedTrail: [['11d ago', 'asked to be called back after Eid', 'note']] },
+  'Deema Nails': { phone: '+962 78 555 0417', email: 'deema@deemanails.jo', vertical: 'Salon', areas: ['Sweifieh Village'], locs: ['Sweifieh Village'], types: ['Cashback Card', 'VIP Tiers'], plan: 'Growth', value: 79, source: 'Event', follow: 'Thursday', touch: 6, seedTrail: [['6d ago', 'wants Growth at Starter price — needs an admin answer', 'escalate'], ['9d ago', 'met at the Swefieh beauty fair', 'note']] }
+};
+const LEAD_BASE = { ar: '', vertical: 'Other', city: 'Amman', areas: [], locs: [], types: [], plan: 'Starter', value: 25, source: 'Outbound', follow: 'This week', email: '—', phone: '—', touch: 0, seedTrail: [], note: '' };
+// the escalation the console already knows about, seeded identically so the phone does not invent
+// a queue of its own
+const ESCAL_SEED = [{ id: 'e-Deema Nails', lead: 'Deema Nails', rep: 'Lina', ask: 'wants Growth at Starter price' }];
+// Lina's own history, from the console's team-performance block — one source, two screens
+const LINA_PERF = { last: 5, spark: [2, 1, 3, 2, 3, 2, 4, 2] };
+const REP_TONE = { 'Omar': ['#FDF4EC', '#C96A14', '#E88024'], 'Lina': ['#EDE9F5', '#5B4A8A', '#7B68AE'], 'Sami': ['#E2EFF0', '#0F5B63', '#0F5B63'] };
+
+class Component extends DCLogic {
+  state = {
+    screen: 'today', navSeq: 0, slideFrom: '26px', settled: false, tick: 1, toast: '',
+    leadSel: null, pipeStage: 'All', leadMoved: null,
+    // ── the three keys this phone shares with the console ──
+    leadMods: {}, leadsAdded: [], leadTrail: {},
+    // ── this phone's own session ──
+    escal: [], converted: {}, sentInvites: [],
+    addStep: 0, afBiz: '', afAr: '', afOwner: '', afPhone: '', afEmail: '',
+    afVertical: 'Café', afCity: 'Amman', afAreas: [], afLocs: [''], afTypes: [],
+    afPlan: 'Growth', afValue: '79', afSource: 'Referral', afFollow: 'Tomorrow', afNotes: '',
+    invBiz: '', invOwner: '', invPhone: '', invPlan: 'Growth', invSent: false, invOpened: false, invPulse: 0,
+    resetArm: false
+  };
+
+  db() { const D = (window.WASLA_DB || {}).console || {}; return { leads: D.leads || [], team: D.team || [], leaderboard: D.leaderboard || [], accounts: D.accounts || [] }; }
+  typeNames() { const T = (window.WASLA_DB || {}).types || []; return T.length ? T.map(t => t.name) : ['Stamp Card', 'Cashback Card', 'Points Card', 'Discount Card', 'Coupon', 'VIP Tiers', 'Challenge Card', 'Membership Card']; }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  storage · three keys, three different contracts
+  //    1. salesKey()   — ours alone. Reset wipes this and only this.
+  //    2. consoleKey() — SHARED with the admin console. We own exactly three fields inside it
+  //                      and must hand every other field back untouched.
+  //    3. liveKey()    — the append-only live-events wire every Wasla surface writes to.
+  // ────────────────────────────────────────────────────────────────────────────
+  salesKey() { return 'wasla_demo_sales_state'; }
+  consoleKey() { return 'wasla_demo_console_state'; }
+  // same lookup the dashboard uses, same fallback every other surface hard-codes — one wire
+  liveKey() { const D = window.WASLA_DB; return (D && D.demoFlags && D.demoFlags.liveKey) || 'wasla_demo_live_events'; }
+  _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  _lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+
+  /** Debounced — every mutating action calls persist(); a burst of taps costs one write. */
+  persist() {
+    clearTimeout(this._sv);
+    this._sv = setTimeout(() => {
+      const A = (this.__host && this.__host.logic) || this;
+      A.saveSales();
+      A.mergeConsole();
+    }, 130);
+  }
+  saveSales() {
+    const s = this.state || {};
+    try {
+      this._lsSet(this.salesKey(), JSON.stringify({ v: 1,
+        screen: s.screen, pipeStage: s.pipeStage, leadSel: s.leadSel,
+        leadMods: s.leadMods, leadsAdded: s.leadsAdded, leadTrail: s.leadTrail,
+        escal: s.escal, converted: s.converted, sentInvites: (s.sentInvites || []).slice(0, 20),
+        addStep: s.addStep, afBiz: s.afBiz, afAr: s.afAr, afOwner: s.afOwner, afPhone: s.afPhone,
+        afEmail: s.afEmail, afVertical: s.afVertical, afCity: s.afCity, afAreas: s.afAreas,
+        afLocs: s.afLocs, afTypes: s.afTypes, afPlan: s.afPlan, afValue: s.afValue,
+        afSource: s.afSource, afFollow: s.afFollow, afNotes: s.afNotes,
+        invBiz: s.invBiz, invOwner: s.invOwner, invPhone: s.invPhone, invPlan: s.invPlan, invSent: s.invSent }));
+    } catch (e) {}
+  }
+  /** Pure: reads our own blob and returns a sanitised patch, or null. A bad blob is ignored, never thrown. */
+  readSales() {
+    const raw = this._lsGet(this.salesKey());
+    if (!raw) return null;
+    let b = null;
+    try { b = JSON.parse(raw); } catch (e) { return null; }
+    if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return null;
+    const p = {};
+    const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v)) ? v : null;
+    const str = (v, n) => (typeof v === 'string') ? v.slice(0, n || 120) : null;
+    ['leadMods', 'leadTrail', 'converted'].forEach(k => { const o = obj(b[k]); if (o) p[k] = o; });
+    if (Array.isArray(b.leadsAdded)) p.leadsAdded = b.leadsAdded.filter(l => l && typeof l === 'object' && typeof l.name === 'string' && l.name);
+    if (Array.isArray(b.escal)) p.escal = b.escal.filter(e => e && typeof e === 'object' && typeof e.id === 'string' && typeof e.lead === 'string');
+    if (Array.isArray(b.sentInvites)) p.sentInvites = b.sentInvites.filter(x => typeof x === 'string' && x).slice(0, 20);
+    if (Array.isArray(b.afAreas)) p.afAreas = b.afAreas.filter(x => AREAS.indexOf(x) >= 0);
+    if (Array.isArray(b.afTypes)) p.afTypes = b.afTypes.filter(x => typeof x === 'string' && x).slice(0, 12);
+    if (Array.isArray(b.afLocs)) { const l = b.afLocs.filter(x => typeof x === 'string').slice(0, 8); if (l.length) p.afLocs = l; }
+    if (['today', 'pipeline', 'lead', 'add', 'invite', 'me'].indexOf(b.screen) >= 0) p.screen = b.screen;
+    if (b.pipeStage === 'All' || STAGES.indexOf(b.pipeStage) >= 0) p.pipeStage = b.pipeStage;
+    if (typeof b.leadSel === 'string' || b.leadSel === null) p.leadSel = b.leadSel;
+    if (typeof b.addStep === 'number' && isFinite(b.addStep)) p.addStep = Math.max(0, Math.min(2, Math.round(b.addStep)));
+    ['afBiz', 'afAr', 'afOwner', 'afPhone', 'afEmail', 'afCity', 'afValue', 'afNotes', 'invBiz', 'invOwner', 'invPhone'].forEach(k => { const v = str(b[k], 160); if (v !== null) p[k] = v; });
+    if (VERTS.indexOf(b.afVertical) >= 0) p.afVertical = b.afVertical;
+    if (SOURCES.indexOf(b.afSource) >= 0) p.afSource = b.afSource;
+    if (FOLLOWS.indexOf(b.afFollow) >= 0) p.afFollow = b.afFollow;
+    if (PLAN_PRICE[b.afPlan] != null) p.afPlan = b.afPlan;
+    if (PLAN_PRICE[b.invPlan] != null) p.invPlan = b.invPlan;
+    if (typeof b.invSent === 'boolean') p.invSent = b.invSent;
+    return Object.keys(p).length ? p : null;
+  }
+
+  /** Pure: the pipeline as the CONSOLE currently holds it. The console blob is the shared board —
+      whatever Omar did there is the truth this phone should open on. */
+  readConsolePipe() {
+    const raw = this._lsGet(this.consoleKey());
+    if (!raw) return null;
+    let b = null;
+    try { b = JSON.parse(raw); } catch (e) { return null; }
+    if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return null;
+    const p = {};
+    const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v)) ? v : null;
+    if (obj(b.leadMods)) p.leadMods = b.leadMods;
+    if (obj(b.leadTrail)) p.leadTrail = b.leadTrail;
+    if (Array.isArray(b.leadsAdded)) p.leadsAdded = b.leadsAdded.filter(l => l && typeof l === 'object' && typeof l.name === 'string' && l.name);
+    return Object.keys(p).length ? p : null;
+  }
+
+  /** ── THE CROSS-APP WRITE ──
+      Read-modify-write into the console's blob, touching ONLY leadMods / leadsAdded / leadTrail
+      and handing every other key back byte-for-byte. Four refusals keep it safe:
+        · the whole body is in a try/catch and returns a flag — it can never throw into a click;
+        · unparseable JSON is treated as "no blob" and replaced with a valid v:1 one (which is
+          exactly what the console itself would have done with it);
+        · a blob whose `v` we do not recognise is LEFT ALONE ENTIRELY. Writing our v:1 shape into a
+          v:2 console would make that console reject its own whole session on the next load — a
+          phone that quietly fails to sync is strictly better than a console we invalidated;
+        · a full or blocked store makes _lsSet return false and nothing else happens — the local
+          session carries on with its own copy. */
+  mergeConsole() {
+    try {
+      const s = this.state || {};
+      let blob = null;
+      const raw = this._lsGet(this.consoleKey());
+      if (raw) { try { const parsed = JSON.parse(raw); if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) blob = parsed; } catch (e) { blob = null; } }
+      if (blob && blob.v !== 1) return false;          // a console we do not understand — hands off
+      const next = blob ? { ...blob } : { v: 1 };      // every foreign key rides along untouched
+      next.v = 1;
+      // Even inside our three keys we do not clobber: the console may be open in another tab and
+      // may have moved something since we booted, so each key is UNIONED with what is on disk
+      // rather than overwritten. We won this session's edits; they keep everything else.
+      const objOf = (x) => (x && typeof x === 'object' && !Array.isArray(x)) ? x : {};
+      const arrOf = (x) => Array.isArray(x) ? x : [];
+      const theirMods = objOf(blob && blob.leadMods), myMods = objOf(s.leadMods);
+      const mods = {};
+      Object.keys(theirMods).concat(Object.keys(myMods)).forEach(n => { mods[n] = { ...objOf(theirMods[n]), ...objOf(myMods[n]) }; });
+      next.leadMods = mods;
+      const theirAdded = arrOf(blob && blob.leadsAdded), myAdded = arrOf(s.leadsAdded);
+      const seen = {};
+      next.leadsAdded = [...theirAdded, ...myAdded].filter(l => {
+        if (!l || typeof l !== 'object' || typeof l.name !== 'string' || !l.name) return false;
+        const k = l.name.toLowerCase();
+        if (seen[k]) return false;
+        seen[k] = 1; return true;
+      });
+      const theirTrail = objOf(blob && blob.leadTrail), myTrail = objOf(s.leadTrail);
+      const trail = {};
+      // per lead, the longer history wins — ours is theirs plus whatever we just appended, so this
+      // keeps our new entries AND keeps a lead the console wrote to that we never touched
+      Object.keys(theirTrail).concat(Object.keys(myTrail)).forEach(n => {
+        const a = arrOf(myTrail[n]), b = arrOf(theirTrail[n]);
+        trail[n] = a.length >= b.length ? a : b;
+      });
+      next.leadTrail = trail;
+      return this._lsSet(this.consoleKey(), JSON.stringify(next));
+    } catch (e) { return false; }
+  }
+
+  /** The shared live wire — newest-first, capped at 20, read-modify-write, never throws. */
+  pushLive(kind, who, what, card) {
+    try {
+      let arr = [];
+      const raw = this._lsGet(this.liveKey());
+      if (raw) { try { const p = JSON.parse(raw); if (Array.isArray(p)) arr = p.filter(e => e && typeof e === 'object'); } catch (e) { arr = []; } }
+      arr.unshift({ at: Date.now(), kind, who, what, card });
+      this._lsSet(this.liveKey(), JSON.stringify(arr.slice(0, 20)));
+    } catch (e) {}
+  }
+
+  /** Folds both blobs straight into `state` at CONSTRUCTION: the host installs `__host` only after
+      the constructor returns (so setState is a silent no-op before that), and componentDidMount is
+      conditional in this runtime — it can be deferred, re-fired, or skipped entirely. The console's
+      copy of the three shared keys is applied LAST, because the console blob is the board. */
+  bootRestore() {
+    let p = null, q = null;
+    try { p = this.readSales(); } catch (e) { p = null; }
+    if (p) this.state = { ...this.state, ...p };
+    try { q = this.readConsolePipe(); } catch (e) { q = null; }
+    if (q) this.state = { ...this.state, ...q };
+    return !!(p || q);
+  }
+  __restored = this.bootRestore();
+
+  /** Clears ONLY this phone's blob. The console's pipeline and the live wire are other people's
+      records — a rep resetting her demo does not get to wipe Omar's board. */
+  resetSales() {
+    clearTimeout(this._sv); clearTimeout(this._rt); clearTimeout(this._tt);
+    this.disarmInvite();
+    try { localStorage.removeItem(this.salesKey()); } catch (e) {}
+    this.__restored = false;
+    const h = this.__host || this;
+    h.__wsTicked = false;
+    this.setState({ screen: 'today', navSeq: 0, slideFrom: '26px', toast: '', tick: 1,
+      leadSel: null, pipeStage: 'All', leadMoved: null,
+      leadMods: {}, leadsAdded: [], leadTrail: {},
+      escal: [], converted: {}, sentInvites: [],
+      addStep: 0, afBiz: '', afAr: '', afOwner: '', afPhone: '', afEmail: '',
+      afVertical: 'Café', afCity: 'Amman', afAreas: [], afLocs: [''], afTypes: [],
+      afPlan: 'Growth', afValue: '79', afSource: 'Referral', afFollow: 'Tomorrow', afNotes: '',
+      invBiz: '', invOwner: '', invPhone: '', invPlan: 'Growth', invSent: false, invOpened: false, invPulse: 0,
+      resetArm: false });
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  timers · every one of them is armed through a method that clears itself first,
+  //  latched on the HOST where it must survive a logic hot-swap, and swept on unmount
+  // ────────────────────────────────────────────────────────────────────────────
+  /** The invite "Opened" beat. Armed from renderVals — the one path this runtime guarantees, since
+      componentDidMount can be skipped entirely on the deferred mount path — and latched on the HOST
+      so a logic swap cannot arm a second one. Exactly one timer per sent invite, never one per render. */
+  armInviteOpen() {
+    if (!this.state || !this.state.invSent || this.state.invOpened) return;
+    const h = this.__host || this;
+    if (h.__wsInvArmed) return;
+    h.__wsInvArmed = true;
+    clearTimeout(this._it);
+    this._it = setTimeout(() => {
+      const A = (h.logic) || this;
+      if (A && A.state && A.state.invSent && !A.state.invOpened) A.setState({ invOpened: true });
+    }, 4000);
+  }
+  /** Cancels the "Opened" timer AND clears its host latch, so a fresh invite can arm a fresh one.
+      Called wherever the invite stops being the one that was sent. */
+  disarmInvite() {
+    clearTimeout(this._it);
+    this._it = null;
+    const h = this.__host || this;
+    h.__wsInvArmed = false;
+  }
+  /** The one-shot count-up. Seeds `tick` to 0 in place for the CURRENT render (renderVals reads
+      `this.state` by reference and setState during render is not available to us), then eases it
+      to 1 off rAF. If rAF does not exist the numbers simply start settled — never at zero. */
+  armTick() {
+    const h = this.__host || this;
+    if (h.__wsTicked) return;
+    h.__wsTicked = true;
+    if (typeof requestAnimationFrame !== 'function') return;
+    if (this.state) this.state.tick = 0;
+    const t0 = Date.now();
+    const step = () => {
+      const A = (h.logic) || this;
+      const p = Math.min(1, (Date.now() - t0) / 900);
+      A.setState({ tick: 1 - Math.pow(1 - p, 3) });
+      h.__wsRaf = p < 1 ? requestAnimationFrame(step) : null;
+    };
+    h.__wsRaf = requestAnimationFrame(step);
+  }
+  /** The settle clock, armed the same guarded way for the same reason. */
+  armSettle() {
+    const h = this.__host || this;
+    if (h.__wsSettleArmed) return;
+    h.__wsSettleArmed = true;
+    this.poke();
+  }
+  poke() { clearTimeout(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.setState({ settled: true }); }, 2600); }
+
+  componentDidMount() { this.armSettle(); }
+  componentWillUnmount() {
+    clearTimeout(this._sv); clearTimeout(this._tt); clearTimeout(this._it);
+    clearTimeout(this._pt); clearTimeout(this._rt);
+    const h = this.__host || this;
+    if (h.__wsRaf) { try { cancelAnimationFrame(h.__wsRaf); } catch (e) {} h.__wsRaf = null; }
+  }
+  componentDidUpdate() {
+    const s = this.state;
+    const cur = [s.screen, s.leadSel, s.pipeStage, s.addStep, s.invSent, s.invOpened, s.invPulse,
+      (s.leadsAdded || []).length, JSON.stringify(s.leadMods).length, JSON.stringify(s.leadTrail).length,
+      (s.escal || []).length, (s.sentInvites || []).length, s.toast, s.resetArm, s.leadMoved,
+      s.afBiz, s.afOwner, s.afPhone, (s.afAreas || []).length, (s.afTypes || []).length, (s.afLocs || []).length,
+      s.afPlan, s.afValue, s.afFollow, s.afSource, s.afVertical, s.invBiz, s.invOwner, s.invPhone, s.invPlan].join('|');
+    if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
+    this._lastSig = cur;
+  }
+
+  say(msg) {
+    clearTimeout(this._tt);
+    this.setState({ toast: msg });
+    this._tt = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.setState({ toast: '' }); }, 3400);
+  }
+  /** Every screen change goes through here: one seed bump, one direction, one save. */
+  go(screen, dir) {
+    this.setState(s => ({ screen, navSeq: (s.navSeq || 0) + 1, slideFrom: dir === 'back' ? '-26px' : '26px' }));
+    this.persist();
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  renderVals() {
+    this.armTick();
+    this.armSettle();
+    this.armInviteOpen();
+    const st = this.state, C = this.db(), tick = st.tick;
+    const AN = (n, du, dl) => st.settled ? 'none' : n + ' ' + du + HOUSE + (dl || '0s') + ' both';
+    const SEED = (seq, a, b, du, dl) => (seq % 2 ? b : a) + ' ' + du + HOUSE + (dl || '0s') + ' both';
+    const seq = Number(st.navSeq) || 0;
+
+    // ── the board · seeded leads + anything added on either surface, then per-lead overrides ──
+    const allLeads = [...(C.leads || []), ...(st.leadsAdded || [])].map(l => ({ ...LEAD_BASE, ...(LEADX[l.name] || {}), ...l, ...((st.leadMods || {})[l.name] || {}) }));
+    const valOf = (l) => Number(l.value) || 0;
+    const wOf = (l) => STAGE_W[l.stage] == null ? 0 : STAGE_W[l.stage];
+    const touchOf = (l) => Number(l.touch) || 0;
+    const isStale = (l) => touchOf(l) >= STALE_DAYS;
+    const isConv = (n) => !!(st.converted || {})[n];
+    const trailOf = (n) => [...(((st.leadTrail) || {})[n] || [])];
+    const addTrail = (n, line, kind) => ({ ...(st.leadTrail || {}), [n]: [{ t: 'Just now', line, kind: kind || 'note' }, ...trailOf(n)] });
+    const touchNow = (n, extra) => ({ ...(st.leadMods || {}), [n]: { ...((st.leadMods || {})[n] || {}), touch: 0, ...(extra || {}) } });
+    const escalAll = [...ESCAL_SEED, ...(st.escal || [])].filter((e, i, a) => a.findIndex(x => x.id === e.id) === i);
+    const isEsc = (n) => escalAll.some(e => e.lead === n);
+    const leadSel = allLeads.find(l => l.name === st.leadSel) || null;
+
+    // ── forward-only, on both the row chip and the detail chips ──
+    const leadStage = (l, to) => {
+      this.setState({
+        leadMods: { ...(st.leadMods || {}), [l.name]: { ...((st.leadMods || {})[l.name] || {}), stage: to, touch: 0 } },
+        leadTrail: addTrail(l.name, 'moved ' + l.stage + ' → ' + to, 'move'),
+        leadMoved: l.name, leadSel: l.name
+      });
+      this.say(l.name + ' → ' + to + ' · it is on Omar’s console board already');
+      this.persist();
+    };
+    const stop = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
+    const openLead = (n) => { this.setState({ leadSel: n, leadMoved: null }); this.go('lead', 'fwd'); };
+
+    // ── the invite, wherever it is opened from ──
+    const toInvite = (biz, owner, phone, plan) => {
+      this.disarmInvite();
+      this.setState({ invBiz: biz || '', invOwner: owner || '', invPhone: (phone && phone !== '—') ? phone : '', invPlan: PLAN_PRICE[plan] != null ? plan : 'Growth', invSent: false, invOpened: false, invPulse: (Number(st.invPulse) || 0) + 1 });
+      this.go('invite', 'fwd');
+    };
+    /** The one seam from Won lead to account, shared by the row chip and the detail button so the
+        two can never write a different record of the same act. */
+    const convertLead = (l) => {
+      if (!l || l.stage !== 'Won' || isConv(l.name)) return;
+      this.setState({ converted: { ...(st.converted || {}), [l.name]: true },
+        leadTrail: addTrail(l.name, 'converted — invite prefilled on ' + (l.plan || 'Starter'), 'won'),
+        leadMods: touchNow(l.name), leadSel: l.name });
+      toInvite(l.name, l.owner, l.phone, l.plan);
+      this.say(l.name + ' is converting — the invite is prefilled, send the WhatsApp');
+    };
+
+    // ── numbers ──
+    const raw = allLeads.reduce((n, l) => n + valOf(l), 0);
+    const weighted = Math.round(allLeads.reduce((n, l) => n + valOf(l) * wOf(l), 0));
+    const wonN = allLeads.filter(l => l.stage === 'Won').length;
+    const inPlay = allLeads.length - wonN;
+    const winPct = allLeads.length ? Math.round(wonN / allLeads.length * 100) : 0;
+    const sent = (st.sentInvites || []).length;
+    const activations = 4 + sent;                    // WASLA_DB.console.leaderboard: ['Lina', 4]
+    const ringOf = (r, frac) => { const circ = Math.round(2 * Math.PI * r * 10) / 10; return { full: circ, to: Math.round(circ * (1 - Math.max(0, Math.min(1, frac))) * 10) / 10 }; };
+    const qFrac = Math.min(1, activations / QUOTA);
+    const qColor = qFrac >= 0.75 ? '#2FAE66' : qFrac >= 0.40 ? '#E88024' : '#8C877F';
+    const q1 = ringOf(39, qFrac * tick), q2 = ringOf(64, qFrac * tick);
+
+    // ── needs you today · stale first, then a follow-up that is due, then anything escalated ──
+    const needs = [];
+    allLeads.forEach(l => {
+      const t = touchOf(l), stale = isStale(l), due = String(l.follow || '') === 'Today', esc = isEsc(l.name);
+      if (!stale && !due && !esc) return;
+      const rank = stale ? 0 : esc ? 1 : 2;
+      const why = stale ? ('Untouched ' + t + ' days — it is drifting')
+        : esc ? ('Escalated — waiting on an admin answer')
+          : ('Follow-up due today');
+      needs.push({ l, rank, t, why, tone: stale ? 'warn' : esc ? 'risk' : 'go' });
+    });
+    needs.sort((a, b) => (a.rank - b.rank) || (b.t - a.t) || a.l.name.localeCompare(b.l.name));
+    const TONE = { warn: ['#FDF1DC', '#F6DDB0', '#F0A92B', '#9A6B12'], risk: ['#FBE9E5', '#F3CDC4', '#E2563A', '#B23420'], go: ['#F0F7F3', '#CDE7D9', '#2FAE66', '#1E7D47'] };
+
+    // ── the stage filter ──
+    const pipeStage = st.pipeStage || 'All';
+    const pipeLeads = pipeStage === 'All' ? allLeads : allLeads.filter(l => l.stage === pipeStage);
+    const stageDefs = ['All', ...STAGES];
+
+    // ── the add-a-lead form ──
+    const afLocs = (st.afLocs && st.afLocs.length ? st.afLocs : ['']);
+    const afBizV = (st.afBiz || '').trim(), afOwnerV = (st.afOwner || '').trim();
+    const afPhoneDigits = (st.afPhone || '').replace(/\D/g, '').length;
+    const afPhoneStarts = /^\s*\+?962/.test(st.afPhone || '') || (st.afPhone || '').replace(/\D/g, '').slice(0, 1) === '0' || !(st.afPhone || '').length;
+    const afBizOk = afBizV.length >= 2;
+    const afOwnerOk = afOwnerV.length >= 2;
+    const afPhoneOk = afPhoneDigits >= 9 && afPhoneDigits <= 13;
+    const afDupe = afBizOk && allLeads.some(l => String(l.name).toLowerCase() === afBizV.toLowerCase());
+    const setAf = (k, v) => { this.setState({ [k]: v }); this.persist(); };
+    const pickMulti = (k, list, v) => setAf(k, (list || []).includes(v) ? list.filter(x => x !== v) : [...(list || []), v]);
+    const addStep = Math.max(0, Math.min(2, Number(st.addStep) || 0));
+    // the third gate is the WHOLE form's gate: a restored draft can land on step 3 with step 1
+    // emptied, and the button must not pretend that is submittable
+    const stepOk = [afBizOk && !afDupe, afOwnerOk && afPhoneOk, afBizOk && !afDupe && afOwnerOk && afPhoneOk];
+    const addGate = addStep === 0
+      ? (afDupe ? (afBizV + ' is already on the board — open it instead of adding it twice.')
+        : afBizOk ? 'Good. The Arabic name, vertical and areas are optional — they just make the first meeting shorter.'
+          : 'Name the business. It becomes the account name on every pass it ever issues.')
+      : addStep === 1
+        ? (!afOwnerOk ? 'Add the owner’s name — the invite opens with it, and one owner is the whole model.'
+          : !afPhoneOk ? ('Jordanian mobile — +962 7x xxx xxxx. ' + afPhoneDigits + ' of 9 digits so far.')
+            : !afPhoneStarts ? 'Long enough, but that is not a Jordanian country code — check it before the invite goes out.'
+              : 'Good — that is the number the WhatsApp invite goes to.')
+        : (!stepOk[2]
+          ? 'Go back — business, owner and a full phone number are the three we will not guess.'
+          : (afBizV + ' lands in Cold at JOD ' + (Number(st.afValue) || PLAN_PRICE[st.afPlan] || 25) + ' a month. Advance it from the card when it moves.'));
+    const addReady = stepOk[0] && stepOk[1];
+
+    const addApply = () => {
+      if (!addReady || afDupe) { this.say(afDupe ? (afBizV + ' is already in the pipeline') : 'Business, owner and a full phone number are the three we will not guess'); return; }
+      const locs = afLocs.map(x => String(x || '').trim()).filter(Boolean);
+      const lead = { name: afBizV, ar: (st.afAr || '').trim(), stage: 'Cold', owner: afOwnerV, by: 'Lina',
+        phone: (st.afPhone || '').trim(), email: (st.afEmail || '').trim() || '—',
+        vertical: st.afVertical, city: (st.afCity || 'Amman').trim(), areas: [...(st.afAreas || [])],
+        locs: locs.length ? locs : [(st.afCity || 'Amman').trim()], types: [...(st.afTypes || [])],
+        plan: st.afPlan, value: Number(st.afValue) || PLAN_PRICE[st.afPlan] || 25,
+        source: st.afSource, follow: st.afFollow, touch: 0,
+        note: (st.afNotes || '').trim() || 'Captured just now — no touch yet', seedTrail: [] };
+      this.setState({
+        leadsAdded: [...(st.leadsAdded || []), lead],
+        leadTrail: addTrail(lead.name, 'captured from ' + String(st.afSource).toLowerCase() + ' — follow up ' + String(st.afFollow).toLowerCase(), 'note'),
+        leadSel: lead.name, leadMoved: lead.name, addStep: 0,
+        afBiz: '', afAr: '', afOwner: '', afPhone: '', afEmail: '', afAreas: [], afLocs: [''], afTypes: [], afNotes: '',
+        afVertical: 'Café', afPlan: 'Growth', afValue: '79', afSource: 'Referral', afFollow: 'Tomorrow'
+      });
+      this.go('lead', 'fwd');
+      this.say(lead.name + ' is on the board at Cold — JOD ' + lead.value + '/month, follow up ' + String(lead.follow).toLowerCase());
+    };
+
+    // ── the invite ──
+    const ivBizV = (st.invBiz || '').trim(), ivOwnerV = (st.invOwner || '').trim(), ivPhoneV = (st.invPhone || '').trim();
+    const ivPhoneDigits = ivPhoneV.replace(/\D/g, '').length;
+    const ivBizOk = ivBizV.length >= 2, ivOwnerOk = ivOwnerV.length >= 2, ivPhoneOk = ivPhoneDigits >= 9;
+    const ivReady = ivBizOk && ivOwnerOk && ivPhoneOk;
+    const ivFirst = ivOwnerV.split(' ')[0] || '';
+    const ivSlug = (ivBizV || 'client').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const ivGate = !ivBizOk ? 'Name the business — it becomes the account name on every pass it ever issues.'
+      : !ivOwnerOk ? 'Add the owner’s name — the message opens with it.'
+        : !ivPhoneOk ? ('Add the owner’s WhatsApp — ' + ivPhoneDigits + ' of 9 digits so far.')
+          : st.invSent ? ('Sent to ' + ivPhoneV + '. Nothing more to do from here — the password is theirs alone.')
+            : ('Ready — ' + (ivFirst || 'the owner') + ' gets one WhatsApp, and that link IS the reset flow.');
+    /** Any edit to what the message says un-sends the draft, disarms the tracking timer and bumps
+        the pulse seed so the bubble replays exactly one beat. A sent invite is a fact, not a form. */
+    const ivEdit = (k, v) => { this.disarmInvite(); this.setState({ [k]: v, invSent: false, invOpened: false, invPulse: (Number(st.invPulse) || 0) + 1 }); this.persist(); };
+    const sendInvite = () => {
+      if (st.invSent) return;
+      if (!ivReady) { this.say(ivGate); return; }
+      this.disarmInvite();
+      const already = (st.sentInvites || []).indexOf(ivBizV) >= 0;
+      const nextSent = already ? (st.sentInvites || []) : [...(st.sentInvites || []), ivBizV];
+      const known = allLeads.some(l => l.name === ivBizV);
+      this.setState({ invSent: true, invOpened: false, sentInvites: nextSent,
+        leadTrail: known ? addTrail(ivBizV, 'invite sent on WhatsApp to ' + (ivOwnerV || 'the owner') + ' · ' + st.invPlan, 'invite') : (st.leadTrail || {}),
+        leadMods: known ? touchNow(ivBizV) : (st.leadMods || {}) });
+      this.pushLive('join', ivBizV, 'Lina invited ' + ivBizV + ' — WhatsApp sent', 'New account');
+      this.say('Invite sent to ' + (ivFirst || 'the owner') + ' — the account exists the moment they set a password');
+      this.persist();
+    };
+
+    // ── ME ──
+    const board = (C.leaderboard || []).map(([name, n]) => ({ name, n: name === 'Lina' ? activations : n }));
+    board.sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
+    const boardMax = Math.max(1, ...board.map(b => b.n));
+    const myRank = Math.max(0, board.findIndex(b => b.name === 'Lina')) + 1;
+    const delta = activations - LINA_PERF.last;
+    const spark = LINA_PERF.spark.map((v, i) => i === LINA_PERF.spark.length - 1 ? v + sent : v);
+    const sparkMax = Math.max(1, ...spark);
+    const meTrailRaw = [];
+    allLeads.filter(l => l.by === 'Lina').forEach(l => {
+      trailOf(l.name).forEach(e => meTrailRaw.push({ name: l.name, line: l.name + ' — ' + e.line, t: e.t, kind: e.kind, fresh: true }));
+    });
+    allLeads.filter(l => l.by === 'Lina').forEach(l => {
+      (l.seedTrail || []).forEach(([t, line, kind]) => meTrailRaw.push({ name: l.name, line: l.name + ' — ' + line, t, kind, fresh: false }));
+    });
+    meTrailRaw.push({ name: null, line: 'Marked the Qamar Sweets renewal paid — quota re-armed', t: 'Yesterday', kind: 'note', fresh: false });
+
+    // ── the side panel walk ──
+    const walkDefs = [
+      ['Her Thursday', 'The morning as she opens it', '#E88024', '◷', () => { this.setState({ leadSel: null }); this.go('today', 'back'); }],
+      ['A lead gone quiet', 'Baraka Style · 11 days of silence', '#F0A92B', '!', () => openLead('Baraka Style')],
+      ['Capture in the field', 'The form, prefilled — tap through it', '#7B68AE', '+', () => {
+        this.setState({ addStep: 0, afBiz: 'Habibah Sweets', afAr: 'حلويات حبيبة', afOwner: 'Nadia Habib', afPhone: '+962 79 555 0742', afEmail: 'nadia@habibah.jo', afVertical: 'Retail', afCity: 'Amman', afAreas: ['Rainbow St'], afLocs: ['Rainbow St'], afTypes: ['Stamp Card'], afPlan: 'Growth', afValue: '79', afSource: 'Walk-in', afFollow: 'Today', afNotes: 'Owner wants the 8th-free card before Eid.' });
+        this.go('add', 'fwd');
+      }],
+      ['Convert a won lead', 'Al-Quds Falafel · ready to invite', '#2FAE66', '✓', () => openLead('Al-Quds Falafel')],
+      ['Send the invite', 'The WhatsApp, then the tracking', '#1D6FB8', '→', () => { const l = allLeads.find(x => x.name === 'Al-Quds Falafel'); toInvite('Al-Quds Falafel', (l && l.owner) || 'Abu Shadi', (l && l.phone) || '+962 77 555 0290', (l && l.plan) || 'Starter'); }]
+    ];
+    const tint = (hex, a) => { const n = parseInt(String(hex).slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; };
+
+    const changesN = (st.leadsAdded || []).length + Object.keys(st.leadMods || {}).length;
+    const tabIdx = st.screen === 'today' ? 0 : (st.screen === 'pipeline' || st.screen === 'lead') ? 1 : st.screen === 'add' ? 2 : st.screen === 'me' ? 3 : -1;
+    const tabFg = (i) => tabIdx === i ? '#C96A14' : '#A79C8D';
+    const tabFw = (i) => tabIdx === i ? 800 : 600;
+    const tabSc = (i) => tabIdx === i ? '1.08' : '1';
+    const titleFor = { today: 'Today', pipeline: 'Pipeline', lead: (leadSel ? leadSel.name : 'Lead'), add: 'Add a lead', invite: 'Invite a client', me: ME.name };
+    const subFor = {
+      today: CLOCK.weekday + ' · ' + CLOCK.d + ' ' + CLOCK.month + ' · ' + ME.name,
+      pipeline: allLeads.length + ' on the board · ' + pipeStage,
+      lead: leadSel ? (leadSel.stage + ' · owned by ' + (leadSel.by || '—')) : '—',
+      add: 'Step ' + (addStep + 1) + ' of 3',
+      invite: st.invSent ? 'Sent · tracking below' : 'Draft — nothing has left the phone',
+      me: ME.role + ' · Amman'
+    };
+
+    return {
+      // ── chrome ──
+      enterAnim: 'sceneIn' + (seq % 2 ? '1' : '2') + ' .42s' + HOUSE + 'both',
+      slideFrom: st.slideFrom || '26px',
+      meInitials: ME.initials, meName: ME.name, meAr: ME.ar, meRole: ME.role,
+      barTitle: titleFor[st.screen] || 'Wasla',
+      barSub: subFor[st.screen] || '',
+      showBack: st.screen === 'lead' || st.screen === 'invite',
+      // back from a lead is always the board; back from an invite is the lead it came from, when
+      // that lead still exists — an invite reached from Today has nothing behind it but Today
+      goBack: () => {
+        if (st.screen === 'lead') { this.go('pipeline', 'back'); return; }
+        const src = allLeads.find(l => l.name === (st.invBiz || '').trim());
+        if (st.screen === 'invite' && src) { this.setState({ leadSel: src.name, leadMoved: null }); this.go('lead', 'back'); return; }
+        this.go('today', 'back');
+      },
+      hasToast: !!st.toast, toast: st.toast, toastAnim: SEED(seq + String(st.toast).length, 'stepPopA', 'stepPopB', '.3s'),
+      indLeft: (tabIdx < 0 ? 0 : tabIdx * 25) + '%', indOp: tabIdx < 0 ? '0' : '1',
+      t0Fg: tabFg(0), t1Fg: tabFg(1), t2Fg: tabFg(2), t3Fg: tabFg(3),
+      t0Fw: tabFw(0), t1Fw: tabFw(1), t2Fw: tabFw(2), t3Fw: tabFw(3),
+      t0Sc: tabSc(0), t1Sc: tabSc(1), t2Sc: tabSc(2), t3Sc: tabSc(3),
+      tabToday: () => this.go('today', tabIdx > 0 ? 'back' : 'fwd'),
+      tabPipe: () => this.go('pipeline', tabIdx > 1 ? 'back' : 'fwd'),
+      tabAdd: () => this.go('add', tabIdx > 2 ? 'back' : 'fwd'),
+      tabMe: () => this.go('me', 'fwd'),
+      isToday: st.screen === 'today', isPipe: st.screen === 'pipeline', isLead: st.screen === 'lead',
+      isAdd: st.screen === 'add', isInvite: st.screen === 'invite', isMe: st.screen === 'me',
+
+      // ── TODAY ──
+      greetLine: (CLOCK.hh < 12 ? 'Good morning, ' : CLOCK.hh < 18 ? 'Good afternoon, ' : 'Good evening, ') + ME.first + '.',
+      greetAr: 'صباح الخير',
+      todayLine: CLOCK.weekday + ' · ' + CLOCK.d + ' ' + CLOCK.month + ' · Amman',
+      qCardAnim: AN('fadeUp', '.45s', '.04s'),
+      qColor, qFull: q1.full, qTo: q1.to,
+      qRingAnim: st.settled ? 'none' : 'ringDraw 1.05s' + HOUSE + '.15s both',
+      qLabel: Math.round(activations * tick) + '/' + QUOTA,
+      qHead: activations >= QUOTA ? 'Quota cleared — ' + activations + ' this month'
+        : (QUOTA - activations) + ' more to clear the month',
+      qNote: activations >= QUOTA ? 'Everything past eight is upside. Keep the board moving anyway.'
+        : 'Eight activations is the month. ' + activations + ' are live, and there are ' + (QUOTA - activations) + ' to go — one Won lead, one invite, one password.',
+      todayTiles: [
+        ['Pipeline', 'JOD ' + Math.round(weighted * tick), 'JOD ' + raw + ' raw', '#2C2C2C'],
+        ['In play', String(Math.round(inPlay * tick)), wonN + ' won · ' + allLeads.length + ' total', '#C96A14'],
+        ['Win rate', Math.round(winPct * tick) + '%', wonN + ' of ' + allLeads.length, '#1E7D47']
+      ].map(([label, value, sub, fg], i) => ({ label, value, sub, fg, anim: AN('fadeUp', '.42s', (0.08 + 0.05 * i) + 's') })),
+      needsCardAnim: AN('fadeUp', '.45s', '.16s'),
+      needsCount: String(needs.length),
+      needsBadgeBg: needs.length ? '#FDF1DC' : '#F0F7F3',
+      needsBadgeFg: needs.length ? '#9A6B12' : '#1E7D47',
+      needsEmpty: needs.length === 0,
+      needsEmptyLine: 'Nothing is drifting and nothing is due. Rare — go add a lead.',
+      needsRows: needs.slice(0, 6).map((nd, i) => {
+        const T = TONE[nd.tone];
+        const t = REP_TONE[nd.l.by] || ['#EFEDE8', '#6B6760', '#8C877F'];
+        return { name: nd.l.name, ar: nd.l.ar || '', why: nd.why,
+          bg: T[0], br: T[1], dot: T[2], whyFg: T[3],
+          dotAnim: nd.tone === 'risk' ? 'pulseDot 2s infinite' : 'none',
+          by: nd.l.by === 'Lina' ? 'you' : (nd.l.by || '—'),
+          byBg: nd.l.by === 'Lina' ? '#EDE9F5' : t[0], byFg: nd.l.by === 'Lina' ? '#5B4A8A' : t[1],
+          go: () => openLead(nd.l.name),
+          anim: AN('fadeUp', '.4s', (0.2 + 0.05 * i) + 's') };
+      }),
+      needsFoot: 'Stale is ' + STALE_DAYS + ' days without a touch — the same clock the console runs. A ping, a note or a stage move resets it.',
+      qa1Anim: AN('fadeUp', '.45s', '.3s'), qa2Anim: AN('fadeUp', '.45s', '.35s'),
+      goAdd: () => this.go('add', 'fwd'),
+      goInviteBlank: () => toInvite('', '', '', 'Growth'),
+
+      // ── PIPELINE ──
+      stageChips: stageDefs.map((s, i) => {
+        const n = s === 'All' ? allLeads.length : allLeads.filter(l => l.stage === s).length;
+        const on = pipeStage === s;
+        return { label: s, n: String(n),
+          dot: s === 'All' ? '#6E6960' : (STAGE_DOT[s] || '#C9BFAF'),
+          bg: on ? '#2C2C2C' : '#FFFFFF', br: on ? '#2C2C2C' : '#E7E0D5', fg: on ? '#FFFFFF' : '#5D5348',
+          nBg: on ? 'rgba(255,255,255,.18)' : '#F4F0E8', nFg: on ? '#FFFFFF' : '#7A7166',
+          go: () => { this.setState({ pipeStage: s }); this.persist(); },
+          anim: AN('fadeUp', '.35s', (0.02 * i) + 's') };
+      }),
+      pipeHead: pipeLeads.length
+        ? (pipeLeads.length + (pipeLeads.length === 1 ? ' lead · JOD ' : ' leads · JOD ') + pipeLeads.reduce((n, l) => n + valOf(l), 0) + ' raw → JOD ' + Math.round(pipeLeads.reduce((n, l) => n + valOf(l) * wOf(l), 0)) + ' weighted')
+        : 'Nothing under this filter — so nothing forecast.',
+      pipeEmpty: pipeLeads.length === 0,
+      pipeEmptyLine: pipeStage === 'Won' ? 'Nothing won yet. Move something here.' : pipeStage === 'Cold' ? 'Nothing has gone cold. Good.' : 'Empty under this filter — try All.',
+      pipeFoot: 'Tap a card to open it. ▸ advances one stage, forward only — the pipeline never walks backwards, here or on the console.',
+      pipeRows: pipeLeads.map((l, i) => {
+        const conv = isConv(l.name), moved = st.leadMoved === l.name;
+        const next = STAGES[STAGES.indexOf(l.stage) + 1];
+        const stale = isStale(l), t = touchOf(l);
+        const canConv = l.stage === 'Won' && !conv;
+        const s = STAGE_STYLE[l.stage] || ['#EFEDE8', '#6B6760'];
+        const rt = REP_TONE[l.by] || ['#EFEDE8', '#6B6760', '#8C877F'];
+        return {
+          name: l.name, ar: l.ar || '', owner: l.owner || '—',
+          by: l.by === 'Lina' ? 'you' : (l.by || '—'),
+          byBg: l.by === 'Lina' ? '#EDE9F5' : rt[0], byFg: l.by === 'Lina' ? '#5B4A8A' : rt[1],
+          areas: (l.areas || []).slice(0, 3).map(a => ({ label: a })),
+          stage: l.stage, stBg: s[0], stFg: s[1], dot: STAGE_DOT[l.stage] || '#C9BFAF',
+          value: 'JOD ' + valOf(l),
+          age: t === 0 ? 'touched today' : t + 'd since last touch',
+          ageFg: stale ? '#9A6B12' : '#A79C8D', ageFw: stale ? 800 : 600,
+          br: conv ? '#9AD3B4' : (st.leadSel === l.name ? '#E88024' : '#EDE6DA'), op: conv ? '.88' : '1',
+          converted: conv, convLabel: (st.sentInvites || []).indexOf(l.name) >= 0 ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT',
+          anim: moved ? SEED(seq, 'rowInA', 'rowInB', '.5s') : AN('fadeUp', '.42s', (0.03 * i) + 's'),
+          hasAct: !!next || canConv,
+          actLabel: canConv ? 'Convert →' : '▸ advance', actFs: canConv ? '9.5px' : '9.5px',
+          actTip: canConv ? 'Convert — prefill the invite' : ('Move to ' + next),
+          actBr: canConv ? '#9AD3B4' : '#E7E0D5', actBg: canConv ? '#E7F6EE' : '#FFFFFF', actFg: canConv ? '#1E7D47' : '#6E6960',
+          act: (e) => { stop(e); if (canConv) { convertLead(l); return; } if (next) leadStage(l, next); },
+          open: () => openLead(l.name)
+        };
+      }),
+
+      // ── LEAD DETAIL ──
+      ldName: leadSel ? leadSel.name : '', ldAr: leadSel ? (leadSel.ar || '') : '',
+      ldStage: leadSel ? leadSel.stage : '',
+      ldStBg: (STAGE_STYLE[(leadSel || {}).stage] || ['#EFEDE8'])[0],
+      ldStFg: (STAGE_STYLE[(leadSel || {}).stage] || ['', '#6B6760'])[1],
+      ldSubLine: leadSel ? [leadSel.owner, leadSel.phone, leadSel.vertical, 'owned by ' + (leadSel.by === 'Lina' ? 'you' : (leadSel.by || '—')), 'follow-up ' + (leadSel.follow || '—')].filter(Boolean).join(' · ') : '',
+      ldIsConverted: !!leadSel && isConv(leadSel.name),
+      ldConvChip: leadSel && (st.sentInvites || []).indexOf(leadSel.name) >= 0 ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT',
+      ldHeadAnim: AN('fadeUp', '.42s'),
+      ldStagesAnim: AN('fadeUp', '.42s', '.05s'),
+      ldStages: STAGES.map(s => {
+        const cur = STAGES.indexOf((leadSel || {}).stage), i = STAGES.indexOf(s);
+        const on = i === cur, past = i < cur;
+        const c = STAGE_STYLE[s] || ['#EFEDE8', '#6B6760'];
+        return { label: s,
+          br: on ? c[1] : '#E7E0D5', bg: on ? c[0] : '#FFFFFF',
+          fg: on ? c[1] : past ? '#B5AB9C' : '#5D5348',
+          op: past ? '.45' : '1', cursor: (past || on) ? 'default' : 'pointer',
+          cls: (past || on) ? 'ws-off' : 'ws-chip',
+          pick: () => { if (!leadSel) return; if (i <= cur) { if (past) this.say('Forward only — the pipeline never walks backwards'); return; } leadStage(leadSel, s); } };
+      }),
+      ldStageNote: leadSel
+        ? (leadSel.stage === 'Won'
+          ? (isConv(leadSel.name) ? 'Won and converted — the invite is out; the account is born the second they set a password.' : 'Won — convert it and the account is born on their phone.')
+          : ('Now ' + leadSel.stage + ' · next is ' + (STAGES[STAGES.indexOf(leadSel.stage) + 1] || '—') + '. Earlier stages are closed.'))
+        : '',
+      ldGroups: (leadSel ? [
+        ['Contact', [['Owner', leadSel.owner || '—'], ['Phone', leadSel.phone || '—'], ['Email', leadSel.email || '—'], ['Vertical', leadSel.vertical || '—'], ['Source', leadSel.source || '—']]],
+        ['Footprint', [['City', leadSel.city || 'Amman'], ['Areas', (leadSel.areas || []).join(' · ') || '—'], ['Locations', String((leadSel.locs || []).length || 1)], ['Branches', (leadSel.locs || []).join(' · ') || '—']]],
+        ['The deal', [['Plan interest', leadSel.plan || '—'], ['Expected value', 'JOD ' + valOf(leadSel) + ' / month'], ['Card types', (leadSel.types || []).join(' · ') || '—'], ['Follow-up', leadSel.follow || '—'], ['Last touch', touchOf(leadSel) === 0 ? 'today' : (touchOf(leadSel) + ' days ago')]]]
+      ] : []).map(([title, rows], i) => ({ title, anim: AN('fadeUp', '.42s', (0.09 + 0.05 * i) + 's'), rows: rows.map(([k, v]) => ({ k, v })) })),
+      ldTrailAnim: AN('fadeUp', '.42s', '.24s'),
+      ldTrail: (leadSel ? [...trailOf(leadSel.name), ...((leadSel.seedTrail || []).map(([t, line, kind]) => ({ t, line, kind })))] : []).slice(0, 8)
+        .map((e, i) => ({ line: e.line, t: e.t, dot: TRAIL_DOT[e.kind] || '#C9BFAF', anim: AN('fadeUp', '.36s', (0.26 + 0.04 * i) + 's') })),
+      ldTrailEmpty: !!leadSel && (trailOf(leadSel.name).length + ((leadSel.seedTrail || []).length)) === 0,
+      ldNoteAnim: AN('fadeUp', '.42s', '.3s'),
+      ldNote: (leadSel || {}).note || '',
+      setLdNote: (e) => { if (!leadSel) return; this.setState({ leadMods: { ...(st.leadMods || {}), [leadSel.name]: { ...((st.leadMods || {})[leadSel.name] || {}), note: e.target.value } } }); this.persist(); },
+      ldNoteBg: (leadSel && String(leadSel.note || '').trim().length >= 6) ? '#E88024' : '#EFEDE8',
+      ldNoteFg: (leadSel && String(leadSel.note || '').trim().length >= 6) ? '#FFFFFF' : '#93887A',
+      ldNoteCls: (leadSel && String(leadSel.note || '').trim().length >= 6) ? 'ws-cta' : 'ws-off',
+      ldNoteCur: (leadSel && String(leadSel.note || '').trim().length >= 6) ? 'pointer' : 'not-allowed',
+      ldNoteLabel: (leadSel && String(leadSel.note || '').trim().length >= 6) ? 'Save the note to the trail' : 'Write a few words first',
+      ldNoteSave: () => {
+        if (!leadSel) return;
+        const n = String(leadSel.note || '').trim();
+        if (n.length < 6) return;
+        this.setState({ leadTrail: addTrail(leadSel.name, 'note: ' + n, 'note'), leadMods: touchNow(leadSel.name) });
+        this.say('Noted on ' + leadSel.name + ' — it is on Omar’s console trail too');
+        this.persist();
+      },
+      ldFollowAnim: AN('fadeUp', '.42s', '.34s'),
+      ldFollowChips: FOLLOWS.map(f => {
+        const on = (leadSel || {}).follow === f;
+        return { label: f, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348',
+          pick: () => {
+            if (!leadSel) return;
+            this.setState({ leadMods: touchNow(leadSel.name, { follow: f }), leadTrail: addTrail(leadSel.name, 'follow-up scheduled — ' + f.toLowerCase(), 'move') });
+            this.say('Follow-up on ' + leadSel.name + ' set for ' + f.toLowerCase());
+            this.persist();
+          } };
+      }),
+      ldFollowNote: leadSel ? ('Currently ' + (leadSel.follow || '—') + '. A follow-up you never set is a lead you already lost.') : '',
+      ldActionsAnim: AN('fadeUp', '.42s', '.38s'),
+      ldPing: () => {
+        if (!leadSel) return;
+        this.setState({ leadTrail: addTrail(leadSel.name, 'pinged ' + (leadSel.owner || 'the owner') + ' on WhatsApp', 'ping'), leadMods: touchNow(leadSel.name) });
+        this.say('WhatsApp sent to ' + (leadSel.owner || 'the lead') + ' — in Arabic, from your number');
+        this.persist();
+      },
+      ldCanConvert: !!leadSel && leadSel.stage === 'Won' && !isConv(leadSel.name),
+      ldConvert: () => convertLead(leadSel),
+      ldEscLabel: (leadSel && isEsc(leadSel.name)) ? 'Escalated — waiting on admin' : 'Escalate to admin',
+      ldEscBr: (leadSel && isEsc(leadSel.name)) ? '#F0A92B' : '#E7E0D5',
+      ldEscFg: (leadSel && isEsc(leadSel.name)) ? '#9A6B12' : '#5D5348',
+      ldEscalate: () => {
+        if (!leadSel) return;
+        const id = 'e-' + leadSel.name;
+        if (isEsc(leadSel.name)) { this.say(leadSel.name + ' is already with the admin — one escalation at a time'); return; }
+        const ask = String(leadSel.note || 'needs a decision').replace(/\s*—\s*escalate\s*$/i, '').trim();
+        this.setState({ escal: [...(st.escal || []), { id, lead: leadSel.name, rep: 'Lina', ask }],
+          leadTrail: addTrail(leadSel.name, 'escalated to admin — ' + ask, 'escalate'), leadMods: touchNow(leadSel.name) });
+        this.say(leadSel.name + ' escalated — the ask is on the trail Omar reads');
+        this.persist();
+      },
+      ldFootNote: 'Everything here — the stage, the ping, the note, the escalation — lands on Omar’s console board the moment you tap it. Nothing waits for a sync button.',
+
+      // ── ADD A LEAD ──
+      addS0: addStep === 0, addS1: addStep === 1, addS2: addStep === 2,
+      addStepAnim: SEED(addStep + seq, 'stepPopA', 'stepPopB', '.36s'),
+      addSteps: ['The business', 'The owner', 'The deal'].map((label, i) => ({
+        label, flex: i === 2 ? '0 0 auto' : '1 1 auto',
+        mark: i < addStep ? '✓' : String(i + 1),
+        bg: i < addStep ? '#E7F6EE' : i === addStep ? '#E88024' : '#FFFFFF',
+        fg: i < addStep ? '#1E7D47' : i === addStep ? '#FFFFFF' : '#A79C8D',
+        br: i < addStep ? '#9AD3B4' : i === addStep ? '#E88024' : '#E7E0D5',
+        labFg: i === addStep ? '#C96A14' : '#A79C8D',
+        hasLine: i < 2, lineW: i < addStep ? '100%' : '0%'
+      })),
+      afBiz: st.afBiz, setAfBiz: (e) => setAf('afBiz', e.target.value),
+      afBizBr: afDupe ? '#E2563A' : afBizOk ? '#9AD3B4' : '#D8D0C2',
+      afBizFg: afDupe ? '#B23420' : afBizOk ? '#1E7D47' : '#A79C8D',
+      afBizNote: afDupe ? 'Already on the board — open it instead of adding it twice.' : afBizOk ? 'Good — this is the account name.' : 'Two characters minimum. Arabic name is optional and lands under it.',
+      afAr: st.afAr, setAfAr: (e) => setAf('afAr', e.target.value),
+      afVertChips: VERTS.map(v => { const on = st.afVertical === v; return { label: v, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => setAf('afVertical', v) }; }),
+      afCity: st.afCity, setAfCity: (e) => setAf('afCity', e.target.value),
+      afAreaChips: AREAS.map(a => { const on = (st.afAreas || []).includes(a); return { label: a, mark: on ? '✓ ' : '', br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => pickMulti('afAreas', st.afAreas, a) }; }),
+      afLocN: String(afLocs.length),
+      afLocNote: afLocs.length === 1 ? 'One location — Starter covers it.' : afLocs.length + ' locations — name each one, staff scopes follow.',
+      afLocPlus: () => { if (afLocs.length >= 8) { this.say('Eight is the demo ceiling — real accounts have no cap'); return; } setAf('afLocs', [...afLocs, '']); },
+      afLocMinus: () => { if (afLocs.length <= 1) return; setAf('afLocs', afLocs.slice(0, -1)); },
+      afLocRows: afLocs.map((v, i) => ({ v, ph: i === 0 ? 'e.g. Rainbow St — the main branch' : 'e.g. branch ' + (i + 1), anim: AN('fadeUp', '.3s', (0.03 * i) + 's'), set: (e) => setAf('afLocs', afLocs.map((x, j) => j === i ? e.target.value : x)) })),
+      afOwner: st.afOwner, setAfOwner: (e) => setAf('afOwner', e.target.value),
+      afOwnerBr: afOwnerOk ? '#9AD3B4' : '#D8D0C2',
+      afPhone: st.afPhone, setAfPhone: (e) => setAf('afPhone', e.target.value),
+      afPhoneBr: (st.afPhone || '').length === 0 ? '#D8D0C2' : (afPhoneOk && afPhoneStarts) ? '#9AD3B4' : afPhoneOk ? '#F0A92B' : '#E2563A',
+      afPhoneFg: (st.afPhone || '').length === 0 ? '#A79C8D' : (afPhoneOk && afPhoneStarts) ? '#1E7D47' : afPhoneOk ? '#9A6B12' : '#B23420',
+      afPhoneNote: (st.afPhone || '').length === 0 ? 'Jordanian mobile — +962 7x xxx xxxx. It becomes the WhatsApp we invite them on.'
+        : !afPhoneStarts ? 'Jordanian numbers start +962 or 07 — check the country code.'
+          : afPhoneOk ? 'Good — this is the number the invite goes to.'
+            : ('Not a full number yet — ' + afPhoneDigits + ' of 9 digits.'),
+      afEmail: st.afEmail, setAfEmail: (e) => setAf('afEmail', e.target.value),
+      afSourceChips: SOURCES.map(s => { const on = st.afSource === s; return { label: s, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => setAf('afSource', s) }; }),
+      afTypeChips: this.typeNames().map(t => { const on = (st.afTypes || []).includes(t); return { label: t, mark: on ? '✓ ' : '', br: on ? '#2FAE66' : '#E7E0D5', bg: on ? '#E7F6EE' : '#FFFFFF', fg: on ? '#1E7D47' : '#5D5348', pick: () => pickMulti('afTypes', st.afTypes, t) }; }),
+      afPlanChips: ['Starter', 'Growth', 'Unlimited'].map(p => { const on = st.afPlan === p; return { label: p + ' · JOD ' + PLAN_PRICE[p], br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => { this.setState({ afPlan: p, afValue: String(PLAN_PRICE[p]) }); this.persist(); } }; }),
+      afValue: st.afValue, setAfValue: (e) => setAf('afValue', String(e.target.value).replace(/[^0-9]/g, '')),
+      afValueNote: 'Picking a plan fills this in. Override it when the deal is not list price — the forecast reads this number, not the plan.',
+      afFollowChips: FOLLOWS.map(f => { const on = st.afFollow === f; return { label: f, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => setAf('afFollow', f) }; }),
+      afNotes: st.afNotes, setAfNotes: (e) => setAf('afNotes', e.target.value),
+      addGateLine: addGate,
+      addGateDot: stepOk[addStep] ? '#2FAE66' : '#F0A92B',
+      addGateFg: stepOk[addStep] ? '#1E7D47' : '#9A6B12',
+      addGateBg: stepOk[addStep] ? '#F0F7F3' : '#FDF1DC',
+      addGateBr: stepOk[addStep] ? '#CDE7D9' : '#F6DDB0',
+      addBackShow: addStep > 0,
+      addBack: () => { this.setState({ addStep: Math.max(0, addStep - 1) }); this.persist(); },
+      addNextLabel: addStep === 0 ? 'Next · the owner' : addStep === 1 ? 'Next · the deal' : (afBizOk ? ('Add ' + afBizV + ' to the board') : 'Add to the board'),
+      addNextBg: stepOk[addStep] ? '#E88024' : '#EFEDE8',
+      addNextFg: stepOk[addStep] ? '#FFFFFF' : '#93887A',
+      addNextCls: stepOk[addStep] ? 'ws-cta' : 'ws-off',
+      addNextCur: stepOk[addStep] ? 'pointer' : 'not-allowed',
+      addNext: () => {
+        if (!stepOk[addStep]) { this.say(addGate); return; }
+        if (addStep < 2) { this.setState({ addStep: addStep + 1 }); this.persist(); return; }
+        addApply();
+      },
+
+      // ── INVITE ──
+      ivLede: st.invSent
+        ? ('Sent. Nothing exists on Wasla’s side yet — the account is born the second ' + (ivFirst || 'the owner') + ' sets a password.')
+        : 'Accounts are born on a phone. You send one WhatsApp; they own the account a minute later.',
+      ivFormAnim: AN('fadeUp', '.42s', '.03s'),
+      ivBiz: st.invBiz, setIvBiz: (e) => ivEdit('invBiz', e.target.value), ivBizBr: ivBizOk ? '#9AD3B4' : (ivBizV.length ? '#F0A92B' : '#D8D0C2'),
+      ivOwner: st.invOwner, setIvOwner: (e) => ivEdit('invOwner', e.target.value), ivOwnerBr: ivOwnerOk ? '#9AD3B4' : (ivOwnerV.length ? '#F0A92B' : '#D8D0C2'),
+      ivPhone: st.invPhone, setIvPhone: (e) => ivEdit('invPhone', e.target.value), ivPhoneBr: ivPhoneOk ? '#9AD3B4' : (ivPhoneV.length ? '#F0A92B' : '#D8D0C2'),
+      ivPlanChips: ['Starter', 'Growth', 'Unlimited'].map(p => ({ label: p + ' · JOD ' + PLAN_PRICE[p], br: st.invPlan === p ? '#E88024' : '#E7E0D5', bg: st.invPlan === p ? '#FDF4EC' : '#FFFFFF', fg: st.invPlan === p ? '#C96A14' : '#5D5348', pick: () => { this.setState({ invPlan: p }); this.persist(); } })),
+      ivPlanNote: st.invPlan + ' — JOD ' + (PLAN_PRICE[st.invPlan] || 0) + ' a month · ' + (PLAN_BLURB[st.invPlan] || '') + '. Quotas only — all eight card types are on every plan.',
+      ivPreviewAnim: AN('fadeUp', '.45s', '.1s'),
+      ivBubbleAnim: ((Number(st.invPulse) || 0) % 2) ? 'msgPulseB .45s' + HOUSE + 'both' : 'msgPulseA .45s' + HOUSE + 'both',
+      ivFirst: ivFirst || 'there', ivBizShown: ivBizV || 'your business',
+      ivPhoneShown: ivPhoneV || 'no number yet', ivSlug,
+      ivStamp: st.invSent ? (INVITE_STAMP + ' ✓✓') : 'draft · not sent',
+      ivPreviewNote: st.invSent ? 'Delivered. Arabic first in production — this is the English gloss of what landed.' : 'The draft, exactly as it will land. Arabic first in production; nothing is softened on the way out.',
+      ivGateLine: ivGate,
+      ivGateDot: (st.invSent || ivReady) ? '#2FAE66' : '#F0A92B',
+      ivGateFg: (st.invSent || ivReady) ? '#1E7D47' : '#9A6B12',
+      ivSendAnim: AN('fadeUp', '.45s', '.2s'),
+      ivBtnLabel: st.invSent ? 'Sent ✓ — tracking below' : ivReady ? 'Send the WhatsApp invite' : 'Three fields, then it sends',
+      ivBtnBg: st.invSent ? '#2FAE66' : ivReady ? '#E88024' : '#EFEDE8',
+      ivBtnFg: (st.invSent || ivReady) ? '#FFFFFF' : '#93887A',
+      ivBtnCls: (ivReady && !st.invSent) ? 'ws-cta' : 'ws-off',
+      ivBtnCur: (ivReady && !st.invSent) ? 'pointer' : 'not-allowed',
+      sendInvite,
+      ivTracking: st.invSent,
+      ivTrackAnim: AN('popIn', '.45s'),
+      ivTrackChip: st.invOpened ? 'opened · waiting on the password' : 'sent · waiting to be opened',
+      ivSteps: (() => {
+        const opened = !!st.invOpened;
+        const rows = [
+          { label: 'Sent', done: true, note: 'WhatsApp delivered to ' + (ivPhoneV || 'the owner') + ' at ' + INVITE_STAMP + '.' },
+          { label: 'Opened', done: opened, note: opened ? ((ivFirst || 'The owner') + ' opened the link — no password on it yet.') : 'Waiting. The read receipt lands here the moment it happens, not before.' },
+          { label: 'Password set — account live', done: false, note: 'Still pending, and it will stay honest about that. Nobody at Wasla ever sees the password.' }
+        ];
+        return rows.map((r, i) => ({ label: r.label, note: r.note, mark: r.done ? '✓' : '·',
+          bg: r.done ? '#2FAE66' : '#FFFFFF', br: r.done ? '#2FAE66' : '#E0D8CB',
+          markFg: r.done ? '#FFFFFF' : '#B0A594', fg: r.done ? '#2C2C2C' : '#93887A',
+          hasLine: i < rows.length - 1,
+          lineFrom: r.done ? '#2FAE66' : '#E7E0D5', lineTo: (rows[i + 1] && rows[i + 1].done) ? '#2FAE66' : '#EFE8DC',
+          dotAnim: (r.label === 'Opened' && opened) ? 'nodeGlow 1.4s ease-out both' : (!r.done && i === 2 ? 'waitPulse 1.9s ease-in-out infinite' : 'none'),
+          lineAnim: AN('lineGrow', '.5s', (0.1 + 0.08 * i) + 's'),
+          anim: AN('fadeUp', '.4s', (0.05 * i) + 's') }));
+      })(),
+      ivTrackFoot: 'There is no half-made account on our side: until that third node lights, nothing exists but a link. No credential anybody here could leak, and no login to hand over.',
+
+      // ── ME ──
+      meCardAnim: AN('fadeUp', '.45s'),
+      mqColor: qColor, mqFull: q2.full, mqTo: q2.to,
+      mqRingAnim: st.settled ? 'none' : 'ringDraw 1.15s' + HOUSE + '.18s both',
+      mqNum: String(Math.round(activations * tick)), mqGoal: String(QUOTA),
+      mqNote: activations >= QUOTA ? 'The month is cleared. Everything after this is upside.' : ((QUOTA - activations) + ' activations left in the month — and ' + inPlay + ' leads still in play to find them in.'),
+      mDelta: (delta > 0 ? '+' : delta < 0 ? '−' : '±') + Math.abs(delta) + ' vs last month',
+      mDeltaBg: delta > 0 ? '#E7F6EE' : delta < 0 ? '#FDF1DC' : '#EFEDE8',
+      mDeltaFg: delta > 0 ? '#1E7D47' : delta < 0 ? '#9A6B12' : '#6B6760',
+      mDeltaNote: 'June closed at ' + LINA_PERF.last + '.',
+      lbCardAnim: AN('fadeUp', '.45s', '.08s'),
+      lbRows: board.map((b, i) => {
+        const mine = b.name === 'Lina';
+        const t = REP_TONE[b.name] || ['#EFEDE8', '#6B6760', '#8C877F'];
+        return { rank: '#' + (i + 1), name: mine ? (b.name + ' · you') : b.name, n: String(b.n),
+          initials: b.name === 'Omar' ? 'OH' : b.name === 'Lina' ? 'LK' : 'SA',
+          avBg: t[0], avFg: t[1], fw: mine ? 800 : 600,
+          pct: Math.round(b.n / boardMax * 100 * tick) + '%',
+          barBg: mine ? '#E88024' : t[2],
+          barAnim: AN('growW', '.7s', (0.2 + 0.07 * i) + 's'),
+          anim: AN('fadeUp', '.4s', (0.12 + 0.05 * i) + 's') };
+      }),
+      lbNote: 'You are #' + myRank + ' of ' + board.length + ' this month. The board is the same one the console shows — send an invite and it moves here first.',
+      spCardAnim: AN('fadeUp', '.45s', '.14s'),
+      sparkBars: spark.map((v, i) => ({
+        h: Math.max(4, Math.round(v / sparkMax * 68)) + 'px',
+        bg: i === spark.length - 1 ? '#E88024' : '#E7D9C4',
+        label: i === spark.length - 1 ? 'now' : 'w' + (i + 1),
+        tip: v + ' activation' + (v === 1 ? '' : 's'),
+        anim: AN('barRise', '.5s', (0.2 + 0.045 * i) + 's')
+      })),
+      sparkNote: 'Eight weeks of activations. The last bar is this week — it moves the moment an invite goes out.',
+      mtCardAnim: AN('fadeUp', '.45s', '.2s'),
+      meTrail: meTrailRaw.slice(0, 7).map((e, i) => ({
+        line: e.line, t: e.t, dot: TRAIL_DOT[e.kind] || '#C9BFAF',
+        cur: e.name ? 'pointer' : 'default',
+        go: () => { if (e.name) openLead(e.name); },
+        anim: AN('fadeUp', '.38s', (0.24 + 0.04 * i) + 's')
+      })),
+
+      // ── the side panel ──
+      walkRows: walkDefs.map(([label, sub, dot, glyph, go], i) => ({
+        label, sub, dot, glyph, go,
+        discBg: tint(dot, .1), discBr: tint(dot, .3),
+        br: '#E7E0D5', bg: '#FFFFFF',
+        anim: AN('fadeUp', '.34s', (0.04 + 0.03 * i) + 's')
+      })),
+      syncDot: changesN ? '#2FAE66' : '#C9BFAF',
+      syncDotAnim: changesN ? 'pulseDot 2.4s infinite' : 'none',
+      syncLine: changesN
+        ? (changesN + (changesN === 1 ? ' pipeline change from this phone is' : ' pipeline changes from this phone are') + ' already written into the console’s own session blob — leads added, stages moved, trails written. Open the console and they are on Omar’s board.')
+        : 'Add a lead, move a stage or write a note, and it is written straight into the console’s session — three keys inside its blob, every other key handed back untouched.',
+      resetLabel: st.resetArm ? 'Tap again to wipe this demo session' : 'Reset demo · مسح جلسة العرض',
+      resetBr: st.resetArm ? '#E2563A' : '#DCD3C4',
+      resetFg: st.resetArm ? '#E2563A' : '#93887A',
+      resetDemo: () => {
+        if (!st.resetArm) { this.setState({ resetArm: true }); clearTimeout(this._rt); this._rt = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.setState({ resetArm: false }); }, 4000); return; }
+        clearTimeout(this._rt);
+        this.resetSales();
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

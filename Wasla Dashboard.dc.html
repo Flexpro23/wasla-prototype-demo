@@ -90,6 +90,23 @@
   .wl-spark{transform-origin:bottom center;will-change:transform;}
   .wl-card .wl-note{max-height:0;opacity:0;overflow:hidden;transition:max-height .32s cubic-bezier(.22,.61,.36,1),opacity .24s,margin-top .3s;margin-top:0;}
   .wl-card:hover .wl-note{max-height:40px;opacity:1;margin-top:9px;}
+  /* the tile's edit shortcut: invisible until the tile is under the pointer,
+     but it keeps its box either way so nothing reflows on hover. Focus shows
+     it too, so a keyboard never meets a control it cannot see. */
+  .wl-card .wl-edit{opacity:0;transform:translateY(-3px);transition:opacity .22s,transform .22s cubic-bezier(.22,.61,.36,1),box-shadow .2s;}
+  .wl-card:hover .wl-edit,.wl-card .wl-edit:focus{opacity:1;transform:none;}
+  .wl-card .wl-edit:hover{box-shadow:0 6px 16px rgba(0,0,0,.22);}
+  .wl-card .wl-edit:active{transform:scale(.95);}
+  /* the editor's own kit */
+  .wl-in{transition:border-color .2s,box-shadow .2s;}
+  .wl-in:hover{border-color:#C4B9A6;}
+  .wl-drop{transition:border-color .2s,color .2s,background .2s;}
+  .wl-drop:hover{border-color:#E88024;color:#C96A14;background:rgba(232,128,36,.05);}
+  .wl-linkact{transition:color .18s,background .18s;border-radius:7px;}
+  .wl-linkact:hover{color:#E88024;background:rgba(232,128,36,.08);}
+  .wl-danger{transition:background .2s,color .2s,border-color .2s,transform .16s cubic-bezier(.22,.61,.36,1);}
+  .wl-danger:hover{background:#E2563A;color:#FFFFFF;border-color:#E2563A;}
+  .wl-danger:active{transform:scale(.97);}
   .wl-row{transition:background .15s;}
   .wl-row:hover{background:#FAF6EF;}
   .wl-row .wl-chk{opacity:.38;transition:opacity .18s,border-color .18s,background .18s,transform .18s;}
@@ -186,7 +203,7 @@
   <main style="{{ shellStyle }}">
     <sc-if value="{{ viewAs }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#FDF1DC;border-bottom:1px solid #EBD7A9;color:#7A5A2E;font-size:11.5px;font-weight:700;padding:9px 22px;flex-shrink:0;position:sticky;top:0;z-index:60;">
-        <span style="width:8px;height:8px;border-radius:50%;background:#E8B824;flex-shrink:0;animation:pulse 2.2s infinite;"></span>{{ t.viewAsLine }}<span style="opacity:.5;">·</span><a href="Wasla Console.dc.html" style="font-weight:800;color:#C96A14;">{{ t.backToConsole }}</a>
+        <span style="width:8px;height:8px;border-radius:50%;background:#E8B824;flex-shrink:0;animation:pulse 2.2s infinite;"></span>{{ viewAsLine }}<span style="opacity:.5;">·</span><a href="Wasla Console.dc.html" style="font-weight:800;color:#C96A14;">{{ t.backToConsole }}</a>
       </div>
     </sc-if>
     <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
@@ -302,10 +319,11 @@
                         <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11.5px;opacity:.85;">{{ c.ar }}</div>
                       </div>
                       <div style="margin-inline-start:auto;text-align:end;color:rgba(255,255,255,.92);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:4px 9px;white-space:nowrap;">{{ c.typeName }}</div>
+                      <div class="wl-edit" onClick="{{ c.edit }}" title="{{ tileEditLabel }}" style="cursor:pointer;flex-shrink:0;background:rgba(255,255,255,.94);color:{{ c.color }};font-size:10.5px;font-weight:800;border-radius:999px;padding:5px 11px;white-space:nowrap;">✎ {{ tileEditLabel }}</div>
                     </div>
                     <div style="padding:15px 18px 16px;">
                       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                        <span style="display:inline-flex;align-items:center;gap:6px;background:{{ c.badgeBg }};color:{{ c.badgeFg }};font-size:11px;font-weight:700;border-radius:999px;padding:4px 11px;animation:{{ c.badgeAnim }};"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;animation:{{ c.dotAnim }};"></span>{{ c.badge }}</span>
+                        <span style="display:inline-flex;align-items:center;gap:6px;background:{{ c.badgeBg }};color:{{ c.badgeFg }};font-size:11px;font-weight:700;border-radius:999px;padding:4px 11px;text-decoration:{{ c.badgeDeco }};animation:{{ c.badgeAnim }};"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;animation:{{ c.dotAnim }};"></span>{{ c.badge }}</span>
                         <div style="display:flex;align-items:flex-end;gap:2.5px;height:22px;">
                           <sc-for list="{{ c.bars }}" as="b" hint-placeholder-count="7">
                             <div class="wl-spark" style="width:6px;height:{{ b.h }};background:{{ b.bg }};border-radius:3px;animation:{{ b.anim }};"></div>
@@ -1121,18 +1139,28 @@
               <div onClick="{{ acResubmit }}" style="cursor:pointer;opacity:{{ roDim }};background:#E2563A;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 20px;transition:transform .2s;" style-hover="transform:translateY(-1px)">Fix &amp; resubmit →</div>
             </div>
           </sc-if>
+          <sc-if value="{{ acIsRetired }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#EFEDE8;border:1.5px solid #D8D4CB;border-radius:16px;padding:15px 20px;margin-bottom:18px;animation:{{ enterAnim }};">
+              <span style="width:10px;height:10px;border-radius:50%;background:#8C8577;flex-shrink:0;"></span>
+              <div style="flex:1;min-width:220px;">
+                <div style="font-size:13.5px;font-weight:800;color:#6B6760;text-decoration:line-through;">{{ acRetiredWhoLine }}</div>
+                <div style="font-size:12px;color:#8C8577;margin-top:3px;">{{ t.acRetiredMeansLine }}</div>
+              </div>
+            </div>
+          </sc-if>
           <div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap;background:linear-gradient(135deg,{{ ac.color }},{{ acColor2 }});border-radius:22px;padding:24px 28px;color:#FFFFFF;box-shadow:0 18px 40px rgba(36,28,22,.18);transition:background .4s;">
             <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.94);color:{{ ac.color }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;">{{ ac.initial }}</div>
             <div style="min-width:0;">
               <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
                 <span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;">{{ acName }}</span>
-                <span style="display:inline-flex;align-items:center;gap:7px;background:{{ acBadgeBg }};color:{{ acBadgeFg }};font-size:11px;font-weight:700;border-radius:999px;padding:4px 12px;white-space:nowrap;animation:{{ acBadgeAnim }};"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;animation:{{ acBadgeDotAnim }};"></span>{{ acBadge }}</span>
+                <span style="display:inline-flex;align-items:center;gap:7px;background:{{ acBadgeBg }};color:{{ acBadgeFg }};font-size:11px;font-weight:700;border-radius:999px;padding:4px 12px;white-space:nowrap;text-decoration:{{ acBadgeDeco }};animation:{{ acBadgeAnim }};"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;animation:{{ acBadgeDotAnim }};"></span>{{ acBadge }}</span>
               </div>
               <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;opacity:.85;margin-top:3px;color:{{ acTaglineColor }};">{{ ac.ar }} · {{ ac.tagline }}</div>
             </div>
             <div style="margin-inline-start:auto;display:flex;align-items:center;gap:22px;flex-wrap:wrap;">
               <div><div style="font-size:10.5px;letter-spacing:.06em;opacity:.8;">{{ t.acStatMembers }}</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:23px;font-variant-numeric:tabular-nums;">{{ acMembers }}</div></div>
               <div><div style="font-size:10.5px;letter-spacing:.06em;opacity:.8;">{{ t.acStatWallets }}</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:23px;font-variant-numeric:tabular-nums;">{{ acPasses }}</div></div>
+              <div class="wl-press wl-ghost" onClick="{{ openEditTab }}" style="cursor:pointer;background:rgba(255,255,255,.94);color:{{ ac.color }};font-weight:800;font-size:12.5px;border-radius:999px;padding:10px 20px;white-space:nowrap;">✎ {{ acEditLabel }}</div>
               <div class="wl-press wl-ghost" onClick="{{ acAction }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid rgba(255,255,255,.7);color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:10px 20px;white-space:nowrap;" style-hover="background:rgba(255,255,255,.15)">{{ acActionLabel }}</div>
             </div>
           </div>
@@ -1540,20 +1568,64 @@
             <div style="margin-top:20px;max-width:{{ tabMax }};animation:{{ tabAnim }};">
               <div style="font-size:11.5px;color:#93887A;line-height:1.55;margin-bottom:14px;">{{ t.edBandNote }}</div>
 
+              <sc-if value="{{ edDirty }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#FDF7F0;border:1.5px solid #F0D6B4;border-radius:14px;padding:12px 16px;margin-bottom:14px;animation:{{ edNoteAnim }};">
+                  <span style="width:8px;height:8px;border-radius:50%;background:#E88024;flex-shrink:0;animation:pulse 1.8s infinite;"></span>
+                  <span style="font-size:12.5px;font-weight:800;color:#8A6B33;white-space:nowrap;">{{ edUnsavedLabel }}</span>
+                  <span style="font-size:11.5px;color:#93887A;flex:1;min-width:150px;line-height:1.5;">{{ edAfterLine }}</span>
+                  <span class="wl-press" onClick="{{ edDiscardEdits }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid #D8D0C2;color:#5D5348;font-size:11.5px;font-weight:800;border-radius:999px;padding:7px 15px;white-space:nowrap;">{{ t.edDiscard }}</span>
+                  <span class="wl-cta" onClick="{{ edSave }}" style="cursor:pointer;opacity:{{ roDim }};background:#E88024;color:#FFFFFF;font-size:11.5px;font-weight:800;border-radius:999px;padding:8px 17px;white-space:nowrap;">{{ t.edSaveGo }}</span>
+                </div>
+              </sc-if>
+
               <div style="background:#F2FAF5;border:1.5px solid #CDEBDA;border-radius:20px;padding:15px 16px 17px;animation:{{ edBandAnim1 }};">
                 <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:13px;">
                   <span style="display:inline-flex;align-items:center;gap:7px;background:#CDEBDA;color:#1E7D47;font-size:10px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:5px 12px;white-space:nowrap;text-transform:uppercase;flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:#2FAE66;flex-shrink:0;"></span>{{ edTierInstant }}</span>
                   <span style="font-size:12px;color:#3F6E52;line-height:1.5;min-width:0;">{{ edWhyInstant }}</span>
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start;">
+
                   <div style="background:#FFFFFF;border:1px solid #DCEEE4;border-radius:16px;padding:18px 20px;min-width:0;">
-                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px;">{{ t.edLook }}</div>
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:12px;">{{ t.edIdentity }}</div>
                     <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:9px;">{{ t.edBrandColor }}</div>
-                    <div style="display:flex;gap:9px;flex-wrap:wrap;">
+                    <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center;">
                       <sc-for list="{{ edSwatches }}" as="es" hint-placeholder-count="8">
-                        <div class="wl-sw" onClick="{{ es.pick }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;background:{{ es.hex }};border:3px solid {{ es.ring }};" style-hover="transform:scale(1.15)"></div>
+                        <div class="wl-sw" onClick="{{ es.pick }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;background:{{ es.hex }};border:3px solid {{ es.ring }};"></div>
                       </sc-for>
+                      <label style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;background:conic-gradient(#E2563A,#E8B824,#2FAE66,#0F5B63,#6E37A0,#E2563A);border:3px solid {{ edCustomRing }};position:relative;display:inline-block;overflow:hidden;flex-shrink:0;">
+                        <input type="color" value="{{ ac.color }}" onChange="{{ setEdColorPick }}" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;">
+                      </label>
                     </div>
+                    <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ edColorLine }}</div>
+
+                    <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:16px 0 7px;">{{ t.edLogoLabel }}</div>
+                    <sc-if value="{{ edLogoOff }}" hint-placeholder-val="{{ true }}">
+                      <label class="wl-drop" style="cursor:pointer;opacity:{{ roDim }};display:flex;align-items:center;justify-content:center;gap:9px;border:1.5px dashed #D8D0C2;border-radius:12px;padding:15px 12px;color:#93887A;font-size:12.5px;font-weight:700;text-align:center;">{{ t.edLogoDrop }}
+                        <input type="file" accept="image/*" onChange="{{ pickEdLogo }}" style="display:none;">
+                      </label>
+                    </sc-if>
+                    <sc-if value="{{ edLogoOn }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;align-items:center;gap:12px;background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:10px 12px;">
+                        <img src="{{ edLogo }}" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;border:1px solid #E7E0D5;">
+                        <span style="font-size:12px;font-weight:700;color:#1E7D47;flex:1;min-width:0;">{{ t.edArtLive }}</span>
+                        <span onClick="{{ removeEdLogo }}" style="cursor:pointer;opacity:{{ roDim }};font-size:11px;font-weight:800;color:#E2563A;flex-shrink:0;" style-hover="color:#B23420">{{ t.edRemoveCaps }}</span>
+                      </div>
+                    </sc-if>
+
+                    <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:16px 0 7px;">{{ t.edBannerLabel }}</div>
+                    <sc-if value="{{ edBannerOff }}" hint-placeholder-val="{{ true }}">
+                      <label class="wl-drop" style="cursor:pointer;opacity:{{ roDim }};display:flex;align-items:center;justify-content:center;gap:9px;border:1.5px dashed #D8D0C2;border-radius:12px;padding:15px 12px;color:#93887A;font-size:12.5px;font-weight:700;text-align:center;">{{ t.edBannerDrop }}
+                        <input type="file" accept="image/*" onChange="{{ pickEdBanner }}" style="display:none;">
+                      </label>
+                    </sc-if>
+                    <sc-if value="{{ edBannerOn }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;align-items:center;gap:12px;background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:10px 12px;">
+                        <img src="{{ edBanner }}" alt="" style="width:92px;aspect-ratio:1032/336;border-radius:7px;object-fit:cover;display:block;flex-shrink:0;">
+                        <span style="font-size:12px;font-weight:700;color:#1E7D47;flex:1;min-width:0;">{{ t.edArtLive }}</span>
+                        <span onClick="{{ removeEdBanner }}" style="cursor:pointer;opacity:{{ roDim }};font-size:11px;font-weight:800;color:#E2563A;flex-shrink:0;" style-hover="color:#B23420">{{ t.edRemoveCaps }}</span>
+                      </div>
+                    </sc-if>
+                    <div style="font-size:10.5px;color:#93887A;margin-top:8px;line-height:1.5;">{{ edArtHintLine }}</div>
                     <sc-if value="{{ edNoteLook }}" hint-placeholder-val="{{ false }}">
                       <div style="display:flex;align-items:flex-start;gap:8px;background:#F2FAF5;border-radius:10px;padding:9px 12px;margin-top:12px;animation:{{ edNoteAnim }};">
                         <span style="width:7px;height:7px;border-radius:50%;background:#2FAE66;margin-top:4px;flex-shrink:0;"></span>
@@ -1561,17 +1633,40 @@
                       </div>
                     </sc-if>
                   </div>
+
+                  <sc-if value="{{ edIsStamps }}" hint-placeholder-val="{{ true }}">
+                    <div style="background:#FFFFFF;border:1px solid #DCEEE4;border-radius:16px;padding:18px 20px;min-width:0;">
+                      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:12px;">{{ t.edStampStyleLabel }}</div>
+                      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+                        <sc-for list="{{ edStampStyles }}" as="ei" hint-placeholder-count="8">
+                          <div class="wl-press" onClick="{{ ei.pick }}" title="{{ ei.name }}" style="cursor:pointer;opacity:{{ roDim }};width:56px;display:flex;flex-direction:column;align-items:center;gap:7px;">
+                            <span style="{{ ei.cell.box }}"><span style="{{ ei.cell.disc }}">
+                              <sc-if value="{{ ei.isReal }}" hint-placeholder-val="{{ true }}"><img src="{{ ei.realSrc }}" alt="" style="{{ ei.realStyle }}"></sc-if>
+                              <sc-if value="{{ ei.notReal }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" style="{{ ei.cell.svg }}"><path d="{{ ei.cell.d }}" fill="{{ ei.cell.ink }}" stroke="{{ ei.cell.ink }}" strokeWidth="{{ ei.cell.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ ei.cell.s }}" fill="none" stroke="{{ ei.cell.ink }}" strokeWidth="{{ ei.cell.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></sc-if>
+                            </span></span>
+                            <span style="font-size:10px;font-weight:{{ ei.fw }};color:{{ ei.fg }};text-align:center;line-height:1.25;transition:color .2s;">{{ ei.name }}</span>
+                          </div>
+                        </sc-for>
+                        <div class="wl-press" onClick="{{ uploadStampToast }}" title="{{ t.stStyleUpload }}" style="cursor:pointer;width:56px;display:flex;flex-direction:column;align-items:center;gap:7px;">
+                          <span class="wl-drop" style="width:42px;height:42px;border-radius:50%;border:2px dashed #D8D0C2;display:flex;align-items:center;justify-content:center;color:#93887A;font-size:16px;font-weight:700;">↑</span>
+                          <span style="font-size:10px;font-weight:600;color:#93887A;text-align:center;line-height:1.25;">{{ t.stStyleUpload }}</span>
+                        </div>
+                      </div>
+                      <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.5;">{{ edStampHintLine }}</div>
+                    </div>
+                  </sc-if>
+
                   <div style="background:#FFFFFF;border:1px solid #DCEEE4;border-radius:16px;padding:18px 20px;min-width:0;">
                     <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:12px;">{{ t.edBdayTitle }}</div>
                     <sc-if value="{{ birthdayOn }}" hint-placeholder-val="{{ true }}">
                       <div style="display:flex;flex-direction:column;gap:12px;">
                         <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.edBdayMsgPre }} <span style="font-family:ui-monospace,monospace;background:#FAF6EF;border-radius:5px;padding:1px 6px;">{name}</span> {{ t.edBdayMsgPost }}</div>
-                          <textarea value="{{ bdayMsg }}" onChange="{{ setBdayMsg }}" rows="2" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13px;resize:none;background:#FFFFFF;"></textarea></div>
+                          <textarea class="wl-in" value="{{ bdayMsg }}" onChange="{{ setBdayMsg }}" rows="2" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13px;resize:none;background:#FFFFFF;"></textarea></div>
                         <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.edBdayGift }}</div>
-                          <input value="{{ bdayGift }}" onChange="{{ setBdayGift }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13px;background:#FFFFFF;"></div>
+                          <input class="wl-in" value="{{ bdayGift }}" onChange="{{ setBdayGift }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13px;background:#FFFFFF;"></div>
                         <div style="background:linear-gradient(170deg,#1F1F24,#101013);border-radius:14px;padding:12px 14px;color:#FFFFFF;">
                           <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:22px;height:22px;border-radius:6px;background:{{ ac.color }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:10px;flex-shrink:0;">{{ ac.initial }}</div>
+                            <div style="width:22px;height:22px;border-radius:6px;overflow:hidden;background:{{ ac.color }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:10px;flex-shrink:0;"><sc-if value="{{ edLogoOn }}" hint-placeholder-val="{{ false }}"><img src="{{ edLogo }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"></sc-if><sc-if value="{{ edLogoOff }}" hint-placeholder-val="{{ true }}">{{ ac.initial }}</sc-if></div>
                             <div style="font-size:11.5px;font-weight:700;min-width:0;">{{ acName }}</div>
                             <div style="margin-inline-start:auto;font-size:9.5px;opacity:.6;white-space:nowrap;">Sept 14 · 9:00</div>
                           </div>
@@ -1592,6 +1687,118 @@
                         <span onClick="{{ enableBirthday }}" style="cursor:pointer;opacity:{{ roDim }};color:#C96A14;font-weight:800;" style-hover="color:#E88024">{{ t.edBdayTurnOn }}</span></div>
                     </sc-if>
                   </div>
+
+                  <div style="background:#FFFFFF;border:1px solid #DCEEE4;border-radius:16px;padding:18px 20px;min-width:0;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:12px;">{{ t.edWhereTitle }}</div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                      <sc-for list="{{ edBranchChips }}" as="ebc" hint-placeholder-count="3">
+                        <div class="wl-press" onClick="{{ ebc.toggle }}" style="cursor:pointer;opacity:{{ roDim }};display:flex;align-items:center;gap:8px;border:1.5px solid {{ ebc.br }};background:{{ ebc.bg }};color:{{ ebc.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">
+                          <span style="width:15px;height:15px;border-radius:5px;border:2px solid {{ ebc.boxBr }};background:{{ ebc.boxBg }};color:#FFFFFF;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;">{{ ebc.mark }}</span>{{ ebc.label }}
+                        </div>
+                      </sc-for>
+                    </div>
+                    <div style="font-size:11px;color:#93887A;margin-top:10px;line-height:1.5;">{{ edBranchNote }}</div>
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin:20px 0 4px;">{{ t.edSignupTitle }}</div>
+                    <div style="font-size:11px;color:#93887A;margin-bottom:10px;line-height:1.5;">{{ t.edSignupSub }}</div>
+                    <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:13px;padding:2px 14px 12px;">
+                      <sc-for list="{{ edFieldRows }}" as="efr" hint-placeholder-count="5">
+                        <div onClick="{{ efr.toggle }}" style="cursor:{{ efr.cursor }};display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #F0EAE0;animation:{{ efr.anim }};">
+                          <span style="width:8px;height:8px;border-radius:3px;background:{{ efr.dot }};flex-shrink:0;"></span>
+                          <span style="font-size:12.5px;font-weight:600;flex:1;min-width:0;">{{ efr.label }}</span>
+                          <sc-if value="{{ efr.locked }}" hint-placeholder-val="{{ false }}">
+                            <span style="font-size:10px;font-weight:800;color:#6B6760;background:#EFEDE8;border-radius:999px;padding:3px 10px;white-space:nowrap;">{{ t.wLockedOn }}</span>
+                          </sc-if>
+                          <sc-if value="{{ efr.switchable }}" hint-placeholder-val="{{ true }}">
+                            <span style="width:36px;height:21px;border-radius:99px;opacity:{{ roDim }};background:{{ efr.swBg }};position:relative;flex-shrink:0;transition:background .25s;">
+                              <span style="position:absolute;top:3px;inset-inline-start:{{ efr.knob }};width:15px;height:15px;border-radius:50%;background:#FFFFFF;transition:inset-inline-start .25s;box-shadow:0 1px 3px rgba(0,0,0,.25);"></span>
+                            </span>
+                          </sc-if>
+                          <sc-if value="{{ efr.isCustom }}" hint-placeholder-val="{{ false }}">
+                            <span style="font-size:10px;font-weight:800;color:#7A5A2E;background:#F0E7DB;border-radius:999px;padding:3px 10px;white-space:nowrap;">{{ t.goesForReview }}</span>
+                          </sc-if>
+                        </div>
+                      </sc-for>
+                      <div class="wl-drop" onClick="{{ openFieldSheet }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px dashed #D8D0C2;border-radius:10px;padding:9px;text-align:center;font-size:12px;font-weight:700;color:#93887A;margin-top:12px;">+ {{ t.addField }} <span style="font-weight:500;">({{ t.goesForReviewNote }})</span></div>
+                    </div>
+                    <sc-if value="{{ edNoteInstant }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;align-items:flex-start;gap:8px;background:#F2FAF5;border-radius:10px;padding:9px 12px;margin-top:12px;animation:{{ edNoteAnim }};">
+                        <span style="width:7px;height:7px;border-radius:50%;background:#2FAE66;margin-top:4px;flex-shrink:0;"></span>
+                        <span style="font-size:11.5px;color:#3F6E52;line-height:1.5;min-width:0;">{{ edNoteText }}</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+
+                <div style="background:#FFFFFF;border:1px solid #DCEEE4;border-radius:16px;padding:18px 20px;margin-top:16px;">
+                  <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">{{ t.edLinksTitle }}</div>
+                  <div style="font-size:11.5px;color:#93887A;line-height:1.55;margin:5px 0 16px;">{{ t.edLinksSub }}</div>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;align-items:start;">
+                    <div style="min-width:0;">
+                      <sc-for list="{{ edLinkRows }}" as="lr2" hint-placeholder-count="4">
+                        <div style="display:flex;gap:12px;padding:13px 0;border-bottom:1px solid #F5F0E8;animation:{{ lr2.anim }};">
+                          <div style="width:34px;height:34px;border-radius:10px;background:{{ lr2.glyphBg }};color:{{ lr2.glyphFg }};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;flex-shrink:0;transition:background .25s,color .25s;">{{ lr2.glyph }}</div>
+                          <div style="flex:1;min-width:0;">
+                            <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+                              <span style="font-size:13px;font-weight:700;">{{ lr2.label }}</span>
+                              <span style="background:{{ lr2.pillBg }};color:{{ lr2.pillFg }};font-size:9.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ lr2.state }}</span>
+                            </div>
+                            <sc-if value="{{ lr2.isOver }}" hint-placeholder-val="{{ false }}">
+                              <input class="wl-in" value="{{ lr2.val }}" onChange="{{ lr2.set }}" placeholder="{{ lr2.ph }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:9px;padding:8px 11px;font-size:12.5px;background:#FFFFFF;margin-top:7px;">
+                              <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:7px;">
+                                <span class="wl-linkact" onClick="{{ lr2.revert }}" style="cursor:pointer;opacity:{{ roDim }};font-size:11px;font-weight:800;color:#C96A14;padding:2px 5px;">{{ t.lkRevert }}</span>
+                                <span class="wl-linkact" onClick="{{ lr2.hide }}" style="cursor:pointer;opacity:{{ roDim }};font-size:11px;font-weight:700;color:#93887A;padding:2px 5px;">{{ t.lkHide }}</span>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ lr2.isInherit }}" hint-placeholder-val="{{ true }}">
+                              <div style="font-size:12.5px;color:#93887A;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lr2.accLine }}</div>
+                              <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;">
+                                <span class="wl-linkact" onClick="{{ lr2.makeOwn }}" style="cursor:pointer;opacity:{{ roDim }};font-size:11px;font-weight:800;color:#C96A14;padding:2px 5px;">{{ t.lkUseOwn }}</span>
+                                <span class="wl-linkact" onClick="{{ lr2.hide }}" style="cursor:pointer;opacity:{{ roDim }};font-size:11px;font-weight:700;color:#93887A;padding:2px 5px;">{{ t.lkHide }}</span>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ lr2.isHidden }}" hint-placeholder-val="{{ false }}">
+                              <div style="font-size:12.5px;color:#B5AB9C;margin-top:6px;text-decoration:line-through;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lr2.accLine }}</div>
+                              <div style="margin-top:6px;">
+                                <span class="wl-linkact" onClick="{{ lr2.show }}" style="cursor:pointer;opacity:{{ roDim }};font-size:11px;font-weight:800;color:#C96A14;padding:2px 5px;">{{ t.lkShowAgain }}</span>
+                              </div>
+                            </sc-if>
+                          </div>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{ edNoteLinks }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:flex-start;gap:8px;background:#F2FAF5;border-radius:10px;padding:9px 12px;margin-top:12px;animation:{{ edNoteAnim }};">
+                          <span style="width:7px;height:7px;border-radius:50%;background:#2FAE66;margin-top:4px;flex-shrink:0;"></span>
+                          <span style="font-size:11.5px;color:#3F6E52;line-height:1.5;min-width:0;">{{ edNoteText }}</span>
+                        </div>
+                      </sc-if>
+                    </div>
+                    <div style="min-width:0;">
+                      <div style="font-size:10px;font-weight:900;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:9px;">{{ t.lkBackTitle }}</div>
+                      <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:14px;overflow:hidden;box-shadow:0 10px 26px rgba(36,28,22,.10);max-width:300px;">
+                        <div style="padding:12px 16px;border-bottom:1px solid #F1EBE1;display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                          <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13.5px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ acName }}</span>
+                          <span style="color:#007AFF;font-size:12px;font-weight:600;flex-shrink:0;">Done</span>
+                        </div>
+                        <sc-for list="{{ edBackRows }}" as="ebr" hint-placeholder-count="4">
+                          <div style="padding:11px 16px;border-bottom:1px solid #F5F0E8;">
+                            <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ ebr.k }}</div>
+                            <div style="font-size:12.5px;font-weight:600;color:{{ ebr.color }};margin-top:3px;line-height:1.5;word-break:break-word;">{{ ebr.v }}</div>
+                          </div>
+                        </sc-for>
+                        <sc-if value="{{ edBackEmpty }}" hint-placeholder-val="{{ false }}">
+                          <div style="padding:13px 16px;border-bottom:1px solid #F5F0E8;font-size:11.5px;color:#B5AB9C;line-height:1.5;">{{ t.lkBackEmpty }}</div>
+                        </sc-if>
+                        <div style="padding:11px 16px;">
+                          <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ t.lkBackTerms }}</div>
+                          <div style="font-size:12px;font-weight:600;color:#93887A;margin-top:3px;line-height:1.5;">{{ t.lkBackTermsV }}</div>
+                        </div>
+                      </div>
+                      <sc-if value="{{ edBackHasRows }}" hint-placeholder-val="{{ true }}">
+                        <div style="font-size:10.5px;color:#93887A;margin-top:9px;line-height:1.5;">{{ t.lkTapNote }}</div>
+                      </sc-if>
+                      <div style="font-size:10.5px;color:#B5AB9C;margin-top:6px;line-height:1.5;">{{ t.lkBackNote }}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1600,31 +1807,240 @@
                   <span style="display:inline-flex;align-items:center;gap:7px;background:#F5E0C6;color:#9A6B12;font-size:10px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:5px 12px;white-space:nowrap;text-transform:uppercase;flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:#C99A3E;flex-shrink:0;animation:pulse 2.4s infinite;"></span>{{ edTierQuick }}</span>
                   <span style="font-size:12px;color:#8A6B33;line-height:1.5;min-width:0;">{{ edWhyQuick }}</span>
                 </div>
-                <div style="background:#FFFFFF;border:1px solid #F2E4D0;border-radius:16px;padding:20px 24px;max-width:640px;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;">
+                <div style="background:#FFFFFF;border:1px solid #F2E4D0;border-radius:16px;padding:20px 24px;max-width:660px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
                     <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">{{ t.edNameRules }}</div>
                     <span style="background:#F0E7DB;color:#7A5A2E;font-size:10.5px;font-weight:800;border-radius:999px;padding:4px 11px;white-space:nowrap;">{{ t.goesForReview }}</span>
                   </div>
                   <div style="font-size:11.5px;color:#93887A;margin-bottom:14px;">{{ t.edNameRulesSub }}</div>
                   <div style="display:flex;flex-direction:column;gap:13px;">
                     <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.edCardName }}</div>
-                      <input value="{{ edName }}" onChange="{{ setEdName }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;"></div>
+                      <input class="wl-in" value="{{ edName }}" onChange="{{ setEdName }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+                      <sc-if value="{{ edGhostName }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:7px;">
+                          <span style="background:#EFEDE8;color:#6B6760;font-size:10px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ t.edWasLive }} · {{ edGhostNameLive }}</span>
+                          <span style="background:#F0E7DB;color:#7A5A2E;font-size:10px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ t.edNowReview }} · {{ edGhostNameNext }}</span>
+                        </div>
+                      </sc-if></div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.edArNameLabel }}</div>
+                      <input class="wl-in" value="{{ edArName }}" onChange="{{ setEdArName }}" dir="rtl" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;font-family:'IBM Plex Sans Arabic',sans-serif;">
+                      <sc-if value="{{ edGhostAr }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:7px;">
+                          <span style="background:#EFEDE8;color:#6B6760;font-size:10px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ t.edWasLive }} · {{ edGhostArLive }}</span>
+                          <span style="background:#F0E7DB;color:#7A5A2E;font-size:10px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ t.edNowReview }} · {{ edGhostArNext }}</span>
+                        </div>
+                      </sc-if></div>
                     <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.edRewardLabel }}</div>
-                      <input value="{{ edReward }}" onChange="{{ setEdReward }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;"></div>
-                    <sc-if value="{{ acIsStamps }}" hint-placeholder-val="{{ false }}">
-                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.edGoalLabel }}</div>
+                      <input class="wl-in" value="{{ edReward }}" onChange="{{ setEdReward }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+                      <sc-if value="{{ edGhostReward }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:7px;">
+                          <span style="background:#EFEDE8;color:#6B6760;font-size:10px;font-weight:800;border-radius:999px;padding:3px 9px;">{{ t.edWasLive }} · {{ edGhostRewardLive }}</span>
+                          <span style="background:#F0E7DB;color:#7A5A2E;font-size:10px;font-weight:800;border-radius:999px;padding:3px 9px;">{{ t.edNowReview }} · {{ edGhostRewardNext }}</span>
+                        </div>
+                      </sc-if></div>
+
+                    <div style="height:1px;background:#F5F0E8;margin:3px 0 1px;"></div>
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14.5px;">{{ t.edRulesTitle }}</div>
+                    <div style="font-size:11.5px;color:#93887A;margin-top:-8px;line-height:1.55;">{{ t.edRulesSub }}</div>
+
+                    <sc-if value="{{ edIsStamps }}" hint-placeholder-val="{{ true }}">
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlGoal }}</div>
                         <div style="display:flex;align-items:center;gap:14px;">
-                          <div class="wl-press" onClick="{{ edGoalDown }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                          <div class="wl-press" onClick="{{ edGoalDown }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
                           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:30px;text-align:center;font-variant-numeric:tabular-nums;">{{ edGoal }}</div>
-                          <div class="wl-press" onClick="{{ edGoalUp }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
-                        </div></div>
+                          <div class="wl-press" onClick="{{ edGoalUp }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                        </div>
+                        <sc-if value="{{ edGhostGoal }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:8px;">
+                            <span style="background:#EFEDE8;color:#6B6760;font-size:10px;font-weight:800;border-radius:999px;padding:3px 9px;">{{ t.edWasLive }} · {{ edGhostGoalLive }}</span>
+                            <span style="background:#F0E7DB;color:#7A5A2E;font-size:10px;font-weight:800;border-radius:999px;padding:3px 9px;">{{ t.edNowReview }} · {{ edGhostGoalNext }}</span>
+                          </div>
+                        </sc-if>
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;">{{ edRewardAtLine }}</div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlEarnGuard }}</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <sc-for list="{{ edCapChips }}" as="ec1" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ec1.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ec1.br }};background:{{ ec1.bg }};color:{{ ec1.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ec1.label }}</div></sc-for>
+                        </div>
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;">{{ t.rlEarnGuardNote }}</div></div>
                     </sc-if>
+
+                    <sc-if value="{{ edIsCashback }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;gap:26px;flex-wrap:wrap;">
+                        <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCbRate }}</div>
+                          <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="wl-press" onClick="{{ edRateDown }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                            <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:52px;text-align:center;font-variant-numeric:tabular-nums;">{{ edRate }}%</div>
+                            <div class="wl-press" onClick="{{ edRateUp }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                          </div></div>
+                        <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCbMin }}</div>
+                          <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="wl-press" onClick="{{ edMinDown }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                            <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:74px;text-align:center;font-variant-numeric:tabular-nums;">JOD {{ edMin }}</div>
+                            <div class="wl-press" onClick="{{ edMinUp }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                          </div></div>
+                      </div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCbExp }}</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <sc-for list="{{ edBexpChips }}" as="ec2" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ec2.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ec2.br }};background:{{ ec2.bg }};color:{{ ec2.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ec2.label }}</div></sc-for>
+                        </div>
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlCbNote }}</div></div>
+                    </sc-if>
+
+                    <sc-if value="{{ edIsPoints }}" hint-placeholder-val="{{ false }}">
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlPtPer }}</div>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                          <div class="wl-press" onClick="{{ edPerDown }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:44px;text-align:center;font-variant-numeric:tabular-nums;">{{ edPer }}</div>
+                          <div class="wl-press" onClick="{{ edPerUp }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                        </div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlPtLadder }}</div>
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                          <sc-for list="{{ edLadderRows }}" as="elr" hint-placeholder-count="2">
+                            <div>
+                              <div style="display:flex;align-items:center;gap:8px;">
+                                <input class="wl-in" value="{{ elr.name }}" onChange="{{ elr.setName }}" style="flex:1;min-width:0;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:10px 12px;font-size:13px;background:#FFFFFF;">
+                                <input class="wl-in" value="{{ elr.cost }}" onChange="{{ elr.setCost }}" style="width:70px;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:10px 6px;font-size:13px;background:#FFFFFF;text-align:center;font-variant-numeric:tabular-nums;">
+                                <span style="font-size:10.5px;color:#93887A;">pts</span>
+                                <span onClick="{{ elr.remove }}" style="cursor:pointer;opacity:{{ roDim }};color:{{ elr.xColor }};font-size:14px;padding:2px 4px;" style-hover="color:#E2563A">✕</span>
+                              </div>
+                              <div style="font-size:10.5px;color:#93887A;margin:4px 0 0 2px;">{{ elr.jodHint }}</div>
+                            </div>
+                          </sc-for>
+                        </div>
+                        <div class="wl-drop" onClick="{{ edAddLadder }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px dashed #D8D0C2;border-radius:10px;padding:9px;text-align:center;font-size:12px;font-weight:700;color:#93887A;margin-top:8px;">{{ t.rlPtAdd }}</div>
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlPtNote }}</div></div>
+                    </sc-if>
+
+                    <sc-if value="{{ edIsDiscount }}" hint-placeholder-val="{{ false }}">
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlDcPct }}</div>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                          <div class="wl-press" onClick="{{ edPctDown }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:64px;text-align:center;font-variant-numeric:tabular-nums;">−{{ edPct }}%</div>
+                          <div class="wl-press" onClick="{{ edPctUp }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                        </div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.rlDcFine }} <span style="color:#93887A;font-weight:500;">{{ t.rlDcFineOpt }}</span></div>
+                        <input class="wl-in" value="{{ edFine }}" onChange="{{ setEdFine }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlDcNote }}</div></div>
+                    </sc-if>
+
+                    <sc-if value="{{ edIsCoupon }}" hint-placeholder-val="{{ false }}">
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.rlCpOffer }}</div>
+                        <input class="wl-in" value="{{ edOffer }}" onChange="{{ setEdOffer }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;"></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCpExp }}</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <sc-for list="{{ edExpChips }}" as="ec3" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ec3.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ec3.br }};background:{{ ec3.bg }};color:{{ ec3.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ec3.label }}</div></sc-for>
+                        </div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCpQty }}</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <sc-for list="{{ edQtyChips }}" as="ec4" hint-placeholder-count="4"><div class="wl-press" onClick="{{ ec4.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ec4.br }};background:{{ ec4.bg }};color:{{ ec4.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ec4.label }}</div></sc-for>
+                        </div>
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlCpNote }}</div></div>
+                    </sc-if>
+
+                    <sc-if value="{{ edIsVip }}" hint-placeholder-val="{{ false }}">
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlVipLadder }}</div>
+                        <div style="display:flex;flex-direction:column;gap:10px;">
+                          <sc-for list="{{ edTierRows }}" as="etr" hint-placeholder-count="3">
+                            <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+                              <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+                                <span style="width:20px;height:20px;border-radius:50%;background:{{ etr.dot }};flex-shrink:0;border:1px solid rgba(0,0,0,.08);"></span>
+                                <input class="wl-in" value="{{ etr.val }}" onChange="{{ etr.set }}" style="flex:1;min-width:110px;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:9px;padding:8px 11px;font-size:13px;background:#FFFFFF;font-weight:700;">
+                                <sc-if value="{{ etr.isFirst }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;color:#93887A;white-space:nowrap;">{{ t.rlVipFirst }}</span></sc-if>
+                                <sc-if value="{{ etr.notFirst }}" hint-placeholder-val="{{ true }}"><span style="font-size:10.5px;color:#93887A;">{{ t.rlVipAt }}</span><input class="wl-in" value="{{ etr.at }}" onChange="{{ etr.setAt }}" style="width:46px;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:9px;padding:8px 4px;font-size:13px;background:#FFFFFF;text-align:center;font-variant-numeric:tabular-nums;"><span style="font-size:10.5px;color:#93887A;">{{ t.rlVipVisits }}</span></sc-if>
+                              </div>
+                              <input class="wl-in" value="{{ etr.perk }}" onChange="{{ etr.setPerk }}" placeholder="{{ t.rlVipPerkPh }}" style="opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:9px;padding:8px 11px;font-size:12.5px;background:#FFFFFF;">
+                            </div>
+                          </sc-for>
+                        </div>
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlVipNote }}</div></div>
+                    </sc-if>
+
+                    <sc-if value="{{ edIsChallenge }}" hint-placeholder-val="{{ false }}">
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlChMission }}</div>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                          <div class="wl-press" onClick="{{ edVisitsDown }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;min-width:110px;text-align:center;font-variant-numeric:tabular-nums;">{{ edVisits }} {{ t.rlChVisits }}</div>
+                          <div class="wl-press" onClick="{{ edVisitsUp }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                        </div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlChWindow }}</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <sc-for list="{{ edWindowChips }}" as="ec5" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ec5.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ec5.br }};background:{{ ec5.bg }};color:{{ ec5.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ec5.label }}</div></sc-for>
+                        </div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlChMin }}</div>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                          <div class="wl-press" onClick="{{ edMinvDown }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;min-width:120px;text-align:center;">{{ edMinv }}</div>
+                          <div class="wl-press" onClick="{{ edMinvUp }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                        </div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.rlChPrize }}</div>
+                        <input class="wl-in" value="{{ edPrize }}" onChange="{{ setEdPrize }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;"></div>
+                    </sc-if>
+
+                    <sc-if value="{{ edIsMembership }}" hint-placeholder-val="{{ false }}">
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlMbValidity }}</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <sc-for list="{{ edValidityChips }}" as="ec6" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ec6.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ec6.br }};background:{{ ec6.bg }};color:{{ ec6.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ec6.label }}</div></sc-for>
+                        </div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlMbFee }}</div>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                          <div class="wl-press" onClick="{{ edFeeDown }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;min-width:104px;text-align:center;">{{ edFeeLabel }}</div>
+                          <div class="wl-press" onClick="{{ edFeeUp }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                        </div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlMbRem }}</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <sc-for list="{{ edRemChips }}" as="ec7" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ec7.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ec7.br }};background:{{ ec7.bg }};color:{{ ec7.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ec7.label }}</div></sc-for>
+                        </div></div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.rlMbBenefit }}</div>
+                        <input class="wl-in" value="{{ edBenefit }}" onChange="{{ setEdBenefit }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlMbNote }}</div></div>
+                    </sc-if>
+
+                    <div style="height:1px;background:#F5F0E8;margin:3px 0 1px;"></div>
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14.5px;">{{ t.edExtrasTitle }}</div>
+                    <div style="display:flex;align-items:center;gap:12px;background:#FAF6EF;border-radius:12px;padding:12px 14px;">
+                      <div class="wl-press" onClick="{{ toggleEdWelcome }}" style="cursor:pointer;opacity:{{ roDim }};width:38px;height:22px;border-radius:99px;background:{{ edWelcomeBg }};position:relative;transition:background .25s;flex-shrink:0;">
+                        <div style="position:absolute;top:3px;inset-inline-start:{{ edWelcomeKnob }};width:16px;height:16px;border-radius:50%;background:#FFFFFF;transition:inset-inline-start .25s;box-shadow:0 1px 3px rgba(0,0,0,.25);"></div>
+                      </div>
+                      <div style="font-size:12px;color:#5D5348;line-height:1.5;min-width:0;"><strong>{{ t.rlWelcome }}</strong> — {{ edWelcomeLine }}</div>
+                    </div>
+                    <sc-if value="{{ edShowExpiry }}" hint-placeholder-val="{{ true }}">
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlExpiry }}</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <sc-for list="{{ edXExpChips }}" as="ex1" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ex1.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ex1.br }};background:{{ ex1.bg }};color:{{ ex1.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ex1.label }}</div></sc-for>
+                        </div>
+                        <div style="font-size:10.5px;color:#93887A;margin-top:7px;">{{ t.wExpiryNote }}</div></div>
+                    </sc-if>
+                    <div><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px;">
+                        <span style="font-size:11.5px;font-weight:700;color:#5D5348;">{{ t.rlCap }}</span>
+                        <span style="background:#CDEBDA;color:#1E7D47;font-size:9.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ edTierInstant }}</span>
+                      </div>
+                      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <sc-for list="{{ edXCapChips }}" as="ex2" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ex2.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ex2.br }};background:{{ ex2.bg }};color:{{ ex2.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ex2.label }}</div></sc-for>
+                      </div>
+                      <div style="font-size:10.5px;color:#93887A;margin-top:7px;">{{ t.wRedeemCapNote }}</div></div>
+
                     <sc-if value="{{ edNoteRules }}" hint-placeholder-val="{{ false }}">
                       <div style="display:flex;align-items:flex-start;gap:8px;background:#FDF7F0;border-radius:10px;padding:9px 12px;animation:{{ edNoteAnim }};">
                         <span style="width:7px;height:7px;border-radius:50%;background:#C99A3E;margin-top:4px;flex-shrink:0;"></span>
                         <span style="font-size:11.5px;color:#8A6B33;line-height:1.5;min-width:0;">{{ edNoteText }}</span>
                       </div>
                     </sc-if>
+
+                    <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:14px;padding:14px 16px;">
+                      <div style="font-size:11px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;margin-bottom:8px;">{{ t.edAfterTitle }}</div>
+                      <sc-for list="{{ edReviewRows }}" as="err" hint-placeholder-count="2">
+                        <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;padding:5px 0;animation:{{ err.anim }};">
+                          <span style="font-size:11.5px;font-weight:700;color:#5D5348;min-width:96px;">{{ err.label }}</span>
+                          <span style="font-size:11.5px;color:#B5AB9C;text-decoration:line-through;">{{ err.from }}</span>
+                          <span style="font-size:11.5px;color:#93887A;">→</span>
+                          <span style="font-size:11.5px;font-weight:700;color:#7A5A2E;">{{ err.to }}</span>
+                        </div>
+                      </sc-for>
+                      <div style="font-size:11.5px;color:#5D5348;line-height:1.55;margin-top:7px;">{{ edAfterLine }}</div>
+                      <div style="font-size:11px;color:#93887A;line-height:1.55;margin-top:5px;">{{ t.edAfterInstant }}</div>
+                    </div>
+
                     <div class="wl-cta" onClick="{{ edSave }}" style="cursor:pointer;opacity:{{ roDim }};background:{{ edSaveBg }};color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 0;text-align:center;">{{ edSaveLabel }}</div>
                     <sc-if value="{{ edPending }}" hint-placeholder-val="{{ false }}">
                       <div style="display:flex;align-items:center;gap:8px;background:#F0E7DB;color:#7A5A2E;font-size:11.5px;font-weight:700;border-radius:10px;padding:9px 13px;"><span style="width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;animation:pulse 2s infinite;"></span>{{ t.edPendingLine }}</div>
@@ -1638,10 +2054,47 @@
                   <span style="display:inline-flex;align-items:center;gap:7px;background:#E4E0D8;color:#6B6760;font-size:10px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:5px 12px;white-space:nowrap;text-transform:uppercase;flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:#9E988C;flex-shrink:0;"></span>{{ edTierNever }}</span>
                   <span style="font-size:12px;color:#6B6760;line-height:1.5;min-width:0;">{{ edWhyNever }}</span>
                 </div>
-                <div style="background:#FFFFFF;border:1px solid #E7E4DD;border-radius:16px;padding:20px 24px;max-width:640px;">
+                <div style="background:#FFFFFF;border:1px solid #E7E4DD;border-radius:16px;padding:20px 24px;max-width:660px;">
                   <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px;">{{ t.edTypeTitle }}</div>
                   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13.5px;font-weight:700;color:#5D5348;background:#F6F4F0;border:1px dashed #D8D4CB;border-radius:12px;padding:11px 14px;">🔒 {{ acTypeName }}<span style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#93887A;font-weight:500;">{{ acTypeAr }}</span></div>
                   <div style="font-size:11.5px;color:#93887A;margin-top:10px;line-height:1.5;">{{ t.edTypeFoot }}</div>
+                  <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin:20px 0 10px;">{{ t.edLockedJoin }}</div>
+                  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:700;color:#5D5348;background:#F6F4F0;border:1px dashed #D8D4CB;border-radius:12px;padding:11px 14px;font-family:ui-monospace,monospace;">🔒 {{ edJoinUrl }}</div>
+                  <div style="font-size:11.5px;color:#93887A;margin-top:10px;line-height:1.5;">{{ t.edLockedJoinFoot }}</div>
+                </div>
+              </div>
+
+              <div style="background:#FBF3F1;border:1.5px solid #EFD4CC;border-radius:20px;padding:15px 16px 17px;margin-top:16px;animation:{{ edBandAnim4 }};">
+                <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:13px;">
+                  <span style="display:inline-flex;align-items:center;gap:7px;background:#F6DCD5;color:#B23420;font-size:10px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:5px 12px;white-space:nowrap;text-transform:uppercase;flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:#E2563A;flex-shrink:0;"></span>{{ t.edDangerTitle }}</span>
+                  <span style="font-size:12px;color:#8A5346;line-height:1.5;min-width:0;">{{ t.edDangerSub }}</span>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start;">
+                  <sc-if value="{{ edCanPause }}" hint-placeholder-val="{{ true }}">
+                    <div style="background:#FFFFFF;border:1px solid #F2E2DC;border-radius:16px;padding:18px 20px;min-width:0;">
+                      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:7px;">{{ t.edPauseTitle }}</div>
+                      <div style="font-size:12px;color:#93887A;line-height:1.6;margin-bottom:14px;">{{ t.edPauseBody }}</div>
+                      <div class="wl-press wl-danger" onClick="{{ edPauseNow }}" style="cursor:pointer;opacity:{{ roDim }};display:inline-block;border:1.5px solid #E2563A;color:#B23420;font-weight:800;font-size:12.5px;border-radius:999px;padding:10px 20px;">{{ acActionLabel }}</div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ edCanResume }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:#FFFFFF;border:1px solid #F2E2DC;border-radius:16px;padding:18px 20px;min-width:0;">
+                      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:7px;">{{ t.edResumeTitle }}</div>
+                      <div style="font-size:12px;color:#93887A;line-height:1.6;margin-bottom:14px;">{{ t.edResumeBody }}</div>
+                      <div class="wl-press" onClick="{{ edResumeNow }}" style="cursor:pointer;opacity:{{ roDim }};display:inline-block;background:#2FAE66;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:10px 20px;">{{ acActionLabel }}</div>
+                    </div>
+                  </sc-if>
+                  <div style="background:#FFFFFF;border:1px solid #F2E2DC;border-radius:16px;padding:18px 20px;min-width:0;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:7px;">{{ t.edRetireTitleCard }}</div>
+                    <div style="font-size:12px;color:#93887A;line-height:1.6;margin-bottom:12px;">{{ t.edRetireBodyCard }}</div>
+                    <div style="font-size:11.5px;color:#8A5346;line-height:1.6;margin-bottom:14px;">{{ t.edRetireAskBody }}</div>
+                    <sc-if value="{{ edNotRetired }}" hint-placeholder-val="{{ true }}">
+                      <div class="wl-press wl-danger" onClick="{{ edRetireNow }}" style="cursor:pointer;opacity:{{ roDim }};display:inline-block;border:1.5px solid #E2563A;color:#B23420;font-weight:800;font-size:12.5px;border-radius:999px;padding:10px 20px;">{{ t.edRetireBtn }}</div>
+                    </sc-if>
+                    <sc-if value="{{ edIsRetired }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:inline-flex;align-items:center;gap:8px;background:#EFEDE8;color:#8C8577;font-size:12px;font-weight:800;border-radius:999px;padding:9px 17px;text-decoration:line-through;">{{ t.edRetiredAlready }}</div>
+                    </sc-if>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2109,17 +2562,26 @@
             </div>
           </sc-if>
           <sc-if value="{{ setLinks }}" hint-placeholder-val="{{ false }}">
-            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:6px 24px;animation:{{ setTabAnim }};">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:20px 24px 8px;animation:{{ setTabAnim }};">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;">{{ t.setLinksTitle }}</div>
+              <div style="font-size:11.5px;color:#93887A;line-height:1.55;margin:5px 0 8px;">{{ t.setLinksSub }}</div>
               <sc-for list="{{ linkRows }}" as="lk" hint-placeholder-count="4">
-                <div class="wl-row" style="display:flex;align-items:center;gap:13px;padding:14px 10px;margin:0 -10px;border-radius:11px;border-bottom:1px solid #F5F0E8;animation:{{ lk.anim }};">
+                <div class="wl-row" style="display:flex;align-items:flex-start;gap:13px;padding:14px 10px;margin:0 -10px;border-radius:11px;border-bottom:1px solid #F5F0E8;animation:{{ lk.anim }};">
                   <div style="width:34px;height:34px;border-radius:10px;background:{{ lk.glyphBg }};color:{{ lk.glyphFg }};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;flex-shrink:0;transition:background .25s,color .25s;">{{ lk.glyph }}</div>
-                  <div style="min-width:0;flex:1;"><div style="font-size:13.5px;font-weight:700;">{{ lk.label }}</div><div style="font-size:11.5px;color:#93887A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lk.value }}</div></div>
-                  <div class="wl-press" onClick="{{ lk.toggle }}" style="cursor:pointer;opacity:{{ roDim }};width:40px;height:23px;border-radius:99px;background:{{ lk.swBg }};position:relative;transition:background .25s;flex-shrink:0;">
-                    <div style="position:absolute;top:3px;inset-inline-start:{{ lk.knob }};width:17px;height:17px;border-radius:50%;background:#FFFFFF;transition:inset-inline-start .28s cubic-bezier(.22,.61,.36,1);box-shadow:0 1px 3px rgba(0,0,0,.25);"></div>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:13.5px;font-weight:700;margin-bottom:6px;">{{ lk.label }}</div>
+                    <input class="wl-in" value="{{ lk.value }}" onChange="{{ lk.set }}" onBlur="{{ lk.blur }}" placeholder="{{ lk.ph }}" style="width:100%;max-width:340px;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:9px;padding:9px 12px;font-size:12.5px;background:#FFFFFF;">
+                    <div style="font-size:11px;color:#93887A;margin-top:6px;line-height:1.5;">{{ lk.summary }}</div>
+                  </div>
+                  <div style="text-align:end;flex-shrink:0;">
+                    <div class="wl-press" onClick="{{ lk.toggle }}" style="cursor:pointer;opacity:{{ roDim }};width:40px;height:23px;border-radius:99px;background:{{ lk.swBg }};position:relative;transition:background .25s;margin-inline-start:auto;">
+                      <div style="position:absolute;top:3px;inset-inline-start:{{ lk.knob }};width:17px;height:17px;border-radius:50%;background:#FFFFFF;transition:inset-inline-start .28s cubic-bezier(.22,.61,.36,1);box-shadow:0 1px 3px rgba(0,0,0,.25);"></div>
+                    </div>
+                    <div style="font-size:9.5px;color:#93887A;margin-top:6px;max-width:96px;line-height:1.4;">{{ t.setLinksInclude }}</div>
                   </div>
                 </div>
               </sc-for>
-              <div style="font-size:11.5px;color:#93887A;padding:12px 0;">Account links ride the back of every card unless a card overrides them.</div>
+              <div style="font-size:11.5px;color:#93887A;padding:12px 0;line-height:1.55;">{{ t.lkBackNote }}</div>
             </div>
           </sc-if>
           <sc-if value="{{ setSecurity }}" hint-placeholder-val="{{ false }}">
@@ -2534,6 +2996,22 @@ class Component extends DCLogic {
     activeCardId: null, memberIdx: null, cardTab: 'members', settingsTab: 'company', actFilter: 'all', posterSize: 'A4',
     memFilter: 'all', wbText: '', wbSent: false, bday: {},
     cardMods: {}, edits: {}, links: { ig: true, wa: true, loc: true, web: false },
+    /* ══ LINKS — the back of the card ═════════════════════════════════════
+       Two overlays, never a mutation of WASLA_DB.
+         accLinks[k]        the account default, once the owner has edited it
+         cardLinks[cid][k]  what THIS card says about that link:
+                              a string  → this card overrides with it
+                              ''        → hidden on this card
+                              null      → explicitly back to inherit
+                            key absent  → fall through to the card's own
+                                          `links` in the data file, and only
+                                          then to the account default.
+       `links` (the four booleans above) keeps its old meaning: include this
+       link on cards by DEFAULT. A card that overrides is unaffected by it. */
+    accLinks: {}, cardLinks: {},
+    /* per-card art. The bytes live in their own localStorage keys — never in
+       the demo blob, which has to stay small enough to write. */
+    cardArt: {},
     addons: { daraj: { b: true, r: true, s: false }, layl: { b: false, r: true, s: false }, zaytoun: { b: true, r: false, s: false }, sukkar: { b: false, r: false, s: false }, ghaim: { b: false, r: false, s: false } },
     wiz: { step: 1, typeId: null, name: '', ar: '', color: '#1E5C43', goal: 8, reward: '', cfg: {}, submitted: false },
     wizFocus: 'apple', wizNote: '', wizNoteKind: '', demoT: 0, wizBiz: '', wizGoalQ: '', extrasOpen: false, wizSuggest: null,
@@ -2612,7 +3090,7 @@ class Component extends DCLogic {
     window.addEventListener('keydown', this._skey);
     this.poke();
   }
-  componentWillUnmount() { try { clearInterval(this._demo); } catch (e) {} try { clearTimeout(this._sv); } catch (e) {} }
+  componentWillUnmount() { try { clearInterval(this._demo); } catch (e) {} try { clearTimeout(this._sv); } catch (e) {} this.dropConsoleSync(); }
   focusSearch() { setTimeout(() => { try { const el = document.querySelector('[data-wsearch]'); if (el) el.focus(); } catch (e) {} }, 60); }
   scrollSearchRow(i) { setTimeout(() => { try { const el = document.querySelector('[data-srow="' + i + '"]'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 20); }
   // ── view-as: one guard, one dim flag ──────────────────────────────────
@@ -2638,6 +3116,14 @@ class Component extends DCLogic {
           addedCards: s.addedCards, cardMods: s.cardMods, addons: s.addons,
           staffMods: s.staffMods, staffRemoved: s.staffRemoved, addedStaff: s.addedStaff,
           addedFields: s.addedFields, sentExtra: s.sentExtra, cancelled: s.cancelled,
+          /* the editor's own three: staged review edits, birthday copy, and the
+             two link overlays. cardArt is deliberately absent — data URIs would
+             blow the blob past the quota and take the whole save with them. */
+          edits: s.edits, bday: s.bday, links: s.links, accLinks: s.accLinks, cardLinks: s.cardLinks,
+          /* raised-by-Yara change requests — the console's client asks inbox
+             reads this same key straight out of localStorage, so it has to
+             round-trip here or a real request silently dies on reload. */
+          changeReqs: s.changeReqs,
           bcUsed: this.bcUsedCount() }));
       } catch (e) {}
     }, 80);
@@ -2667,6 +3153,23 @@ class Component extends DCLogic {
     if (obj(b.addedFields)) p.addedFields = b.addedFields;
     if (arr(b.sentExtra)) p.sentExtra = b.sentExtra.filter(x => x && x.title && x.card);
     if (arr(b.cancelled)) p.cancelled = b.cancelled.filter(x => typeof x === 'string');
+    /* client change-requests (Settings · Company → "Request a change"). Kept
+       narrow on purpose — the console's client asks inbox reads this same
+       array straight out of localStorage, so a malformed entry here must be
+       dropped rather than risk showing garbage on that side. */
+    if (arr(b.changeReqs)) p.changeReqs = b.changeReqs.filter(x => x && typeof x === 'object'
+      && typeof x.label === 'string' && x.label.trim() && typeof x.value === 'string' && x.value.trim())
+      .map(x => ({ label: str(x.label), value: str(x.value) }));
+    /* the editor's overlays. `edits` and `cardLinks` are card-id → object maps;
+       a hostile blob gets flattened to {} rather than trusted, and cardLinks
+       values are narrowed to string | null so the three-state read below can
+       never meet a number or an array. */
+    if (obj(b.edits)) { const e = {}; Object.keys(b.edits).forEach(k => { const v = obj(b.edits[k]); if (v) e[k] = { ...v, pending: !!v.pending, cfg: obj(v.cfg) || {} }; }); p.edits = e; }
+    if (obj(b.bday)) { const d = {}; Object.keys(b.bday).forEach(k => { const v = obj(b.bday[k]); if (v) d[k] = { msg: str(v.msg), gift: str(v.gift) }; }); p.bday = d; }
+    if (obj(b.links)) { const l = { ...(base.links || {}) }; Object.keys(l).forEach(k => { if (typeof b.links[k] === 'boolean') l[k] = b.links[k]; }); p.links = l; }
+    if (obj(b.accLinks)) { const a2 = {}; Object.keys(b.accLinks).forEach(k => { if (typeof b.accLinks[k] === 'string') a2[k] = b.accLinks[k]; }); p.accLinks = a2; }
+    if (obj(b.cardLinks)) { const cl = {}; Object.keys(b.cardLinks).forEach(cid => { const v = obj(b.cardLinks[cid]); if (!v) return; const row = {};
+      Object.keys(v).forEach(k => { const x = v[k]; if (typeof x === 'string' || x === null) row[k] = x; }); cl[cid] = row; }); p.cardLinks = cl; }
     if (b.lang === 'en' || b.lang === 'ar') p.lang = b.lang;
     return Object.keys(p).length ? p : null;
   }
@@ -2693,8 +3196,11 @@ class Component extends DCLogic {
     /* the till's bus is demo data too — a reset that left it behind would
        replay yesterday's stamps into a "fresh start" */
     try { localStorage.removeItem(this.liveKey()); } catch (e) {}
+    /* the per-card art lives outside the blob, so a reset has to sweep it too */
+    try { Object.keys(localStorage).forEach(k => { if (k.indexOf('wasla_card_logo_') === 0 || k.indexOf('wasla_card_banner_') === 0) localStorage.removeItem(k); }); } catch (e) {}
     clearTimeout(this._sv);
     this.setState({ liveEvents: [], bcSeg: 'all', addedCards: [], cardMods: {}, edits: {}, bday: {},
+      accLinks: {}, cardLinks: {}, cardArt: {}, links: { ig: true, wa: true, loc: true, web: false },
       addons: { daraj: { b: true, r: true, s: false }, layl: { b: false, r: true, s: false }, zaytoun: { b: true, r: false, s: false }, sukkar: { b: false, r: false, s: false }, ghaim: { b: false, r: false, s: false } },
       staffMods: {}, staffRemoved: [], addedStaff: [], addedFields: {},
       sentExtra: [], cancelled: [], changeReqs: [], memSel: [], msgOpen: false, msgText: '',
@@ -2723,7 +3229,11 @@ class Component extends DCLogic {
       paused: { label: 'Paused · موقوفة', bg: '#FDF1DC', fg: '#9A6B12', anim: 'none' },
       review: { label: 'In review · قيد المراجعة', bg: '#F0E7DB', fg: '#7A5A2E', anim: 'pulse 2.2s infinite' },
       draft: { label: 'Draft · مسودة', bg: '#EFEDE8', fg: '#6B6760', anim: 'none' },
-      returned: { label: 'Sent back · أعيدت', bg: '#FBE6E1', fg: '#B23420', anim: 'pulse 1.8s infinite' }
+      returned: { label: 'Sent back · أعيدت', bg: '#FBE6E1', fg: '#B23420', anim: 'pulse 1.8s infinite' },
+      /* retired: struck through, because the card is over — but its passes are
+         not. Earning stops, redemption stays honoured, so the badge reads as
+         "closed" rather than "gone". */
+      retired: { label: 'Retired · متقاعدة', bg: '#EFEDE8', fg: '#8C8577', anim: 'none', deco: 'line-through' }
     }[state] || {};
   }
   _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -2786,6 +3296,107 @@ class Component extends DCLogic {
     if (!fresh.length) return false;
     this.state = { ...this.state, liveEvents: fresh.slice(0, 20) };
     return true;
+  }
+  /* ══ THE CONSOLE'S TAKEDOWNS ═══════════════════════════════════════════
+     Wasla's own console is a separate surface with its OWN blob. When Omar
+     takes one of this account's cards down, the decision lands there —
+     never here — under a per-card record keyed by ACCOUNT NAME + CARD NAME
+     (there is no shared card id between the two surfaces, so the name is
+     the join). We are a READER, exactly like readLive() above: nothing in
+     this section ever writes the console's key.
+
+       key     'wasla_demo_console_state'                     (v:1 object)
+       cardMods["<account>::<card name>"] = { state:'retired', reason, when, by }
+
+     A missing key, a bad version, a foreign account, or a record that
+     is not actually 'retired' all degrade to "nothing taken down" —
+     never a throw. */
+  consoleKey() { return 'wasla_demo_console_state'; }
+  /** This demo only ever renders one account, but reads its own name off
+      WASLA_DB rather than hardcoding it twice. */
+  consoleAcct() { const D = this.db(); return (D.account && D.account.company) || 'Tala Hospitality Group'; }
+  /** card display name → this dashboard's own card id — the console has no
+      notion of `id`, so its takedown records can only be joined by name. */
+  consoleCardMap() { const D = this.db(); const m = {}; (D.cards || []).forEach(c => { if (c && c.name) m[c.name] = c.id; }); return m; }
+  /** Pure: the console blob → { [cardId]: { state:'retired', reason } } or null.
+      `acct` narrows to THIS account — a takedown logged against any other
+      name is invisible here, by design; `nameToId` narrows to cards this
+      dashboard actually knows about. */
+  parseConsoleTakedowns(raw, acct, nameToId) {
+    try {
+      const b = JSON.parse(raw);
+      if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return null;
+      const cm = b.cardMods;
+      if (!cm || typeof cm !== 'object' || Array.isArray(cm)) return null;
+      const out = {};
+      Object.keys(cm).forEach(key => {
+        const sep = key.indexOf('::');
+        if (sep < 0) return;
+        if (key.slice(0, sep) !== acct) return;
+        const cid = (nameToId || {})[key.slice(sep + 2)];
+        if (!cid) return;
+        const rec = cm[key];
+        if (!rec || typeof rec !== 'object' || Array.isArray(rec) || rec.state !== 'retired') return;
+        out[cid] = { state: 'retired', reason: typeof rec.reason === 'string' ? rec.reason : '' };
+      });
+      return Object.keys(out).length ? out : null;
+    } catch (e) { return null; }
+  }
+  /** Re-parses only when the stored STRING changes — same memo discipline as
+      the Customer file's dashOverlay(), so a card-heavy render never pays
+      for JSON.parse per card, and a write from the console tab is never
+      served stale. */
+  consoleOverlay(acct, nameToId) {
+    let raw = null;
+    try { raw = this._lsGet(this.consoleKey()); } catch (e) { raw = null; }
+    if (!raw) { this._consoleRaw = null; this._consoleOv = null; return null; }
+    if (raw === this._consoleRaw) return this._consoleOv;
+    this._consoleRaw = raw;
+    this._consoleOv = this.parseConsoleTakedowns(raw, acct, nameToId);
+    return this._consoleOv;
+  }
+  /** A takedown made in an open Console tab should reach Yara here live —
+      Wasla is acting ON her, not just editing a link, so (unlike link
+      sync) this earns exactly one toast per newly-arrived takedown.
+      Armed from renderVals — the one path this runtime guarantees, since
+      componentDidMount can be skipped on the deferred mount path — and
+      latched on the HOST so a logic swap can never double-subscribe.
+      Torn down in componentWillUnmount, same discipline as the Customer
+      file's armLinkSync/dropLinkSync. */
+  armConsoleSync() {
+    const h = this.__host || this;
+    if (h.__wcConsoleSync) return;
+    if (typeof window === 'undefined' || typeof window.addEventListener !== 'function') return;
+    // the baseline is taken BEFORE the listener exists, so a takedown already
+    // sitting in the console when this tab opened never toasts — only what
+    // arrives AFTER this point is "new".
+    h.__wcConsoleKnown = this.consoleOverlay(this.consoleAcct(), this.consoleCardMap()) || {};
+    const fn = (e) => {
+      if (e && e.key && e.key !== this.consoleKey()) return;
+      const L = (this.__host && this.__host.logic) || this;
+      if (!L || !L.state) return;
+      const acct = L.consoleAcct(), map = L.consoleCardMap();
+      const before = h.__wcConsoleKnown || {};
+      const now = L.consoleOverlay(acct, map) || {};
+      h.__wcConsoleKnown = now;
+      const freshId = Object.keys(now).find(cid => !before[cid]);
+      if (freshId) {
+        const card = (L.db().cards || []).find(c => c && c.id === freshId);
+        const T = L._t || {};
+        const reason = (now[freshId] && now[freshId].reason) || T.acRetiredReasonUnknown || 'Your account manager has the details';
+        const prefix = T.acRetiredWaslaPrefix || 'Taken down by Wasla';
+        L.say(((card && card.name) || freshId) + ' — ' + prefix + ' · ' + reason);
+      }
+      L.forceUpdate();
+    };
+    h.__wcConsoleSync = fn;
+    try { window.addEventListener('storage', fn); } catch (err) { h.__wcConsoleSync = null; }
+  }
+  dropConsoleSync() {
+    const h = this.__host || this;
+    if (!h.__wcConsoleSync) return;
+    try { if (typeof window !== 'undefined' && window.removeEventListener) window.removeEventListener('storage', h.__wcConsoleSync); } catch (e) {}
+    h.__wcConsoleSync = null;
   }
   /** The storage-event path: merge what is new, cap, toast the newest. */
   pullLive() {
@@ -3022,6 +3633,7 @@ class Component extends DCLogic {
         + 'max-width:' + (best.cols * size + (best.cols - 1) * gx) + 'px;margin:0 auto;position:relative;' };
   }
   renderVals() {
+    this.armConsoleSync();
     const { account: Acc, cards, types, members, activity, staff, broadcasts } = this.db();
     const st = this.state, wiz = st.wiz, tick = st.tick;
     const EN = st.lang === 'en';
@@ -3039,9 +3651,9 @@ class Component extends DCLogic {
         planAskToast: 'Omar will WhatsApp you about {name} today',
         planRenewIn: 'renews {d} — in {n} days', planRenewToday: 'renews today, {d}',
         planCardsLabel: 'Cards', planBcLabel: 'Broadcasts this month', planLeft: '{n} left',
-        planStarterLine: 'Up to 3 cards · 5 broadcasts a month',
+        planStarterLine: 'Up to 3 cards · No broadcasts',
         planGrowthLine: 'Up to 10 cards · 10 broadcasts a month',
-        planUnlimitedLine: 'Unlimited cards · 40 broadcasts a month',
+        planUnlimitedLine: 'Unlimited cards · Unlimited broadcasts',
         secEmail: 'Email', secPassword: 'Password', secChange: 'CHANGE', secDevices: 'Signed-in devices',
         secThisDevice: 'this device', secSignOut: 'SIGN OUT', secSignedOut: 'Signed out ✓',
         secSignedOutToast: 'signed out — that scanner will ask for the password again',
@@ -3083,6 +3695,7 @@ class Component extends DCLogic {
         stfActStamp: 'stamp added', stfActEarn: 'balance topped up', stfActPts: 'points added',
         stfActCheck: 'checked in', stfActVerify: 'pass verified', stfActRedeem: 'reward redeemed',
         viewAsLine: 'Viewing Tala Hospitality as Wasla staff — read-only', backToConsole: 'Back to the console →',
+        viewAsOtherLine: 'This demo only models Tala Hospitality Group — the console asked to view {acct}',
         demoHub: 'Demo hub', staffShort: 'Staff', menuSecurity: 'Security', menuSignOut: 'Sign out', signedOut: 'Signed out — the demo stays open',
         topMember: 'Top member', birthday: 'Birthday',
         addField: 'Add a field', goesForReviewNote: 'goes for a quick review', goesForReview: 'GOES FOR REVIEW',
@@ -3181,6 +3794,95 @@ class Component extends DCLogic {
         capReward: 'New reward wording queued — staff still read the current line.',
         capBday: 'Saved — it sends at 9:00 on their morning.',
         capInstantToast: 'Instant — wallets recolor tonight',
+        /* ── the full card editor ─────────────────────────────────────────── */
+        edEditCard: 'Edit card', edEditShort: 'Edit',
+        edIdentity: 'Identity & art', edArNameLabel: 'Arabic name', edStampStyleLabel: 'Stamp style',
+        edLogoLabel: 'Logo', edBannerLabel: 'Banner', edLogoDrop: '↑ Drop a logo — PNG or JPG',
+        edBannerDrop: '↑ Drop a banner — PNG or JPG', edRemoveCaps: 'REMOVE',
+        edArtLive: 'On this card’s passes — live', edArtHint: 'Art is per card: this logo and banner ride only {name}. Locked to spec — we crop for Apple and Google.',
+        edStampHint: 'Changing the style restamps every pass preview, member row and progress cell for this card.',
+        edCustomColor: 'Current {hex} — tap the wheel for any custom color.',
+        edRulesTitle: 'The rules', edRulesSub: 'The economics members already hold. Old values stay live until Wasla approves.',
+        edExtrasTitle: 'Extras',
+        edSignupTitle: 'Signup fields', edSignupSub: 'What the join page asks for. Name and phone are always on.',
+        edWhereTitle: 'Where it runs', edWhereNoneNote: 'No branches selected — nothing can be scanned onto this card.',
+        edWhereAllNote: 'All branches — every scanner in the account can serve this card.',
+        edWhereSomeNote: 'Scanners at the ticked branches serve this card; the others refuse it politely.',
+        edLinksTitle: 'Links on the back of the card',
+        edLinksSub: 'Instagram, WhatsApp, a location and a website ride the back of the pass. Each one can inherit the account default, carry its own value on this card, or be hidden here.',
+        lkStateInherited: 'Inherited', lkStateOverridden: 'This card', lkStateHidden: 'Hidden',
+        lkUseOwn: 'Use a different one for this card', lkRevert: 'Revert to account default',
+        lkHide: 'Hide on this card', lkShowAgain: 'Show it again',
+        lkAccountDefault: 'Account default', lkNoValue: 'Not set yet',
+        lkBackTitle: 'Back of the card', lkBackTerms: 'Terms',
+        lkBackTermsV: 'Earning follows this card’s rules · redemption is honoured while the pass lives.',
+        lkBackNote: 'Wallet renders links as tappable rows on the back of the pass — one tap opens Instagram, WhatsApp or Maps.',
+        lkBackEmpty: 'Every link is hidden on this card — the back shows the terms only.',
+        lkTapNote: 'Blue rows are tappable in the wallet.',
+        setLinksTitle: 'Account links', setLinksSub: 'Cards inherit these unless a card sets its own. Editing one here updates every card that inherits it.',
+        setLinksInclude: 'Include on cards by default',
+        lkSumNone: 'No card overrides this.', lkSumOver: '{n} of {total} cards override this.',
+        lkSumHidden: '{n} hide it.', lkSumOpen: 'Open a card →',
+        edAfterTitle: 'What happens when you save',
+        edAfterInstant: 'Instant changes are already live — wallets redraw tonight.',
+        edAfterReview: '{n} change goes to Wasla. Today’s card keeps its current values until Omar approves — usually within a day.',
+        edAfterReviewPl: '{n} changes go to Wasla. Today’s card keeps its current values until Omar approves — usually within a day.',
+        edAfterNone: 'Nothing staged — the review band is unchanged.',
+        edWasLive: 'Live now', edNowReview: 'In review',
+        edUnsavedOne: '1 unsaved change', edUnsavedMany: '{n} unsaved changes',
+        edDiscard: 'Discard', edLeaveTitle: 'Leave without saving?',
+        edLeaveBody: 'Your staged changes have not been sent to Wasla. Leaving this tab drops them and the card keeps its current values.',
+        edLeaveOk: 'Discard changes', edDiscarded: 'Changes discarded — the card is unchanged',
+        edDangerTitle: 'Danger zone', edDangerSub: 'Two ways to stop a card. One is reversible.',
+        edPauseTitle: 'Pause this card', edPauseBody: 'Earning and new signups stop, the pass greys in wallets, balances stay redeemable. Resume any time.',
+        edResumeTitle: 'Resume this card', edResumeBody: 'Earning and signups start again the moment you tap.',
+        edRetireTitleCard: 'Retire this card', edRetireBodyCard: 'The end of the card, not of what members earned.',
+        edRetireBtn: 'Retire card', edRetiredAlready: 'This card is retired.',
+        edRetireAsk: 'Retire {name}?', edRetireAskBody: 'Existing passes stop earning immediately and the signup QR goes dead. Everything already earned stays redeemable at the till until each pass is spent — nothing is voided. The card cannot be un-retired; you would add a new one.',
+        edRetireOk: 'Retire the card', edRetireDone: 'Retired — earning stopped, redemption still honoured',
+        /* the merchant side of a takedown: a card can go retired either because
+           she retired it herself (edRetireNow, tagged retiredBy:'merchant') or
+           because Wasla took it down — anything retired WITHOUT that tag reads
+           as the latter, honestly, without inventing a reason we don't have. */
+        acRetiredYouLine: 'You retired this card.', acRetiredWaslaPrefix: 'Taken down by Wasla',
+        acRetiredReasonUnknown: 'Your account manager has the details',
+        acRetiredMeansLine: 'Earning has stopped and the signup QR is dead — anything already earned stays redeemable at the till.',
+        edLockedJoin: 'Signup link', edLockedJoinFoot: 'The join URL is printed on posters and lives in wallets — it can never be reissued.',
+        rlGoal: 'Stamps to a reward', rlRewardAt: 'The reward at {n} stamps',
+        rlEarnGuard: 'Earning guard', rlEarnGuardNote: 'Stops over-stamping — the scanner refuses politely past the limit.',
+        rlCbRate: 'Cashback rate', rlCbMin: 'Redeem from', rlCbExp: 'Balance expires',
+        rlCbNote: 'Money-like: customers spend the balance in full or partially at the till.',
+        rlPtPer: 'Points per JOD spent', rlPtLadder: 'The reward ladder — cheapest first',
+        rlPtAdd: '+ Add a reward', rlPtNote: 'Nothing is ever preselected at redeem — staff show the ladder, the customer picks.',
+        rlPtCap: 'Four rewards keeps the ladder scannable',
+        rlDcPct: 'Standing discount', rlDcFine: 'Fine print', rlDcFineOpt: '(optional — rides the pass)',
+        rlDcNote: 'No transaction at the till — staff scan and see a verdict: valid or expired.',
+        rlCpOffer: 'The offer', rlCpExp: 'Expires after', rlCpQty: 'How many exist',
+        rlCpNote: 'One per customer, one-shot and irreversible — the scanner always asks twice.',
+        rlVipLadder: 'The ladder — name · unlocks at · its perk', rlVipAt: 'at', rlVipVisits: 'visits',
+        rlVipFirst: 'everyone starts here', rlVipPerkPh: 'The perk at this tier',
+        rlVipNote: 'Tier-ups celebrate on the pass — there is no redeem, the tier is the reward.',
+        rlChMission: 'The mission', rlChVisits: 'visits', rlChWindow: 'Inside the window',
+        rlChMin: 'A visit counts from', rlChAny: 'Any purchase', rlChPrize: 'The prize',
+        rlMbValidity: 'Valid for', rlMbFee: 'Membership fee', rlMbFree: 'Free to join',
+        rlMbRem: 'Renewal reminder', rlMbBenefit: 'What membership includes',
+        rlMbNote: 'Staff scan for a verdict: active, expiring soon, or lapsed.',
+        rlWelcome: 'Welcome bonus', rlExpiry: 'Expiry policy', rlCap: 'Redemptions per day',
+        capLogo: 'Logo swapped — this card’s passes redraw tonight.',
+        capLogoOff: 'Logo removed — the card falls back to its initial.',
+        capBanner: 'Banner swapped — cropped to both wallet specs.',
+        capBannerOff: 'Banner removed — the card goes back to clean color.',
+        capStamp: 'Stamp style changed — every stamp on this card redraws.',
+        capBranchEd: 'Branches updated — scanners follow this list from the next scan.',
+        capFieldEd: 'Signup fields updated — the join page redraws.',
+        capLinkOver: '{label} now carries this card’s own value.',
+        capLinkInherit: '{label} back to the account default.',
+        capLinkHide: '{label} hidden on this card’s pass back.',
+        capLinkShow: '{label} shows on this card again.',
+        capLinkEdit: '{label} updated — the pass back redraws tonight.',
+        capAccLink: 'Account default updated — every card that inherits it follows.',
+        capRulesEd: 'Rules staged — today’s card keeps its current numbers until approved.',
+        capCapEd: 'Redemption cap updated — instant, it rides the back of the card.',
         wStepType: 'Type', wStepDetails: 'Details', wStepBrand: 'Brand', wStepRules: 'Rules', wStepReview: 'Review',
         wStepDone: 'Done — tap to go back', wStepNow: 'You are here', wStepLater: 'Coming up',
         wGalTitle: 'Choose the card before the colors.',
@@ -3348,9 +4050,9 @@ class Component extends DCLogic {
         planAskToast: 'عمر سيراسلك عن باقة {name} اليوم',
         planRenewIn: 'يتجدد {d} — بعد {n} يوماً', planRenewToday: 'يتجدد اليوم، {d}',
         planCardsLabel: 'البطاقات', planBcLabel: 'إشعارات هذا الشهر', planLeft: 'بقي {n}',
-        planStarterLine: 'حتى ٣ بطاقات · ٥ إشعارات شهرياً',
+        planStarterLine: 'حتى ٣ بطاقات · بدون إشعارات',
         planGrowthLine: 'حتى ١٠ بطاقات · ١٠ إشعارات شهرياً',
-        planUnlimitedLine: 'بطاقات بلا حد · ٤٠ إشعاراً شهرياً',
+        planUnlimitedLine: 'بطاقات بلا حد · إشعارات غير محدودة',
         secEmail: 'البريد', secPassword: 'كلمة المرور', secChange: 'تغيير', secDevices: 'الأجهزة المسجّلة',
         secThisDevice: 'هذا الجهاز', secSignOut: 'تسجيل الخروج', secSignedOut: 'خرج ✓',
         secSignedOutToast: 'خرج — سيطلب هذا الماسح كلمة المرور من جديد',
@@ -3392,6 +4094,7 @@ class Component extends DCLogic {
         stfActStamp: 'أُضيف ختم', stfActEarn: 'أُضيف رصيد', stfActPts: 'أُضيفت نقاط',
         stfActCheck: 'تسجيل حضور', stfActVerify: 'تحقّق من البطاقة', stfActRedeem: 'استُبدلت مكافأة',
         viewAsLine: 'تشاهد مجموعة تالا كموظف في وصلة — للقراءة فقط', backToConsole: '← العودة إلى لوحة وصلة',
+        viewAsOtherLine: 'هذا العرض يمثّل مجموعة تالا للضيافة فقط — بينما طلبت لوحة وصلة عرض {acct}',
         demoHub: 'مركز العروض', staffShort: 'الموظفون', menuSecurity: 'الأمان', menuSignOut: 'تسجيل الخروج', signedOut: 'تم تسجيل الخروج — العرض التجريبي يبقى مفتوحاً',
         topMember: 'عضو مميز', birthday: 'عيد الميلاد',
         addField: 'أضف حقلاً', goesForReviewNote: 'يذهب لمراجعة سريعة', goesForReview: 'قيد المراجعة',
@@ -3490,6 +4193,91 @@ class Component extends DCLogic {
         capReward: 'صياغة المكافأة الجديدة في الطابور — الموظفون يقرأون السطر الحالي.',
         capBday: 'حُفظت — ترسل ٩:٠٠ صباحهم.',
         capInstantToast: 'فوري — المحافظ تتلوّن الليلة',
+        /* ── محرّر البطاقة الكامل ─────────────────────────────────────────── */
+        edEditCard: 'تعديل البطاقة', edEditShort: 'تعديل',
+        edIdentity: 'الهوية والفن', edArNameLabel: 'الاسم بالعربي', edStampStyleLabel: 'شكل الختم',
+        edLogoLabel: 'الشعار', edBannerLabel: 'البانر', edLogoDrop: '↑ أفلت شعاراً — PNG أو JPG',
+        edBannerDrop: '↑ أفلت بانراً — PNG أو JPG', edRemoveCaps: 'إزالة',
+        edArtLive: 'على بطاقات هذه البطاقة — فعّال', edArtHint: 'الفن لكل بطاقة على حدة: هذا الشعار والبانر يركبان {name} فقط. مقيّد بالمواصفات — نقصّه لآبل وجوجل.',
+        edStampHint: 'تغيير الشكل يعيد ختم كل معاينة بطاقة وصف عضو وخلية تقدّم لهذه البطاقة.',
+        edCustomColor: 'الحالي {hex} — اضغط العجلة لأي لون مخصص.',
+        edRulesTitle: 'القواعد', edRulesSub: 'الاقتصاد الذي يحمله الأعضاء أصلاً. القيم القديمة تبقى فعّالة حتى تعتمد وصلة.',
+        edExtrasTitle: 'إضافات',
+        edSignupTitle: 'حقول التسجيل', edSignupSub: 'ما تطلبه صفحة الانضمام. الاسم والهاتف مفعّلان دائماً.',
+        edWhereTitle: 'أين تعمل', edWhereNoneNote: 'لا فروع مختارة — لا شيء يمكن مسحه على هذه البطاقة.',
+        edWhereAllNote: 'كل الفروع — كل ماسح في الحساب يخدم هذه البطاقة.',
+        edWhereSomeNote: 'الماسحات في الفروع المؤشّرة تخدم هذه البطاقة، والبقية ترفض بأدب.',
+        edLinksTitle: 'الروابط على ظهر البطاقة',
+        edLinksSub: 'انستغرام وواتساب والموقع والموقع الإلكتروني تركب ظهر البطاقة. كل رابط إما يرث الافتراضي من الحساب، أو يحمل قيمته الخاصة هنا، أو يُخفى.',
+        lkStateInherited: 'موروث', lkStateOverridden: 'هذه البطاقة', lkStateHidden: 'مخفي',
+        lkUseOwn: 'استخدم قيمة مختلفة لهذه البطاقة', lkRevert: 'العودة لافتراضي الحساب',
+        lkHide: 'أخفِه على هذه البطاقة', lkShowAgain: 'أظهره مجدداً',
+        lkAccountDefault: 'افتراضي الحساب', lkNoValue: 'غير محدد بعد',
+        lkBackTitle: 'ظهر البطاقة', lkBackTerms: 'الشروط',
+        lkBackTermsV: 'الكسب يتبع قواعد هذه البطاقة · الاستبدال محفوظ ما دامت البطاقة حيّة.',
+        lkBackNote: 'المحفظة تعرض الروابط كصفوف قابلة للنقر على ظهر البطاقة — نقرة واحدة تفتح انستغرام أو واتساب أو الخرائط.',
+        lkBackEmpty: 'كل الروابط مخفية على هذه البطاقة — الظهر يعرض الشروط فقط.',
+        lkTapNote: 'الصفوف الزرقاء قابلة للنقر داخل المحفظة.',
+        setLinksTitle: 'روابط الحساب', setLinksSub: 'البطاقات ترث هذه ما لم تضع بطاقة قيمتها الخاصة. تعديل واحد هنا يحدّث كل بطاقة ترثه.',
+        setLinksInclude: 'ضمّه للبطاقات افتراضياً',
+        lkSumNone: 'لا بطاقة تتجاوز هذا.', lkSumOver: '{n} من {total} بطاقات تتجاوز هذا.',
+        lkSumHidden: '{n} تخفيه.', lkSumOpen: 'افتح بطاقة ←',
+        edAfterTitle: 'ماذا يحدث عند الحفظ',
+        edAfterInstant: 'التغييرات الفورية فعّالة أصلاً — المحافظ تُعاد رسمها الليلة.',
+        edAfterReview: 'تغيير واحد ({n}) يذهب لوصلة. بطاقة اليوم تحتفظ بقيمها الحالية حتى يعتمدها عمر — عادةً خلال يوم.',
+        edAfterReviewPl: '{n} تغييرات تذهب لوصلة. بطاقة اليوم تحتفظ بقيمها الحالية حتى يعتمدها عمر — عادةً خلال يوم.',
+        edAfterNone: 'لا شيء في الطابور — نطاق المراجعة كما هو.',
+        edWasLive: 'الفعّال الآن', edNowReview: 'قيد المراجعة',
+        edUnsavedOne: 'تغيير واحد غير محفوظ', edUnsavedMany: '{n} تغييرات غير محفوظة',
+        edDiscard: 'تجاهل', edLeaveTitle: 'المغادرة دون حفظ؟',
+        edLeaveBody: 'تغييراتك المرحّلة لم تُرسل لوصلة. مغادرة هذا التبويب تُسقطها وتبقى البطاقة بقيمها الحالية.',
+        edLeaveOk: 'تجاهل التغييرات', edDiscarded: 'أُسقطت التغييرات — البطاقة كما هي',
+        edDangerTitle: 'منطقة الخطر', edDangerSub: 'طريقتان لإيقاف بطاقة. واحدة فقط قابلة للتراجع.',
+        edPauseTitle: 'إيقاف هذه البطاقة مؤقتاً', edPauseBody: 'يتوقف الكسب والتسجيل الجديد، وتبهت البطاقة في المحافظ، والأرصدة تبقى قابلة للاستبدال. استأنف متى شئت.',
+        edResumeTitle: 'استئناف هذه البطاقة', edResumeBody: 'الكسب والتسجيل يعودان لحظة الضغط.',
+        edRetireTitleCard: 'تقاعد هذه البطاقة', edRetireBodyCard: 'نهاية البطاقة، لا نهاية ما كسبه الأعضاء.',
+        edRetireBtn: 'أحِل البطاقة للتقاعد', edRetiredAlready: 'هذه البطاقة متقاعدة.',
+        edRetireAsk: 'إحالة {name} للتقاعد؟', edRetireAskBody: 'البطاقات القائمة تتوقف عن الكسب فوراً ويموت رمز التسجيل. كل ما كُسب يبقى قابلاً للاستبدال عند الكاشير حتى يُصرف — لا شيء يُلغى. لا يمكن التراجع؛ ستضيف بطاقة جديدة بدلاً منها.',
+        edRetireOk: 'أحِلها للتقاعد', edRetireDone: 'تقاعدت — توقف الكسب والاستبدال ما زال محفوظاً',
+        acRetiredYouLine: 'أنت من أحلت هذه البطاقة للتقاعد.', acRetiredWaslaPrefix: 'أحالتها وصلة للتقاعد',
+        acRetiredReasonUnknown: 'التفاصيل عند مدير حسابك',
+        acRetiredMeansLine: 'توقف الكسب ومات رمز التسجيل — كل ما كُسب سابقاً يبقى قابلاً للاستبدال عند الكاشير.',
+        edLockedJoin: 'رابط التسجيل', edLockedJoinFoot: 'رابط الانضمام مطبوع على الملصقات ويعيش في المحافظ — لا يمكن إصداره من جديد.',
+        rlGoal: 'الأختام حتى المكافأة', rlRewardAt: 'المكافأة عند {n} أختام',
+        rlEarnGuard: 'حارس الكسب', rlEarnGuardNote: 'يمنع الختم الزائد — الماسح يرفض بأدب بعد الحد.',
+        rlCbRate: 'نسبة الكاش باك', rlCbMin: 'الاستبدال من', rlCbExp: 'انتهاء الرصيد',
+        rlCbNote: 'يشبه النقود: العميل يصرف الرصيد كاملاً أو جزئياً عند الكاشير.',
+        rlPtPer: 'نقاط لكل دينار', rlPtLadder: 'سلّم المكافآت — الأرخص أولاً',
+        rlPtAdd: '+ أضف مكافأة', rlPtNote: 'لا شيء مُختار مسبقاً عند الاستبدال — الموظف يعرض السلّم والعميل يختار.',
+        rlPtCap: 'أربع مكافآت تُبقي السلّم مقروءاً',
+        rlDcPct: 'الخصم الدائم', rlDcFine: 'الشروط الصغيرة', rlDcFineOpt: '(اختياري — يركب البطاقة)',
+        rlDcNote: 'لا معاملة عند الكاشير — الموظف يمسح ويرى الحكم: صالحة أو منتهية.',
+        rlCpOffer: 'العرض', rlCpExp: 'ينتهي بعد', rlCpQty: 'كم عدداً منه',
+        rlCpNote: 'واحد لكل عميل، مرة واحدة ولا رجعة — الماسح يسأل مرتين دائماً.',
+        rlVipLadder: 'السلّم — الاسم · يُفتح عند · ميزته', rlVipAt: 'عند', rlVipVisits: 'زيارة',
+        rlVipFirst: 'الجميع يبدأ هنا', rlVipPerkPh: 'الميزة في هذه الفئة',
+        rlVipNote: 'الترقيات تُحتفى بها على البطاقة — لا استبدال، الفئة هي المكافأة.',
+        rlChMission: 'المهمة', rlChVisits: 'زيارات', rlChWindow: 'داخل النافذة',
+        rlChMin: 'الزيارة تُحتسب من', rlChAny: 'أي شراء', rlChPrize: 'الجائزة',
+        rlMbValidity: 'صالحة لـ', rlMbFee: 'رسوم العضوية', rlMbFree: 'الانضمام مجاني',
+        rlMbRem: 'تذكير التجديد', rlMbBenefit: 'ماذا تشمل العضوية',
+        rlMbNote: 'الموظف يمسح ليرى الحكم: فعّالة، أو توشك على الانتهاء، أو منتهية.',
+        rlWelcome: 'مكافأة الترحيب', rlExpiry: 'سياسة الانتهاء', rlCap: 'الاستبدالات يومياً',
+        capLogo: 'بُدّل الشعار — بطاقات هذه البطاقة تُعاد رسمها الليلة.',
+        capLogoOff: 'أُزيل الشعار — البطاقة تعود لحرفها الأول.',
+        capBanner: 'بُدّل البانر — مقصوص لمواصفات المحفظتين.',
+        capBannerOff: 'أُزيل البانر — البطاقة تعود للون الصافي.',
+        capStamp: 'تغيّر شكل الختم — كل ختم على هذه البطاقة يُعاد رسمه.',
+        capBranchEd: 'تحدّثت الفروع — الماسحات تتبع هذه القائمة من المسح التالي.',
+        capFieldEd: 'تحدّثت حقول التسجيل — صفحة الانضمام تُعاد رسمها.',
+        capLinkOver: '{label} يحمل الآن قيمة هذه البطاقة.',
+        capLinkInherit: '{label} عاد لافتراضي الحساب.',
+        capLinkHide: '{label} مخفي على ظهر هذه البطاقة.',
+        capLinkShow: '{label} يظهر على هذه البطاقة مجدداً.',
+        capLinkEdit: '{label} تحدّث — ظهر البطاقة يُعاد رسمه الليلة.',
+        capAccLink: 'تحدّث افتراضي الحساب — كل بطاقة ترثه تتبعه.',
+        capRulesEd: 'القواعد في الطابور — بطاقة اليوم تحتفظ بأرقامها حتى الاعتماد.',
+        capCapEd: 'تحدّث حد الاستبدال — فوري، ويركب ظهر البطاقة.',
         wStepType: 'النوع', wStepDetails: 'التفاصيل', wStepBrand: 'الهوية', wStepRules: 'القواعد', wStepReview: 'المراجعة',
         wStepDone: 'اكتملت — اضغط للعودة', wStepNow: 'أنت هنا', wStepLater: 'قادمة',
         wGalTitle: 'اختر البطاقة قبل الألوان.',
@@ -3652,13 +4440,28 @@ class Component extends DCLogic {
     const mkNav = (keys) => keys.map(([key, label]) => { const active = st.screen === key || (key === 'home' && (st.screen === 'card' || st.screen === 'wizard')); return { label, go: () => this.setState({ screen: key, memberIdx: null }), bg: active ? 'rgba(232,128,36,.14)' : 'transparent', fg: active ? '#C96A14' : '#5D5348', fw: active ? 800 : 500, dot: active ? '#E88024' : 'transparent' }; });
     const navItems = mkNav(navDef);
     const mNavItems = mkNav([['home', t.home], ['activity', t.activity], ['broadcasts', t.broadcasts], ['staff', t.staffShort], ['settings', t.settings]]).map(n => ({ ...n, dot: n.dot === 'transparent' ? '#D8D0C2' : n.dot }));
-    const allCards = [...cards.map(c => { const mod = st.cardMods[c.id] || {}; const merged = { ...c, ...mod }; if (mod.color) merged.color2 = this.shade(mod.color);
+    /* the console's own takedowns, overlaid UNDER this dashboard's own cardMods —
+       so if Yara somehow retired the same card herself in this session, her own
+       action (spread last, below) wins the wording, exactly as the task requires. */
+    const consoleTd = this.consoleOverlay(this.consoleAcct(), this.consoleCardMap()) || {};
+    const allCards = [...cards.map(c => { const mod = st.cardMods[c.id] || {}; const cTd = consoleTd[c.id]; const merged = { ...c, ...(cTd || {}), ...mod }; if (mod.color) merged.color2 = this.shade(mod.color);
       if (c.id === 'sukkar') { const ls = this._lsGet(this.sukkarKey()); if (ls === 'approved') { merged.state = 'live'; merged.passes = 41; merged.stat1 = { label: 'Approved by Wasla', v: 'Just now' }; merged.stat2 = { label: 'First passes', v: '41' }; merged.note = 'Live — Yara got the WhatsApp.'; } else if (ls === 'rejected') { merged.state = 'returned'; merged.stat1 = { label: 'Sent back', v: 'Just now' }; merged.stat2 = { label: 'In wallets', v: 'Nothing' }; } else if (ls === 'resubmitted') { merged.stat1 = { label: 'Resubmitted', v: 'Just now' }; merged.stat2 = { label: 'Reviewer', v: 'Wasla · Omar' }; } }
       return merged; }), ...st.addedCards];
     const typeOf = (id) => types.find(x => x.id === id) || {};
     const cardTiles = allCards.map((c, i) => { const b = this.badge(c.state); const wa = c.weekActivity || []; const max = Math.max(...wa, 1); return { ...c, open: () => this.setState({ screen: 'card', activeCardId: c.id, memberIdx: null, cardTab: 'members', memFilter: 'all', wbSent: false }), anim: AN('fadeUp', '.55s', (0.06 * i + 0.15) + 's'), typeName: typeOf(c.type).name || c.type, badge: b.label, badgeBg: b.bg, badgeFg: b.fg, dotAnim: b.anim,
+      /* the hover shortcut into this card's settings tab — the tile is the
+         first thing anyone looks at, so "edit" has to start here. It swallows
+         the click so the tile's own open() doesn't also fire. */
+      edit: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ screen: 'card', activeCardId: c.id, cardTab: 'edit', memberIdx: null, memFilter: 'all', wbSent: false, edNote: '', edNoteKind: '' }); },
+      badgeDeco: b.deco || 'none',
       badgeAnim: c.state === 'review' ? 'reviewGlow 2.6s ease-in-out infinite' : 'none',
-      hasNote: !!c.note, noteLine: c.note || '',
+      /* a retired card always shows who ended it — that line pre-empts
+         whatever `note` the card happened to carry, since "why is this
+         greyed out" is the one question a retired tile has to answer. */
+      hasNote: c.state === 'retired' ? true : !!c.note,
+      noteLine: c.state === 'retired'
+        ? (c.retiredBy === 'merchant' ? t.acRetiredYouLine : (t.acRetiredWaslaPrefix + ' · ' + (c.reason || t.acRetiredReasonUnknown)))
+        : (c.note || ''),
       stripOpacity: (c.state === 'draft' || c.state === 'review') ? 0.55 : 1, s1l: c.stat1.label, s1v: c.stat1.v, s1vColor: (c.id === 'layl' && c.gold) ? c.gold : '#241C16', s2l: c.stat2.label, s2v: c.stat2.v,
       bars: wa.map((v, bi) => ({ h: Math.max(3, Math.round(v / max * 22)) + 'px', bg: v ? c.color : '#E7E0D5', anim: AN('barRise', '.5s', (0.06 * i + 0.3 + bi * 0.04) + 's') })) }; });
     const hour = new Date().getHours(); const gWord = EN ? (hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening') : (hour < 12 ? 'صباح الخير' : 'مساء الخير');
@@ -3989,7 +4792,16 @@ class Component extends DCLogic {
     const ac = allCards.find(c => c.id === st.activeCardId) || allCards[0] || {};
     const acB = this.badge(ac.state);
     const acC2 = ac.color2 || this.shade(ac.color || '#26262B');
-    const ed = st.edits[ac.id] || { name: ac.name || '', reward: ac.reward || '', goal: ac.goal || 8, pending: false };
+    /* the QUICK-REVIEW staging slot. Every key falls back to what the card is
+       actually running, so an older saved blob that only carries {name} still
+       reads as "nothing else changed" rather than blanking the other fields. */
+    const edRaw = st.edits[ac.id] || {};
+    const ed = {
+      name: edRaw.name !== undefined ? edRaw.name : (ac.name || ''),
+      ar: edRaw.ar !== undefined ? edRaw.ar : (ac.ar || ''),
+      reward: edRaw.reward !== undefined ? edRaw.reward : (ac.reward || ''),
+      goal: edRaw.goal !== undefined ? edRaw.goal : (ac.goal || 8),
+      cfg: edRaw.cfg || {}, pending: !!edRaw.pending };
     const edNote = (msg, kind) => this.setState({ edNote: msg || '', edNoteKind: kind || 'edit' });
     const setEd = (patch) => this.setState({ edits: { ...st.edits, [ac.id]: { ...ed, ...patch, pending: false } } });
     const lastLbl = (d) => d === 0 ? (EN ? 'today' : 'اليوم') : d === 1 ? (EN ? 'yesterday' : 'أمس') : d + (EN ? 'd ago' : ' يوم');
@@ -4135,7 +4947,14 @@ class Component extends DCLogic {
     const tabAnim = (ctFwd ? 'tabInR' : 'tabInL') + ' .44s cubic-bezier(.22,.61,.36,1) ' + (24 + ctIdx * 5) + 'ms both';
     const cardTabsDef = [['members', EN ? 'Members' : 'الأعضاء'], ['analytics', EN ? 'Analytics' : 'التحليلات'], ['addons', EN ? 'Add-ons' : 'الإضافات'], ['signup', EN ? 'Signup & poster' : 'التسجيل والملصق'], ['edit', EN ? 'Card settings' : 'إعدادات البطاقة']];
     const cardTabs = cardTabsDef.map(([k, label], i) => { const on = st.cardTab === k; return { label, active: on,
-      go: () => this.setState({ cardTab: k, anHour: null, edNote: '', edNoteKind: '' }),
+      /* leaving the editor with staged review edits is the one place in this
+         file where a click can quietly throw work away, so it asks first. The
+         guard reads edDirty/edClear, which are declared further down — the
+         arrow only runs after renderVals has finished, so the binding is live
+         by then. Instant edits are already saved and never reach this. */
+      go: () => { const move = () => this.setState({ cardTab: k, anHour: null, edNote: '', edNoteKind: '' });
+        if (st.cardTab === 'edit' && k !== 'edit' && edDirty) { this.ask(t.edLeaveTitle, t.edLeaveBody, t.edLeaveOk, '#E2563A', () => { this.setState({ edits: edClear() }); this.saveDemo(); move(); }); return; }
+        move(); },
       br: on ? '#E88024' : '#E7E0D5', bg: on ? '#E88024' : '#FFFFFF', fg: on ? '#FFFFFF' : '#5D5348',
       indOrigin: ctFwd ? 'left center' : 'right center',
       indAnim: 'indGrow .42s cubic-bezier(.22,.61,.36,1) ' + (20 + i * 4) + 'ms both' }; });
@@ -4181,16 +5000,202 @@ class Component extends DCLogic {
     const bd = st.bday[ac.id] || { msg: 'Happy birthday, {name}! A gift is riding your card today — come celebrate with us.', gift: giftDefaults[ac.id] || 'A small gift from us' };
     const setBd = (patch) => this.setState({ bday: { ...st.bday, [ac.id]: { ...bd, ...patch } } });
     // one pause/resume path — used by the card header and by the command palette
-    const setCardState = (c, next, msg) => { this.setState({ cardMods: { ...this.state.cardMods, [c.id]: { ...(this.state.cardMods[c.id] || {}), state: next } } }); this.saveDemo(); this.say(msg); };
+    const setCardState = (c, next, msg, extra) => { this.setState({ cardMods: { ...this.state.cardMods, [c.id]: { ...(this.state.cardMods[c.id] || {}), state: next, ...(extra || {}) } } }); this.saveDemo(); this.say(msg); };
     const pauseCard = (c) => g(() => this.ask('Pause ' + c.name + '?', 'New signups and earning stop, and the card greys in wallets. Balances stay redeemable. You can resume anytime.', 'Pause card', '#E2563A', () => setCardState(c, 'paused', 'Paused — balances stay redeemable')));
     const resumeCard = (c) => g(() => setCardState(c, 'live', c.name + ' is live again'));
     const cardActionFn = (c) => c.state === 'live' ? pauseCard(c) : resumeCard(c);
     const resubmitCard = g(() => { this._lsSet(this.sukkarKey(), 'resubmitted'); this.say('Resubmitted — Omar sees it at the top of the queue'); this.forceUpdate(); });
+    /* retiredBy tags who ended the card's life: this is the ONLY path in this
+       file that puts a card into 'retired', so tagging it 'merchant' here is
+       how the profile banner and tile note later tell "you retired this"
+       apart from a Wasla takedown — anything retired WITHOUT this tag (e.g.
+       a foreign cardMods blob) reads as a takedown by default. */
+    const retireCard = (c) => g(() => this.ask(fill(t.edRetireAsk, { name: c.name || '' }), t.edRetireAskBody, t.edRetireOk, '#B23420',
+      () => setCardState(c, 'retired', t.edRetireDone, { retiredBy: 'merchant' })));
     const acActionDef = ac.state === 'live' ? { label: EN ? 'Pause card' : 'إيقاف مؤقت', fn: pauseCard(ac) }
       : ac.state === 'paused' ? { label: EN ? 'Resume card' : 'استئناف', fn: resumeCard(ac) }
       : ac.state === 'returned' ? { label: EN ? 'Fix & resubmit' : 'صحّح وأعد الإرسال', fn: resubmitCard }
       : ac.state === 'draft' ? { label: EN ? 'Continue setup' : 'أكمل الإعداد', fn: () => this.resumeDraft(ac) }
+      : ac.state === 'retired' ? { label: EN ? 'Retired' : 'متقاعدة', fn: () => this.say(EN ? 'Retired — earning stopped, redemption still honoured' : 'متقاعدة — توقف الكسب والاستبدال محفوظ') }
       : { label: EN ? 'In review — Omar has it' : 'قيد المراجعة', fn: () => this.say('Omar is on it — usually within a day') };
+
+    /* ══ THE CARD EDITOR ════════════════════════════════════════════════════
+       Everything the wizard configured, editable afterwards, sorted into the
+       three bands the wizard already promised:
+
+         INSTANT   → written straight into cardMods / cardLinks / cardArt and
+                     saved. What you see on the card is what members get.
+         REVIEW    → staged in edits[cardId]. The card keeps running on its
+                     current numbers; the staged value shows as a ghost chip
+                     until Wasla approves.
+         NEVER     → rendered locked, with the reason.
+
+       Two rules hold the whole thing together: nothing here mutates WASLA_DB,
+       and every mutating handler goes through g() so view-as stays a
+       look-don't-touch mode. ════════════════════════════════════════════ */
+    const acMod = st.cardMods[ac.id] || {};
+    const putMod = (patch) => { this.setState({ cardMods: { ...st.cardMods, [ac.id]: { ...acMod, ...patch } } }); this.saveDemo(); };
+    // ── per-card art. Bytes in their own localStorage key, never in the blob.
+    const artKey = (kind, cid) => 'wasla_card_' + kind + '_' + cid;
+    const artOf = (kind) => { const s0 = (st.cardArt || {})[ac.id] || {};
+      if (s0[kind] !== undefined) return s0[kind] || '';
+      return this._lsGet(artKey(kind, ac.id)) || ''; };
+    const putArt = (kind, val) => { try { if (val) localStorage.setItem(artKey(kind, ac.id), val); else localStorage.removeItem(artKey(kind, ac.id)); } catch (e) {}
+      this.setState(s => ({ cardArt: { ...(s.cardArt || {}), [ac.id]: { ...((s.cardArt || {})[ac.id] || {}), [kind]: val } } })); };
+    const pickArt = (kind, cap) => g((e) => { const f = e.target.files && e.target.files[0]; if (!f) return;
+      const r = new FileReader(); r.onload = () => { putArt(kind, r.result); edNote(cap, 'art'); this.say(cap); }; r.readAsDataURL(f); });
+    const acLogo = artOf('logo'), acBanner = artOf('banner');
+    // ── the type's rule set: defaults, then instant mods, then staged edits.
+    const acCfgBase = { ...this.cfgDefaults(ac.type || 'stamps') };
+    acCfgBase.icon = this.cardStampStyle(ac);
+    if (ac.type === 'membership' && ac.reward) acCfgBase.benefit = ac.reward;
+    if (ac.type === 'coupon' && ac.reward) acCfgBase.offer = ac.reward;
+    if (ac.type === 'challenge' && ac.reward) acCfgBase.prize = ac.reward;
+    const acCfgLive = { ...acCfgBase, ...(acMod.cfg || {}) };
+    const acCfg = { ...acCfgLive, ...(ed.cfg || {}) };
+    const setEdCfg = (patch) => { setEd({ cfg: { ...(ed.cfg || {}), ...patch } }); edNote(t.capRulesEd, 'rules'); };
+    /* the one INSTANT control that lives inside the review band (the per-day
+       redemption cap). Its caption is filed under 'rules' so it renders beside
+       the chip it belongs to rather than up in the branches panel — the text
+       itself carries the tier, and the chip wears an INSTANT pill. */
+    const setModCfg = (patch, cap) => { putMod({ cfg: { ...(acMod.cfg || {}), ...patch } }); edNote(cap || t.capCapEd, 'rules'); this.say(cap || t.capCapEd); };
+    /* one chip factory for the editor. `defs` are [rawValue, bilingualLabel] so
+       the stored values stay identical to the wizard's — a card configured in
+       the wizard and then edited here never ends up with two spellings of the
+       same rule. */
+    const mkEdChips = (defs, key, review) => defs.map(([v, label]) => ({ label,
+      pick: g(() => { if (review) setEdCfg({ [key]: v }); else setModCfg({ [key]: v }); }),
+      br: acCfg[key] === v ? '#E88024' : '#E7E0D5', bg: acCfg[key] === v ? '#FDF4EC' : '#FFFFFF', fg: acCfg[key] === v ? '#C96A14' : '#5D5348' }));
+    const edLadder = acCfg.ladder || [];
+    const edTiers = acCfg.tiers || [];
+    const edLadderJod = (cost) => fill(t.wLadderJod, { v: money((cost || 0) / Math.max(acCfg.per || 10, 1)) });
+    // ── the diff: what is staged, what is live, and how many of each.
+    const edPairs = [
+      { id: 'name', label: t.edCardName, live: ac.name || '', next: ed.name },
+      { id: 'ar', label: t.edArNameLabel, live: ac.ar || '', next: ed.ar },
+      { id: 'reward', label: t.edRewardLabel, live: ac.reward || '', next: ed.reward }
+    ];
+    if (ac.type === 'stamps') edPairs.push({ id: 'goal', label: t.rlGoal, live: String(ac.goal || 8), next: String(ed.goal) });
+    /* one label per rule key, so the "what happens when you save" summary reads
+       like a sentence a café owner would write rather than a config dump. */
+    const RULE_LABEL = { cap: t.rlEarnGuard, rate: t.rlCbRate, min: t.rlCbMin, bexp: t.rlCbExp,
+      per: t.rlPtPer, ladder: t.rlPtLadder, pct: t.rlDcPct, fine: t.rlDcFine,
+      offer: t.rlCpOffer, expiry: t.rlCpExp, qty: t.rlCpQty, tiers: t.rlVipLadder,
+      visits: t.rlChMission, window: t.rlChWindow, minv: t.rlChMin, prize: t.rlChPrize,
+      validity: t.rlMbValidity, fee: t.rlMbFee, rem: t.rlMbRem, benefit: t.rlMbBenefit,
+      xwel: t.rlWelcome, xexp: t.rlExpiry, xcap: t.rlCap };
+    Object.keys(ed.cfg || {}).forEach(k => {
+      const asText = (v) => Array.isArray(v) ? v.map(x => (x && (x.name || '')) + (x && x.cost !== undefined ? ' · ' + x.cost : (x && x.at !== undefined ? ' · ' + x.at : ''))).join(' / ')
+        : (v === true ? (EN ? 'on' : 'مفعّل') : v === false ? (EN ? 'off' : 'معطّل') : String(v === undefined || v === null ? '' : v));
+      edPairs.push({ id: 'cfg.' + k, label: RULE_LABEL[k] || k, live: asText(acCfgLive[k]), next: asText((ed.cfg || {})[k]) });
+    });
+    const edChanged = edPairs.filter(p => String(p.live) !== String(p.next));
+    const edChangedIds = {}; edChanged.forEach(p => { edChangedIds[p.id] = p; });
+    const edDirty = edChanged.length > 0 && !ed.pending;
+    const edClear = () => { const nx = {}; Object.keys(st.edits || {}).forEach(k => { if (k !== ac.id) nx[k] = st.edits[k]; }); return nx; };
+    const edDiscard = g(() => { this.setState({ edits: edClear(), edNote: '', edNoteKind: '' }); this.saveDemo(); this.say(t.edDiscarded); });
+    const edGhost = (id) => { const p = edChangedIds[id]; return { on: !!p && ed.pending, live: p ? p.live : '', next: p ? p.next : '' }; };
+    const gName = edGhost('name'), gAr = edGhost('ar'), gRew = edGhost('reward'), gGoal = edGhost('goal');
+    const edReviewRows = edChanged.map((p, i) => ({ label: p.label, from: p.live || '—', to: p.next || '—',
+      anim: AN('fadeUp', '.36s', (0.04 * i + 0.05) + 's') }));
+    const edAfterLine = !edChanged.length ? t.edAfterNone
+      : fill(edChanged.length === 1 ? t.edAfterReview : t.edAfterReviewPl, { n: edChanged.length });
+
+    /* ══ LINKS — three states, one resolver ═════════════════════════════════
+       decl(card, key) answers with the card's DECLARATION, not its rendered
+       value: a string overrides, '' hides, null inherits. The overlay wins,
+       then the data file's own `links`, then "inherit". Nothing writes to
+       WASLA_DB — the overlay is the only mutable surface. */
+    const hasOwn = (o, k) => !!o && Object.prototype.hasOwnProperty.call(o, k);
+    const LK_DEFS = [
+      { k: 'ig', glyph: 'IG', label: 'Instagram', ph: '@yourhandle' },
+      { k: 'wa', glyph: 'WA', label: 'WhatsApp', ph: '+962 7…' },
+      { k: 'loc', glyph: '⌖', label: EN ? 'Location' : 'الموقع', ph: EN ? 'Rainbow St, Amman' : 'شارع الرينبو، عمّان' },
+      { k: 'web', glyph: 'W', label: EN ? 'Website' : 'الموقع الإلكتروني', ph: 'yourbrand.jo' }
+    ];
+    const accLinkVal = (k) => { const ov = st.accLinks || {}; if (hasOwn(ov, k)) return ov[k] || ''; return ((Acc.links || {})[k]) || ''; };
+    const linkDecl = (c, k) => { const ov = (st.cardLinks || {})[c.id] || {}; if (hasOwn(ov, k)) return ov[k];
+      const raw = c.links || {}; if (hasOwn(raw, k)) return raw[k]; return null; };
+    const putCardLink = (patch) => { this.setState({ cardLinks: { ...(st.cardLinks || {}), [ac.id]: { ...((st.cardLinks || {})[ac.id] || {}), ...patch } } }); this.saveDemo(); };
+    const putAccLink = (k, v) => { this.setState({ accLinks: { ...(st.accLinks || {}), [k]: v } }); this.saveDemo(); };
+    const edLinkRows = LK_DEFS.map((d, i) => {
+      const decl = linkDecl(ac, d.k), accV = accLinkVal(d.k);
+      const hidden = decl === '', over = typeof decl === 'string' && decl !== '';
+      const inherit = !hidden && !over;
+      /* hiding must not silently eat the value the card was carrying, so it
+         parks it in a sibling `<key>_was` slot. `_was` is never read by
+         linkDecl (it only ever looks up the bare key), so the three states
+         stay exactly three. "Show it again" restores the parked override, or
+         falls back to inherit if there was nothing to park. */
+      const parked = ((st.cardLinks || {})[ac.id] || {})[d.k + '_was'] || '';
+      return { ...d,
+        isOver: over, isInherit: inherit, isHidden: hidden,
+        state: hidden ? t.lkStateHidden : over ? t.lkStateOverridden : t.lkStateInherited,
+        pillBg: hidden ? '#EFEDE8' : over ? '#FDF4EC' : '#EDF1F6',
+        pillFg: hidden ? '#8C8577' : over ? '#C96A14' : '#4E6E8E',
+        glyphBg: hidden ? '#F3EDE3' : over ? '#FDF4EC' : '#EDF1F6',
+        glyphFg: hidden ? '#B5AB9C' : over ? '#C96A14' : '#4E6E8E',
+        val: over ? decl : '', shown: (over ? decl : accV) || t.lkNoValue,
+        accLine: t.lkAccountDefault + ' · ' + (accV || t.lkNoValue),
+        anim: AN('fadeUp', '.4s', (0.05 * i + 0.06) + 's'),
+        set: g((e) => { putCardLink({ [d.k]: e.target.value }); edNote(fill(t.capLinkEdit, { label: d.label }), 'links'); }),
+        makeOwn: g(() => { putCardLink({ [d.k]: accV || d.ph }); edNote(fill(t.capLinkOver, { label: d.label }), 'links'); this.say(fill(t.capLinkOver, { label: d.label })); }),
+        revert: g(() => { putCardLink({ [d.k]: null, [d.k + '_was']: '' }); edNote(fill(t.capLinkInherit, { label: d.label }), 'links'); this.say(fill(t.capLinkInherit, { label: d.label })); }),
+        hide: g(() => { putCardLink({ [d.k]: '', [d.k + '_was']: over ? decl : '' }); edNote(fill(t.capLinkHide, { label: d.label }), 'links'); this.say(fill(t.capLinkHide, { label: d.label })); }),
+        show: g(() => { putCardLink({ [d.k]: parked || null, [d.k + '_was']: '' }); edNote(fill(t.capLinkShow, { label: d.label }), 'links'); this.say(fill(t.capLinkShow, { label: d.label })); }) };
+    });
+    /* the live back-of-card preview — the same label/value rows the Customer
+       surface flips to, iOS link-blue on the tappable ones. */
+    const edBackRows = edLinkRows.filter(r => !r.isHidden).map(r => ({ k: r.label, v: r.isOver ? r.val : accLinkVal(r.k),
+      color: '#007AFF' })).filter(r => !!r.v);
+    const edBackEmpty = edBackRows.length === 0;
+
+    // ── branches: which of the account's branches this card runs at (INSTANT)
+    const ALLBR = Acc.branches || [];
+    const acBranches = Array.isArray(acMod.branches) ? acMod.branches
+      : (ac.branch ? ALLBR.filter(b => String(ac.branch).indexOf(b) >= 0) : ALLBR.slice());
+    const edBranchChips = ALLBR.map(b => { const on = acBranches.indexOf(b) >= 0; return { label: b, mark: on ? '✓' : '',
+      br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348',
+      boxBr: on ? '#E88024' : '#D8D0C2', boxBg: on ? '#E88024' : '#FFFFFF',
+      toggle: g(() => { putMod({ branches: on ? acBranches.filter(x => x !== b) : [...acBranches, b] }); edNote(t.capBranchEd, 'instant'); this.say(t.capBranchEd); }) }; });
+    const edBranchNote = acBranches.length === 0 ? t.edWhereNoneNote : acBranches.length === ALLBR.length ? t.edWhereAllNote : t.edWhereSomeNote;
+    // ── signup fields on this card: the two locked ones, two switchables, customs
+    const acFields = acMod.fields || {};
+    const edFieldRows = [
+      { label: t.wFieldName, locked: true, switchable: false, isCustom: false, cursor: 'default', dot: '#93887A', swBg: '#D8D0C2', knob: '3px', toggle: () => {} },
+      { label: t.wFieldPhone, locked: true, switchable: false, isCustom: false, cursor: 'default', dot: '#93887A', swBg: '#D8D0C2', knob: '3px', toggle: () => {} },
+      ...[['birthday', t.wFieldBirthday], ['email', t.wFieldEmail]].map(([k, label]) => { const on = !!acFields[k]; return {
+        label, locked: false, switchable: true, isCustom: false, cursor: 'pointer',
+        dot: on ? '#E88024' : '#D8D0C2', swBg: on ? '#2FAE66' : '#D8D0C2', knob: on ? '18px' : '3px',
+        toggle: g(() => { putMod({ fields: { ...acFields, [k]: !on } }); edNote(t.capFieldEd, 'instant'); this.say(t.capFieldEd); }) }; }),
+      ...(custom ? [{ label: custom, locked: false, switchable: false, isCustom: true, cursor: 'default', dot: '#7A5A2E', swBg: '#D8D0C2', knob: '3px', toggle: () => {} }] : []),
+      ...newFields.map(f => ({ label: f.label, locked: false, switchable: false, isCustom: true, cursor: 'default', dot: '#7A5A2E', swBg: '#D8D0C2', knob: '3px', toggle: () => {} }))
+    ].map((f, i) => ({ ...f, anim: AN('fadeUp', '.36s', (0.04 * i + 0.05) + 's') }));
+    // ── the stamp-style picker, the wizard's component pointed at THIS card
+    const acStampStyle = this.cardStampStyle(ac);
+    const edStampStyles = Object.keys(this.stampGlyphs()).map(id => { const on = acStampStyle === id, sArt = this.stampArt(id), real = !!sArt;
+      return { id, name: (t.stName || {})[id] || id, fg: on ? '#C96A14' : '#93887A', fw: on ? 800 : 600,
+        cell: this.stampCell({ flat: true, size: 42, filled: true, style: id,
+          disc: on ? (ac.color || '#26262B') : (real ? this.hexA(ac.color || '#26262B', .86) : this.hexA(ac.color || '#26262B', .13)),
+          ink: on ? '#FFFFFF' : (ac.color || '#26262B'),
+          inner: on ? 'rgba(0,0,0,.2)' : this.hexA(ac.color || '#26262B', .2),
+          outer: on ? '0 0 0 3px rgba(232,128,36,.95)' : '' }),
+        isReal: real, notReal: !real, realSrc: real ? sArt.filled : '',
+        realStyle: 'width:64%;height:64%;object-fit:contain;display:block;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35));',
+        pick: g(() => { putMod({ stampStyle: id }); edNote(t.capStamp, 'instant'); this.say(t.capStamp); }) }; });
+    // ── the account-links editor behind Settings → Links
+    const setLinkRows = LK_DEFS.map((d, i) => { const on = !!(st.links || {})[d.k];
+      const overN = allCards.filter(c => { const v = linkDecl(c, d.k); return typeof v === 'string' && v !== ''; }).length;
+      const hidN = allCards.filter(c => linkDecl(c, d.k) === '').length;
+      const sum = (overN ? fill(t.lkSumOver, { n: overN, total: allCards.length }) : t.lkSumNone)
+        + (hidN ? ' ' + fill(t.lkSumHidden, { n: hidN }) : '');
+      return { ...d, value: accLinkVal(d.k), summary: sum,
+        swBg: on ? '#2FAE66' : '#D8D0C2', knob: on ? '20px' : '3px',
+        glyphBg: on ? '#FDF4EC' : '#F3EDE3', glyphFg: on ? '#C96A14' : '#B5AB9C',
+        anim: AN('fadeUp', '.4s', (0.05 * i + 0.08) + 's'),
+        set: g((e) => { putAccLink(d.k, e.target.value); }),
+        blur: g(() => this.say(t.capAccLink)),
+        toggle: g(() => { this.setState({ links: { ...st.links, [d.k]: !on } }); this.saveDemo(); this.say(!on ? d.label + ' — ' + t.setLinksInclude : d.label + ' ✕'); }) }; });
     // ── broadcasts ─────────────────────────────────────────────────────────
     /* the member SEGMENTS live here, above the broadcast composer, because
        both screens read them: the directory filters rows with these predicates
@@ -4376,17 +5381,9 @@ class Component extends DCLogic {
     const companyRows = [[t.owner, EN ? (Acc.owner || '') : (Acc.ownerAr || '')],
       [t.crBranches, (Acc.branches || []).join(' · ')], [t.crCity, t.cityAmman]]
       .map(([k, v], i) => ({ k, v, anim: AN('fadeUp', '.4s', (0.05 * i + 0.08) + 's') }));
-    const linkDefs = [
-      { k: 'ig', glyph: 'IG', label: 'Instagram', value: '@talagroup' },
-      { k: 'wa', glyph: 'WA', label: 'WhatsApp', value: '+962 79 555 0100' },
-      { k: 'loc', glyph: '⌖', label: 'Location', value: 'Rainbow St · Amman' },
-      { k: 'web', glyph: 'W', label: 'Website', value: 'talagroup.jo' }
-    ];
-    const linkRows = linkDefs.map((d, i) => { const on = st.links[d.k]; return { ...d,
-      swBg: on ? '#2FAE66' : '#D8D0C2', knob: on ? '20px' : '3px',
-      glyphBg: on ? '#FDF4EC' : '#F3EDE3', glyphFg: on ? '#C96A14' : '#B5AB9C',
-      anim: AN('fadeUp', '.4s', (0.05 * i + 0.08) + 's'),
-      toggle: g(() => { this.setState({ links: { ...st.links, [d.k]: !on } }); this.say(!on ? d.label + ' now rides every card — instant' : d.label + ' removed from cards'); }) }; });
+    /* the four account-default link rows are built with the card editor, up in
+       the card-profile block, so both surfaces read one resolver — see
+       setLinkRows / LK_DEFS. Nothing account-level is defined twice. */
     // (c) security — device glyphs drawn in CSS, "this device" accented, revoke is real
     const secGone = st.secRevoked || [];
     const sessDefs = [
@@ -4447,6 +5444,15 @@ class Component extends DCLogic {
     const actDefs = [
       { label: t.saBroadcast, hint: t.saHintScreen, glyph: '≡', color: '#7A5A2E', keys: 'broadcast send message push notify blast إشعار أرسل رسالة', run: goScreen('broadcasts') },
       { label: t.saAddCard, hint: t.saHintScreen, glyph: '+', color: '#E88024', keys: 'add card new create wizard make بطاقة أضف جديدة', run: () => { this.setState(shutSearch); this.openWiz(); } },
+      /* "Edit <card>" — the third way into the editor, after the tile hover and
+         the profile header, for the owner who lives on ⌘K. One row per card is
+         five rows, which would swallow the whole six-row default list, so they
+         only appear once something has been typed. */
+      ...(sq ? allCards.map(c => ({
+        label: t.edEditCard + ' · ' + c.name, hint: t.saHintCard,
+        glyph: '✎', color: c.color || '#5D5348',
+        keys: 'edit change settings rules links logo colour color تعديل تحرير إعدادات روابط ' + (c.name || '').toLowerCase() + ' ' + (c.ar || ''),
+        run: () => { this.setState({ ...shutSearch, screen: 'card', activeCardId: c.id, cardTab: 'edit', memberIdx: null, memFilter: 'all', wbSent: false, edNote: '', edNoteKind: '' }); } })) : []),
       ...allCards.filter(c => c.state === 'live' || c.state === 'paused').map(c => ({
         label: (c.state === 'live' ? t.saPause : t.saResume) + ' ' + c.name, hint: t.saHintCard,
         glyph: c.state === 'live' ? '‖' : '▶', color: c.color || '#5D5348',
@@ -4628,6 +5634,15 @@ class Component extends DCLogic {
     const invBranchChips = (Acc.branches || []).map(b => ({ label: b, pick: () => this.setState({ invBranch: b }), br: st.invBranch === b ? '#E88024' : '#E7E0D5', bg: st.invBranch === b ? '#FDF4EC' : '#FFFFFF', fg: st.invBranch === b ? '#C96A14' : '#5D5348' }));
     const staffPanelOpen = st.inviteOpen || !!sd;
     const viewAs = (() => { try { return ((window.location || {}).search || '').indexOf('viewas=1') >= 0; } catch (e) { return false; } })();
+    /* the console's "View as client" link now carries ?viewas=1&acct=<slug> —
+       this demo dashboard only ever models Tala, so a foreign slug must not
+       be shown under Tala's banner. slugOf mirrors the console's own
+       slugifier exactly (see Wasla Console.dc.html) so the comparison holds. */
+    const acctParam = (() => { try { const m = ((window.location || {}).search || '').match(/[?&]acct=([^&]+)/); return m ? decodeURIComponent(m[1]) : ''; } catch (e) { return ''; } })();
+    const slugOf = (n) => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const acctIsTala = !acctParam || slugOf(acctParam) === slugOf(Acc.company || 'Tala Hospitality Group');
+    const acctWantedName = acctIsTala ? '' : ((CONS.find(a => slugOf(a.name) === slugOf(acctParam)) || {}).name || acctParam);
+    const viewAsLine = acctIsTala ? t.viewAsLine : fill(t.viewAsOtherLine, { acct: acctWantedName });
     const MOB = st.mobile;
     /* ── overlay containment ──────────────────────────────────────────────
        Every overlay lives inside <main>. On desktop <main> is not a positioned
@@ -4705,7 +5720,7 @@ class Component extends DCLogic {
       ownerName: EN ? (Acc.owner || '') : (Acc.ownerAr || ''), ownerInitials: Acc.initials || '',
       quotaLabel: (Acc.cardsUsed || 0) + ' of ' + (Acc.cardQuota || 10), quotaPct: Math.round((Acc.cardsUsed || 0) / (Acc.cardQuota || 10) * 100 * tick) + '%',
       isHome: st.screen === 'home', isWizard: st.screen === 'wizard', isCard: st.screen === 'card', isMembers: st.screen === 'members', isActivity: st.screen === 'activity', isBroadcasts: st.screen === 'broadcasts', isStaff: st.screen === 'staff', isSettings: st.screen === 'settings',
-      viewAs,
+      viewAs, viewAsLine,
       searchOpen: st.searchOpen, searchQ: st.searchQ, searchCards, searchMembers, searchActions,
       hasSearchCards: searchCards.length > 0, hasSearchMembers: searchMembers.length > 0, hasSearchActions: searchActions.length > 0,
       searchEmpty: sTotal === 0,
@@ -4726,7 +5741,7 @@ class Component extends DCLogic {
       feedGroups,
       resetDemoGo: g(() => this.ask(t.resetQ, t.resetBody, t.resetBtn, '#E2563A', () => { this.resetDemo(); this.say(t.resetDone); })),
       greeting: gWord + (EN ? ', ' : '، ') + (EN ? (Acc.owner || '').split(' ')[0] : (Acc.ownerAr || '').split(' ')[0]) + '.',
-      stats, cardTiles, startWizard: this.openWiz, goHome: () => this.setState({ screen: 'home', memberIdx: null }), goActivity: () => this.setState({ screen: 'activity' }),
+      stats, cardTiles, tileEditLabel: t.edEditShort, startWizard: this.openWiz, goHome: () => this.setState({ screen: 'home', memberIdx: null }), goActivity: () => this.setState({ screen: 'activity' }),
       enterAnim: AN('fadeUp', '.5s'), enterAnimFast: AN('fadeUp', '.4s'), popAnim: AN('popIn', '.5s'), popAnimFast: AN('popIn', '.45s'), slideAnim: AN('slideRight', '.55s'), slideAnimFast: AN('slideRight', '.4s'),
       stepAnim: reAnim('stepIn', '.42s', wiz.step * 7 + 1),
       wizStep1: wiz.step === 1, wizStep2: wiz.step === 2, wizConfig: wiz.step === 3 || wiz.step === 4, wizBrand: wiz.step === 3, wizRules: wiz.step === 4, wizStep5: wiz.step === 5,
@@ -4852,6 +5867,11 @@ class Component extends DCLogic {
       posterLine, posterLineAr, joinRows, joinRead,
       acReturned: ac.state === 'returned',
       acResubmit: resubmitCard,
+      /* the merchant side of a takedown: same "who/why" read as the tile note
+         (see cardTiles above), just spelled out with the "what it means" line
+         that a one-liner on the tile has no room for. */
+      acIsRetired: ac.state === 'retired',
+      acRetiredWhoLine: ac.retiredBy === 'merchant' ? t.acRetiredYouLine : (t.acRetiredWaslaPrefix + ' · ' + (ac.reason || t.acRetiredReasonUnknown)),
       notSubmitted: !wiz.submitted, isSubmitted: wiz.submitted,
       wizSubmit: g(() => this.setState({ wiz: { ...wiz, submitted: true } })),
       wizApprove: () => {
@@ -4865,6 +5885,10 @@ class Component extends DCLogic {
       // card profile
       ac, acName: ed.pending ? ac.name : (st.edits[ac.id] ? ac.name : ac.name), acColor2: acC2, acBadge: acB.label, acBadgeBg: acB.bg, acBadgeFg: acB.fg,
       acBadgeAnim: ac.state === 'review' ? 'badgePulse 2.4s ease-in-out infinite' : 'none', acBadgeDotAnim: acB.anim || 'none',
+      acBadgeDeco: acB.deco || 'none',
+      /* the discoverable path the founder was missing: tile → profile → edit.
+         Navigation, not a mutation, so it stays live in view-as. */
+      acEditLabel: t.edEditCard, openEditTab: () => this.setState({ cardTab: 'edit', anHour: null, edNote: '', edNoteKind: '' }),
       acTaglineColor: (ac.id === 'layl' && ac.gold) ? ac.gold : '#FFFFFF',
       acMembers: this.fmt((ac.members || 0) * statTick), acPasses: this.fmt((ac.passes || 0) * statTick), acMemberRows,
       acReward: ac.reward || ac.tagline || '', acNote: ac.note || (EN ? 'Signup QR active at the counter.' : 'رمز الانضمام فعّال عند الكاونتر.'),
@@ -4902,26 +5926,104 @@ class Component extends DCLogic {
       posterSizes, posterSizeNote: st.posterSize + ' · ' + ({ A4: '210 × 297 mm', A5: '148 × 210 mm', A6: '105 × 148 mm', 'Roll-up': '850 × 2000 mm', Custom: EN ? 'your size — send it to Omar' : 'مقاسك — أرسله لعمر' }[st.posterSize] || ''),
       posterOpen: st.posterOpen, openPoster: () => this.setState({ posterOpen: true }), closePoster: () => this.setState({ posterOpen: false }),
       doPrint: () => { try { window.print(); } catch (e) {} },
-      edName: ed.name, setEdName: (e) => { setEd({ name: e.target.value }); edNote(fill(t.capName, { old: ac.name || '' }), 'rules'); },
-      edReward: ed.reward, setEdReward: (e) => { setEd({ reward: e.target.value }); edNote(t.capReward, 'rules'); },
+      edName: ed.name, setEdName: g((e) => { setEd({ name: e.target.value }); edNote(fill(t.capName, { old: ac.name || '' }), 'rules'); }),
+      edArName: ed.ar, setEdArName: g((e) => { setEd({ ar: e.target.value }); edNote(fill(t.capName, { old: ac.ar || '' }), 'rules'); }),
+      edReward: ed.reward, setEdReward: g((e) => { setEd({ reward: e.target.value }); edNote(t.capReward, 'rules'); }),
       edGoal: ed.goal,
-      edGoalUp: () => { const n = Math.min(12, ed.goal + 1); setEd({ goal: n }); edNote(fill(t.capGoal, { n, old: ac.goal || ed.goal }), 'rules'); },
-      edGoalDown: () => { const n = Math.max(4, ed.goal - 1); setEd({ goal: n }); edNote(fill(t.capGoal, { n, old: ac.goal || ed.goal }), 'rules'); },
-      edPending: !!ed.pending, edSaveBg: ed.pending ? '#2FAE66' : '#E88024', edSaveLabel: ed.pending ? t.edSaveDone : t.edSaveGo,
-      edSave: g(() => { if (ed.pending) return; this.ask(t.edAskTitle, t.edAskBody, t.edAskOk, '#E88024', () => { this.setState({ edits: { ...st.edits, [ac.id]: { ...ed, pending: true } }, edNote: '', edNoteKind: '' }); this.say(t.edSentToast); }); }),
+      edGoalUp: g(() => { const n = Math.min(12, ed.goal + 1); setEd({ goal: n }); edNote(fill(t.capGoal, { n, old: ac.goal || ed.goal }), 'rules'); }),
+      edGoalDown: g(() => { const n = Math.max(4, ed.goal - 1); setEd({ goal: n }); edNote(fill(t.capGoal, { n, old: ac.goal || ed.goal }), 'rules'); }),
+      edPending: !!ed.pending, edSaveBg: ed.pending ? '#2FAE66' : (edDirty ? '#E88024' : '#DCD3C4'), edSaveLabel: ed.pending ? t.edSaveDone : t.edSaveGo,
+      edSave: g(() => { if (ed.pending) return; if (!edDirty) { this.say(t.edAfterNone); return; } this.ask(t.edAskTitle, t.edAskBody, t.edAskOk, '#E88024', () => { this.setState({ edits: { ...st.edits, [ac.id]: { ...ed, pending: true } }, edNote: '', edNoteKind: '' }); this.saveDemo(); this.say(t.edSentToast); }); }),
       edSwatches,
+      /* ── the editor: identity & art (INSTANT) ─────────────────────────── */
+      edCustomRing: SW.indexOf(ac.color) < 0 ? '#E88024' : '#EDE6DA',
+      edColorHex: String(ac.color || '').toUpperCase(),
+      edColorLine: fill(t.edCustomColor, { hex: String(ac.color || '').toUpperCase() }),
+      setEdColorPick: g((e) => { putMod({ color: e.target.value }); edNote(t.capRecolor, 'color'); }),
+      edLogo: acLogo, edLogoOn: !!acLogo, edLogoOff: !acLogo,
+      edBanner: acBanner, edBannerOn: !!acBanner, edBannerOff: !acBanner,
+      pickEdLogo: pickArt('logo', t.capLogo), pickEdBanner: pickArt('banner', t.capBanner),
+      removeEdLogo: g(() => { putArt('logo', ''); edNote(t.capLogoOff, 'art'); this.say(t.capLogoOff); }),
+      removeEdBanner: g(() => { putArt('banner', ''); edNote(t.capBannerOff, 'art'); this.say(t.capBannerOff); }),
+      edArtHintLine: fill(t.edArtHint, { name: ac.name || '' }),
+      edStampStyles, edStampHintLine: t.edStampHint,
+      /* ── the editor: links (INSTANT) ──────────────────────────────────── */
+      edLinkRows, edBackRows, edBackEmpty, edBackHasRows: !edBackEmpty,
+      /* ── the editor: branches + signup fields (INSTANT) ────────────────── */
+      edBranchChips, edBranchNote, edFieldRows,
+      /* ── the editor: rules (QUICK REVIEW) ─────────────────────────────── */
+      edIsStamps: ac.type === 'stamps', edIsCashback: ac.type === 'cashback', edIsPoints: ac.type === 'points',
+      edIsDiscount: ac.type === 'discount', edIsCoupon: ac.type === 'coupon', edIsVip: ac.type === 'vip',
+      edIsChallenge: ac.type === 'challenge', edIsMembership: ac.type === 'membership',
+      edRewardAtLine: fill(t.rlRewardAt, { n: ed.goal }),
+      edCapChips: mkEdChips([['1 / visit', EN ? '1 / visit' : '١ لكل زيارة'], ['2 / day', EN ? '2 / day' : '٢ يومياً'], ['No limit', EN ? 'No limit' : 'بلا حد']], 'cap', true),
+      edRate: acCfg.rate, edRateUp: g(() => setEdCfg({ rate: Math.min(15, (acCfg.rate || 5) + 1) })), edRateDown: g(() => setEdCfg({ rate: Math.max(1, (acCfg.rate || 5) - 1) })),
+      edMin: acCfg.min, edMinUp: g(() => setEdCfg({ min: Math.min(10, (acCfg.min || 2) + 1) })), edMinDown: g(() => setEdCfg({ min: Math.max(0, (acCfg.min || 2) - 1) })),
+      edBexpChips: mkEdChips([['Never', t.wChipNever], ['6 months', t.wChip6mo], ['1 year', t.wChip1yr]], 'bexp', true),
+      edPer: acCfg.per, edPerUp: g(() => setEdCfg({ per: Math.min(20, (acCfg.per || 10) + 1) })), edPerDown: g(() => setEdCfg({ per: Math.max(1, (acCfg.per || 10) - 1) })),
+      edLadderRows: edLadder.map((r, i) => ({ name: r.name, cost: String(r.cost), xColor: edLadder.length > 1 ? '#93887A' : '#E7E0D5', jodHint: edLadderJod(r.cost),
+        setName: g((e) => setEdCfg({ ladder: edLadder.map((x, j) => j === i ? { ...x, name: e.target.value } : x) })),
+        setCost: g((e) => { const v = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setEdCfg({ ladder: edLadder.map((x, j) => j === i ? { ...x, cost: v } : x) }); }),
+        remove: g(() => { if (edLadder.length > 1) setEdCfg({ ladder: edLadder.filter((_, j) => j !== i) }); }) })),
+      edAddLadder: g(() => { if (edLadder.length >= 4) { this.say(t.rlPtCap); return; } setEdCfg({ ladder: [...edLadder, { name: EN ? 'New reward' : 'مكافأة جديدة', cost: ((edLadder[edLadder.length - 1] || { cost: 250 }).cost || 250) + 250 }] }); }),
+      edPct: acCfg.pct, edPctUp: g(() => setEdCfg({ pct: Math.min(50, (acCfg.pct || 15) + 5) })), edPctDown: g(() => setEdCfg({ pct: Math.max(5, (acCfg.pct || 15) - 5) })),
+      edFine: acCfg.fine || '', setEdFine: g((e) => setEdCfg({ fine: e.target.value })),
+      edOffer: acCfg.offer || '', setEdOffer: g((e) => setEdCfg({ offer: e.target.value })),
+      edExpChips: mkEdChips([['2 weeks', EN ? '2 weeks' : 'أسبوعان'], ['1 month', EN ? '1 month' : 'شهر'], ['3 months', EN ? '3 months' : '٣ أشهر']], 'expiry', true),
+      edQtyChips: mkEdChips([['Unlimited', EN ? 'Unlimited' : 'بلا حد'], ['First 50', EN ? 'First 50' : 'أول ٥٠'], ['First 100', EN ? 'First 100' : 'أول ١٠٠'], ['First 500', EN ? 'First 500' : 'أول ٥٠٠']], 'qty', true),
+      edTierRows: edTiers.map((tr, i) => ({ val: tr.name, at: String(tr.at), perk: tr.perk, dot: tierDots[i] || '#AEB7C2', isFirst: i === 0, notFirst: i > 0,
+        set: g((e) => setEdCfg({ tiers: edTiers.map((x, j) => j === i ? { ...x, name: e.target.value } : x) })),
+        setAt: g((e) => { const v = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setEdCfg({ tiers: edTiers.map((x, j) => j === i ? { ...x, at: v } : x) }); }),
+        setPerk: g((e) => setEdCfg({ tiers: edTiers.map((x, j) => j === i ? { ...x, perk: e.target.value } : x) })) })),
+      edVisits: acCfg.visits, edVisitsUp: g(() => setEdCfg({ visits: Math.min(10, (acCfg.visits || 5) + 1) })), edVisitsDown: g(() => setEdCfg({ visits: Math.max(3, (acCfg.visits || 5) - 1) })),
+      edWindowChips: mkEdChips([['2 weeks', EN ? '2 weeks' : 'أسبوعان'], ['1 month', EN ? '1 month' : 'شهر'], ['Ramadan', EN ? 'Ramadan' : 'رمضان']], 'window', true),
+      edMinv: acCfg.minv > 0 ? 'JOD ' + acCfg.minv + '+' : t.rlChAny,
+      edMinvUp: g(() => setEdCfg({ minv: Math.min(20, (acCfg.minv || 0) + 1) })), edMinvDown: g(() => setEdCfg({ minv: Math.max(0, (acCfg.minv || 0) - 1) })),
+      edPrize: acCfg.prize || '', setEdPrize: g((e) => setEdCfg({ prize: e.target.value })),
+      edValidityChips: mkEdChips([['1 month', EN ? '1 month' : 'شهر'], ['3 months', EN ? '3 months' : '٣ أشهر'], ['1 year', EN ? '1 year' : 'سنة']], 'validity', true),
+      edFeeLabel: acCfg.fee > 0 ? 'JOD ' + acCfg.fee : t.rlMbFree,
+      edFeeUp: g(() => setEdCfg({ fee: Math.min(200, (acCfg.fee || 0) + 5) })), edFeeDown: g(() => setEdCfg({ fee: Math.max(0, (acCfg.fee || 0) - 5) })),
+      edRemChips: mkEdChips([['1 week before', EN ? '1 week before' : 'قبل أسبوع'], ['3 days before', EN ? '3 days before' : 'قبل ٣ أيام'], ['No reminder', EN ? 'No reminder' : 'بلا تذكير']], 'rem', true),
+      edBenefit: acCfg.benefit || '', setEdBenefit: g((e) => setEdCfg({ benefit: e.target.value })),
+      /* extras: welcome + expiry go for review (they move value), the per-day
+         redemption cap is an operational guard, so it lands instantly. */
+      edWelcomeOn: !!acCfg.xwel, edWelcomeBg: acCfg.xwel ? '#2FAE66' : '#D8D0C2', edWelcomeKnob: acCfg.xwel ? '19px' : '3px',
+      toggleEdWelcome: g(() => setEdCfg({ xwel: !acCfg.xwel })),
+      edWelcomeLine: (t.wWelcomeLine || {})[ac.type] || '',
+      edShowExpiry: ac.type === 'stamps' || ac.type === 'points' || ac.type === 'vip',
+      edXExpChips: mkEdChips([['never', t.wChipNever], ['6m', t.wChip6mo], ['1y', t.wChip1yr]], 'xexp', true),
+      edXCapChips: mkEdChips([['none', t.wChipNoCap], ['1d', t.wChip1Day], ['3d', t.wChip3Day]], 'xcap', false),
+      /* ── the editor: the save contract ────────────────────────────────── */
+      edReviewRows, edHasReviewRows: edReviewRows.length > 0, edAfterLine,
+      edDirty, edUnsavedLabel: edChanged.length === 1 ? t.edUnsavedOne : fill(t.edUnsavedMany, { n: edChanged.length }),
+      edDiscardEdits: edDiscard,
+      edGhostName: gName.on, edGhostNameLive: gName.live, edGhostNameNext: gName.next,
+      edGhostAr: gAr.on, edGhostArLive: gAr.live, edGhostArNext: gAr.next,
+      edGhostReward: gRew.on, edGhostRewardLive: gRew.live, edGhostRewardNext: gRew.next,
+      edGhostGoal: gGoal.on, edGhostGoalLive: gGoal.live, edGhostGoalNext: gGoal.next,
+      /* ── the editor: never, and the danger zone ───────────────────────── */
+      edJoinUrl: 'wasla.app/j/' + (ac.id || 'card'),
+      edIsRetired: ac.state === 'retired', edNotRetired: ac.state !== 'retired',
+      edCanPause: ac.state === 'live', edCanResume: ac.state === 'paused',
+      edPauseNow: pauseCard(ac), edResumeNow: resumeCard(ac), edRetireNow: retireCard(ac),
       // (7) the three tier bands — same wording the wizard showed before submit
       edTierInstant: t.wTierInstant, edTierQuick: t.wTierQuick, edTierNever: t.wTierNever,
       edWhyInstant: t.wInstantList, edWhyQuick: t.wQuickList, edWhyNever: t.wNeverList,
       edBandAnim1: AN('fadeUp', '.45s', '.02s'), edBandAnim2: AN('fadeUp', '.45s', '.1s'), edBandAnim3: AN('fadeUp', '.45s', '.18s'),
+      edBandAnim4: AN('fadeUp', '.45s', '.26s'),
       // (8) narration captions next to the controls that change something visible
       edNoteText: st.edNote || '', edNoteAnim: reAnim('fadeUp', '.35s', this.hashHue(st.edNote || 'idle')),
-      edNoteLook: !!st.edNote && st.edNoteKind === 'color',
+      edNoteLook: !!st.edNote && (st.edNoteKind === 'color' || st.edNoteKind === 'art'),
       edNoteRules: !!st.edNote && st.edNoteKind === 'rules',
       edNoteBday: !!st.edNote && st.edNoteKind === 'bday',
+      edNoteLinks: !!st.edNote && st.edNoteKind === 'links',
+      edNoteInstant: !!st.edNote && st.edNoteKind === 'instant',
       birthdayOn: !!adState.b, birthdayOff: !adState.b, enableBirthday: g(() => { this.setState({ addons: { ...st.addons, [ac.id]: { ...adState, b: true } } }); this.saveDemo(); this.say('Birthday add-on is on — instant'); }),
-      bdayMsg: bd.msg, setBdayMsg: (e) => { setBd({ msg: e.target.value }); edNote(t.capBday, 'bday'); },
-      bdayGift: bd.gift, setBdayGift: (e) => { setBd({ gift: e.target.value }); edNote(t.capBday, 'bday'); },
+      /* the birthday copy is a live edit like any other, so it goes through the
+         same view-as guard — it used to be the one writable field a Wasla
+         viewer could still change. */
+      bdayMsg: bd.msg, setBdayMsg: g((e) => { setBd({ msg: e.target.value }); edNote(t.capBday, 'bday'); this.saveDemo(); }),
+      bdayGift: bd.gift, setBdayGift: g((e) => { setBd({ gift: e.target.value }); edNote(t.capBday, 'bday'); this.saveDemo(); }),
       bdayPreview: bd.msg.split('{name}').join('Sara'),
       // activity
       actChips, actGroups,
@@ -4996,7 +6098,7 @@ class Component extends DCLogic {
         this.setState({ addedStaff: [...st.addedStaff, { name: nm, ar: '', initials: ini || 'W', branch: st.invBranch || (Acc.branches || [])[0] || '', cards: [...st.invCards], scansToday: 0 }], inviteOpen: false, invName: '', invCards: [], staffSel: nm }); this.saveDemo(); this.say(nm + ' — ' + t.inviteSent); }),
       // settings
       setTabs, setTabAnim, setCompany: st.settingsTab === 'company', setLinks: st.settingsTab === 'links', setSecurity: st.settingsTab === 'security', setPlan: st.settingsTab === 'plan', setLanguage: st.settingsTab === 'language',
-      companyRows, linkRows, sessionRows, langRows,
+      companyRows, linkRows: setLinkRows, sessionRows, langRows,
       planName, planMeters, planTiers, planRenewLine,
       planChipDot: renewDays <= 7 ? '#E2563A' : renewDays <= 21 ? '#E88024' : '#2FAE66',
       planChipAnim: AN('popIn', '.45s', '.18s'),

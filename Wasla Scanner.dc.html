@@ -62,6 +62,12 @@
   @keyframes nameA{from{opacity:0;transform:translateY(-9px);}to{opacity:1;transform:none;}}
   @keyframes nameB{from{opacity:0;transform:translateY(-9px);}to{opacity:1;transform:none;}}
 
+  /* the join QR · the card lands, it does not fade in — a printed thing appearing on glass */
+  @keyframes qrLand{0%{opacity:0;transform:scale(.9) translateY(10px);}62%{transform:scale(1.015) translateY(0);}100%{opacity:1;transform:scale(1);}}
+  /* the auto-lock warning drains its own bar — the end state (empty) is the honest one */
+  @keyframes drainW{from{width:100%;}to{width:0%;}}
+  @keyframes lockRise{from{opacity:0;transform:translateY(18px) scale(.97);}to{opacity:1;transform:none;}}
+
   /* ── deliberate loops · the only motion that never stops ── */
   @keyframes breathe{0%,100%{box-shadow:0 0 0 0 rgba(232,128,36,.26), inset 0 0 22px rgba(232,128,36,.05);}50%{box-shadow:0 0 0 15px rgba(232,128,36,0), inset 0 0 44px rgba(232,128,36,.15);}}
   @keyframes nextGlow{0%,100%{opacity:.26;transform:scale(1);}50%{opacity:.6;transform:scale(1.12);}}
@@ -106,6 +112,15 @@
   .ws-link{transition:color .18s,border-color .18s,background .18s;}
   .ws-link:hover{color:#E2563A !important;border-color:rgba(226,86,58,.55) !important;background:rgba(226,86,58,.06) !important;}
   .ws-shine{background-image:linear-gradient(100deg,#2A2A30 8%,#3B3B45 26%,#2A2A30 46%);background-size:240% 100%;animation:sheen 1.2s linear infinite;}
+  /* a list row that can be acted on — history, lookup results, the staff picker on the lock */
+  .ws-row{transition:background .18s,border-color .18s,transform .14s cubic-bezier(.22,.61,.36,1);}
+  .ws-row:hover{background:#23232A !important;border-color:rgba(232,128,36,.45) !important;}
+  .ws-row:active{transform:scale(.985) !important;}
+  /* the one real text field in the till — a search box has to look focusable in a dark register */
+  .ws-field{transition:border-color .2s,box-shadow .2s,background .2s;outline:none;}
+  .ws-field:hover{border-color:rgba(232,128,36,.45) !important;}
+  .ws-field:focus{border-color:#E88024 !important;box-shadow:0 0 0 3px rgba(232,128,36,.15) !important;}
+  .ws-field::placeholder{color:#6E6C77;}
   /* the disabled register — declared last so it wins the specificity tie against every rule above */
   .ws-off,.ws-off:hover,.ws-off:active{transform:none !important;filter:none !important;box-shadow:none !important;}
 
@@ -143,27 +158,35 @@
     <div style="flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column;padding:14px 14px 18px;">
       <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}">
         <div style="flex:1;display:flex;flex-direction:column;animation:{{ enterAnim }};">
-          <div style="display:flex;align-items:center;gap:11px;padding:4px 6px 18px;">
+          <div style="display:flex;align-items:center;gap:9px;padding:4px 4px 16px;">
             <div style="width:38px;height:38px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;animation:{{ staffAvatarAnim }};">{{ staffInitials }}</div>
-            <div style="min-width:0;animation:{{ staffNameAnim }};">
-              <div style="font-size:14px;font-weight:800;">{{ staffName }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#9B99A3;">{{ staffAr }}</span></div>
+            <div style="min-width:0;flex:1;animation:{{ staffNameAnim }};">
+              <div style="font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ staffName }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#9B99A3;">{{ staffAr }}</span></div>
               <div style="font-size:11px;color:#9B99A3;">{{ idleSubLine }}</div>
             </div>
-            <div onClick="{{ endShift }}" class="ws-ghost" style="cursor:pointer;margin-inline-start:auto;border:1px solid rgba(244,242,238,.18);color:#9B99A3;font-size:10.5px;font-weight:700;border-radius:999px;padding:6px 12px;white-space:nowrap;">{{ t.endShift }}</div>
+            <div onClick="{{ lockNow }}" class="ws-ghost" style="cursor:pointer;border:1px solid rgba(244,242,238,.18);color:#9B99A3;font-size:12px;font-weight:700;border-radius:999px;padding:6px 10px;flex-shrink:0;line-height:1;">🔒</div>
+            <div onClick="{{ endShift }}" class="ws-ghost" style="cursor:pointer;border:1px solid rgba(244,242,238,.18);color:#9B99A3;font-size:10.5px;font-weight:700;border-radius:999px;padding:6px 11px;white-space:nowrap;flex-shrink:0;">{{ t.endShift }}</div>
           </div>
           <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
-            <div onClick="{{ scanDefault }}" class="ws-scan" style="cursor:pointer;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #2A2A30, #1B1B1F);border:2.5px solid rgba(232,128,36,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
+            <div onClick="{{ scanDefault }}" class="ws-scan" style="cursor:pointer;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #2A2A30, #1B1B1F);border:2.5px solid rgba(232,128,36,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;flex-shrink:0;">
               <div style="width:44px;height:44px;border:3px solid #E88024;border-radius:11px;position:relative;"><div style="position:absolute;left:6px;right:6px;top:50%;height:2.5px;background:#E88024;"></div></div>
               <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:16px;">{{ t.ready }}</div>
               <div style="font-size:11.5px;color:#9B99A3;">{{ t.readyAlt }}</div>
             </div>
-            <div onClick="{{ openManual }}" class="ws-ghost" style="cursor:pointer;border:1.5px solid rgba(244,242,238,.2);color:#F4F2EE;font-weight:700;font-size:12.5px;border-radius:999px;padding:11px 22px;text-align:center;">{{ t.manual }}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:304px;">
+              <sc-for list="{{ idleActions }}" as="ia" hint-placeholder-count="4">
+                <div onClick="{{ ia.go }}" class="ws-ghost" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;border:1.5px solid {{ ia.br }};background:{{ ia.bg }};color:{{ ia.fg }};font-weight:700;font-size:11.5px;border-radius:999px;padding:10px 6px;text-align:center;line-height:1.2;animation:{{ ia.anim }};">
+                  <span style="font-size:13px;font-weight:900;flex-shrink:0;">{{ ia.icon }}</span>{{ ia.label }}
+                </div>
+              </sc-for>
+            </div>
           </div>
           <div style="padding-top:14px;">
             <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;margin-bottom:9px;">{{ t.yourCards }}</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(30,92,67,.25);border:1px solid rgba(47,174,102,.35);color:#7BD8A5;font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;"><span style="width:7px;height:7px;border-radius:50%;background:#2FAE66;"></span>Daraj Coffee</span>
-              <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(27,36,64,.4);border:1px solid rgba(120,140,200,.3);color:#A9B6E0;font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;"><span style="width:7px;height:7px;border-radius:50%;background:#6E82C4;"></span>Layl Lounge</span>
+              <sc-for list="{{ myCards }}" as="mycd" hint-placeholder-count="2">
+                <span style="display:inline-flex;align-items:center;gap:7px;background:{{ mycd.bg }};border:1px solid {{ mycd.br }};color:{{ mycd.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;animation:{{ mycd.anim }};"><span style="width:7px;height:7px;border-radius:50%;background:{{ mycd.dot }};"></span>{{ mycd.name }}</span>
+              </sc-for>
             </div>
             <div style="font-size:10.5px;color:#8E8C96;margin-top:9px;line-height:1.55;">{{ t.onlyYours }}</div>
           </div>
@@ -210,6 +233,21 @@
               <sc-for list="{{ tabItems }}" as="tb" hint-placeholder-count="2">
                 <div onClick="{{ tb.go }}" class="ws-tab" style="cursor:pointer;flex:1;text-align:center;border-radius:12px;padding:11px 0;font-size:13px;font-weight:800;border:1.5px solid {{ tb.br }};background:{{ tb.bg }};color:{{ tb.fg }};">{{ tb.label }}</div>
               </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ pausedNote }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;background:rgba(240,169,43,.1);border:1px solid rgba(240,169,43,.34);color:#F0A92B;border-radius:12px;padding:10px 13px;font-size:11px;font-weight:700;line-height:1.5;animation:{{ tabsAnim }};">{{ pausedNoteLine }}</div>
+          </sc-if>
+
+          <sc-if value="{{ rdLocked }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;background:rgba(226,86,58,.1);border:1px solid rgba(226,86,58,.4);border-radius:14px;padding:12px 13px;display:flex;align-items:center;gap:11px;animation:{{ tabsAnim }};">
+              <span style="width:30px;height:30px;border-radius:50%;background:rgba(226,86,58,.16);border:1.5px solid #E2563A;color:#E2563A;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔒</span>
+              <div style="min-width:0;flex:1;">
+                <div style="font-size:12px;font-weight:800;color:#E2563A;">{{ rdLockTitle }}</div>
+                <div style="font-size:10.5px;color:#9B99A3;line-height:1.45;margin-top:2px;">{{ rdLockWhy }}</div>
+              </div>
+              <div onClick="{{ askManagerUnlock }}" class="ws-press" style="cursor:pointer;border:1.5px solid rgba(232,128,36,.55);background:rgba(232,128,36,.1);color:#F09A4D;font-size:10.5px;font-weight:800;border-radius:999px;padding:8px 11px;white-space:nowrap;flex-shrink:0;">{{ t.mgrUnlockBtn }}</div>
             </div>
           </sc-if>
 
@@ -353,6 +391,7 @@
                 </sc-for>
                 <div style="text-align:center;font-size:11px;color:#8E8C96;margin-top:2px;line-height:1.5;">{{ t.noRedeemVip }}</div>
               </div>
+              <div onClick="{{ applyPerk }}" class="ws-ghost" style="cursor:pointer;border:1.5px solid {{ perkBr }};color:{{ perkFg }};font-weight:800;font-size:12.5px;border-radius:14px;padding:12px 0;text-align:center;margin-bottom:8px;animation:{{ ctaAnim2 }};">{{ perkBtnLabel }}</div>
               <div onClick="{{ vipCheckin }}" class="ws-cta" style="cursor:pointer;background:{{ collectBg }};color:#FFFFFF;font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;animation:{{ ctaAnim }};">{{ vipBtnLabel }}</div>
             </sc-if>
 
@@ -414,12 +453,18 @@
             </sc-if>
 
             <sc-if value="{{ bRefusal }}" hint-placeholder-val="{{ false }}">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;animation:{{ refusalShake }};">
-                <div style="width:88px;height:88px;border-radius:50%;background:rgba(226,86,58,.12);border:3px solid #E2563A;display:flex;align-items:center;justify-content:center;font-size:34px;color:#E2563A;animation:{{ popAnim }};">✕</div>
-                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:22px;">{{ rfTitle }}</div>
-                <div style="font-size:13px;color:#9B99A3;line-height:1.65;max-width:270px;">{{ rfWhy }}</div>
-                <div style="background:rgba(232,128,36,.1);border:1px solid rgba(232,128,36,.35);color:#F09A4D;border-radius:12px;padding:11px 16px;font-size:12.5px;font-weight:700;max-width:280px;line-height:1.5;animation:{{ rfDoAnim }};">{{ rfDo }}</div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;animation:{{ refusalShake }};">
+                <div style="width:84px;height:84px;border-radius:50%;background:{{ rfTint }};border:3px solid {{ rfTone }};display:flex;align-items:center;justify-content:center;font-size:32px;color:{{ rfTone }};flex-shrink:0;animation:{{ popAnim }};">{{ rfMark }}</div>
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:21px;line-height:1.3;">{{ rfTitle }}</div>
+                <div style="font-size:12.5px;color:#9B99A3;line-height:1.6;max-width:274px;">{{ rfWhy }}</div>
+                <sc-if value="{{ rfHasRule }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(244,242,238,.05);border:1px dashed rgba(244,242,238,.2);color:#9B99A3;border-radius:999px;padding:6px 13px;font-size:10.5px;font-weight:800;letter-spacing:.02em;max-width:280px;line-height:1.4;">{{ rfRule }}</div>
+                </sc-if>
+                <div style="background:rgba(232,128,36,.1);border:1px solid rgba(232,128,36,.35);color:#F09A4D;border-radius:12px;padding:11px 16px;font-size:12.5px;font-weight:700;max-width:284px;line-height:1.5;animation:{{ rfDoAnim }};">{{ rfDo }}</div>
               </div>
+              <sc-if value="{{ rfHasAlt }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ rfAltGo }}" class="ws-cta" style="cursor:pointer;background:transparent;border:1.5px solid {{ rfAltBr }};color:{{ rfAltFg }};font-weight:800;font-size:13px;border-radius:14px;padding:13px 0;text-align:center;margin-bottom:8px;animation:{{ ctaAnim }};">{{ rfAltLabel }}</div>
+              </sc-if>
               <div onClick="{{ toIdle }}" class="ws-cta" style="cursor:pointer;background:#26262B;border:1px solid rgba(244,242,238,.14);color:#F4F2EE;font-weight:800;font-size:14px;border-radius:14px;padding:15px 0;text-align:center;animation:{{ ctaAnim2 }};">{{ t.nextCustomer }}</div>
             </sc-if>
           </div>
@@ -428,7 +473,7 @@
     </div>
 
     <sc-if value="{{ hasFlash }}" hint-placeholder-val="{{ false }}">
-      <div style="position:absolute;inset:0;z-index:80;background:rgba(16,16,19,.88);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:30px;animation:{{ flashAnim }};">
+      <div style="position:absolute;inset:0;z-index:100;background:rgba(16,16,19,.88);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:30px;animation:{{ flashAnim }};">
         <div style="position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <div style="position:absolute;inset:0;border-radius:50%;border:3px solid {{ flashColor }};opacity:0;animation:{{ flashRippleAnim }};"></div>
           <div style="position:relative;width:96px;height:96px;border-radius:50%;background:{{ flashTint }};border:3.5px solid {{ flashColor }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:42px;color:{{ flashColor }};animation:{{ flashMarkAnim }};">{{ flashMark }}</div>
@@ -469,9 +514,9 @@
     </sc-if>
 
     <sc-if value="{{ pinOpen }}" hint-placeholder-val="{{ false }}">
-      <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.94);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px;animation:flashIn .3s both;">
-        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ t.pinTitle }}</div>
-        <div style="font-size:11.5px;color:#9B99A3;text-align:center;max-width:270px;line-height:1.5;">{{ t.pinSub }}</div>
+      <div style="position:absolute;inset:0;z-index:98;background:rgba(16,16,19,.94);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px;animation:flashIn .3s both;">
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ pinTitleLine }}</div>
+        <div style="font-size:11.5px;color:#9B99A3;text-align:center;max-width:270px;line-height:1.5;">{{ pinSubLine }}</div>
         <div style="position:relative;display:flex;gap:12px;align-items:center;justify-content:center;padding:10px 18px;animation:{{ pinShake }};">
           <div style="position:absolute;inset:0;border-radius:999px;border:2px solid #2FAE66;opacity:0;animation:{{ pinRippleAnim }};"></div>
           <sc-for list="{{ pinDots }}" as="pd" hint-placeholder-count="4"><span style="width:14px;height:14px;border-radius:50%;background:{{ pd.bg }};border:1.5px solid {{ pd.br }};transition:background .15s,border-color .15s;animation:{{ pd.anim }};"></span></sc-for>
@@ -479,12 +524,12 @@
         <sc-if value="{{ pinBad }}" hint-placeholder-val="{{ false }}">
           <div style="color:#E2563A;font-size:11.5px;font-weight:800;text-align:center;animation:fadeUp .28s cubic-bezier(.22,.61,.36,1) both;">{{ pinBadLine }}</div>
         </sc-if>
-        <div style="display:grid;grid-template-columns:repeat(3,64px);gap:10px;margin-top:2px;">
-          <sc-for list="{{ pinKeys }}" as="pk" hint-placeholder-count="9">
-            <div onClick="{{ pk.tap }}" class="ws-key" style="cursor:pointer;height:52px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:18px;">{{ pk.k }}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,64px);gap:9px;margin-top:2px;">
+          <sc-for list="{{ pinKeys }}" as="pk" hint-placeholder-count="12">
+            <div onClick="{{ pk.tap }}" class="{{ pk.cls }}" style="cursor:{{ pk.cur }};height:48px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:18px;visibility:{{ pk.vis }};">{{ pk.k }}</div>
           </sc-for>
         </div>
-        <div style="background:rgba(232,128,36,.1);border:1px dashed rgba(232,128,36,.4);color:#F09A4D;border-radius:999px;padding:5px 13px;font-size:10.5px;font-weight:800;letter-spacing:.03em;">{{ t.pinHint }}</div>
+        <div style="background:rgba(232,128,36,.1);border:1px dashed rgba(232,128,36,.4);color:#F09A4D;border-radius:999px;padding:5px 13px;font-size:10.5px;font-weight:800;letter-spacing:.03em;">{{ pinHintLine }}</div>
         <div onClick="{{ pinCancel }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;padding:4px 10px;">{{ t.cancel }}</div>
       </div>
     </sc-if>
@@ -506,9 +551,9 @@
             <div onClick="{{ mk.tap }}" class="{{ mk.cls }}" style="cursor:{{ mk.cur }};height:48px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:17px;visibility:{{ mk.vis }};">{{ mk.k }}</div>
           </sc-for>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:280px;margin-top:2px;">
-          <sc-for list="{{ manualHints }}" as="mh" hint-placeholder-count="3">
-            <div onClick="{{ mh.fill }}" class="ws-press" style="cursor:pointer;background:rgba(232,128,36,.08);border:1px solid rgba(232,128,36,.25);color:#F09A4D;border-radius:10px;padding:6px 10px;font-size:10.5px;font-weight:700;text-align:center;animation:{{ mh.anim }};">{{ mh.label }}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:290px;max-height:104px;overflow-y:auto;margin-top:2px;">
+          <sc-for list="{{ manualHints }}" as="mh" hint-placeholder-count="6">
+            <div onClick="{{ mh.fill }}" class="ws-press" style="cursor:pointer;background:rgba(232,128,36,.08);border:1px solid rgba(232,128,36,.25);color:#F09A4D;border-radius:10px;padding:6px 8px;font-size:10px;font-weight:700;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;animation:{{ mh.anim }};">{{ mh.label }}</div>
           </sc-for>
         </div>
         <div onClick="{{ manualCancel }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;margin-top:2px;padding:4px 10px;">{{ t.cancel }}</div>
@@ -517,6 +562,7 @@
 
     <sc-if value="{{ shiftOpen }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;inset:0;z-index:90;background:rgba(16,16,19,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px 30px 26px;animation:flashIn .3s both;text-align:center;overflow-y:auto;">
+        <div onClick="{{ closeShift }}" class="ws-x" style="position:absolute;top:18px;inset-inline-end:20px;z-index:2;cursor:pointer;color:#8E8C96;font-size:19px;padding:6px 8px;line-height:1;">✕</div>
         <sc-if value="{{ showShiftSummary }}" hint-placeholder-val="{{ true }}">
           <div style="width:56px;height:56px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;flex-shrink:0;animation:{{ shiftAvatarAnim }};">{{ staffInitials }}</div>
           <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:22px;flex-shrink:0;">{{ t.shiftDone }}</div>
@@ -560,6 +606,190 @@
         </sc-if>
       </div>
     </sc-if>
+    <sc-if value="{{ lookupOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:92;background:rgba(16,16,19,.97);display:flex;flex-direction:column;padding:26px 20px 20px;gap:11px;animation:flashIn .3s both;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;">
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:17px;">{{ t.lookupTitle }}</div>
+          <div onClick="{{ closeLookup }}" class="ws-x" style="cursor:pointer;color:#8E8C96;font-size:18px;padding:4px 6px;">✕</div>
+        </div>
+        <div style="font-size:11px;color:#9B99A3;line-height:1.5;flex-shrink:0;">{{ lookupSubLine }}</div>
+        <input value="{{ lookupQ }}" onChange="{{ onLookupInput }}" placeholder="{{ t.lookupPh }}" class="ws-field" style="flex-shrink:0;width:100%;background:#1B1B1F;border:1.5px solid rgba(244,242,238,.16);border-radius:13px;padding:12px 14px;color:#F4F2EE;font-size:13.5px;font-weight:600;font-family:'Plus Jakarta Sans','IBM Plex Sans Arabic',system-ui,sans-serif;">
+        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:7px;min-height:0;">
+          <sc-if value="{{ lookupNone }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;color:#8E8C96;font-size:12px;padding:30px 10px;line-height:1.6;">{{ lookupNoneLine }}</div>
+          </sc-if>
+          <sc-for list="{{ lookupRows }}" as="lu" hint-placeholder-count="3">
+            <div onClick="{{ lu.go }}" class="ws-row" style="cursor:pointer;display:flex;align-items:center;gap:10px;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:13px;padding:10px 12px;animation:{{ lu.anim }};">
+              <div style="width:34px;height:34px;border-radius:50%;background:{{ lu.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:12.5px;flex-shrink:0;">{{ lu.initials }}</div>
+              <div style="min-width:0;flex:1;text-align:start;">
+                <div style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lu.name }}</div>
+                <div style="font-size:10.5px;color:#9B99A3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lu.card }}</div>
+                <div style="font-size:9.5px;color:#6E6C77;font-variant-numeric:tabular-nums;">{{ lu.meta }}</div>
+              </div>
+              <span style="color:#8E8C96;font-size:15px;flex-shrink:0;">{{ chev }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:rgba(240,169,43,.1);border:1px solid rgba(240,169,43,.32);color:#F0A92B;border-radius:12px;padding:10px 13px;font-size:10.5px;font-weight:700;text-align:center;line-height:1.5;flex-shrink:0;">{{ t.lookupNote }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ historyOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:95;background:rgba(16,16,19,.97);display:flex;flex-direction:column;padding:26px 20px 20px;gap:10px;animation:flashIn .3s both;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;">
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:17px;">{{ t.histTitle }}</div>
+          <div onClick="{{ closeHistory }}" class="ws-x" style="cursor:pointer;color:#8E8C96;font-size:18px;padding:4px 6px;">✕</div>
+        </div>
+        <div style="font-size:11px;color:#9B99A3;line-height:1.5;flex-shrink:0;">{{ histSubLine }}</div>
+        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:7px;min-height:0;">
+          <sc-if value="{{ histEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="text-align:center;color:#8E8C96;font-size:12px;padding:34px 10px;line-height:1.6;">{{ t.noActionsYet }}</div>
+          </sc-if>
+          <sc-for list="{{ histRows }}" as="hr" hint-placeholder-count="5">
+            <div onClick="{{ hr.go }}" class="{{ hr.cls }}" style="cursor:{{ hr.cur }};display:flex;align-items:center;gap:10px;background:#1B1B1F;border:1px solid {{ hr.br }};border-radius:12px;padding:9px 12px;opacity:{{ hr.op }};animation:{{ hr.anim }};">
+              <div style="width:30px;height:30px;border-radius:50%;background:{{ hr.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:11px;flex-shrink:0;">{{ hr.initials }}</div>
+              <div style="min-width:0;flex:1;text-align:start;">
+                <div style="font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ hr.member }}</div>
+                <div style="font-size:10.5px;color:{{ hr.actionFg }};">{{ hr.action }}</div>
+                <div style="font-size:9.5px;color:#6E6C77;">{{ hr.meta }}</div>
+              </div>
+              <sc-if value="{{ hr.corrected }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:9px;font-weight:800;color:#F0A92B;border:1px solid rgba(240,169,43,.4);border-radius:999px;padding:3px 7px;white-space:nowrap;flex-shrink:0;">{{ t.correctedBadge }}</span>
+              </sc-if>
+              <sc-if value="{{ hr.canFix }}" hint-placeholder-val="{{ true }}">
+                <span style="color:#8E8C96;font-size:15px;flex-shrink:0;">{{ chev }}</span>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:rgba(232,128,36,.09);border:1px solid rgba(232,128,36,.3);color:#F09A4D;border-radius:12px;padding:10px 13px;font-size:10.5px;font-weight:700;text-align:center;line-height:1.5;flex-shrink:0;">{{ t.histNote }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ corrOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:96;background:rgba(16,16,19,.96);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:28px;text-align:center;animation:flashIn .3s both;">
+        <div style="width:64px;height:64px;border-radius:50%;background:rgba(240,169,43,.14);border:2.5px solid #F0A92B;color:#F0A92B;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;animation:{{ popAnim }};">↺</div>
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:20px;line-height:1.3;">{{ t.corrTitle }}</div>
+        <div style="background:#1B1B1F;border:1px solid rgba(244,242,238,.1);border-radius:14px;padding:13px 15px;width:100%;max-width:290px;text-align:start;">
+          <div style="font-size:13px;font-weight:800;">{{ corrMember }}</div>
+          <div style="font-size:11.5px;color:#9B99A3;margin-top:2px;">{{ corrAction }}</div>
+          <div style="font-size:10px;color:#6E6C77;margin-top:2px;">{{ corrMeta }}</div>
+        </div>
+        <div style="background:rgba(226,86,58,.1);border:1px solid rgba(226,86,58,.35);color:#F09A4D;border-radius:12px;padding:11px 15px;font-size:12px;font-weight:700;max-width:290px;line-height:1.55;">{{ corrEffect }}</div>
+        <div onClick="{{ confirmCorrection }}" class="ws-cta" style="cursor:pointer;width:100%;max-width:290px;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14.5px;border-radius:14px;padding:15px 0;text-align:center;animation:{{ ctaAnim }};">{{ corrBtnLabel }}</div>
+        <div onClick="{{ cancelCorrection }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;padding:4px 10px;">{{ t.cancel }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ joinOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:92;background:rgba(16,16,19,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px 22px 22px;text-align:center;animation:flashIn .3s both;">
+        <div onClick="{{ closeJoin }}" class="ws-x" style="position:absolute;top:18px;inset-inline-end:20px;z-index:2;cursor:pointer;color:#8E8C96;font-size:19px;padding:6px 8px;line-height:1;">✕</div>
+        <sc-if value="{{ joinPick }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ t.joinPickTitle }}</div>
+          <div style="font-size:11.5px;color:#9B99A3;max-width:250px;line-height:1.55;">{{ t.joinPickSub }}</div>
+          <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:265px;margin-top:4px;">
+            <sc-for list="{{ joinCards }}" as="jc" hint-placeholder-count="2">
+              <div onClick="{{ jc.pick }}" class="ws-row" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);border-radius:14px;padding:12px 14px;animation:{{ jc.anim }};">
+                <div style="width:36px;height:36px;border-radius:11px;background:{{ jc.dot }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:15px;flex-shrink:0;">{{ jc.initial }}</div>
+                <div style="min-width:0;text-align:start;flex:1;"><div style="font-size:13.5px;font-weight:800;">{{ jc.name }}</div><div style="font-size:10.5px;color:#9B99A3;">{{ jc.sub }}</div></div>
+                <span style="color:#8E8C96;font-size:15px;flex-shrink:0;">{{ chev }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ joinQr }}" hint-placeholder-val="{{ true }}">
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:18px;flex-shrink:0;">{{ joinTitle }}</div>
+          <div style="background:#FFFFFF;border-radius:22px;padding:16px;box-shadow:0 18px 44px rgba(0,0,0,.5);flex-shrink:0;animation:{{ joinQrAnim }};">
+            <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:10px;">
+              <span style="width:18px;height:18px;border-radius:6px;background:{{ joinColor }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:10px;">{{ joinInitial }}</span>
+              <span style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:12.5px;color:#241C16;">{{ joinCardName }}</span>
+            </div>
+            {{ joinQrEl }}
+            <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:11.5px;color:#93887A;margin-top:10px;letter-spacing:.02em;">{{ joinUrl }}</div>
+          </div>
+          <div style="font-size:11.5px;color:#9B99A3;max-width:262px;line-height:1.55;flex-shrink:0;">{{ joinHint }}</div>
+          <div onClick="{{ joinScanning }}" class="ws-cta" style="cursor:pointer;width:100%;max-width:290px;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:14px;padding:14px 0;text-align:center;flex-shrink:0;animation:{{ ctaAnim }};">{{ t.joinScanBtn }}</div>
+        </sc-if>
+        <sc-if value="{{ joinWaiting }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <div style="position:absolute;inset:0;border-radius:50%;border:2.5px solid rgba(232,128,36,.5);animation:nextGlow 1.6s ease-in-out infinite;"></div>
+            <div style="width:64px;height:64px;border-radius:50%;background:rgba(232,128,36,.14);border:2px solid #E88024;display:flex;align-items:center;justify-content:center;font-size:26px;color:#E88024;">⌁</div>
+          </div>
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ joinWaitTitle }}</div>
+          <div style="font-size:12px;color:#9B99A3;max-width:250px;line-height:1.6;">{{ t.joinWaitSub }}</div>
+        </sc-if>
+        <sc-if value="{{ joinDone }}" hint-placeholder-val="{{ false }}">
+          <div style="width:88px;height:88px;border-radius:50%;background:rgba(47,174,102,.13);border:3px solid #2FAE66;display:flex;align-items:center;justify-content:center;font-size:34px;color:#2FAE66;flex-shrink:0;animation:{{ popAnim }};">✓</div>
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:21px;line-height:1.3;">{{ joinDoneTitle }}</div>
+          <div style="font-size:12.5px;color:#9B99A3;max-width:262px;line-height:1.6;">{{ joinDoneSub }}</div>
+          <div onClick="{{ joinAgain }}" class="ws-cta" style="cursor:pointer;width:100%;max-width:290px;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:14px;padding:14px 0;text-align:center;animation:{{ ctaAnim }};">{{ t.joinAgain }}</div>
+          <div onClick="{{ closeJoin }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;padding:4px 10px;">{{ t.joinDoneBtn }}</div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ lockWarnOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;bottom:64px;z-index:70;display:flex;justify-content:center;pointer-events:none;padding:0 18px;">
+        <div onClick="{{ stayUnlocked }}" class="ws-undo" style="pointer-events:auto;cursor:pointer;position:relative;overflow:hidden;background:#26262B;border:1px solid rgba(240,169,43,.5);color:#F0A92B;font-size:12px;font-weight:800;border-radius:999px;padding:10px 18px;box-shadow:0 8px 20px rgba(0,0,0,.35);animation:flashIn .25s cubic-bezier(.22,.61,.36,1) both;">
+          <span style="position:absolute;bottom:0;inset-inline-start:0;height:2.5px;background:#F0A92B;opacity:.7;animation:{{ lockWarnBar }};"></span>{{ lockWarnLine }}
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ locked }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;z-index:120;background:radial-gradient(520px 340px at 50% 22%, #22222A, #0C0C0E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px 26px 24px;text-align:center;animation:flashIn .32s both;">
+        <div style="position:absolute;top:22px;inset-inline-start:0;inset-inline-end:0;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <span style="width:7px;height:7px;border-radius:50%;background:#E88024;"></span>
+          <span style="font-size:10.5px;font-weight:800;letter-spacing:.1em;color:#8E8C96;text-transform:uppercase;">{{ lockBrandLine }}</span>
+        </div>
+        <sc-if value="{{ lockPickOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:13px;width:100%;animation:{{ lockPickAnim }};">
+            <div style="width:58px;height:58px;border-radius:50%;background:rgba(232,128,36,.13);border:2px solid rgba(232,128,36,.55);display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;">🔒</div>
+            <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:21px;">{{ t.lockWho }}</div>
+            <div style="font-size:11.5px;color:#9B99A3;max-width:252px;line-height:1.55;">{{ t.lockWhoSub }}</div>
+            <sc-if value="{{ lockPickErr }}" hint-placeholder-val="{{ false }}">
+              <div style="color:#E2563A;font-size:11.5px;font-weight:800;max-width:250px;line-height:1.5;animation:fadeUp .28s cubic-bezier(.22,.61,.36,1) both;">{{ lockErrLine }}</div>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:9px;width:100%;max-width:268px;margin-top:2px;">
+              <sc-for list="{{ lockStaffRows }}" as="ls" hint-placeholder-count="3">
+                <div onClick="{{ ls.pick }}" class="{{ ls.cls }}" style="cursor:{{ ls.cur }};display:flex;align-items:center;gap:11px;background:#1B1B1F;border:1px solid {{ ls.br }};border-radius:14px;padding:11px 13px;opacity:{{ ls.op }};animation:{{ ls.anim }};">
+                  <div style="width:36px;height:36px;border-radius:50%;background:{{ ls.avBg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex-shrink:0;">{{ ls.initials }}</div>
+                  <div style="min-width:0;text-align:start;flex:1;"><div style="font-size:13.5px;font-weight:800;">{{ ls.name }}</div><div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10.5px;color:#9B99A3;">{{ ls.sub }}</div></div>
+                  <sc-if value="{{ ls.blocked }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size:9px;font-weight:800;color:#8E8C96;border:1px solid rgba(244,242,238,.16);border-radius:999px;padding:3px 7px;white-space:nowrap;flex-shrink:0;">{{ t.otherBranch }}</span>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:10.5px;color:#6E6C77;max-width:250px;line-height:1.5;margin-top:2px;">{{ t.lockBranchRule }}</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ lockPinOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;animation:{{ lockPinAnim }};">
+            <div style="width:54px;height:54px;border-radius:50%;background:#E88024;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;flex-shrink:0;">{{ lockWhoInitials }}</div>
+            <div>
+              <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:18px;">{{ lockWhoName }}</div>
+              <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11.5px;color:#9B99A3;margin-top:2px;">{{ lockWhoSub }}</div>
+            </div>
+            <div style="font-size:11.5px;color:#9B99A3;max-width:262px;line-height:1.5;">{{ lockPinLine }}</div>
+            <div style="position:relative;display:flex;gap:12px;align-items:center;justify-content:center;padding:6px 16px;animation:{{ lockShake }};">
+              <sc-for list="{{ lockDots }}" as="ld" hint-placeholder-count="4"><span style="width:13px;height:13px;border-radius:50%;background:{{ ld.bg }};border:1.5px solid {{ ld.br }};transition:background .15s,border-color .15s;animation:{{ ld.anim }};"></span></sc-for>
+            </div>
+            <sc-if value="{{ lockErr }}" hint-placeholder-val="{{ false }}">
+              <div style="color:#E2563A;font-size:11.5px;font-weight:800;animation:fadeUp .28s cubic-bezier(.22,.61,.36,1) both;">{{ lockErrLine }}</div>
+            </sc-if>
+            <div style="display:grid;grid-template-columns:repeat(3,62px);gap:9px;">
+              <sc-for list="{{ lockKeys }}" as="lk" hint-placeholder-count="12">
+                <div onClick="{{ lk.tap }}" class="{{ lk.cls }}" style="cursor:{{ lk.cur }};height:48px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:17px;visibility:{{ lk.vis }};">{{ lk.k }}</div>
+              </sc-for>
+            </div>
+            <div style="background:rgba(232,128,36,.1);border:1px dashed rgba(232,128,36,.4);color:#F09A4D;border-radius:999px;padding:5px 13px;font-size:10.5px;font-weight:800;letter-spacing:.03em;">{{ t.pinHint }}</div>
+            <div onClick="{{ lockBackToPick }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:11.5px;font-weight:700;padding:4px 10px;text-decoration:underline;">{{ lockBackLabel }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
     <div style="width:110px;height:4px;border-radius:99px;background:rgba(244,242,238,.4);margin:0 auto 8px;flex-shrink:0;"></div>
   </div>
 
@@ -578,6 +808,18 @@
           <div onClick="{{ dsc.go }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ dsc.br }};background:{{ dsc.bg }};border-radius:11px;padding:9px 11px;animation:{{ dsc.anim }};">
             <span style="width:28px;height:28px;border-radius:9px;background:{{ dsc.discBg }};border:1px solid {{ dsc.discBr }};color:{{ dsc.dot }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:{{ dsc.glyphSize }};letter-spacing:-.02em;flex-shrink:0;">{{ dsc.glyph }}</span>
             <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#241C16;">{{ dsc.label }}</div><div style="font-size:10.5px;color:#93887A;">{{ dsc.sub }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:4px;">When it isn’t a simple yes · 5</div>
+      <div style="font-size:10.5px;color:#93887A;margin-bottom:10px;line-height:1.5;">Four refusals and a warning — each one names the rule and the sentence to say next.</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <sc-for list="{{ edgeScans }}" as="edg" hint-placeholder-count="5">
+          <div onClick="{{ edg.go }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ edg.br }};background:{{ edg.bg }};border-radius:11px;padding:9px 11px;animation:{{ edg.anim }};">
+            <span style="width:28px;height:28px;border-radius:9px;background:{{ edg.discBg }};border:1px solid {{ edg.discBr }};color:{{ edg.dot }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:{{ edg.glyphSize }};letter-spacing:-.02em;flex-shrink:0;">{{ edg.glyph }}</span>
+            <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#241C16;">{{ edg.label }}</div><div style="font-size:10.5px;color:#93887A;">{{ edg.sub }}</div></div>
           </div>
         </sc-for>
       </div>
@@ -606,7 +848,14 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;offlineStart&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
 class Component extends DCLogic {
-  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, flash: null, flashOut: false, syncing: false, syncDone: 0, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ', ramp: 1, scanSeq: 0, stampSeq: 0, amtSeq: 0, chSeq: 0, chFrom: 0, staffSeq: 0, vipSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false };
+  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, flash: null, flashOut: false, syncing: false, syncDone: 0, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ', ramp: 1, scanSeq: 0, stampSeq: 0, amtSeq: 0, chSeq: 0, chFrom: 0, staffSeq: 0, vipSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false,
+    // ── the beginning of the app · a till with no sign-in is a till anyone can use ──
+    locked: true, shiftLive: false, lockMode: 'start', lockStaff: null, lockDigits: '', lockTries: 0, lockErr: false, lockWarn: false, lockSeq: 0, lockAuto: false,
+    // ── history · corrections · lookup · enrolment ──
+    historyOpen: false, corrId: null, lookupOpen: false, lookupQ: '', foundBy: null,
+    joinOpen: false, joinStage: 'qr', joinCard: 'daraj',
+    // ── the true redeem lockout, the paused card, the second verdict ──
+    redeemLocks: {}, renewedExpiring: false, guardHit: false, pausedBal: 3.40, logSeq: 0 };
 
   // ────────────────────────────────────────────────────────────────────────────
   //  language · the map is real {en, ar} pairs, never a reordered concatenation
@@ -624,18 +873,53 @@ class Component extends DCLogic {
       resolving: { en: 'Reading the pass… never a blank screen', ar: 'جارٍ قراءة البطاقة… ولا شاشة فارغة أبداً' },
       bill: { en: 'Bill amount', ar: 'قيمة الفاتورة' },
       nothingPre: { en: 'Nothing preselected — the customer picks.', ar: 'لا شيء محدد مسبقاً — الزبون هو من يختار.' },
-      noRedeemVip: { en: 'VIP has no redeem — the tier is the reward.', ar: 'بطاقة VIP بلا استبدال — المستوى نفسه هو المكافأة.' },
+      noRedeemVip: { en: 'VIP has no redeem — the tier is the reward.', ar: 'بطاقة كبار الزبائن بلا استبدال — المستوى نفسه هو المكافأة.' },
       nextCustomer: { en: 'Next customer', ar: 'الزبون التالي' },
-      pinTitle: { en: 'Manager PIN', ar: 'رمز المدير' },
+      pinTitle: { en: 'Staff PIN', ar: 'رمز الموظف' },
       pinSub: { en: 'Redeems ask for a PIN — collections never do.', ar: 'الاستبدال يطلب رمزاً — أما الجمع فلا.' },
       pinHint: { en: 'Demo PIN 1234', ar: 'رمز العرض 1234' },
       cancel: { en: 'Cancel', ar: 'إلغاء' },
+      // ── sign-in · the shift has a beginning now ──
+      lockWho: { en: 'Who’s on the till?', ar: 'من على الصندوق؟' },
+      lockWhoSub: { en: 'Pick your name, then your PIN. The shift starts when you sign in.', ar: 'اختر اسمك ثم أدخل رمزك. تبدأ المناوبة عند تسجيل الدخول.' },
+      lockBranchRule: { en: 'Only Rainbow St staff can open this till.', ar: 'موظفو شارع الرينبو وحدهم يفتحون هذا الصندوق.' },
+      otherBranch: { en: 'Other branch', ar: 'فرع آخر' },
+      lockStartPin: { en: 'Enter your PIN to start the shift', ar: 'أدخل رمزك لبدء المناوبة' },
+      lockResumePin: { en: 'The shift is still open — your PIN carries on where you left it.', ar: 'المناوبة ما زالت مفتوحة — رمزك يكمل من حيث توقفت.' },
+      lockNotYou: { en: 'Not you? Pick another name', ar: 'لست أنت؟ اختر اسماً آخر' },
+      lockTakeOver: { en: 'Someone else is taking over', ar: 'شخص آخر سيتسلّم المناوبة' },
+      lockWarnStay: { en: 'Locking soon · tap to stay', ar: 'سيُقفل قريباً · اضغط للبقاء' },
+      // ── history + corrections ──
+      histTitle: { en: 'Today’s actions', ar: 'عمليات اليوم' },
+      histNote: { en: 'Tap any action to correct it — corrections are PIN’d and logged.', ar: 'اضغط أي عملية لتصحيحها — التصحيح يطلب رمزاً ويُسجَّل.' },
+      correctedBadge: { en: 'Corrected', ar: 'مصحَّحة' },
+      corrTitle: { en: 'Correct this action?', ar: 'تصحيح هذه العملية؟' },
+      corrBtn: { en: 'Correct it (PIN)', ar: 'صحّحها (رمز)' },
+      // ── lookup ──
+      lookupTitle: { en: 'I forgot my phone', ar: 'نسيت هاتفي' },
+      lookupSub: { en: 'Search by name, phone, or the last 4 digits of either.', ar: 'ابحث بالاسم أو رقم الهاتف أو آخر أربعة أرقام.' },
+      lookupPh: { en: 'Name · phone · last 4', ar: 'الاسم · الهاتف · آخر ٤ أرقام' },
+      lookupNote: { en: 'Found by lookup is written into today’s log — it matters if a customer disputes.', ar: 'العثور بالبحث يُكتب في سجل اليوم — وهذا ما يحسم أي اعتراض.' },
+      lookupStart: { en: 'Start typing — or pick someone you served today.', ar: 'ابدأ بالكتابة — أو اختر أحد زبائن اليوم.' },
+      // ── enrolment at the counter ──
+      joinPickTitle: { en: 'Which card is she joining?', ar: 'أي بطاقة ستنضم إليها؟' },
+      joinPickSub: { en: 'Only the cards assigned to you can be handed out.', ar: 'البطاقات المسندة إليك وحدها يمكن منحها.' },
+      joinScanBtn: { en: 'She’s scanning it now', ar: 'إنها تمسحه الآن' },
+      joinWaitSub: { en: 'The pass builds itself — no app, no form, no password.', ar: 'البطاقة تُبنى وحدها — بلا تطبيق ولا نموذج ولا كلمة سر.' },
+      joinAgain: { en: 'Next in line — show it again', ar: 'التالي في الدور — اعرضه مجدداً' },
+      joinDoneBtn: { en: 'Done', ar: 'تم' },
+      // ── the manager unlock ──
+      mgrUnlockBtn: { en: 'Manager unlock', ar: 'فتح المدير' },
+      mgrPinTitle: { en: 'Manager PIN', ar: 'رمز المدير' },
+      mgrPinSub: { en: 'Only a manager clears a locked redeem — and the unlock is logged.', ar: 'المدير وحده يفتح استبدالاً مقفلاً — ويُسجَّل الفتح باسمه.' },
+      mgrPinHint: { en: 'Demo manager PIN 4680', ar: 'رمز المدير للعرض 4680' },
+      rdLockTitle: { en: 'Redeem locked', ar: 'الاستبدال مقفل' },
       shiftDone: { en: 'Shift summary', ar: 'ملخص المناوبة' },
       shiftNote: { en: 'The count starts fresh for the next teammate — the history stays on the dashboard.', ar: 'العدّاد يبدأ من الصفر للزميل التالي — والسجل الكامل يبقى في لوحة التحكم.' },
       handOver: { en: 'Hand the phone over', ar: 'سلّم الجهاز' },
       onShift: { en: 'On shift', ar: 'على المناوبة' },
       manualTitle: { en: 'Enter the code', ar: 'أدخل الرمز' },
-      manualSub: { en: 'Type the 8 digits printed under the QR', ar: 'اكتب الأرقام الثمانية المطبوعة تحت رمز الـ QR' },
+      manualSub: { en: 'Type the 8 digits printed under the QR', ar: 'اكتب الأرقام الثمانية المطبوعة تحت الرمز' },
       manualNoMatch: { en: 'No member with this code', ar: 'لا يوجد عضو بهذا الرمز' },
       renewBtn: { en: 'Renew · JOD 25', ar: 'تجديد · 25 ديناراً' },
       undo: { en: 'Undo', ar: 'تراجع' },
@@ -716,6 +1000,10 @@ class Component extends DCLogic {
           chVisits: s.chVisits, chDone: s.chDone,
           stamps: s.stamps, cbBal: s.cbBal, pts: s.pts,
           rVisits: s.rVisits, rTier: s.rTier,
+          // the shift itself is state: a locked till must still be locked after a refresh
+          locked: s.locked, shiftLive: s.shiftLive, logSeq: s.logSeq,
+          redeemLocks: s.redeemLocks, renewedExpiring: s.renewedExpiring,
+          guardHit: s.guardHit, pausedBal: s.pausedBal,
           offline: s.offline, queued: s.queued, queueLog: (s.queueLog || []).slice(0, 20) }));
       } catch (e) {}
     }, 120);
@@ -730,18 +1018,33 @@ class Component extends DCLogic {
     const p = {};
     const int = (x, lo, hi) => (typeof x === 'number' && isFinite(x)) ? Math.max(lo, Math.min(hi, Math.round(x))) : null;
     const num = (x, lo, hi) => (typeof x === 'number' && isFinite(x)) ? Math.max(lo, Math.min(hi, x)) : null;
-    const log = (v) => Array.isArray(v) ? v.filter(l => l && typeof l === 'object' && typeof l.scen === 'string' && typeof l.k === 'string').slice(0, 20).map(l => ({ scen: l.scen, k: l.k, v: l.v, ts: 0, old: true })) : null;
+    const str = (x, n) => (typeof x === 'string' && x) ? x.slice(0, n) : undefined;
+    // a live event rides in the queue, so it has to survive the round-trip too — anything that is
+    // not the {kind,who,what,card} shape is simply dropped and the row syncs silently
+    const ev = (e) => (e && typeof e === 'object' && !Array.isArray(e) && typeof e.kind === 'string')
+      ? { kind: e.kind.slice(0, 16), who: str(e.who, 60) || '', what: str(e.what, 160) || '', card: str(e.card, 60) || '' } : undefined;
+    const log = (v) => Array.isArray(v) ? v.filter(l => l && typeof l === 'object' && typeof l.scen === 'string' && typeof l.k === 'string').slice(0, 20).map(l => ({ scen: l.scen, k: l.k, v: l.v, ts: 0, old: true, id: str(l.id, 24), by: str(l.by, 40), who: str(l.who, 60), corrected: l.corrected === true, live: ev(l.live) })) : null;
     if (b.lang === 'en' || b.lang === 'ar') p.lang = b.lang;
-    [['scansToday', 0, 9999], ['sStamps', 0, 9999], ['sRewards', 0, 9999], ['queued', 0, 999], ['pts', 0, 999999], ['rVisits', 0, 999], ['chVisits', 0, 99]].forEach(([k, lo, hi]) => { const n = int(b[k], lo, hi); if (n !== null) p[k] = n; });
+    [['scansToday', 0, 9999], ['sStamps', 0, 9999], ['sRewards', 0, 9999], ['queued', 0, 999], ['pts', 0, 999999], ['rVisits', 0, 999], ['chVisits', 0, 99], ['logSeq', 0, 999999]].forEach(([k, lo, hi]) => { const n = int(b[k], lo, hi); if (n !== null) p[k] = n; });
     { const n = int(b.stamps, 0, 8); if (n !== null) p.stamps = n; }
     { const n = num(b.cbBal, 0, 99999); if (n !== null) p.cbBal = +n.toFixed(2); }
+    { const n = num(b.pausedBal, 0, 99999); if (n !== null) p.pausedBal = +n.toFixed(2); }
     ['staffName', 'staffAr', 'staffInitials'].forEach(k => { if (typeof b[k] === 'string' && b[k]) p[k] = b[k].slice(0, 40); });
-    ['couponDone', 'renewedMembership', 'chDone', 'offline'].forEach(k => { if (typeof b[k] === 'boolean') p[k] = b[k]; });
+    ['couponDone', 'renewedMembership', 'renewedExpiring', 'chDone', 'offline', 'locked', 'shiftLive', 'guardHit'].forEach(k => { if (typeof b[k] === 'boolean') p[k] = b[k]; });
     if (b.rTier === 'Silver' || b.rTier === 'Gold') p.rTier = b.rTier;
+    // the redeem lockout is a real lock, so it persists — sanitised to a flat map of true flags
+    if (b.redeemLocks && typeof b.redeemLocks === 'object' && !Array.isArray(b.redeemLocks)) {
+      const rl = {}; Object.keys(b.redeemLocks).slice(0, 20).forEach(k => { if (typeof k === 'string' && k.length < 90 && b.redeemLocks[k] === true) rl[k] = true; });
+      p.redeemLocks = rl;
+    }
     { const l = log(b.sessionLog); if (l) p.sessionLog = l; }
     { const l = log(b.queueLog); if (l) p.queueLog = l; }
     // an offline queue with nothing left offline is a contradiction — drop it rather than lie
     if (p.offline === false) { p.queued = 0; p.queueLog = []; }
+    // the badge and the sheet read the same list — a restored blob can never disagree with itself
+    if (p.queueLog) p.queued = p.queueLog.length;
+    // a shift that was never started cannot be resumed unlocked
+    if (p.shiftLive === false) p.locked = true;
     return Object.keys(p).length ? p : null;
   }
   /** Folds the blob straight into `state` at CONSTRUCTION: the host installs `__host` only after
@@ -755,15 +1058,18 @@ class Component extends DCLogic {
     return true;
   }
   __restored = this.bootRestore();
-  /** Clears ONLY this scanner's blob — no other demo key is touched. */
+  /** Clears ONLY this scanner's blob — no other demo key is touched. A wiped demo goes back to the
+      real beginning: a locked till with no shift open. */
   resetScanner() {
     clearTimeout(this._sv); clearTimeout(this._rt); clearTimeout(this._wt);
+    clearTimeout(this._al); clearTimeout(this._aw); clearTimeout(this._jt);
     try { localStorage.removeItem(this.scanKey()); } catch (e) {}
     try { localStorage.removeItem(this.liveKey()); } catch (e) {}
     this.__restored = false;
     const h = this.__host || this;
     h.__wsWelcomed = true;   // a reset is not a return — no welcome-back on the way out
     h.__wsRampKey = null;
+    h.__wsLockKey = null;
     this.setState({ lang: 'en', screen: 'idle', scenario: null, resolving: false, mode: 'collect',
       stamps: 6, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, syncing: false, syncDone: 0,
       flash: null, flashOut: false, offline: false, queued: 0, queueLog: [], queueSheetOpen: false,
@@ -771,6 +1077,10 @@ class Component extends DCLogic {
       manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null,
       chVisits: 3, chDone: false, chFrom: 0, sessionLog: [], shiftOpen: false, handoverPick: false,
       staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ',
+      locked: true, shiftLive: false, lockMode: 'start', lockStaff: null, lockDigits: '', lockTries: 0, lockErr: false, lockWarn: false, lockAuto: false,
+      historyOpen: false, corrId: null, lookupOpen: false, lookupQ: '', foundBy: null,
+      joinOpen: false, joinStage: 'qr', joinCard: 'daraj',
+      redeemLocks: {}, renewedExpiring: false, guardHit: false, pausedBal: 3.40, logSeq: 0,
       ramp: 1, stampSeq: 0, amtSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false });
   }
   /** The welcome-back beat, armed from the ONE path this runtime guarantees: render. Latched on the
@@ -820,16 +1130,142 @@ class Component extends DCLogic {
     clearTimeout(this._pt); clearTimeout(this._ft); clearTimeout(this._fo); clearTimeout(this._s1);
     clearTimeout(this._s2); clearTimeout(this._ut); clearTimeout(this._mt); clearTimeout(this._sv);
     clearTimeout(this._wt); clearTimeout(this._rt); clearTimeout(this._pk); clearTimeout(this._sy);
+    clearTimeout(this._al); clearTimeout(this._aw); clearTimeout(this._jt); clearTimeout(this._lk);
     const h = this.__host || this;
     if (h.__wsRaf) { try { cancelAnimationFrame(h.__wsRaf); } catch (e) {} h.__wsRaf = null; }
     h.__wsRampKey = null;
+    h.__wsLockKey = null;
   }
   poke() { clearTimeout(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = setTimeout(() => this.setState({ settled: true }), 2600); }
   componentDidUpdate() {
     const s = this.state;
-    const cur = [s.screen, s.scenario, s.mode, s.stamps, s.amount, s.selRw, s.cbSel, s.couponDone, !!s.pin, s.pinDigits, s.pinErr, !!s.flash, s.offline, s.syncing, s.syncDone, s.shiftOpen, s.lang, s.resolving, s.pts, s.cbBal, s.rTier, s.chVisits, s.chDone, s.handoverPick, s.queueSheetOpen, s.manualOpen, s.staffName].join('|');
+    const cur = [s.screen, s.scenario, s.mode, s.stamps, s.amount, s.selRw, s.cbSel, s.couponDone, !!s.pin, s.pinDigits, s.pinErr, !!s.flash, s.offline, s.syncing, s.syncDone, s.shiftOpen, s.lang, s.resolving, s.pts, s.cbBal, s.rTier, s.chVisits, s.chDone, s.handoverPick, s.queueSheetOpen, s.manualOpen, s.staffName,
+      s.locked, s.lockMode, s.lockStaff, s.lockDigits, s.lockErr, s.historyOpen, s.corrId, s.lookupOpen, s.lookupQ, s.joinOpen, s.joinStage, s.joinCard, s.pausedBal].join('|');
     if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
     this._lastSig = cur;
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  the lock · a till phone left on the counter is a till phone anyone can use
+  // ────────────────────────────────────────────────────────────────────────────
+  /** The demo roster, with the branch and the cards each person is actually allowed to serve.
+      A till at Rainbow St only opens for Rainbow St staff — the rest are shown and refused. */
+  staffList() {
+    return [
+      { name: 'Ahmad Zoubi', ar: 'أحمد الزعبي', initials: 'AZ', branch: 'Rainbow St', branchAr: 'شارع الرينبو', cards: ['daraj', 'layl'] },
+      { name: 'Rasha Kilani', ar: 'رشا الكيلاني', initials: 'RK', branch: 'Rainbow St', branchAr: 'شارع الرينبو', cards: ['daraj'] },
+      { name: 'Samir Awad', ar: 'سمير عوض', initials: 'SW', branch: 'Abdali Mall', branchAr: 'مول العبدلي', cards: ['layl'] }
+    ];
+  }
+  tillBranch() { return 'Rainbow St'; }
+  cardDefs() {
+    return {
+      daraj: { name: 'Daraj Coffee', ar: 'مقهى درج', initial: 'D', color: '#1E5C43', dot: '#2FAE66', fg: '#7BD8A5', bg: 'rgba(30,92,67,.25)', br: 'rgba(47,174,102,.35)', slug: 'daraj', line: 'Buy 7, the 8th is on us', lineAr: 'اشترِ سبعة والثامن علينا' },
+      layl: { name: 'Layl Lounge', ar: 'صالة ليل', initial: 'L', color: '#1B2440', dot: '#6E82C4', fg: '#A9B6E0', bg: 'rgba(27,36,64,.4)', br: 'rgba(120,140,200,.3)', slug: 'layl', line: 'Three tiers, real perks', lineAr: 'ثلاث فئات ومزايا حقيقية' }
+    };
+  }
+  /** The person on shift, resolved back to the roster so their cards and branch travel with them. */
+  meStaff() { const n = this.state.staffName; return this.staffList().filter(p => p.name === n)[0] || this.staffList()[0]; }
+  meIdx() { const n = this.state.staffName, L = this.staffList(); for (let i = 0; i < L.length; i++) if (L[i].name === n) return i; return 0; }
+  myCardIds() { return this.meStaff().cards; }
+  /** A demo tile tapped through the lock: the lock card bumps rather than pretending nothing
+      happened — the PIN is printed right there on it. */
+  lockNudge() { this.setState(s => ({ lockSeq: s.lockSeq + 1 })); }
+  staffPin() { return '1234'; }
+  managerPin() { return '4680'; }
+  /** Locks the phone WITHOUT ending the shift — the between-customers gesture. Everything
+      transient goes with it: an open PIN pad, a half-typed bill, a live undo. */
+  lockTill(auto) {
+    clearTimeout(this._ut); clearTimeout(this._pk); clearTimeout(this._mt);
+    clearTimeout(this._al); clearTimeout(this._aw); clearTimeout(this._jt);
+    const h = this.__host || this;
+    h.__wsLockKey = null;
+    const idx = this.meIdx();
+    this.setState(s => ({ locked: true, lockMode: 'resume', lockStaff: idx, lockDigits: '', lockTries: 0, lockErr: false, lockWarn: false, lockSeq: s.lockSeq + 1,
+      screen: 'idle', scenario: null, resolving: false, undo: null, pin: null, pinDigits: '', pinTries: 0, pinErr: false,
+      manualOpen: false, manualCode: '', manualError: false, historyOpen: false, corrId: null,
+      lookupOpen: false, lookupQ: '', joinOpen: false, shiftOpen: false, handoverPick: false, queueSheetOpen: false, amount: '',
+      // the lock screen says why it locked — a flash behind a full-screen lock would never be seen
+      lockAuto: !!auto }));
+    this.saveScan();
+  }
+  /** The idle auto-lock. Armed from renderVals (the one path this runtime guarantees) behind a
+      HOST-level key so it re-arms on activity and exactly once per quiet period, never per render.
+      Two timers: the warning, then the lock — both swept on unmount, on key change, and on unlock. */
+  armIdleLock(key) {
+    const h = this.__host || this;
+    if (h.__wsLockKey === key) return;
+    h.__wsLockKey = key;
+    clearTimeout(this._al); clearTimeout(this._aw);
+    if (this.state && this.state.lockWarn) this.state.lockWarn = false;
+    if (!key) return;
+    this._aw = setTimeout(() => {
+      const A = (this.__host && this.__host.logic) || this;
+      if ((A.__host || A).__wsLockKey !== key) return;
+      A.setState({ lockWarn: true });
+    }, 48000);
+    this._al = setTimeout(() => {
+      const A = (this.__host && this.__host.logic) || this;
+      if ((A.__host || A).__wsLockKey !== key) return;
+      if (A.state.locked || !A.state.shiftLive) return;
+      A.lockTill(true);
+    }, 60000);
+  }
+  /** Cancelling the auto-lock is a tap on the warning — it pushes the whole window out again. */
+  stayUnlocked() {
+    const h = this.__host || this;
+    h.__wsLockKey = null;
+    clearTimeout(this._al); clearTimeout(this._aw);
+    this.setState({ lockWarn: false });
+    this.poke();
+  }
+  /** The PIN that opens the till. `start` mints a fresh shift for whoever signed in (counters at
+      zero, identity set, a line in the log); `resume` just lifts the lock on the shift already
+      running. Three wrong codes drop back to the picker rather than pretending to lock the phone. */
+  lockKeyTap(k) {
+    const s = this.state;
+    if (s.lockErr || s.lockStaff == null) return;
+    if (k === '⌫') { this.setState({ lockDigits: s.lockDigits.slice(0, -1) }); return; }
+    if (s.lockDigits.length >= 4) return;
+    const d = s.lockDigits + k;
+    this.setState({ lockDigits: d });
+    if (d.length === 4) {
+      clearTimeout(this._lk);
+      this._lk = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.checkLockPin(); }, 240);
+    }
+  }
+  checkLockPin() {
+    const s = this.state;
+    if (s.lockStaff == null || s.lockDigits.length !== 4) return;
+    if (s.lockDigits === this.staffPin()) { this.openTill(); return; }
+    const tries = s.lockTries + 1;
+    if (tries >= 3) {
+      // back to the picker with the reason showing — a till that pretends to brick itself is worse
+      this.setState({ lockStaff: null, lockDigits: '', lockTries: 3, lockErr: true });
+      return;
+    }
+    this.setState({ lockTries: tries, lockErr: true });
+    clearTimeout(this._lk);
+    this._lk = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; if (A.state.locked) A.setState({ lockDigits: '', lockErr: false }); }, 820);
+  }
+  openTill() {
+    const s = this.state, p = this.staffList()[s.lockStaff];
+    if (!p) return;
+    // signing in as anyone other than the person on shift IS a new shift, whatever route got here
+    const fresh = s.lockMode === 'start' || p.name !== s.staffName;
+    const h = this.__host || this;
+    h.__wsLockKey = null;
+    if (fresh) {
+      this.setState(st => ({ locked: false, shiftLive: true, lockDigits: '', lockTries: 0, lockErr: false, lockStaff: null, lockWarn: false, lockAuto: false,
+        staffName: p.name, staffAr: p.ar, staffInitials: p.initials, staffSeq: st.staffSeq + 1,
+        scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', scenario: null, undo: null, guardHit: false, foundBy: null }));
+      h.__wsRampKey = null;   // a new shift counts its own totals up from zero
+      this.logAction(null, 'shiftStart', p.name);
+      this.flashNow('✓', '#2FAE66', this.L('Shift started', 'بدأت المناوبة'), this.L(p.name.split(' ')[0] + ' is on the till · Rainbow St · counters at zero.', p.ar.split(' ')[0] + ' على الصندوق · شارع الرينبو · العدّادات من الصفر.'));
+    } else {
+      this.setState({ locked: false, lockDigits: '', lockTries: 0, lockErr: false, lockStaff: null, lockWarn: false, lockAuto: false });
+    }
+    this.saveScan();
   }
 
   // ────────────────────────────────────────────────────────────────────────────
@@ -842,31 +1278,53 @@ class Component extends DCLogic {
     this._fo = setTimeout(() => this.setState({ flashOut: true }), 1420);
     this._ft = setTimeout(() => this.setState({ flash: null, flashOut: false }), 1740);
   }
-  scanTo(scenario) {
+  /** `organic` marks the paths where a real customer walked up — the big scan button, a typed code,
+      a counter lookup. Those obey the earning guard (one stamp per customer per day); the demo rail
+      on the right is explicit "show me this state" intent and always goes where it says. */
+  scanTo(scenario, organic) {
+    let scen = scenario;
+    if (organic && scen === 'stamps' && this.state.guardHit) scen = 'guard';
     clearTimeout(this._ut); clearTimeout(this._s1); clearTimeout(this._s2);
-    this.setState(s => ({ screen: 'scan', resolving: false, scenario, mode: scenario === 'coupon' ? 'redeem' : 'collect',
+    this.setState(s => ({ screen: 'scan', resolving: false, scenario: scen, mode: scen === 'coupon' ? 'redeem' : 'collect',
       amount: '', selRw: null, cbSel: null, pin: null, pinDigits: '', pinTries: 0, pinErr: false, undo: null,
+      lookupOpen: false, historyOpen: false, corrId: null, joinOpen: false,
       scanSeq: s.scanSeq + 1, stampSeq: 0, amtSeq: 0,
       chFrom: 0, chSeq: s.chSeq + 1, vipClimb: false, vipSeq: s.vipSeq + 1 }));
     this._s1 = setTimeout(() => this.setState({ resolving: true }), 450);
+    const byLookup = this.state.foundBy === scenario;
     this._s2 = setTimeout(() => {
       const A = (this.__host && this.__host.logic) || this;
-      A.setState({ screen: 'member', resolving: false, scansToday: A.state.scansToday + 1 });
-      A.logAction(scenario, 'scan');
+      A.setState({ screen: 'member', resolving: false, scansToday: A.state.scansToday + 1, foundBy: null });
+      A.logAction(scen, byLookup ? 'foundScan' : 'scan');
     }, 1400);
   }
   askPin(tag) { clearTimeout(this._pk); this.setState({ pin: tag, pinDigits: '', pinTries: 0, pinErr: false }); }
-  demoPin() { return '1234'; }
-  /** Three tries per sheet opening. A wrong code shakes and clears; the third closes the sheet with
-      a refusal rather than letting the pad be brute-forced in front of the customer. */
+  demoPin() { return this.staffPin(); }
+  /** A manager tag carries the lock it is trying to clear: 'mgr:<lockKey>'. */
+  isMgrTag(tag) { return typeof tag === 'string' && tag.slice(0, 4) === 'mgr:'; }
+  /** One redeem, one member, one lock. The key is what the flash has always claimed it was. */
+  lockKeyFor(scen, tag) { return String(this.state.staffName) + '|' + String(scen) + '|' + String(tag); }
+  isRedeemLocked(scen, tag) { return !!(this.state.redeemLocks || {})[this.lockKeyFor(scen, tag)]; }
+  /** Three tries per sheet opening. A wrong code shakes and clears; the third stores a REAL lock on
+      that redeem for that member and closes the sheet — the next tap finds it locked, exactly as
+      the refusal says, until a manager PIN clears it. */
   checkPin() {
-    const st = this.state;
-    if (!st.pin || st.pinDigits.length !== 4) return;
-    if (st.pinDigits === this.demoPin()) { this.finishPin(); return; }
+    const st = this.state, tag = st.pin;
+    if (!tag || st.pinDigits.length !== 4) return;
+    const expect = this.isMgrTag(tag) ? this.managerPin() : this.demoPin();
+    if (st.pinDigits === expect) { this.finishPin(); return; }
     const tries = st.pinTries + 1;
     if (tries >= 3) {
       this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false });
-      this.flashNow('✕', '#E2563A', this.L('Ask the manager', 'اسأل المدير'), this.L('Three wrong codes — this redeem is locked until a manager unlocks it.', 'ثلاثة رموز خاطئة — هذا الاستبدال مقفل حتى يفتحه المدير.'));
+      if (this.isMgrTag(tag)) {
+        this.flashNow('🔒', '#E2563A', this.L('Still locked', 'ما زال مقفلاً'), this.L('Three wrong manager codes — the redeem stays locked.', 'ثلاثة رموز مدير خاطئة — يبقى الاستبدال مقفلاً.'));
+        return;
+      }
+      const key = this.lockKeyFor(st.scenario, tag);
+      this.setState(s => ({ redeemLocks: { ...(s.redeemLocks || {}), [key]: true } }));
+      this.logAction(st.scenario, 'rdLocked', tag);
+      this.flashNow('🔒', '#E2563A', this.L('Locked — ask the manager', 'مقفل — اسأل المدير'), this.L('Three wrong codes. This redeem is locked until a manager unlocks it.', 'ثلاثة رموز خاطئة. هذا الاستبدال مقفل حتى يفتحه المدير.'));
+      this.saveScan();
       return;
     }
     this.setState({ pinTries: tries, pinErr: true });
@@ -876,56 +1334,150 @@ class Component extends DCLogic {
       if (A.state.pin) A.setState({ pinDigits: '', pinErr: false });
     }, 820);
   }
+  /** Every PIN'd action now signs itself: `by` is the person whose code authorised it, which is the
+      one thing a disputed redeem always needs and the log never used to carry. */
   finishPin() {
-    const st = this.state, tag = st.pin, scen = st.scenario;
+    const st = this.state, tag = st.pin, scen = st.scenario, by = st.staffName;
     this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false });
-    if (tag === 'stamps') { this.setState({ stamps: 0, sRewards: st.sRewards + 1, mode: 'collect', stampSeq: 0 }); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L('Free drink — a fresh card is already counting.', 'مشروب مجاني — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward'); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free drink')); }
-    if (tag === 'cash') { const v = st.cbSel; const nb = +(st.cbBal - v).toFixed(2); this.setState({ cbBal: nb, cbSel: null }); this.flashNow('✓', '#2FAE66', this.L('JOD ' + v.toFixed(2) + ' off the bill', 'خُصم ' + v.toFixed(2) + ' ديناراً من الفاتورة'), this.L('New balance JOD ' + nb.toFixed(2) + ' — it spends like money.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — يُصرف كالنقود.')); this.logAction(scen, 'redCash', v); this.emitLive(this.liveFor(scen, 'reward', 'redeemed JOD ' + v.toFixed(2) + ' off the bill')); }
-    if (tag === 'pts') { const i = st.selRw; const r = this.rungs()[i]; const np = st.pts - r.cost; this.setState({ pts: np, selRw: null }); this.flashNow('✓', '#2FAE66', this.rungName(i), this.L(r.cost + ' pts spent · ' + np + ' left.', 'صُرفت ' + r.cost + ' نقطة · بقي ' + np + ' نقطة.')); this.logAction(scen, 'redPts', i); this.emitLive(this.liveFor(scen, 'reward', 'redeemed ' + this.rungs()[i].en)); }
-    if (tag === 'coupon') { this.setState({ couponDone: true }); this.flashNow('1×', '#2FAE66', this.L('The dessert is theirs', 'الحلوى من نصيبها'), this.L('The coupon is spent — it can never fire twice.', 'الكوبون استُهلك — ولا يمكن أن يُصرف مرتين.')); this.logAction(scen, 'redCoupon'); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free dessert')); }
-    if (tag === 'renew') { this.setState({ renewedMembership: true }); this.flashNow('✓', '#2FAE66', this.L('Membership renewed', 'تم تجديد الاشتراك'), this.L('Active again — same pass, fresh year.', 'فعّال من جديد — نفس البطاقة وسنة جديدة.')); this.logAction(scen, 'renew'); this.emitLive(this.liveFor(scen, 'renew', 'renewed their membership')); }
+    if (this.isMgrTag(tag)) {
+      const key = tag.slice(4);
+      this.setState(s => { const m = { ...(s.redeemLocks || {}) }; delete m[key]; return { redeemLocks: m }; });
+      this.logAction(scen, 'mgrUnlock', key.split('|')[2], { by });
+      this.flashNow('🔓', '#2FAE66', this.L('Manager unlocked it', 'فتحه المدير'), this.L('The redeem is open again — the unlock is in today’s log.', 'الاستبدال مفتوح من جديد — والفتح مسجَّل في سجل اليوم.'));
+      this.saveScan(); return;
+    }
+    if (tag === 'correct') { this.applyCorrection(by); return; }
+    if (tag === 'stamps') { this.setState({ stamps: 0, sRewards: st.sRewards + 1, mode: 'collect', stampSeq: 0 }); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L('Free drink — a fresh card is already counting.', 'مشروب مجاني — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward', undefined, { by }); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free drink')); }
+    if (tag === 'cash') {
+      const paused = scen === 'paused', bal = paused ? st.pausedBal : st.cbBal;
+      const v = st.cbSel, nb = +(bal - v).toFixed(2);
+      this.setState(paused ? { pausedBal: nb, cbSel: null } : { cbBal: nb, cbSel: null });
+      this.flashNow('✓', '#2FAE66', this.L('JOD ' + v.toFixed(2) + ' off the bill', 'خُصم ' + v.toFixed(2) + ' ديناراً من الفاتورة'), this.L('New balance JOD ' + nb.toFixed(2) + ' — it spends like money.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — يُصرف كالنقود.'));
+      this.logAction(scen, 'redCash', v, { by }); this.emitLive(this.liveFor(scen, 'reward', 'redeemed JOD ' + v.toFixed(2) + ' off the bill'));
+    }
+    if (tag === 'pts') { const i = st.selRw; const r = this.rungs()[i]; const np = st.pts - r.cost; this.setState({ pts: np, selRw: null }); this.flashNow('✓', '#2FAE66', this.rungName(i), this.L(r.cost + ' pts spent · ' + np + ' left.', 'صُرفت ' + r.cost + ' نقطة · بقي ' + np + ' نقطة.')); this.logAction(scen, 'redPts', i, { by }); this.emitLive(this.liveFor(scen, 'reward', 'redeemed ' + this.rungs()[i].en)); }
+    if (tag === 'coupon') { this.setState({ couponDone: true }); this.flashNow('1×', '#2FAE66', this.L('The dessert is theirs', 'الحلوى من نصيبها'), this.L('The coupon is spent — it can never fire twice.', 'الكوبون استُهلك — ولا يمكن أن يُصرف مرتين.')); this.logAction(scen, 'redCoupon', undefined, { by }); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free dessert')); }
+    if (tag === 'renew') {
+      this.setState(scen === 'expiring' ? { renewedExpiring: true } : { renewedMembership: true });
+      this.flashNow('✓', '#2FAE66', this.L('Membership renewed', 'تم تجديد الاشتراك'), this.L('Active again — same pass, fresh year.', 'فعّال من جديد — نفس البطاقة وسنة جديدة.'));
+      this.logAction(scen, 'renew', undefined, { by }); this.emitLive(this.liveFor(scen, 'renew', 'renewed their membership'));
+    }
     this.saveScan();
   }
   rungs() { return [{ en: 'Free espresso', ar: 'إسبريسو مجاني', cost: 250 }, { en: 'A dozen ka’ak', ar: 'دزينة كعك', cost: 500 }]; }
   rungName(i) { const r = this.rungs()[i]; return r ? this.L(r.en, r.ar) : ''; }
-  armUndo(type, amount, wasOffline) { clearTimeout(this._ut); this.setState({ undo: { type, amount, wasOffline } }); this._ut = setTimeout(() => this.setState({ undo: null }), 8000); }
+  armUndo(type, amount, wasOffline, extra) { clearTimeout(this._ut); this.setState({ undo: { type, amount, wasOffline, ...(extra || {}) } }); this._ut = setTimeout(() => this.setState({ undo: null }), 8000); }
+  /** Undoing an action that was queued has to pull the ROW too, not just decrement the badge —
+      otherwise the sheet keeps listing it and the sync fires a live event for something that was
+      taken back eight seconds after it happened. */
   undoLast() {
     const st = this.state, u = st.undo;
     if (!u) return;
     clearTimeout(this._ut);
     const scen = st.scenario;
-    const q = u.wasOffline ? Math.max(0, st.queued - 1) : st.queued;
+    const ql = u.wasOffline ? st.queueLog.slice(1) : st.queueLog;
+    const base = { queueLog: ql, queued: ql.length, undo: null };
     const title = this.L('Corrected', 'تم التصحيح');
-    if (u.type === 'stamp') { this.setState({ stamps: Math.max(0, st.stamps - 1), sStamps: Math.max(0, st.sStamps - 1), queued: q, undo: null, stampSeq: 0 }); this.flashNow('↺', '#F0A92B', title, this.L('−1 stamp — the card is back where it was.', 'ختم واحد أُزيل — والبطاقة عادت كما كانت.')); this.logAction(scen, 'undoStamp'); }
-    else if (u.type === 'cash') { this.setState({ cbBal: +(st.cbBal - u.amount).toFixed(2), queued: q, undo: null }); this.flashNow('↺', '#F0A92B', title, this.L('− JOD ' + u.amount.toFixed(2) + ' off the wallet again.', 'خُصم ' + u.amount.toFixed(2) + ' ديناراً من الرصيد مجدداً.')); this.logAction(scen, 'undoCash'); }
-    else if (u.type === 'pts') { this.setState({ pts: Math.max(0, st.pts - u.amount), queued: q, undo: null }); this.flashNow('↺', '#F0A92B', title, this.L('− ' + u.amount + ' pts taken back.', 'أُزيلت ' + u.amount + ' نقطة.')); this.logAction(scen, 'undoPts'); }
+    if (u.type === 'stamp') { this.setState({ ...base, stamps: Math.max(0, st.stamps - 1), sStamps: Math.max(0, st.sStamps - 1), stampSeq: 0, guardHit: false }); this.flashNow('↺', '#F0A92B', title, this.L('−1 stamp — the card is back where it was.', 'ختم واحد أُزيل — والبطاقة عادت كما كانت.')); this.logAction(scen, 'undoStamp'); }
+    else if (u.type === 'cash') { this.setState({ ...base, cbBal: +(st.cbBal - u.amount).toFixed(2) }); this.flashNow('↺', '#F0A92B', title, this.L('− JOD ' + u.amount.toFixed(2) + ' off the wallet again.', 'خُصم ' + u.amount.toFixed(2) + ' ديناراً من الرصيد مجدداً.')); this.logAction(scen, 'undoCash'); }
+    else if (u.type === 'pts') { this.setState({ ...base, pts: Math.max(0, st.pts - u.amount) }); this.flashNow('↺', '#F0A92B', title, this.L('− ' + u.amount + ' pts taken back.', 'أُزيلت ' + u.amount + ' نقطة.')); this.logAction(scen, 'undoPts'); }
+    else if (u.type === 'visit') { this.setState(s => ({ ...base, rVisits: Math.max(0, st.rVisits - 1), rTier: u.prevTier || s.rTier, vipClimb: false, vipFromPct: '0%', vipSeq: s.vipSeq + 1 })); this.flashNow('↺', '#F0A92B', title, this.L('The check-in is off her card again.', 'أُزيلت الزيارة من بطاقتها.')); this.logAction(scen, 'undoVisit'); }
+    else if (u.type === 'chVisit') { this.setState(s => ({ ...base, chVisits: Math.max(0, st.chVisits - 1), chDone: false, chFrom: st.chVisits, chSeq: s.chSeq + 1 })); this.flashNow('↺', '#F0A92B', title, this.L('The challenge visit is off the clock again.', 'أُزيلت زيارة التحدي من العدّاد.')); this.logAction(scen, 'undoChVisit'); }
     this.saveScan();
   }
-  manualCodes() { return { '01142201': 'stamps', '01775533': 'cashback', '01924410': 'points' }; }
+  /** One source of truth: every scannable card carries its own printed code, so the manual sheet
+      resolves everything a QR does instead of three of nine. */
+  manualCodes() {
+    const out = {}, S = this.scenAll();
+    Object.keys(S).forEach(k => { if (S[k].code) out[S[k].code] = k; });
+    return out;
+  }
   finishManual() {
     const code = this.state.manualCode;
     if (code.length !== 8) return;
     const scen = this.manualCodes()[code];
-    if (scen) { this.setState({ manualOpen: false, manualCode: '' }); this.scanTo(scen); }
+    if (scen) { this.setState({ manualOpen: false, manualCode: '' }); this.scanTo(scen, true); }
     else { this.setState({ manualError: true }); clearTimeout(this._mt); this._mt = setTimeout(() => this.setState({ manualCode: '', manualError: false }), 900); }
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  correcting a mistake · undo lives 8 seconds, a shift lives eight hours
+  // ────────────────────────────────────────────────────────────────────────────
+  /** What a given log row can be walked back to, and what that costs. `null` means the row is a
+      record, not a movement — a scan, an undo, a correction, a sign-in: nothing to reverse. */
+  correctionFor(l) {
+    if (!l) return null;
+    const n = (x) => Number(x) || 0;
+    switch (l.k) {
+      case 'stamp': case 'qStamp': return { patch: s => ({ stamps: Math.max(0, s.stamps - 1), sStamps: Math.max(0, s.sStamps - 1), stampSeq: 0, guardHit: false }),
+        effect: this.L('Removes 1 stamp from the card.', 'يُزيل ختماً واحداً من البطاقة.'), phrase: 'had a stamp corrected off (−1)' };
+      case 'colCash': case 'qCash': return { patch: s => ({ cbBal: Math.max(0, +(s.cbBal - n(l.v)).toFixed(2)) }),
+        effect: this.L('Takes JOD ' + n(l.v).toFixed(2) + ' back out of the wallet.', 'يُعيد سحب ' + n(l.v).toFixed(2) + ' ديناراً من المحفظة.'), phrase: 'had JOD ' + n(l.v).toFixed(2) + ' cashback corrected off' };
+      case 'colPts': case 'qPts': return { patch: s => ({ pts: Math.max(0, s.pts - n(l.v)) }),
+        effect: this.L('Takes ' + n(l.v) + ' points back off the balance.', 'يُزيل ' + n(l.v) + ' نقطة من الرصيد.'), phrase: 'had ' + n(l.v) + ' points corrected off' };
+      case 'visit': return { patch: s => ({ rVisits: Math.max(0, s.rVisits - 1), vipClimb: false, vipFromPct: '0%', vipSeq: s.vipSeq + 1 }),
+        effect: this.L('Removes the check-in from her card.', 'يُزيل الزيارة من بطاقتها.'), phrase: 'had a check-in corrected off' };
+      case 'chVisit': return { patch: s => ({ chVisits: Math.max(0, s.chVisits - 1), chDone: false, chFrom: s.chVisits, chSeq: s.chSeq + 1 }),
+        effect: this.L('Takes the visit back off the challenge clock.', 'يُزيل الزيارة من عدّاد التحدي.'), phrase: 'had a challenge visit corrected off' };
+      case 'redReward': return { patch: s => ({ stamps: s.goal, sRewards: Math.max(0, s.sRewards - 1), stampSeq: 0 }),
+        effect: this.L('Puts the full card back — the free drink is un-spent.', 'يُعيد البطاقة مكتملة — والمشروب المجاني لم يُصرف.'), phrase: 'had a redeemed reward credited back' };
+      case 'redCash': return { patch: s => ({ cbBal: +(s.cbBal + n(l.v)).toFixed(2) }),
+        effect: this.L('Credits JOD ' + n(l.v).toFixed(2) + ' back to the wallet.', 'يُعيد ' + n(l.v).toFixed(2) + ' ديناراً إلى المحفظة.'), phrase: 'had JOD ' + n(l.v).toFixed(2) + ' credited back' };
+      case 'redPts': { const r = this.rungs()[l.v] || { cost: 0, en: '' }; return { patch: s => ({ pts: s.pts + r.cost }),
+        effect: this.L('Credits ' + r.cost + ' points back.', 'يُعيد ' + r.cost + ' نقطة إلى الرصيد.'), phrase: 'had ' + r.en + ' credited back' }; }
+      case 'redCoupon': return { patch: () => ({ couponDone: false }),
+        effect: this.L('Puts the coupon back — unused, and usable once.', 'يُعيد الكوبون — غير مستخدم، وقابل للاستخدام مرة واحدة.'), phrase: 'had a coupon credited back' };
+      default: return null;
+    }
+  }
+  /** The row the confirm sheet is pointed at, found by id so a growing log can never shift it. */
+  corrRow() { const id = this.state.corrId; if (!id) return null; return this.state.sessionLog.filter(l => l.id === id)[0] || null; }
+  /** PIN'd, once per action, logged, and announced on the shared bus — offline it queues like any
+      other write and the announcement waits for the sync, same as everything else the till does. */
+  applyCorrection(by) {
+    const st = this.state, l = this.corrRow();
+    if (!l) { this.setState({ corrId: null }); return; }
+    const c = this.correctionFor(l);
+    if (!c || l.corrected) { this.setState({ corrId: null }); return; }
+    this.setState(s => ({ ...c.patch(s), corrId: null, historyOpen: false,
+      sessionLog: s.sessionLog.map(r => r.id === l.id ? { ...r, corrected: true } : r) }));
+    this.logAction(l.scen, 'correction', l.k, { by, who: l.who, whoAr: l.whoAr });
+    this.flashNow('↺', '#F0A92B', this.L('Corrected', 'تم التصحيح'), c.effect + this.L(' Authorised by ' + String(by).split(' ')[0] + '.', ' بموافقة ' + String(this.state.staffAr).split(' ')[0] + '.'));
+    const ev = this.liveFor(l.scen, 'earn', c.phrase);
+    if (st.offline) this.pushQueue(l.scen, 'qCorrection', l.k, ev); else this.emitLive(ev);
+    this.saveScan();
   }
 
   // ────────────────────────────────────────────────────────────────────────────
   //  shared data
   // ────────────────────────────────────────────────────────────────────────────
-  scenInfo(scen) {
+  /** Every scannable state in one table. `code` is the 8 digits printed under the customer's QR —
+      a card without one cannot be typed in (the foreign pass keeps its code so the refusal can be
+      reached by hand too; the guard and the tier refusal are STATES of a card that already has a
+      code, not separate cards, so they carry none). `phone` is what the counter asks for when the
+      customer forgot the pass entirely. */
+  scenAll() {
     return {
-      stamps: { m: ['Sara Al-Amin', 'سارة الأمين', 'SA'], card: 'Daraj Coffee · Stamp card', cardAr: 'مقهى درج · بطاقة أختام', color: '#1E5C43', art: 'coffee' },
-      cashback: { m: ['Khaled Mansour', 'خالد منصور', 'KM'], card: 'Zaytoun Kitchen · Cashback', cardAr: 'مطبخ زيتون · استرداد نقدي', color: '#5C6B2F' },
-      points: { m: ['Salma Oweis', 'سلمى عويس', 'SO'], card: 'Sukkar Bakery · Points', cardAr: 'مخبز سكّر · نقاط', color: '#B14A32' },
-      coupon: { m: ['Nadia Farhat', 'نادية فرحات', 'NF'], card: 'Daraj Coffee · Coupon', cardAr: 'مقهى درج · كوبون', color: '#1E5C43' },
-      vip: { m: ['Rania Qasem', 'رانيا قاسم', 'RQ'], card: 'Layl Lounge · VIP tiers', cardAr: 'صالة ليل · مستويات VIP', color: '#1B2440' },
-      discount: { m: ['Ruba Zureikat', 'روبا زريقات', 'RZ'], card: 'Zaytoun Kitchen · Discount', cardAr: 'مطبخ زيتون · بطاقة خصم', color: '#5C6B2F' },
-      membership: { m: ['Anas Freihat', 'أنس فريحات', 'AF'], card: 'Ghaim Studio · Membership', cardAr: 'استوديو غيم · اشتراك', color: '#4E6E8E' },
-      challenge: { m: ['Huda Barakat', 'هدى بركات', 'HB'], card: 'Daraj Coffee · Challenge', cardAr: 'مقهى درج · بطاقة تحدٍّ', color: '#7A4FA3' },
-      foreign: { m: ['Unknown pass', 'بطاقة غير معروفة', '؟'], card: 'Marmar Lounge — not your account', cardAr: 'صالة مرمر — ليست ضمن حسابك', color: '#6B6760' }
-    }[scen] || { m: ['', '', ''], card: '', cardAr: '', color: '#26262B' };
+      stamps: { m: ['Sara Al-Amin', 'سارة الأمين', 'SA'], card: 'Daraj Coffee · Stamp card', cardAr: 'مقهى درج · بطاقة أختام', color: '#1E5C43', art: 'coffee', phone: '+962 79 555 0114', code: '01142201' },
+      cashback: { m: ['Khaled Mansour', 'خالد منصور', 'KM'], card: 'Zaytoun Kitchen · Cashback', cardAr: 'مطبخ زيتون · استرداد نقدي', color: '#5C6B2F', phone: '+962 79 555 0166', code: '01775533' },
+      points: { m: ['Salma Oweis', 'سلمى عويس', 'SO'], card: 'Sukkar Bakery · Points', cardAr: 'مخبز سكّر · نقاط', color: '#B14A32', phone: '+962 79 555 0244', code: '01924410' },
+      coupon: { m: ['Nadia Farhat', 'نادية فرحات', 'NF'], card: 'Daraj Coffee · Coupon', cardAr: 'مقهى درج · كوبون', color: '#1E5C43', phone: '+962 78 555 0231', code: '01330077' },
+      vip: { m: ['Rania Qasem', 'رانيا قاسم', 'RQ'], card: 'Layl Lounge · VIP tiers', cardAr: 'صالة ليل · فئات كبار الزبائن', color: '#1B2440', phone: '+962 77 555 0143', code: '01455812' },
+      discount: { m: ['Ruba Zureikat', 'روبا زريقات', 'RZ'], card: 'Zaytoun Kitchen · Discount', cardAr: 'مطبخ زيتون · بطاقة خصم', color: '#5C6B2F', phone: '+962 79 555 0268', code: '01568230' },
+      membership: { m: ['Anas Freihat', 'أنس فريحات', 'AF'], card: 'Ghaim Studio · Membership', cardAr: 'استوديو غيم · اشتراك', color: '#4E6E8E', phone: '+962 78 555 0293', code: '01671945' },
+      challenge: { m: ['Huda Barakat', 'هدى بركات', 'HB'], card: 'Daraj Coffee · Challenge', cardAr: 'مقهى درج · بطاقة تحدٍّ', color: '#7A4FA3', phone: '+962 77 555 0117', code: '01784306' },
+      foreign: { m: ['Unknown pass', 'بطاقة غير معروفة', '؟'], card: 'Marmar Lounge — not your account', cardAr: 'صالة مرمر — ليست ضمن حسابك', color: '#6B6760', code: '01890021' },
+      // ── the four refusals the spec named and the third verdict it named ──
+      paused: { m: ['Dana Tahboub', 'دانا طهبوب', 'DT'], card: 'Zaytoun Kitchen · Cashback (paused)', cardAr: 'مطبخ زيتون · استرداد (موقوفة)', color: '#5C6B2F', phone: '+962 79 555 0192', code: '01905517' },
+      guard: { m: ['Sara Al-Amin', 'سارة الأمين', 'SA'], card: 'Daraj Coffee · Stamp card', cardAr: 'مقهى درج · بطاقة أختام', color: '#1E5C43', art: 'coffee', phone: '+962 79 555 0114' },
+      overcap: { m: ['Noor Shami', 'نور الشامي', 'NS'], card: 'Daraj Coffee · Stamp card', cardAr: 'مقهى درج · بطاقة أختام', color: '#1E5C43', art: 'coffee', phone: '+962 78 555 0121', code: '01214408' },
+      tierlock: { m: ['Rania Qasem', 'رانيا قاسم', 'RQ'], card: 'Layl Lounge · VIP tiers', cardAr: 'صالة ليل · فئات كبار الزبائن', color: '#1B2440', phone: '+962 77 555 0143' },
+      expiring: { m: ['Luay Sharif', 'لؤي شريف', 'LS'], card: 'Ghaim Studio · Membership', cardAr: 'استوديو غيم · اشتراك', color: '#4E6E8E', phone: '+962 79 555 0277', code: '01337790' },
+      // the counter enrolment writes its own rows into the log and the queue
+      join: { m: ['New member', 'عضو جديد', '+'], card: 'Counter QR', cardAr: 'رمز الصندوق', color: '#E88024' }
+    };
   }
+  scenInfo(scen) { return this.scenAll()[scen] || { m: ['', '', ''], card: '', cardAr: '', color: '#26262B' }; }
   memberName(scen) { const m = this.scenInfo(scen).m; return this.L(m[0], m[1]); }
 
   // ────────────────────────────────────────────────────────────────────────────
@@ -1012,7 +1564,33 @@ class Component extends DCLogic {
       case 'qStamp': return this.L('Stamp added', 'أُضيف ختم');
       case 'qCash': return this.L('JOD ' + v + ' cashback', v + ' ديناراً استرداد');
       case 'qPts': return this.L(v + ' pts', v + ' نقطة');
+      case 'shiftStart': return this.L('Shift started', 'بدأت المناوبة');
+      case 'foundScan': return this.L('Found by lookup', 'عُثر عليه بالبحث');
+      case 'undoVisit': return this.L('Undo · visit', 'تراجع · زيارة');
+      case 'undoChVisit': return this.L('Undo · challenge visit', 'تراجع · زيارة تحدٍّ');
+      case 'rdLocked': return this.L('Redeem locked · 3 wrong PINs', 'قُفل الاستبدال · ٣ رموز خاطئة');
+      case 'mgrUnlock': return this.L('Manager unlocked · ', 'فتح المدير · ') + this.actionNoun(v);
+      case 'correction': return this.L('Correction · ', 'تصحيح · ') + this.actionNoun(v);
+      case 'qCorrection': return this.L('Correction · ', 'تصحيح · ') + this.actionNoun(v);
+      case 'join': return this.L('Joined at the counter', 'انضم من الصندوق');
+      case 'qJoin': return this.L('Joined at the counter', 'انضم من الصندوق');
+      case 'perk': return this.L('Gold perk applied · 15%', 'طُبّقت ميزة الذهبية · 15%');
       default: return '';
+    }
+  }
+  /** What a corrected or unlocked action IS, in one noun — so a log row never reads
+      "Correction · Collected · JOD undefined". */
+  actionNoun(k) {
+    switch (k) {
+      case 'stamp': case 'qStamp': case 'stamps': return this.L('stamp', 'ختم');
+      case 'colCash': case 'qCash': case 'cash': case 'redCash': return this.L('cashback', 'استرداد');
+      case 'colPts': case 'qPts': case 'pts': case 'redPts': return this.L('points', 'نقاط');
+      case 'redReward': return this.L('reward', 'مكافأة');
+      case 'redCoupon': case 'coupon': return this.L('coupon', 'كوبون');
+      case 'renew': return this.L('renewal', 'تجديد');
+      case 'visit': return this.L('visit', 'زيارة');
+      case 'chVisit': return this.L('challenge visit', 'زيارة تحدٍّ');
+      default: return this.L('action', 'عملية');
     }
   }
   timeAgo(l) {
@@ -1023,9 +1601,23 @@ class Component extends DCLogic {
     const m = Math.round(sec / 60);
     return this.L(m + 'm ago', 'قبل ' + m + ' د');
   }
-  logAction(scen, k, v) { this.setState(s => ({ sessionLog: [{ scen, k, v, ts: Date.now() }, ...s.sessionLog].slice(0, 20) })); this.saveScan(); }
+  /** Rows carry an id (so a correction can point at exactly one), and `by` — the code that
+      authorised it. `who` overrides the scenario's member for rows that belong to nobody's card:
+      a sign-in, a counter join. */
+  logAction(scen, k, v, extra) {
+    this.setState(s => {
+      const id = 'a' + (s.logSeq + 1);
+      return { logSeq: s.logSeq + 1, sessionLog: [{ scen, k, v, ts: Date.now(), id, ...(extra || {}) }, ...s.sessionLog].slice(0, 20) };
+    });
+    this.saveScan();
+  }
   /** A queued row carries the live event it will fire once it actually reaches the server. */
-  pushQueue(scen, k, v, live) { this.setState(s => ({ queueLog: [{ scen, k, v, ts: Date.now(), live }, ...s.queueLog].slice(0, 20) })); this.saveScan(); }
+  pushQueue(scen, k, v, live, extra) {
+    this.setState(s => { const ql = [{ scen, k, v, ts: Date.now(), live, ...(extra || {}) }, ...s.queueLog].slice(0, 20); return { queueLog: ql, queued: ql.length }; });
+    this.saveScan();
+  }
+  /** The name a log or queue row shows: its own if it carries one, otherwise its card's member. */
+  rowWho(l) { return (l && l.who) ? this.L(l.who, l.whoAr || l.who) : this.memberName(l && l.scen); }
 
   // ────────────────────────────────────────────────────────────────────────────
   //  offline sync · the queue drains one row at a time, not in a blink
@@ -1065,15 +1657,183 @@ class Component extends DCLogic {
     this.setState({ syncing: false, syncDone: 0, queueLog: left, queued: left.length, queueSheetOpen: goingOffline ? false : s.queueSheetOpen });
     this.saveScan();
   }
-  staffList() { return [{ name: 'Ahmad Zoubi', ar: 'أحمد الزعبي', initials: 'AZ' }, { name: 'Rasha Kilani', ar: 'رشا كيلاني', initials: 'RK' }]; }
   pickStaff(idx) {
     clearTimeout(this._ut);
     const p = this.staffList()[idx];
+    if (!p) return;
     this.setState(s => ({ staffName: p.name, staffAr: p.ar, staffInitials: p.initials, shiftOpen: false, handoverPick: false,
-      scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', scenario: null, undo: null, staffSeq: s.staffSeq + 1 }));
+      scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', scenario: null, undo: null, staffSeq: s.staffSeq + 1,
+      guardHit: false, foundBy: null, shiftLive: true }));
     const h = this.__host || this;
     h.__wsRampKey = null;   // the totals are a new person's now — let them count up again
+    h.__wsLockKey = null;
+    this.logAction(null, 'shiftStart', p.name, { who: p.name, whoAr: p.ar });
     this.saveScan();
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  enrolment at the counter · 68% of every join in the data starts right here
+  // ────────────────────────────────────────────────────────────────────────────
+  /** A deterministic module matrix for a join URL: three finder eyes, timing runs, a cleared
+      centre for the brand mark, and a stable pseudo-random field so the same URL always draws the
+      same code. Emitted as ONE svg path — 441 rects would be 441 React elements per render. */
+  joinQrPath(text, n) {
+    const key = text + '|' + n;
+    if (this._qr && this._qr[key]) return this._qr[key];
+    const g = [];
+    for (let r = 0; r < n; r++) { g.push([]); for (let c = 0; c < n; c++) g[r].push(0); }
+    const eye = (r0, c0) => {
+      for (let i = -1; i < 8; i++) for (let j = -1; j < 8; j++) {
+        const y = r0 + i, x = c0 + j;
+        if (y < 0 || x < 0 || y >= n || x >= n) continue;
+        const inner = i >= 0 && i < 7 && j >= 0 && j < 7;
+        const on = inner && (i === 0 || i === 6 || j === 0 || j === 6 || (i >= 2 && i <= 4 && j >= 2 && j <= 4));
+        g[y][x] = on ? 1 : -1;
+      }
+    };
+    eye(0, 0); eye(0, n - 7); eye(n - 7, 0);
+    for (let i = 8; i < n - 8; i++) { g[6][i] = (i % 2 ? -1 : 1); g[i][6] = (i % 2 ? -1 : 1); }
+    const mid = Math.floor(n / 2);
+    for (let r = mid - 2; r <= mid + 2; r++) for (let c = mid - 2; c <= mid + 2; c++) if (g[r] && g[r][c] === 0) g[r][c] = -1;
+    let h = 2166136261;
+    for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 16777619); }
+    const rnd = () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 1000) / 1000; };
+    let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+      const v = g[r][c] === 0 ? (rnd() > .52 ? 1 : 0) : g[r][c];
+      if (v === 1) d += 'M' + c + ' ' + r + 'h1v1h-1z';
+    }
+    (this._qr = this._qr || {})[key] = d;
+    return d;
+  }
+  joinQrEl(text, px) {
+    const R = (typeof React !== 'undefined' && React) ? React : null;
+    if (!R) return null;
+    const n = 25, d = this.joinQrPath(text, n), c = this.cardDefs()[this.state.joinCard] || this.cardDefs().daraj;
+    const mid = n / 2;
+    return R.createElement('svg', { viewBox: '-1 -1 ' + (n + 2) + ' ' + (n + 2), width: px, height: px, style: { display: 'block', margin: '0 auto', shapeRendering: 'crispEdges' } },
+      R.createElement('rect', { key: 'bg', x: -1, y: -1, width: n + 2, height: n + 2, fill: '#FFFFFF' }),
+      R.createElement('path', { key: 'mod', d, fill: '#1B1B1F' }),
+      R.createElement('rect', { key: 'mk', x: mid - 2.6, y: mid - 2.6, width: 5.2, height: 5.2, rx: 1.4, fill: c.color }),
+      R.createElement('text', { key: 'in', x: mid, y: mid + 1.35, textAnchor: 'middle', style: { fill: '#FFFFFF', fontFamily: 'Nunito, sans-serif', fontWeight: 900, fontSize: '3.6px' } }, c.initial)
+    );
+  }
+  /** Who walks away with a pass. The counter join is the acquisition moment the account's own
+      numbers put at 68% — the till has to be able to hand a card over, not just read one. */
+  joinPerson(cardId) {
+    return cardId === 'layl'
+      ? { en: 'Nadeen Sultan', ar: 'نادين سلطان', initials: 'NS' }
+      : { en: 'Hala Odeh', ar: 'هلا عودة', initials: 'HO' };
+  }
+  joinUrlFor(cardId) { return 'wasla.app/j/' + ((this.cardDefs()[cardId] || this.cardDefs().daraj).slug); }
+  openJoin() {
+    const ids = this.myCardIds();
+    clearTimeout(this._jt);
+    this.setState(s => ({ joinOpen: true, joinStage: ids.length > 1 ? 'pick' : 'qr', joinCard: ids[0] || 'daraj', historyOpen: false, lookupOpen: false }));
+  }
+  closeJoin() { clearTimeout(this._jt); this.setState({ joinOpen: false, joinStage: 'qr' }); }
+  /** The customer is pointing a camera at the phone: a beat of waiting, then the pass exists. */
+  joinScanning() {
+    clearTimeout(this._jt);
+    this.setState({ joinStage: 'scanning' });
+    this._jt = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.finishJoin(); }, 1500);
+  }
+  finishJoin() {
+    const st = this.state, p = this.joinPerson(st.joinCard), cd = this.cardDefs()[st.joinCard] || this.cardDefs().daraj;
+    this.setState({ joinStage: 'done' });
+    this.logAction('join', 'join', p.en, { who: p.en, whoAr: p.ar });
+    const ev = { kind: 'join', who: p.en, what: p.en + ' joined from the counter QR' + this.liveBy(), card: cd.name };
+    if (st.offline) this.pushQueue('join', 'qJoin', p.en, ev, { who: p.en, whoAr: p.ar }); else this.emitLive(ev);
+    this.saveScan();
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  member lookup · "I forgot my phone" is a daily event, not an edge case
+  // ────────────────────────────────────────────────────────────────────────────
+  /** Only the cards this staff member serves, and only the states a person can actually be looked
+      up in — the guard and the tier refusal are conditions, not people. */
+  lookupPool() {
+    const S = this.scenAll(), skip = { foreign: 1, guard: 1, tierlock: 1, join: 1 };
+    return Object.keys(S).filter(k => !skip[k] && S[k].phone).map(k => ({ key: k, ...S[k] }));
+  }
+  lookupHits() {
+    const q = String(this.state.lookupQ || '').trim().toLowerCase();
+    const pool = this.lookupPool();
+    if (!q) return pool.slice(0, 4);
+    const digits = q.replace(/\D/g, '');
+    return pool.filter(p => {
+      if (p.m[0].toLowerCase().indexOf(q) >= 0 || p.m[1].indexOf(q) >= 0) return true;
+      if (!digits) return false;
+      const ph = String(p.phone || '').replace(/\D/g, ''), cd = String(p.code || '');
+      return ph.indexOf(digits) >= 0 || cd.indexOf(digits) >= 0 || ph.slice(-4) === digits || cd.slice(-4) === digits;
+    }).slice(0, 6);
+  }
+  /** A lookup resolves to exactly what a scan resolves to — and says so in the log, because a
+      customer who disputes a stamp deserves to see how the till found them. */
+  resolveLookup(key) {
+    this.setState({ lookupOpen: false, lookupQ: '', foundBy: key });
+    this.scanTo(key, true);
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  the refusals · six of them, and every one says WHY and WHAT TO DO
+  // ────────────────────────────────────────────────────────────────────────────
+  /** A refusal is not an error message. It is the moment a member of staff has to say something to
+      a customer standing in front of them — so each one carries the reason, the rule it comes from
+      (named, so it sounds like policy and not a glitch), and the sentence to say next. */
+  refusalDef(scen) {
+    const st = this.state;
+    if (scen === 'foreign') return {
+      mark: '✕', tone: '#E2563A',
+      title: this.L('Not your card to scan', 'ليست بطاقتك لتمسحها'),
+      why: this.L('This pass belongs to Marmar Lounge — a different Wasla account. Nothing was charged, nothing was stamped.', 'هذه البطاقة تخص صالة مرمر — حساب آخر في وصلة. لم يُخصم شيء ولم يُختم شيء.'),
+      rule: this.L('Account rule · a till reads only the cards assigned to it', 'قاعدة الحساب · الصندوق يقرأ البطاقات المسندة إليه فقط'),
+      doLine: this.L('What to do: send the customer to Marmar staff — or ask Yara to assign you the card if this is a mistake.', 'ما العمل: وجّه الزبون إلى فريق مرمر — أو اطلب من يارا إسناد البطاقة إليك إن كان هذا خطأً.')
+    };
+    if (scen === 'paused') return {
+      mark: '❙❙', tone: '#F0A92B',
+      title: this.L('Earning is paused', 'الجمع موقوف'),
+      why: this.L('Zaytoun Kitchen paused this card 12 days ago for the renovation. Nothing earns while it is paused — and nothing was charged.', 'أوقف مطبخ زيتون هذه البطاقة قبل 12 يوماً بسبب التجديد. لا جمع أثناء الإيقاف — ولم يُخصم شيء.'),
+      rule: this.L('Card rule · a paused card stops earning, never redeeming', 'قاعدة البطاقة · الموقوفة تتوقف عن الجمع لا عن الاستبدال'),
+      doLine: this.L('What to do: her JOD ' + st.pausedBal.toFixed(2) + ' is still hers and still spends. Tell her earning restarts the day Zaytoun reopens.', 'ما العمل: ' + st.pausedBal.toFixed(2) + ' ديناراً ما زالت لها وما زالت تُصرف. أخبرها أن الجمع يعود يوم إعادة الافتتاح.'),
+      altLabel: this.L('Redeem her JOD ' + st.pausedBal.toFixed(2) + ' anyway', 'استبدل ' + st.pausedBal.toFixed(2) + ' ديناراً رغم ذلك'),
+      altBr: 'rgba(47,174,102,.45)', altFg: '#7BD8A5',
+      altGo: () => this.setState({ mode: 'redeem', cbSel: null })
+    };
+    if (scen === 'guard') return {
+      mark: '⏱', tone: '#F0A92B',
+      title: this.L('Sara already earned today', 'سارة جمعت ختمها اليوم'),
+      why: this.L('Her stamp landed at 08:41 this morning. A second scan of the same card on the same day adds nothing — the pass already shows ' + st.stamps + ' of ' + st.goal + '.', 'ختمها وصل الساعة 08:41 هذا الصباح. مسح البطاقة نفسها مرة ثانية في اليوم نفسه لا يضيف شيئاً — البطاقة تُظهر ' + st.stamps + ' من ' + st.goal + ' أصلاً.'),
+      rule: this.L('Earning guard · 1 stamp per customer per day · resets at midnight', 'حارس الجمع · ختم واحد لكل زبون يومياً · يُصفَّر منتصف الليل'),
+      doLine: this.L('What to do: tell her it is already on her pass. If she genuinely bought twice, the manager adds the second stamp from the dashboard.', 'ما العمل: أخبرها أن الختم على بطاقتها. وإن كانت اشترت مرتين فعلاً، يضيف المدير الختم الثاني من لوحة التحكم.'),
+      altLabel: this.L('Show her card anyway', 'اعرض بطاقتها على أي حال'),
+      altBr: 'rgba(244,242,238,.24)', altFg: '#F4F2EE',
+      altGo: () => this.scanTo('stamps')
+    };
+    if (scen === 'overcap') return {
+      mark: '✕', tone: '#E2563A',
+      title: this.L('Daily redeem cap reached', 'بلغت حد الاستبدال اليومي'),
+      why: this.L('Noor has already taken two rewards today — 10:12 and 13:40. Daraj allows two redemptions per customer per day.', 'نور استلمت مكافأتين اليوم — 10:12 و13:40. مقهى درج يسمح باستبدالين لكل زبون يومياً.'),
+      rule: this.L('Redemption cap · 2 per customer per day', 'حد الاستبدال · اثنان لكل زبون يومياً'),
+      doLine: this.L('What to do: the full card stays on her pass — nothing is lost. She can redeem it tomorrow, or the manager lifts today’s cap from the dashboard.', 'ما العمل: البطاقة المكتملة تبقى على بطاقتها — لم يضِع شيء. تستطيع استبدالها غداً، أو يرفع المدير حد اليوم من لوحة التحكم.')
+    };
+    if (scen === 'tierlock') {
+      const gold = st.rTier === 'Gold';
+      const need = gold ? 30 : 12, tierEn = gold ? 'Royal' : 'Gold', tierAr = gold ? 'الملكية' : 'الذهبية';
+      const perkEn = gold ? 'The Royal table' : '15% off and the queue skip', perkAr = gold ? 'طاولة الملكية' : 'خصم 15% وتجاوز الطابور';
+      const left = Math.max(0, need - st.rVisits);
+      return {
+        mark: '★', tone: '#E8B824',
+        title: this.L('That perk is ' + tierEn, 'هذه الميزة لفئة ' + tierAr),
+        why: this.L(perkEn + ' belongs to ' + tierEn + '. Rania is ' + (gold ? 'Gold' : 'Silver') + ' — ' + st.rVisits + ' visits, ' + left + ' short of the ' + need + ' that unlock it.', perkAr + ' من مزايا ' + tierAr + '. رانيا ' + (gold ? 'ذهبية' : 'فضية') + ' — ' + st.rVisits + ' زيارة، وتنقصها ' + left + ' من أصل ' + need + ' لفتحها.'),
+        rule: this.L('Tier rule · a perk unlocks at the tier that owns it', 'قاعدة المستويات · تُفتح الميزة عند مستواها'),
+        doLine: this.L('What to do: charge the full bill, and tell her how close she is. Check her in now — the tier lands on her pass the moment she gets there.', 'ما العمل: احسب الفاتورة كاملة، وأخبرها كم اقتربت. سجّل زيارتها الآن — والمستوى يصل بطاقتها لحظة بلوغه.'),
+        altLabel: this.L('Check her in →', 'سجّل زيارتها ←'),
+        altBr: 'rgba(47,174,102,.45)', altFg: '#7BD8A5',
+        altGo: () => this.scanTo('vip')
+      };
+    }
+    return null;
   }
 
   // ────────────────────────────────────────────────────────────────────────────
@@ -1085,9 +1845,15 @@ class Component extends DCLogic {
     const t = this.labels();
     const scen = st.scenario;
     const SCEN = this.scenInfo(scen);
-    const isStampsS = scen === 'stamps', isCash = scen === 'cashback', isPts = scen === 'points';
-    const membershipRenewed = scen === 'membership' && st.renewedMembership;
-    const hasTabs = isStampsS || isCash || isPts;
+    const isStampsS = scen === 'stamps', isPts = scen === 'points';
+    const isPaused = scen === 'paused', pausedRedeem = isPaused && st.mode === 'redeem';
+    // the paused card borrows the whole cashback machine, on its own balance
+    const isCash = scen === 'cashback' || pausedRedeem;
+    const cbBal = isPaused ? st.pausedBal : st.cbBal;
+    const isVerdict = scen === 'discount' || scen === 'membership' || scen === 'expiring';
+    const renewedNow = (scen === 'membership' && st.renewedMembership) || (scen === 'expiring' && st.renewedExpiring);
+    const membershipRenewed = renewedNow;
+    const hasTabs = isStampsS || scen === 'cashback' || isPts;
     const full = st.stamps >= st.goal;
     const amt = parseFloat(st.amount) || 0;
     const rungs = this.rungs();
@@ -1102,6 +1868,11 @@ class Component extends DCLogic {
       : (st.screen === 'member' && (isCash || isPts)) ? 'amt:' + scen
       : st.screen === 'idle' ? 'idle' : '';
     this.armRamp(rampKey);
+    // ── the auto-lock window · only a quiet idle screen with nothing open on top of it, and the key
+    //    changes on every return to idle so coming back from a customer restarts the clock ──
+    const lockable = !st.locked && st.shiftLive && st.screen === 'idle' && !st.flash && !st.pin
+      && !st.shiftOpen && !st.manualOpen && !st.queueSheetOpen && !st.historyOpen && !st.lookupOpen && !st.joinOpen && !st.syncing;
+    this.armIdleLock(lockable ? ['idle', st.scansToday, st.sessionLog.length, st.lang, st.staffName, st.lockSeq, st.offline].join(':') : '');
     const RP = rampKey ? st.ramp : 1;
     const rampIdle = rampKey === 'idle' ? RP : 1;
     const rampAmt = rampKey.slice(0, 4) === 'amt:' ? RP : 1;
@@ -1132,7 +1903,25 @@ class Component extends DCLogic {
       ['challenge', 'Huda — a challenge has a clock', '3/5 visits this month · 9-day window', '#7A4FA3', '3/5', '10.5px'],
       ['foreign', 'A stranger’s card', 'another account · polite refusal', '#E2563A', '⚠', '13px']
     ];
+    // the states where the answer is no — or not yet. Each one names the rule it comes from.
+    const edgeDefs = [
+      ['paused', 'Dana — the shop paused the card', 'earning stops · redeeming still honoured', '#F0A92B', '❙❙', '10px'],
+      ['guard', 'Sara — already stamped today', 'the earning guard, said out loud', '#F0A92B', '⏱', '12px'],
+      ['overcap', 'Noor — the daily redeem cap', 'two rewards already taken today', '#E2563A', '2×', '11px'],
+      ['tierlock', 'Rania — a perk she hasn’t reached', 'Gold perk, Silver member', '#E8B824', '★', '13px'],
+      ['expiring', 'Luay — expiring in 9 days', 'the third verdict · amber, with a way out', '#F0A92B', '9d', '11px']
+    ];
     const tint = (hex, a) => 'rgba(' + parseInt(hex.slice(1, 3), 16) + ',' + parseInt(hex.slice(3, 5), 16) + ',' + parseInt(hex.slice(5, 7), 16) + ',' + a + ')';
+    // ── the refusal in play, and the redeem lock that belongs to this screen ──
+    const lockedLabel = this.L('Locked — a manager must unlock it', 'مقفل — على المدير فتحه');
+    const RF = this.refusalDef(scen);
+    const rdTag = isStampsS ? 'stamps' : (scen === 'cashback' || isPaused) ? 'cash' : isPts ? 'pts' : scen === 'coupon' ? 'coupon' : (scen === 'membership' || scen === 'expiring') ? 'renew' : '';
+    const rdLocked = !!rdTag && this.isRedeemLocked(scen, rdTag);
+    const rdKey = rdTag ? this.lockKeyFor(scen, rdTag) : '';
+    const CARDS = this.cardDefs();
+    const corrL = this.corrRow(), corrC = this.correctionFor(corrL);
+    const lookHits = st.lookupOpen ? this.lookupHits() : [];
+    const joinCard = CARDS[st.joinCard] || CARDS.daraj, joinWho = this.joinPerson(st.joinCard);
 
     return {
       dir: EN ? 'ltr' : 'rtl', t,
@@ -1146,7 +1935,21 @@ class Component extends DCLogic {
       idleSubLine: this.L('Rainbow St · ' + Math.round(st.scansToday * rampIdle) + ' scans today', 'شارع الرينبو · ' + Math.round(st.scansToday * rampIdle) + ' عملية مسح اليوم'),
       staffAvatarAnim: st.staffSeq ? SEED(st.staffSeq, 'bumpA', 'bumpB', '.42s') : AN('popIn', '.4s'),
       staffNameAnim: st.staffSeq ? SEED(st.staffSeq, 'nameA', 'nameB', '.45s', '.06s') : 'none',
-      scanDefault: () => this.scanTo('stamps'),
+      // the circle is a customer walking up, so it obeys the earning guard; the demo rail does not
+      scanDefault: () => this.scanTo('stamps', true),
+      // ── the four jobs the counter actually has, next to the one it already had ──
+      idleActions: [
+        { icon: '#', label: t.manual, go: () => this.setState({ manualOpen: true, manualCode: '', manualError: false }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' },
+        { icon: '⌕', label: this.L('Find a customer', 'ابحث عن زبون'), go: () => this.setState({ lookupOpen: true, lookupQ: '' }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' },
+        { icon: '＋', label: this.L('New customer', 'زبون جديد'), go: () => this.openJoin(), br: 'rgba(232,128,36,.5)', bg: 'rgba(232,128,36,.08)', fg: '#F09A4D' },
+        { icon: '☰', label: this.L('Today’s actions', 'عمليات اليوم'), go: () => this.setState({ historyOpen: true, corrId: null }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' }
+      ].map((a, i) => ({ ...a, anim: AN('fadeUp', '.34s', (0.1 + 0.04 * i) + 's') })),
+      // the chips are the cards this person is cleared for — not a pair of literals
+      myCards: this.myCardIds().map((id, i) => {
+        const c = CARDS[id] || CARDS.daraj;
+        return { name: this.L(c.name, c.ar), bg: c.bg, br: c.br, fg: c.fg, dot: c.dot, anim: AN('fadeUp', '.34s', (0.14 + 0.05 * i) + 's') };
+      }),
+      lockNow: () => this.lockTill(false),
       // ── manual entry ──
       openManual: () => this.setState({ manualOpen: true, manualCode: '', manualError: false }),
       manualCancel: () => { clearTimeout(this._mt); this.setState({ manualOpen: false, manualCode: '', manualError: false }); },
@@ -1157,16 +1960,17 @@ class Component extends DCLogic {
         k, vis: k ? 'visible' : 'hidden', cur: k ? 'pointer' : 'default', cls: k ? 'ws-key' : '',
         tap: () => { if (!k) return; this.setState(s => { let code = s.manualCode; if (k === '⌫') code = code.slice(0, -1); else if (code.length < 8) code += k; if (code.length === 8) { clearTimeout(this._mt); this._mt = setTimeout(() => this.finishManual(), 200); } return { manualCode: code, manualError: false }; }); }
       })),
-      manualHints: [
-        ['01142201', this.L('Sara · stamps', 'سارة · أختام')],
-        ['01775533', this.L('Khaled · cashback', 'خالد · استرداد')],
-        ['01924410', this.L('Salma · points', 'سلمى · نقاط')]
-      ].map(([code, who], i) => ({
-        label: who + ' — ' + code.slice(0, 4) + ' ' + code.slice(4),
-        anim: AN('fadeUp', '.34s', (0.1 + 0.05 * i) + 's'),
+      // every card that carries a printed code offers it here — not three of nine
+      manualHints: Object.keys(this.manualCodes()).map(code => {
+        const k = this.manualCodes()[code], S = this.scenInfo(k);
+        return { code, who: this.L(S.m[0].split(' ')[0], S.m[1].split(' ')[0]) };
+      }).map(({ code, who }, i) => ({
+        label: who + ' · ' + code,
+        anim: AN('fadeUp', '.3s', (0.08 + 0.025 * i) + 's'),
         fill: () => { this.setState({ manualCode: code, manualError: false }); clearTimeout(this._mt); this._mt = setTimeout(() => this.finishManual(), 220); }
       })),
-      toIdle: () => { clearTimeout(this._ut); this.setState({ screen: 'idle', scenario: null, undo: null }); },
+      toIdle: () => { clearTimeout(this._ut); this.setState({ screen: 'idle', scenario: null, undo: null, foundBy: null }); },
+      chev: EN ? '›' : '‹',
       // ── offline ──
       offline: st.offline,
       // the bar stays up through the sync so the drain is visible, then clears itself
@@ -1175,9 +1979,10 @@ class Component extends DCLogic {
       barBr: st.syncing ? 'rgba(47,174,102,.4)' : 'rgba(240,169,43,.4)',
       barFg: st.syncing ? '#7BD8A5' : '#F0A92B',
       barDot: st.syncing ? '#2FAE66' : '#F0A92B',
+      // the badge counts the SAME list the sheet lists — the two can never disagree again
       offlineLine: st.syncing
         ? this.L('Syncing ' + Math.max(0, st.queueLog.length - st.syncDone) + '…', 'جارٍ المزامنة — ' + Math.max(0, st.queueLog.length - st.syncDone) + ' متبقية')
-        : this.L('Offline — ' + st.queued + (st.queued === 1 ? ' collection' : ' collections') + ' queued · redeems locked', 'دون إنترنت — ' + st.queued + ' عملية جمع بالانتظار · الاستبدال مقفل'),
+        : this.L('Offline — ' + st.queueLog.length + (st.queueLog.length === 1 ? ' action' : ' actions') + ' queued · redeems locked', 'دون إنترنت — ' + st.queueLog.length + ' عملية بالانتظار · الاستبدال مقفل'),
       offBannerAnim: AN('slideDown', '.35s'),
       offSwSub: 'Collections queue · redemptions lock',
       toggleOffline: () => {
@@ -1193,9 +1998,9 @@ class Component extends DCLogic {
       openQueueSheet: () => this.setState({ queueSheetOpen: true }),
       closeQueueSheet: () => this.setState({ queueSheetOpen: false }),
       queueEmpty: st.queueLog.length === 0,
-      queueItems: st.queueLog.slice(0, 6).map((q, i) => {
+      queueItems: st.queueLog.map((q, i) => {
         const done = st.syncing && i < st.syncDone;
-        return { member: this.memberName(q.scen), action: this.actionText(q.k, q.v), time: this.timeAgo(q),
+        return { member: this.rowWho(q), action: this.actionText(q.k, q.v), time: this.timeAgo(q),
           anim: AN('fadeUp', '.32s', (0.04 + 0.05 * i) + 's'),
           done, tickAnim: done ? 'popIn .3s cubic-bezier(.22,.61,.36,1) both' : 'none',
           rowBr: done ? 'rgba(47,174,102,.4)' : 'rgba(244,242,238,.08)',
@@ -1218,6 +2023,14 @@ class Component extends DCLogic {
       ].map(x => ({ label: x.label, go: () => this.setState({ mode: x.key, selRw: null, cbSel: null }), br: st.mode === x.key ? x.c : 'rgba(244,242,238,.14)', bg: st.mode === x.key ? (x.key === 'collect' ? 'rgba(47,174,102,.16)' : 'rgba(232,128,36,.16)') : 'transparent', fg: st.mode === x.key ? (x.key === 'collect' ? '#7BD8A5' : '#F09A4D') : '#9B99A3' })),
       modeCollect: st.mode === 'collect', modeRedeem: st.mode === 'redeem',
       collectBg: '#2FAE66',
+      // ── the paused card keeps its redeem and loses its earn, and says so on every screen ──
+      pausedNote: pausedRedeem,
+      pausedNoteLine: this.L('Earning is paused — redeeming is not. The balance is hers until she spends it.', 'الجمع موقوف — أما الاستبدال فلا. الرصيد لها حتى تصرفه.'),
+      // ── the lockout the flash has been promising · now real, stored, and manager-clearable ──
+      rdLocked,
+      rdLockTitle: t.rdLockTitle,
+      rdLockWhy: this.L('Three wrong staff codes on this redeem. Only a manager PIN clears it.', 'ثلاثة رموز موظف خاطئة على هذا الاستبدال. رمز المدير وحده يفتحه.'),
+      askManagerUnlock: () => { if (rdKey) this.askPin('mgr:' + rdKey); },
       // ── stamps ──
       bStamps: isStampsS, stampCount: st.stamps, goal: st.goal,
       stampCells: Array.from({ length: st.goal }, (_, i) => {
@@ -1264,7 +2077,8 @@ class Component extends DCLogic {
       addStamp: () => {
         if (full) { this.setState({ mode: 'redeem' }); return; }
         const n = st.stamps + 1;
-        this.setState(s => ({ stamps: n, sStamps: s.sStamps + 1, queued: s.offline ? s.queued + 1 : s.queued, stampSeq: s.stampSeq + 1 }));
+        // the earning guard is armed by the earn itself: this customer has had today's stamp
+        this.setState(s => ({ stamps: n, sStamps: s.sStamps + 1, stampSeq: s.stampSeq + 1, guardHit: true }));
         this.armUndo('stamp', 1, st.offline);
         this.flashNow('stamp', '#2FAE66', this.L('Stamp ' + n + ' of ' + st.goal, 'الختم ' + n + ' من ' + st.goal),
           st.offline ? this.L('Queued — it lands the second the till is back online.', 'محفوظ — يصل لحظة عودة الاتصال.')
@@ -1278,16 +2092,17 @@ class Component extends DCLogic {
       stampsReady: full, stampsNotReady: !full,
       stampsResetLine: this.L(st.goal + ' / ' + st.goal + ' — the card resets after redeeming', st.goal + ' / ' + st.goal + ' — تُصفَّر البطاقة بعد الاستبدال'),
       shortfallLine: this.L(st.stamps + ' / ' + st.goal + ' — ' + (st.goal - st.stamps) + ' short', st.stamps + ' / ' + st.goal + ' — ناقص ' + (st.goal - st.stamps)),
-      redeemCursor: st.offline ? 'not-allowed' : 'pointer',
-      redeemStampsBg: full && !st.offline ? '#E88024' : '#26262B', redeemStampsFg: full && !st.offline ? '#FFFFFF' : '#8E8C96',
-      redeemStampsCls: full && !st.offline ? 'ws-cta' : 'ws-cta ws-off',
-      redeemStampsLabel: st.offline ? this.L('Redeem locked offline — no double-spend', 'الاستبدال مقفل دون إنترنت — منعاً للصرف المزدوج')
-        : (full ? this.L('Redeem the free drink (PIN)', 'استبدال المشروب المجاني (رمز)') : this.L('Nothing to redeem yet', 'لا شيء للاستبدال بعد')),
-      redeemStamps: () => { if (!full || st.offline) return; this.askPin('stamps'); },
+      redeemCursor: (st.offline || rdLocked) ? 'not-allowed' : 'pointer',
+      redeemStampsBg: full && !st.offline && !rdLocked ? '#E88024' : '#26262B', redeemStampsFg: full && !st.offline && !rdLocked ? '#FFFFFF' : '#8E8C96',
+      redeemStampsCls: full && !st.offline && !rdLocked ? 'ws-cta' : 'ws-cta ws-off',
+      redeemStampsLabel: rdLocked ? lockedLabel
+        : st.offline ? this.L('Redeem locked offline — no double-spend', 'الاستبدال مقفل دون إنترنت — منعاً للصرف المزدوج')
+          : (full ? this.L('Redeem the free drink (PIN)', 'استبدال المشروب المجاني (رمز)') : this.L('Nothing to redeem yet', 'لا شيء للاستبدال بعد')),
+      redeemStamps: () => { if (!full || st.offline || rdLocked) return; this.askPin('stamps'); },
       // ── amount types ──
       bAmount: isCash || isPts, isCashback: isCash, isPoints: isPts,
       amtTopLabel: isCash ? this.L('Wallet balance', 'رصيد المحفظة') : this.L('Points balance', 'رصيد النقاط'),
-      amtTopValue: isCash ? jod((st.cbBal * rampAmt).toFixed(2)) : ptsWord(Math.round(st.pts * rampAmt)),
+      amtTopValue: isCash ? jod((cbBal * rampAmt).toFixed(2)) : ptsWord(Math.round(st.pts * rampAmt)),
       amtDisplay: jod(st.amount || '0'),
       amtBumpAnim: st.amtSeq > 0 ? SEED(st.amtSeq, 'bumpA', 'bumpB', '.28s') : 'none',
       previewAnim: st.amtSeq > 0 ? SEED(st.amtSeq, 'pvA', 'pvB', '.34s') : 'none',
@@ -1303,7 +2118,7 @@ class Component extends DCLogic {
         if (amt <= 0) return;
         if (isCash) {
           const back = +(amt * 0.05).toFixed(2), nb = +(st.cbBal + back).toFixed(2);
-          this.setState(s => ({ cbBal: nb, amount: '', amtSeq: 0, queued: s.offline ? s.queued + 1 : s.queued }));
+          this.setState(s => ({ cbBal: nb, amount: '', amtSeq: 0 }));
           this.armUndo('cash', back, st.offline);
           this.flashNow('✓', '#2FAE66', this.L('+ JOD ' + back.toFixed(2), '+ ' + back.toFixed(2) + ' ديناراً'), st.offline ? this.L('Queued for sync.', 'محفوظ للمزامنة.') : this.L('New balance JOD ' + nb.toFixed(2) + ' — already on his pass.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — على بطاقته فوراً.'));
           this.logAction(scen, 'colCash', back.toFixed(2));
@@ -1311,7 +2126,7 @@ class Component extends DCLogic {
           if (st.offline) this.pushQueue(scen, 'qCash', back.toFixed(2), ev); else this.emitLive(ev);
         } else {
           const add = Math.round(amt * 10), np = st.pts + add;
-          this.setState(s => ({ pts: np, amount: '', amtSeq: 0, queued: s.offline ? s.queued + 1 : s.queued }));
+          this.setState(s => ({ pts: np, amount: '', amtSeq: 0 }));
           this.armUndo('pts', add, st.offline);
           this.flashNow('✓', '#2FAE66', this.L('+ ' + add + ' pts', '+ ' + add + ' نقطة'), st.offline ? this.L('Queued for sync.', 'محفوظ للمزامنة.') : this.L('Balance ' + np + ' pts.', 'الرصيد ' + np + ' نقطة.'));
           this.logAction(scen, 'colPts', add);
@@ -1320,11 +2135,11 @@ class Component extends DCLogic {
         }
         this.saveScan();
       },
-      cbRedeemHint: this.L('Balance JOD ' + st.cbBal.toFixed(2) + ' — spend all of it or part of it.', 'الرصيد ' + st.cbBal.toFixed(2) + ' ديناراً — اصرفه كاملاً أو جزءاً منه.'),
-      cbQuick: [1, 2, st.cbBal].map((v, i) => {
-        const val = i === 2 ? st.cbBal : v, ok = val <= st.cbBal, sel = st.cbSel === val;
+      cbRedeemHint: this.L('Balance JOD ' + cbBal.toFixed(2) + ' — spend all of it or part of it.', 'الرصيد ' + cbBal.toFixed(2) + ' ديناراً — اصرفه كاملاً أو جزءاً منه.'),
+      cbQuick: [1, 2, cbBal].map((v, i) => {
+        const val = i === 2 ? cbBal : v, ok = val <= cbBal, sel = st.cbSel === val;
         return {
-          label: i === 2 ? this.L('All · JOD ' + st.cbBal.toFixed(2), 'الكل · ' + st.cbBal.toFixed(2) + ' ديناراً') : this.L('JOD ' + val.toFixed(2), val.toFixed(2) + ' ديناراً'),
+          label: i === 2 ? this.L('All · JOD ' + cbBal.toFixed(2), 'الكل · ' + cbBal.toFixed(2) + ' ديناراً') : this.L('JOD ' + val.toFixed(2), val.toFixed(2) + ' ديناراً'),
           pick: () => ok && this.setState({ cbSel: sel ? null : val }),
           br: sel ? '#E88024' : (ok ? 'rgba(47,174,102,.3)' : 'rgba(244,242,238,.1)'),
           bg: sel ? 'rgba(232,128,36,.16)' : 'transparent',
@@ -1334,14 +2149,15 @@ class Component extends DCLogic {
           enter: AN('popIn', '.34s', (0.14 + 0.05 * i) + 's')
         };
       }),
-      cbMinLine: st.cbBal < 2 ? this.L('Below the JOD 2 minimum — kindly refused, the balance keeps growing.', 'أقل من الحد الأدنى (ديناران) — رفض بلطف، والرصيد يستمر بالنمو.') : this.L('House rule: redeem from JOD 2 up.', 'قاعدة المحل: الاستبدال من ديناريْن فما فوق.'),
-      cbRedeemBg: st.cbSel && !st.offline && st.cbBal >= 2 ? '#E88024' : '#26262B', cbRedeemFg: st.cbSel && !st.offline && st.cbBal >= 2 ? '#FFFFFF' : '#8E8C96',
-      cbRedeemCls: st.cbSel && !st.offline && st.cbBal >= 2 ? 'ws-cta' : 'ws-cta ws-off',
-      cbRedeemLabel: st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت')
-        : st.cbBal < 2 ? this.L('Below minimum — keep collecting', 'أقل من الحد الأدنى — تابعوا الجمع')
-          : st.cbSel ? this.L('Take JOD ' + st.cbSel.toFixed(2) + ' off the bill (PIN)', 'اخصم ' + st.cbSel.toFixed(2) + ' ديناراً من الفاتورة (رمز)')
-            : this.L('Pick an amount — nothing preselected', 'اختر المبلغ — لا شيء محدد مسبقاً'),
-      redeemCash: () => { if (!st.cbSel || st.offline || st.cbBal < 2) return; this.askPin('cash'); },
+      cbMinLine: cbBal < 2 ? this.L('Below the JOD 2 minimum — kindly refused, the balance keeps growing.', 'أقل من الحد الأدنى (ديناران) — رفض بلطف، والرصيد يستمر بالنمو.') : this.L('House rule: redeem from JOD 2 up.', 'قاعدة المحل: الاستبدال من ديناريْن فما فوق.'),
+      cbRedeemBg: st.cbSel && !st.offline && !rdLocked && cbBal >= 2 ? '#E88024' : '#26262B', cbRedeemFg: st.cbSel && !st.offline && !rdLocked && cbBal >= 2 ? '#FFFFFF' : '#8E8C96',
+      cbRedeemCls: st.cbSel && !st.offline && !rdLocked && cbBal >= 2 ? 'ws-cta' : 'ws-cta ws-off',
+      cbRedeemLabel: rdLocked ? lockedLabel
+        : st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت')
+          : cbBal < 2 ? this.L('Below minimum — keep collecting', 'أقل من الحد الأدنى — تابعوا الجمع')
+            : st.cbSel ? this.L('Take JOD ' + st.cbSel.toFixed(2) + ' off the bill (PIN)', 'اخصم ' + st.cbSel.toFixed(2) + ' ديناراً من الفاتورة (رمز)')
+              : this.L('Pick an amount — nothing preselected', 'اختر المبلغ — لا شيء محدد مسبقاً'),
+      redeemCash: () => { if (!st.cbSel || st.offline || rdLocked || cbBal < 2) return; this.askPin('cash'); },
       // ── the redeem ladder · ready-glow above, shortfall bar below ──
       ptRungs: rungs.map((r, i) => {
         const ok = r.cost <= st.pts, sel = st.selRw === i;
@@ -1361,19 +2177,21 @@ class Component extends DCLogic {
           enter: AN('fadeUp', '.4s', (0.16 + 0.07 * i) + 's')
         };
       }),
-      ptRedeemBg: st.selRw != null && !st.offline ? '#E88024' : '#26262B', ptRedeemFg: st.selRw != null && !st.offline ? '#FFFFFF' : '#8E8C96',
-      ptRedeemCls: st.selRw != null && !st.offline ? 'ws-cta' : 'ws-cta ws-off',
-      ptRedeemLabel: st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت')
-        : st.selRw != null ? this.L('Redeem ' + this.rungName(st.selRw) + ' (PIN)', 'استبدال ' + this.rungName(st.selRw) + ' (رمز)')
-          : this.L('The customer picks first', 'الزبون يختار أولاً'),
-      redeemPts: () => { if (st.selRw == null || st.offline) return; this.askPin('pts'); },
+      ptRedeemBg: st.selRw != null && !st.offline && !rdLocked ? '#E88024' : '#26262B', ptRedeemFg: st.selRw != null && !st.offline && !rdLocked ? '#FFFFFF' : '#8E8C96',
+      ptRedeemCls: st.selRw != null && !st.offline && !rdLocked ? 'ws-cta' : 'ws-cta ws-off',
+      ptRedeemLabel: rdLocked ? lockedLabel
+        : st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت')
+          : st.selRw != null ? this.L('Redeem ' + this.rungName(st.selRw) + ' (PIN)', 'استبدال ' + this.rungName(st.selRw) + ' (رمز)')
+            : this.L('The customer picks first', 'الزبون يختار أولاً'),
+      redeemPts: () => { if (st.selRw == null || st.offline || rdLocked) return; this.askPin('pts'); },
       // ── coupon ──
       bCoupon: scen === 'coupon', couponFresh: !st.couponDone, couponUsed: st.couponDone,
-      cpRedeemBg: !st.couponDone && !st.offline ? '#E88024' : '#26262B', cpRedeemFg: !st.couponDone && !st.offline ? '#FFFFFF' : '#8E8C96',
-      cpRedeemCls: !st.couponDone && !st.offline ? 'ws-cta' : 'ws-cta ws-off',
+      cpRedeemBg: !st.couponDone && !st.offline && !rdLocked ? '#E88024' : '#26262B', cpRedeemFg: !st.couponDone && !st.offline && !rdLocked ? '#FFFFFF' : '#8E8C96',
+      cpRedeemCls: !st.couponDone && !st.offline && !rdLocked ? 'ws-cta' : 'ws-cta ws-off',
       cpRedeemLabel: st.couponDone ? this.L('Nothing to redeem — it’s spent', 'لا شيء للاستبدال — استُهلك')
-        : st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت') : this.L('Redeem — we’ll ask twice', 'استبدال — سنسأل مرتين'),
-      redeemCoupon: () => { if (st.couponDone || st.offline) return; this.askPin('coupon'); },
+        : rdLocked ? lockedLabel
+          : st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت') : this.L('Redeem — we’ll ask twice', 'استبدال — سنسأل مرتين'),
+      redeemCoupon: () => { if (st.couponDone || st.offline || rdLocked) return; this.askPin('coupon'); },
       crossSellStamp: () => { this.scanTo('stamps'); this.flashNow('stamp', '#2FAE66', t.crossSellFlashTitle, t.crossSellFlashSub); },
       // ── VIP · the tier ladder ──
       bVip: scen === 'vip',
@@ -1398,19 +2216,36 @@ class Component extends DCLogic {
         ? [this.L('Skip the line, always', 'أولوية دائمة بلا انتظار'), this.L('15% off the bill', 'خصم 15% على الفاتورة'), this.L('Gold nights — rooftop Thursdays', 'ليالي الذهبية — سطح كل خميس')]
         : [this.L('Members-only offers', 'عروض للأعضاء فقط'), this.L('Birthday dessert on the house', 'حلوى عيد الميلاد على الحساب')]
       ).map((p, i) => ({ p, anim: AN('fadeUp', '.36s', (0.2 + 0.06 * i) + 's') })),
-      vipBtnLabel: this.L('✓ Check in', '✓ تسجيل زيارة'),
+      vipBtnLabel: st.offline ? this.L('✓ Check in (queues offline)', '✓ تسجيل زيارة (يُحفظ للمزامنة)') : this.L('✓ Check in', '✓ تسجيل زيارة'),
+      // a check-in is a collection like any other: offline it QUEUES and its announcement waits
+      // for the sync, and for eight seconds it can be taken back like any other collection
       vipCheckin: () => {
-        if (tierIdx) { this.flashNow('★', '#E8B824', this.L('Visit logged', 'سُجّلت الزيارة'), this.L('Rania keeps every Gold perk.', 'رانيا تحتفظ بكل مزايا الذهبية.')); this.logAction(scen, 'visit'); this.emitLive(this.liveFor(scen, 'earn', 'checked in — Gold')); this.saveScan(); return; }
-        const v = st.rVisits + 1;
-        if (v >= GOLD_AT) {
+        const v = st.rVisits + 1, up = !tierIdx && v >= GOLD_AT;
+        if (tierIdx) {
+          this.setState(s => ({ rVisits: v, vipSeq: s.vipSeq + 1, vipClimb: true, vipFromPct: vipTo }));
+          this.flashNow('★', '#E8B824', this.L('Visit logged', 'سُجّلت الزيارة'), st.offline ? this.L('Queued — it lands the second the till is back online.', 'محفوظة — تصل لحظة عودة الاتصال.') : this.L('Rania keeps every Gold perk.', 'رانيا تحتفظ بكل مزايا الذهبية.'));
+        } else if (up) {
           this.setState(s => ({ rVisits: v, rTier: 'Gold', vipClimb: true, vipFromPct: vipTo, vipSeq: s.vipSeq + 1 }));
-          this.flashNow('★', '#E8B824', this.L('SILVER → GOLD', 'فضية ← ذهبية'), this.L('The tier-up lands on her pass with a little ceremony.', 'الترقية تصل إلى بطاقتها باحتفال صغير.'));
-          this.logAction(scen, 'tierUp'); this.emitLive(this.liveFor(scen, 'earn', 'checked in — Gold'));
+          this.flashNow('★', '#E8B824', this.L('SILVER → GOLD', 'فضية ← ذهبية'), st.offline ? this.L('Queued — the tier-up lands with the sync.', 'محفوظة — الترقية تصل مع المزامنة.') : this.L('The tier-up lands on her pass with a little ceremony.', 'الترقية تصل إلى بطاقتها باحتفال صغير.'));
         } else {
           this.setState(s => ({ rVisits: v, vipSeq: s.vipSeq + 1, vipClimb: true, vipFromPct: vipTo }));
-          this.flashNow('✓', '#2FAE66', this.L('Visit ' + v, 'الزيارة ' + v), this.L((GOLD_AT - v) + ' more to Gold.', 'بقي ' + (GOLD_AT - v) + ' للوصول إلى الذهبية.'));
-          this.logAction(scen, 'visit'); this.emitLive(this.liveFor(scen, 'earn', 'checked in — Silver'));
+          this.flashNow('✓', '#2FAE66', this.L('Visit ' + v, 'الزيارة ' + v), st.offline ? this.L('Queued for sync.', 'محفوظة للمزامنة.') : this.L((GOLD_AT - v) + ' more to Gold.', 'بقي ' + (GOLD_AT - v) + ' للوصول إلى الذهبية.'));
         }
+        this.armUndo('visit', 1, st.offline, { prevTier: st.rTier });
+        this.logAction(scen, up ? 'tierUp' : 'visit');
+        const ev = this.liveFor(scen, 'earn', 'checked in — ' + (up || tierIdx ? 'Gold' : 'Silver'));
+        if (st.offline) this.pushQueue(scen, 'visit', undefined, ev); else this.emitLive(ev);
+        this.saveScan();
+      },
+      // the perk the customer asks for by name. Reached, it applies; not reached, it refuses — and
+      // the refusal is the tier rule said out loud, not a dead button
+      perkBtnLabel: tierIdx ? this.L('Apply 15% off · Gold perk', 'طبّق خصم 15% · ميزة ذهبية') : this.L('Apply 15% off · Gold perk', 'طبّق خصم 15% · ميزة ذهبية'),
+      perkBr: tierIdx ? 'rgba(232,184,36,.5)' : 'rgba(244,242,238,.2)',
+      perkFg: tierIdx ? '#E8B824' : '#9B99A3',
+      applyPerk: () => {
+        if (!tierIdx) { this.scanTo('tierlock'); return; }
+        this.flashNow('★', '#E8B824', this.L('15% off — applied', 'خصم 15% — طُبّق'), this.L('Gold perk. Take it off the bill at the till.', 'ميزة ذهبية. اخصمها من الفاتورة على الصندوق.'));
+        this.logAction(scen, 'perk');
         this.saveScan();
       },
       // ── challenge · the countdown ring ──
@@ -1425,36 +2260,48 @@ class Component extends DCLogic {
       chBtnCursor: st.chDone ? 'not-allowed' : 'pointer',
       chBtnBg: st.chDone ? '#26262B' : '#2FAE66', chBtnFg: st.chDone ? '#8E8C96' : '#FFFFFF',
       chBtnCls: st.chDone ? 'ws-cta ws-off' : 'ws-cta',
-      chBtnLabel: st.chDone ? t.challengeDoneBtn : t.countVisitLabel,
+      chBtnLabel: st.chDone ? t.challengeDoneBtn : (st.offline ? this.L('+ Count this visit (queues offline)', '+ سجّل هذه الزيارة (تُحفظ للمزامنة)') : t.countVisitLabel),
       countVisit: () => {
         if (st.chDone) return;
-        const v = st.chVisits + 1;
-        this.setState(s => ({ chVisits: v, chFrom: s.chVisits, chSeq: s.chSeq + 1, chDone: v >= s.chGoal }));
-        if (v >= st.chGoal) { this.flashNow('🎉', '#2FAE66', t.challengeDoneTitle, this.L('Huda unlocked the free lunch.', 'هدى فازت بالغداء المجاني.')); this.logAction(scen, 'chDone'); }
-        else { this.flashNow('✓', '#2FAE66', this.L('Visit ' + v + ' of ' + st.chGoal, 'الزيارة ' + v + ' من ' + st.chGoal), this.L((st.chGoal - v) + ' to go.', 'بقيت ' + (st.chGoal - v) + ' زيارات.')); this.logAction(scen, 'chVisit'); }
+        const v = st.chVisits + 1, done = v >= st.chGoal;
+        this.setState(s => ({ chVisits: v, chFrom: s.chVisits, chSeq: s.chSeq + 1, chDone: done }));
+        if (done) this.flashNow('🎉', '#2FAE66', t.challengeDoneTitle, st.offline ? this.L('Queued — the prize lands with the sync.', 'محفوظة — الجائزة تصل مع المزامنة.') : this.L('Huda unlocked the free lunch.', 'هدى فازت بالغداء المجاني.'));
+        else this.flashNow('✓', '#2FAE66', this.L('Visit ' + v + ' of ' + st.chGoal, 'الزيارة ' + v + ' من ' + st.chGoal), st.offline ? this.L('Queued for sync.', 'محفوظة للمزامنة.') : this.L((st.chGoal - v) + ' to go.', 'بقيت ' + (st.chGoal - v) + ' زيارات.'));
+        this.armUndo('chVisit', 1, st.offline);
+        this.logAction(scen, done ? 'chDone' : 'chVisit');
+        const ev = this.liveFor(scen, done ? 'reward' : 'earn', done ? 'finished the challenge — free lunch unlocked' : 'logged challenge visit ' + v + ' of ' + st.chGoal);
+        if (st.offline) this.pushQueue(scen, 'chVisit', undefined, ev); else this.emitLive(ev);
         this.saveScan();
       },
-      // ── verdicts · the mark draws itself ──
-      bVerdict: scen === 'discount' || scen === 'membership',
-      vdOk: scen === 'discount' || membershipRenewed, vdWarn: !(scen === 'discount' || membershipRenewed),
-      showRenewBtn: scen === 'membership' && !st.renewedMembership,
-      renewMembership: () => this.askPin('renew'),
-      vdBg: (scen === 'discount' || membershipRenewed) ? 'rgba(47,174,102,.12)' : 'rgba(240,169,43,.12)',
-      vdBorder: (scen === 'discount' || membershipRenewed) ? '#2FAE66' : '#F0A92B',
+      // ── verdicts · three states, not two · the mark draws itself ──
+      bVerdict: isVerdict,
+      vdOk: scen === 'discount' || renewedNow, vdWarn: !(scen === 'discount' || renewedNow),
+      showRenewBtn: (scen === 'membership' && !st.renewedMembership) || (scen === 'expiring' && !st.renewedExpiring),
+      renewMembership: () => { if (rdLocked) return; this.askPin('renew'); },
+      vdBg: (scen === 'discount' || renewedNow) ? 'rgba(47,174,102,.12)' : (scen === 'expiring' ? 'rgba(240,169,43,.12)' : 'rgba(226,86,58,.12)'),
+      vdBorder: (scen === 'discount' || renewedNow) ? '#2FAE66' : (scen === 'expiring' ? '#F0A92B' : '#E2563A'),
       vdFloodAnim: AN('flood', '.42s'), vdRippleAnim: AN('ringOut', '.7s', '.16s'),
       vdDrawAnim: AN('drawMark', '.55s', '.14s'), vdDotAnim: AN('popIn', '.3s', '.5s'),
       vdTitle: scen === 'discount' ? this.L('Valid — 15% off', 'سارية — خصم 15%')
-        : (membershipRenewed ? this.L('Active — renewed today', 'فعّال — جُدّد اليوم') : this.L('Expired 12 days ago', 'انتهى قبل 12 يوماً')),
+        : renewedNow ? this.L('Active — renewed today', 'فعّال — جُدّد اليوم')
+          : scen === 'expiring' ? this.L('Expiring in 9 days', 'ينتهي بعد 9 أيام')
+            : this.L('Expired 12 days ago', 'انتهى قبل 12 يوماً'),
       vdSub: scen === 'discount' ? this.L('Apply it at the till. No tabs, no typing — the card is a verdict.', 'طبّق الخصم على الصندوق. لا تبويبات ولا كتابة — البطاقة حكم لا معاملة.')
-        : (membershipRenewed ? this.L('Renewed just now — same pass, active again.', 'جُدّد للتو — نفس البطاقة، فعّالة من جديد.')
-          : this.L('Lapsed Jul 18. Renewal is JOD 25 at the counter — one tap re-activates the same pass.', 'انتهى في 18 تموز. التجديد 25 ديناراً على الصندوق — لمسة واحدة تعيد تفعيل نفس البطاقة.')),
-      // ── refusal ──
-      bRefusal: scen === 'foreign',
+        : renewedNow ? this.L('Renewed just now — same pass, active again.', 'جُدّد للتو — نفس البطاقة، فعّالة من جديد.')
+          : scen === 'expiring' ? this.L('Valid until 9 Aug 2026 — honour it today. Renewing now is JOD 25 and keeps the same pass, so he never lapses at all.', 'سارٍ حتى 9 آب 2026 — اعتمده اليوم. التجديد الآن 25 ديناراً ويبقيه على نفس البطاقة، فلا ينقطع اشتراكه أصلاً.')
+            : this.L('Lapsed Jul 18. Renewal is JOD 25 at the counter — one tap re-activates the same pass.', 'انتهى في 18 تموز. التجديد 25 ديناراً على الصندوق — لمسة واحدة تعيد تفعيل نفس البطاقة.'),
+      // ── refusals · six of them now, and every one carries the rule it comes from ──
+      bRefusal: !!RF && !pausedRedeem,
       refusalShake: AN('nudge', '.5s', '.18s'),
       rfDoAnim: AN(EN ? 'typeInLtr' : 'typeInRtl', '.55s', '.42s'),
-      rfTitle: this.L('Not your card to scan', 'ليست بطاقتك لتمسحها'),
-      rfWhy: this.L('This pass belongs to Marmar Lounge — a different Wasla account. Nothing was charged, nothing was stamped.', 'هذه البطاقة تخص صالة مرمر — حساب آخر في وصلة. لم يُخصم شيء ولم يُختم شيء.'),
-      rfDo: this.L('What to do: send the customer to Marmar staff — or ask Yara to assign you the card if this is a mistake.', 'ما العمل: وجّه الزبون إلى فريق مرمر — أو اطلب من يارا إسناد البطاقة إليك إن كان هذا خطأً.'),
+      rfMark: RF ? RF.mark : '✕', rfTone: RF ? RF.tone : '#E2563A', rfTint: tint(RF ? RF.tone : '#E2563A', .12),
+      rfTitle: RF ? RF.title : '', rfWhy: RF ? RF.why : '',
+      rfHasRule: !!(RF && RF.rule), rfRule: RF ? (RF.rule || '') : '',
+      rfDo: RF ? RF.doLine : '',
+      rfHasAlt: !!(RF && RF.altLabel), rfAltLabel: RF ? (RF.altLabel || '') : '',
+      rfAltBr: RF ? (RF.altBr || 'rgba(244,242,238,.24)') : 'rgba(244,242,238,.24)',
+      rfAltFg: RF ? (RF.altFg || '#F4F2EE') : '#F4F2EE',
+      rfAltGo: () => { if (RF && RF.altGo) RF.altGo(); },
       // ── flash ──
       // 'stamp' is a token, not a character — the flash draws the real cup at flash size
       hasFlash: !!st.flash,
@@ -1469,8 +2316,13 @@ class Component extends DCLogic {
       flashRippleAnim: 'ringOut .75s cubic-bezier(.22,.61,.36,1) both',
       flashTitleAnim: 'fadeUp .38s cubic-bezier(.22,.61,.36,1) .08s both',
       flashSubAnim: 'fadeUp .38s cubic-bezier(.22,.61,.36,1) .15s both',
-      // ── PIN ──
+      // ── PIN · the staff code for a redeem, a different manager code for an unlock ──
       pinOpen: !!st.pin,
+      pinTitleLine: this.isMgrTag(st.pin) ? t.mgrPinTitle : (st.pin === 'correct' ? t.corrTitle : t.pinTitle),
+      pinSubLine: this.isMgrTag(st.pin) ? t.mgrPinSub
+        : st.pin === 'correct' ? this.L('A correction moves real value — it needs a code and it signs itself.', 'التصحيح يحرّك قيمة حقيقية — يطلب رمزاً ويوقّع باسم صاحبه.')
+          : t.pinSub,
+      pinHintLine: this.isMgrTag(st.pin) ? t.mgrPinHint : t.pinHint,
       pinDots: [0, 1, 2, 3].map(i => ({
         bg: st.pinErr ? '#E2563A' : (i < st.pinDigits.length ? '#E88024' : 'transparent'),
         br: st.pinErr ? '#E2563A' : (i < st.pinDigits.length ? '#E88024' : 'rgba(244,242,238,.4)'),
@@ -1482,18 +2334,27 @@ class Component extends DCLogic {
       pinBadLine: st.pinTries === 1
         ? this.L('Wrong code — 2 tries left', 'رمز خاطئ — بقيت محاولتان')
         : this.L('Wrong code — 1 try left', 'رمز خاطئ — بقيت محاولة واحدة'),
-      pinKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k => ({ k, tap: () => {
-        this.setState(s => (!s.pin || s.pinErr || s.pinDigits.length >= 4) ? null : { pinDigits: s.pinDigits + k });
-        // setState here is synchronous (support.js __setLogicState), so this reads the new length
-        if (this.state.pin && !this.state.pinErr && this.state.pinDigits.length === 4) {
-          clearTimeout(this._pk);
-          this._pk = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.checkPin(); }, 260);
+      // a four-digit code needs a 0 and a way back — the manager code has both, and a mistyped
+      // digit should not burn one of three tries
+      pinKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map(k => ({
+        k, vis: k ? 'visible' : 'hidden', cur: k ? 'pointer' : 'default', cls: k ? 'ws-key' : '',
+        tap: () => {
+          if (!k) return;
+          if (k === '⌫') { this.setState(s => (!s.pin || s.pinErr) ? null : { pinDigits: s.pinDigits.slice(0, -1) }); return; }
+          this.setState(s => (!s.pin || s.pinErr || s.pinDigits.length >= 4) ? null : { pinDigits: s.pinDigits + k });
+          // setState here is synchronous (support.js __setLogicState), so this reads the new length
+          if (this.state.pin && !this.state.pinErr && this.state.pinDigits.length === 4) {
+            clearTimeout(this._pk);
+            this._pk = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.checkPin(); }, 260);
+          }
         }
-      } })),
+      })),
       pinCancel: () => { clearTimeout(this._pk); this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false }); },
       // ── shift + handover ──
       staffName: st.staffName, staffAr: st.staffAr, staffInitials: st.staffInitials,
       endShift: () => this.setState({ shiftOpen: true, handoverPick: false }), shiftOpen: st.shiftOpen,
+      // the way OUT of the end-shift overlay — it used to be a corridor with one door
+      closeShift: () => this.setState({ shiftOpen: false, handoverPick: false }),
       showShiftSummary: st.shiftOpen && !st.handoverPick, showHandoverPicker: st.shiftOpen && st.handoverPick,
       shiftAvatarAnim: AN('popIn', '.42s'),
       shiftTotals: [
@@ -1502,21 +2363,145 @@ class Component extends DCLogic {
         [st.sRewards, this.L('rewards', 'مكافآت')]
       ].map(([n, label], i) => ({ n: Math.round(n * rampShift), label, anim: AN('fadeUp', '.4s', (0.06 + 0.06 * i) + 's') })),
       shiftLogEmpty: st.sessionLog.length === 0,
-      shiftLog: st.sessionLog.slice(0, 6).map((l, i) => ({ member: this.memberName(l.scen), action: this.actionText(l.k, l.v), time: this.timeAgo(l), anim: AN('fadeUp', '.34s', (0.14 + 0.05 * i) + 's') })),
+      // the summary shows the whole log it keeps, not the first six of twenty
+      shiftLog: st.sessionLog.map((l, i) => ({ member: this.rowWho(l), action: this.actionText(l.k, l.v), time: this.timeAgo(l), anim: AN('fadeUp', '.34s', (0.14 + 0.04 * Math.min(i, 8)) + 's') })),
       startHandover: () => this.setState({ handoverPick: true }),
       cancelHandover: () => this.setState({ handoverPick: false }),
-      staffChoices: this.staffList().map((p, i) => {
+      // only the people cleared for THIS branch can be handed the phone
+      staffChoices: this.staffList().map((p, i) => ({ p, i })).filter(x => x.p.branch === this.tillBranch()).map(({ p, i }, n) => {
         const isYou = p.name === st.staffName;
-        return { name: p.name, initials: p.initials, sub: p.ar + this.L(' · Rainbow St', ' · شارع الرينبو'),
+        return { name: EN ? p.name : p.ar, initials: p.initials, sub: (EN ? p.ar : p.name) + ' · ' + this.L(p.branch, p.branchAr),
           isYou, br: isYou ? 'rgba(232,128,36,.35)' : 'rgba(244,242,238,.1)', avBg: isYou ? '#E88024' : '#4E6E8E',
-          anim: AN('fadeUp', '.38s', (0.1 + 0.07 * i) + 's'), pick: () => this.pickStaff(i) };
+          anim: AN('fadeUp', '.38s', (0.1 + 0.07 * n) + 's'), pick: () => this.pickStaff(i) };
       }),
       hasUndo: !!st.undo && st.screen === 'member', undoLast: () => this.undoLast(),
+
+      // ── the lock · the app has a beginning, and a way to close between customers ──
+      locked: st.locked,
+      lockPickOpen: st.locked && st.lockStaff == null,
+      lockPinOpen: st.locked && st.lockStaff != null,
+      lockPickErr: st.locked && st.lockStaff == null && st.lockErr,
+      lockBrandLine: this.L('Wasla · Rainbow St', 'وصلة · شارع الرينبو'),
+      lockPickAnim: st.lockSeq ? SEED(st.lockSeq, 'bumpA', 'bumpB', '.42s') : AN('lockRise', '.45s'),
+      lockPinAnim: st.lockSeq ? SEED(st.lockSeq, 'bumpA', 'bumpB', '.42s') : AN('lockRise', '.4s'),
+      lockStaffRows: this.staffList().map((p, i) => {
+        const ok = p.branch === this.tillBranch();
+        return { name: EN ? p.name : p.ar, initials: p.initials, sub: (EN ? p.ar : p.name) + ' · ' + this.L(p.branch, p.branchAr),
+          blocked: !ok, op: ok ? '1' : '.45', cls: ok ? 'ws-row' : 'ws-row ws-off', cur: ok ? 'pointer' : 'not-allowed',
+          br: ok ? 'rgba(244,242,238,.1)' : 'rgba(244,242,238,.06)', avBg: ok ? (p.name === st.staffName ? '#E88024' : '#4E6E8E') : '#3A3A42',
+          anim: AN('fadeUp', '.36s', (0.08 + 0.06 * i) + 's'),
+          pick: () => { if (!ok) return; this.setState({ lockStaff: i, lockDigits: '', lockTries: 0, lockErr: false }); } };
+      }),
+      lockWhoInitials: (this.staffList()[st.lockStaff] || {}).initials || '',
+      lockWhoName: EN ? ((this.staffList()[st.lockStaff] || {}).name || '') : ((this.staffList()[st.lockStaff] || {}).ar || ''),
+      lockWhoSub: EN ? ((this.staffList()[st.lockStaff] || {}).ar || '') : ((this.staffList()[st.lockStaff] || {}).name || ''),
+      lockPinLine: st.lockAuto ? this.L('It locked itself after a quiet minute — nobody touched the till. The shift is still open.', 'قفل نفسه بعد دقيقة من السكون — لم يلمسه أحد. والمناوبة ما زالت مفتوحة.')
+        : st.lockMode === 'start' ? t.lockStartPin : t.lockResumePin,
+      lockDots: [0, 1, 2, 3].map(i => ({
+        bg: st.lockErr ? '#E2563A' : (i < st.lockDigits.length ? '#E88024' : 'transparent'),
+        br: st.lockErr ? '#E2563A' : (i < st.lockDigits.length ? '#E88024' : 'rgba(244,242,238,.4)'),
+        anim: (!st.lockErr && i === st.lockDigits.length - 1) ? 'dotPop .3s cubic-bezier(.22,.61,.36,1) both' : 'none'
+      })),
+      lockShake: st.lockErr ? 'shakeX .4s cubic-bezier(.22,.61,.36,1) both' : 'none',
+      lockErr: st.lockErr && st.lockStaff != null,
+      lockErrLine: st.lockTries >= 3
+        ? this.L('Three wrong codes — ask the manager for your PIN.', 'ثلاثة رموز خاطئة — اطلب رمزك من المدير.')
+        : (st.lockTries === 1 ? this.L('Wrong PIN — 2 tries left', 'رمز خاطئ — بقيت محاولتان') : this.L('Wrong PIN — 1 try left', 'رمز خاطئ — بقيت محاولة واحدة')),
+      lockKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map(k => ({
+        k, vis: k ? 'visible' : 'hidden', cur: k ? 'pointer' : 'default', cls: k ? 'ws-key' : '',
+        tap: () => { if (k) this.lockKeyTap(k); }
+      })),
+      lockBackLabel: st.lockMode === 'start' ? t.lockNotYou : t.lockTakeOver,
+      lockBackToPick: () => this.setState({ lockMode: 'start', lockStaff: null, lockDigits: '', lockTries: 0, lockErr: false }),
+      lockWarnOpen: st.lockWarn && !st.locked,
+      lockWarnLine: t.lockWarnStay,
+      lockWarnBar: 'drainW 12s linear both',
+      stayUnlocked: () => this.stayUnlocked(),
+
+      // ── history · the shift's own memory, and the only way to walk an action back ──
+      historyOpen: st.historyOpen,
+      closeHistory: () => this.setState({ historyOpen: false, corrId: null }),
+      histSubLine: this.L(st.sessionLog.length + (st.sessionLog.length === 1 ? ' action this shift · ' : ' actions this shift · ') + String(st.staffName).split(' ')[0] + ' · Rainbow St',
+        st.sessionLog.length + ' عملية في هذه المناوبة · ' + String(st.staffAr).split(' ')[0] + ' · شارع الرينبو'),
+      histEmpty: st.sessionLog.length === 0,
+      histRows: st.sessionLog.map((l, i) => {
+        const c = this.correctionFor(l), canFix = !!c && !l.corrected;
+        return {
+          member: this.rowWho(l), action: this.actionText(l.k, l.v),
+          actionFg: l.corrected ? '#6E6C77' : '#9B99A3',
+          initials: (this.scenInfo(l.scen).m[2] || '·'), color: this.scenInfo(l.scen).color,
+          meta: this.timeAgo(l) + ' · ' + this.L('Rainbow St', 'شارع الرينبو') + (l.by ? (' · ' + this.L('by ' + String(l.by).split(' ')[0], 'بموافقة ' + String(this.state.staffAr).split(' ')[0])) : ''),
+          corrected: !!l.corrected, canFix,
+          cls: canFix ? 'ws-row' : '', cur: canFix ? 'pointer' : 'default',
+          br: canFix ? 'rgba(244,242,238,.11)' : 'rgba(244,242,238,.06)',
+          op: l.corrected ? '.6' : '1',
+          anim: AN('fadeUp', '.32s', (0.05 + 0.035 * Math.min(i, 9)) + 's'),
+          go: () => { if (canFix) this.setState({ corrId: l.id }); }
+        };
+      }),
+      // the PIN pad sits above this sheet, so cancelling a correction lands back on the confirmation
+      corrOpen: !!st.corrId,
+      corrMember: corrL ? this.rowWho(corrL) : '',
+      corrAction: corrL ? this.actionText(corrL.k, corrL.v) : '',
+      corrMeta: corrL ? (this.timeAgo(corrL) + ' · ' + this.L('Rainbow St', 'شارع الرينبو')) : '',
+      corrEffect: corrC ? corrC.effect : '',
+      corrBtnLabel: t.corrBtn,
+      confirmCorrection: () => { if (this.corrRow() && this.correctionFor(this.corrRow())) this.askPin('correct'); },
+      cancelCorrection: () => this.setState({ corrId: null }),
+
+      // ── lookup · "I forgot my phone" ──
+      lookupOpen: st.lookupOpen,
+      closeLookup: () => this.setState({ lookupOpen: false, lookupQ: '' }),
+      lookupQ: st.lookupQ,
+      lookupSubLine: st.lookupQ ? t.lookupSub : t.lookupStart,
+      onLookupInput: (e) => this.setState({ lookupQ: String((e && e.target && e.target.value) || '').slice(0, 28) }),
+      lookupNone: lookHits.length === 0,
+      lookupNoneLine: this.L('Nobody matches that. Check the spelling, or try the last 4 digits of her phone.', 'لا أحد يطابق ذلك. تحقق من الإملاء، أو جرّب آخر أربعة أرقام من هاتفها.'),
+      lookupRows: lookHits.map((p, i) => ({
+        name: this.L(p.m[0], p.m[1]), initials: p.m[2], color: p.color,
+        card: this.L(p.card, p.cardAr),
+        meta: (p.phone || '') + (p.code ? ' · ' + p.code : ''),
+        anim: AN('fadeUp', '.32s', (0.05 + 0.04 * i) + 's'),
+        go: () => this.resolveLookup(p.key)
+      })),
+
+      // ── enrolment · the counter is 68% of every join in this account's own numbers ──
+      joinOpen: st.joinOpen,
+      closeJoin: () => this.closeJoin(),
+      joinPick: st.joinStage === 'pick', joinQr: st.joinStage === 'qr',
+      joinWaiting: st.joinStage === 'scanning', joinDone: st.joinStage === 'done',
+      joinCards: this.myCardIds().map((id, i) => {
+        const c = CARDS[id] || CARDS.daraj;
+        return { name: this.L(c.name, c.ar), sub: this.L(c.line, c.lineAr), initial: c.initial, dot: c.color,
+          anim: AN('fadeUp', '.36s', (0.1 + 0.07 * i) + 's'),
+          pick: () => this.setState({ joinCard: id, joinStage: 'qr' }) };
+      }),
+      joinTitle: this.L('Point her camera here', 'وجّه كاميرتها إلى هنا'),
+      joinQrEl: st.joinOpen ? this.joinQrEl(this.joinUrlFor(st.joinCard), 158) : null,
+      joinUrl: this.joinUrlFor(st.joinCard),
+      joinColor: joinCard.color, joinInitial: joinCard.initial,
+      joinCardName: this.L(joinCard.name, joinCard.ar),
+      joinHint: this.L('No app, no form, no password. The card lands in her wallet and starts counting today.', 'بلا تطبيق ولا نموذج ولا كلمة سر. البطاقة تصل محفظتها وتبدأ العدّ اليوم.'),
+      joinQrAnim: AN('qrLand', '.5s', '.06s'),
+      joinScanning: () => this.joinScanning(),
+      joinWaitTitle: this.L('She’s scanning…', 'تمسح الرمز الآن…'),
+      joinDoneTitle: this.L(joinWho.en + ' has the card', joinWho.ar + ' معها البطاقة'),
+      joinDoneSub: this.L('It is in her wallet already — ' + joinCard.name + ', counting from today. Yara sees the join on the dashboard.', 'صارت في محفظتها — ' + joinCard.ar + '، وتعدّ من اليوم. ويارا ترى الانضمام على لوحة التحكم.'),
+      joinAgain: () => this.setState({ joinStage: this.myCardIds().length > 1 ? 'pick' : 'qr' }),
+
       // ── the demo rail ──
       demoScans: demoDefs.map(([key, label, sub, dot, glyph, glyphSize], i) => ({
         label, sub, dot, glyph, glyphSize,
         discBg: tint(dot, .10), discBr: tint(dot, .3),
-        go: () => this.scanTo(key),
+        go: () => st.locked ? this.lockNudge() : this.scanTo(key),
+        anim: AN('fadeUp', '.34s', (0.04 + 0.03 * i) + 's'),
+        br: st.scenario === key && st.screen !== 'idle' ? '#E88024' : '#E7E0D5',
+        bg: st.scenario === key && st.screen !== 'idle' ? '#FDF4EC' : '#FFFFFF'
+      })),
+      edgeScans: edgeDefs.map(([key, label, sub, dot, glyph, glyphSize], i) => ({
+        label, sub, dot, glyph, glyphSize,
+        discBg: tint(dot, .10), discBr: tint(dot, .3),
+        go: () => st.locked ? this.lockNudge() : this.scanTo(key),
         anim: AN('fadeUp', '.34s', (0.04 + 0.03 * i) + 's'),
         br: st.scenario === key && st.screen !== 'idle' ? '#E88024' : '#E7E0D5',
         bg: st.scenario === key && st.screen !== 'idle' ? '#FDF4EC' : '#FFFFFF'

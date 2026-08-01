@@ -28,6 +28,11 @@
   @keyframes scanline{0%{top:12%;}50%{top:82%;}100%{top:12%;}}
   @keyframes barBreathe{0%,100%{transform:scaleY(1);}50%{transform:scaleY(.62);}}
   @keyframes barSweep{0%{transform:translateX(-120%);}55%{transform:translateX(320%);}100%{transform:translateX(320%);}}
+  /* the sales-rep phone · a lead row nudges toward the next lane and warms in colour, then eases
+     back — same "breathe, don't mutate" idiom as barBreathe/scanline: starts and ends identical,
+     so the loop is seamless and the row never has to actually invent a permanent state change */
+  @keyframes leadSlide{0%,100%{transform:translateX(0);}50%{transform:translateX(9px);}}
+  @keyframes leadDotShift{0%,100%{background:#8B8378;}50%{background:#E88024;}}
   /* punch-in · the fourth cup lands like a rubber stamp, holds, then clears for the next pass */
   @keyframes passStamp{0%,54%{opacity:0;transform:scale(1.55) rotate(-7deg);}63%{opacity:1;transform:scale(.93) rotate(2deg);}70%{transform:scale(1.03) rotate(-.5deg);}76%,90%{opacity:1;transform:scale(1) rotate(0);}100%{opacity:0;transform:scale(1) rotate(0);}}
   @keyframes approvePop{0%,60%{transform:scale(1);box-shadow:0 4px 18px rgba(47,174,102,.35);}68%{transform:scale(1.12);box-shadow:0 9px 28px rgba(47,174,102,.62);}77%{transform:scale(.98);}85%,100%{transform:scale(1);box-shadow:0 4px 18px rgba(47,174,102,.35);}}
@@ -88,8 +93,10 @@
       </sc-for>
     </div>
 
-    <!-- ── the four seats ─────────────────────────────────────────────────── -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:16px;margin-top:30px;">
+    <!-- ── the five seats ────────────────────────────────────────────────────
+         grid tuned to skip the "4-wide + 1 orphan" row that minmax(232px,1fr)
+         would hit at tablet-landscape widths — see the walk-through below. ── -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:30px;">
 
       <!-- merchant · the mini dashboard breathes -->
       <div style="display:flex;animation:fadeUp .62s cubic-bezier(.22,.61,.36,1) .26s both;">
@@ -199,19 +206,56 @@
       </a>
       </div>
 
+      <!-- sales rep · a lead nudges a lane over and warms in colour, then eases back -->
+      <div style="display:flex;animation:fadeUp .62s cubic-bezier(.22,.61,.36,1) .58s both;">
+      <a href="Wasla Sales.dc.html" class="wl-seat wl-seat-dark" style="display:flex;flex-direction:column;flex:1;background:linear-gradient(165deg,#232428,#1C1D21);border:1px solid #2E2F34;border-radius:22px;padding:20px;position:relative;overflow:hidden;">
+        <div style="height:104px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:92px;height:96px;border-radius:16px;background:#17181C;border:1.5px solid #2E2F34;padding:9px 8px;position:relative;box-shadow:0 8px 20px rgba(0,0,0,.3);">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:7px;">
+              <div style="width:16px;height:16px;border-radius:50%;background:#E88024;color:#FFFFFF;font-family:'Nunito',sans-serif;font-weight:900;font-size:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">L</div>
+              <div style="height:4px;width:34px;border-radius:99px;background:#3A3B40;"></div>
+            </div>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+              <div style="flex:1;height:5px;border-radius:99px;background:#3A3B40;"></div>
+              <div style="flex:1;height:5px;border-radius:99px;background:rgba(232,128,36,.4);"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;align-items:center;gap:4px;background:#232428;border-radius:6px;padding:4px 5px;">
+                <span style="width:6px;height:6px;border-radius:50%;background:#8B8378;flex-shrink:0;"></span>
+                <span style="height:3px;flex:1;border-radius:99px;background:#3A3B40;"></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;background:#232428;border-radius:6px;padding:4px 5px;animation:leadSlide 4.6s cubic-bezier(.22,.61,.36,1) infinite;">
+                <span style="width:6px;height:6px;border-radius:50%;background:#8B8378;flex-shrink:0;animation:leadDotShift 4.6s cubic-bezier(.22,.61,.36,1) infinite;"></span>
+                <span style="height:3px;flex:1;border-radius:99px;background:#3A3B40;"></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;background:#232428;border-radius:6px;padding:4px 5px;">
+                <span style="width:6px;height:6px;border-radius:50%;background:#2FAE66;flex-shrink:0;"></span>
+                <span style="height:3px;flex:1;border-radius:99px;background:#3A3B40;"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;margin-top:10px;color:#F4F2EE;">The sales rep</div>
+        <div style="font-size:11.5px;color:#9B948A;line-height:1.55;margin-top:4px;">Be Lina in the field — check the quota ring, capture a lead, move its stage, send the invite.</div>
+        <div style="height:28px;margin-top:7px;overflow:hidden;">
+          <div class="wl-hint" style="font-size:10.5px;font-weight:700;color:#F09A4D;line-height:1.3;">→ You'll add a lead and watch it reach Omar's board.</div>
+        </div>
+      </a>
+      </div>
+
     </div>
 
-    <!-- ── the ten-minute walk, as a rail ─────────────────────────────────── -->
-    <div style="margin-top:32px;background:rgba(255,255,255,.04);border:1px solid #2E2F34;border-radius:18px;padding:18px 22px 20px;animation:fadeUp .62s cubic-bezier(.22,.61,.36,1) .58s both;">
+    <!-- ── the eleven-minute walk, as a rail ─────────────────────────────── -->
+    <div style="margin-top:32px;background:rgba(255,255,255,.04);border:1px solid #2E2F34;border-radius:18px;padding:18px 22px 20px;animation:fadeUp .62s cubic-bezier(.22,.61,.36,1) .66s both;">
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;color:#F09A4D;">THE TEN-MINUTE WALK — ONE LOOP, ALL FOUR SEATS</div>
+        <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;color:#F09A4D;">THE ELEVEN-MINUTE WALK — ONE LOOP, ALL FIVE SEATS</div>
         <div style="margin-inline-start:auto;display:flex;align-items:center;gap:7px;background:rgba(232,128,36,.10);border:1px solid rgba(232,128,36,.26);border-radius:999px;padding:5px 12px;">
           <span style="width:5px;height:5px;border-radius:50%;background:#E88024;flex-shrink:0;"></span>
-          <span style="font-size:10.5px;color:#D8D2C8;font-weight:600;">≈ 10 minutes · the whole loop</span>
+          <span style="font-size:10.5px;color:#D8D2C8;font-weight:600;">≈ 11 minutes · the whole loop</span>
         </div>
       </div>
       <div style="display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;margin-top:14px;">
-        <sc-for list="{{ path }}" as="p" hint-placeholder-count="6">
+        <sc-for list="{{ path }}" as="p" hint-placeholder-count="7">
           <div style="display:flex;align-items:center;animation:fadeUp .5s cubic-bezier(.22,.61,.36,1) {{ p.delay }} both;">
             <a href="{{ p.href }}" class="wl-step" style="display:flex;align-items:center;gap:9px;background:#101114;border:1px solid #2E2F34;border-radius:13px;padding:8px 13px 8px 9px;">
               <span class="wl-stepdisc" style="width:23px;height:23px;border-radius:50%;background:linear-gradient(160deg,#F09A4D,#E88024);color:#FFFFFF;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;flex-shrink:0;">{{ p.n }}</span>
@@ -232,7 +276,7 @@
     </div>
 
     <!-- ── footer ─────────────────────────────────────────────────────────── -->
-    <div style="text-align:center;margin-top:28px;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) .92s both;">
+    <div style="text-align:center;margin-top:28px;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) 1.05s both;">
       <div style="font-size:11px;color:#6E6960;">Built for Rawan &amp; Khaled · every surface is clickable, every flow completes · Amman, 2026</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;">
         <span style="width:4px;height:4px;border-radius:50%;background:#E88024;opacity:.65;flex-shrink:0;"></span>
@@ -281,21 +325,23 @@ class Component extends DCLogic {
   renderVals() {
     const stamps = this.stampRow();
     const path = [
-      { n: '1', a: 'Print the poster', b: 'in the dashboard — signup pages', arrow: true, href: 'Wasla Dashboard.dc.html' },
-      { n: '2', a: 'Join as Sara', b: 'scan it in the customer journey', arrow: true, href: 'Wasla Customer.dc.html' },
-      { n: '3', a: 'Stamp her card', b: 'at the staff till', arrow: true, href: 'Wasla Scanner.dc.html' },
-      { n: '4', a: 'Redeem the reward', b: 'when the card fills', arrow: true, href: 'Wasla Scanner.dc.html' },
-      { n: '5', a: 'Submit Sukkar', b: 'the wizard, live previews', arrow: true, href: 'Wasla Dashboard.dc.html' },
-      { n: '6', a: 'Approve it', b: 'in the console — it goes live', arrow: false, href: 'Wasla Console.dc.html' }
+      // where the account comes from, before Yara ever logs in — Lina works the field
+      { n: '1', a: 'Sell it as Lina', b: 'capture Louma Chocolate in the field', arrow: true, href: 'Wasla Sales.dc.html' },
+      { n: '2', a: 'Print the poster', b: 'in the dashboard — signup pages', arrow: true, href: 'Wasla Dashboard.dc.html' },
+      { n: '3', a: 'Join as Sara', b: 'scan it in the customer journey', arrow: true, href: 'Wasla Customer.dc.html' },
+      { n: '4', a: 'Stamp her card', b: 'at the staff till', arrow: true, href: 'Wasla Scanner.dc.html' },
+      { n: '5', a: 'Redeem the reward', b: 'when the card fills', arrow: true, href: 'Wasla Scanner.dc.html' },
+      { n: '6', a: 'Submit Sukkar', b: 'the wizard, live previews', arrow: true, href: 'Wasla Dashboard.dc.html' },
+      { n: '7', a: 'Approve it', b: 'in the console — it goes live', arrow: false, href: 'Wasla Console.dc.html' }
     ];
     return {
       pills: [
         { t: 'Demo data throughout' },
         { t: 'Every number reconciles' },
-        { t: '4 seats · one story' }
+        { t: '5 seats · one story' }
       ],
       // the rail lands last, one disc at a time, picking up where the cards left off
-      path: path.map((p, i) => ({ ...p, delay: (0.64 + i * 0.05).toFixed(2) + 's' })),
+      path: path.map((p, i) => ({ ...p, delay: (0.72 + i * 0.05).toFixed(2) + 's' })),
       stamps: stamps || [],
       hasStamps: !!stamps,
       noStamps: !stamps

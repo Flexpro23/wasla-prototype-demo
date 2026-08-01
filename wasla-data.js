@@ -8,7 +8,11 @@ window.WASLA_DB = {
     broadcastQuota: 10, broadcastsUsed: 6,
     members: 3616, passes: 3204, stampsToday: 214, redeemedWeek: 41,
     memberDelta: "+128 this week", renewal: "12 Aug 2026",
-    branches: ["Rainbow St", "Swefieh", "Abdali Mall"]
+    branches: ["Rainbow St", "Swefieh", "Abdali Mall"],
+    /* account defaults — a card inherits any link it doesn't set itself.
+       On a card: a value = override, "" = hidden on this card, key absent = inherit. */
+    links: { ig: "@talahospitality", wa: "+962 79 555 0100",
+             loc: "Amman, Jordan", web: "talagroup.jo" }
   },
   cardExtras: {
     daraj: {
@@ -47,18 +51,21 @@ window.WASLA_DB = {
       tagline:"Buy 7, the 8th is on us", taglineAr:"اشترِ ٧ والثامن علينا",
       members:1841, passes:1702, weekActivity:[38,52,44,61,58,72,66],
       stat1:{label:"Stamps today",v:"146"}, stat2:{label:"Rewards ready",v:"23"},
+      links: { ig: "@darajcoffee", wa: "+962 79 555 0114", loc: "Rainbow St, Amman", web: "darajcoffee.jo" },
       goal:8, reward:"Free drink of your choice", branch:"Rainbow St" },
     { id:"layl", name:"Layl Lounge", ar:"ليل لاونج", type:"vip", state:"live",
       color:"#1B2440", color2:"#111730", initial:"L", gold:"#E8B824",
       tagline:"Three tiers, real perks", taglineAr:"ثلاث فئات ومزايا حقيقية",
       members:412, passes:398, weekActivity:[12,9,14,11,19,26,22],
       stat1:{label:"Gold members",v:"57"}, stat2:{label:"Visits this week",v:"113"},
+      links: { ig: "@layllounge", wa: "+962 78 555 0180", loc: "Abdali Mall, Amman", web: "" },
       goal:0, reward:"Gold: skip the line + 15%", branch:"Abdali Mall" },
     { id:"zaytoun", name:"Zaytoun Kitchen", ar:"مطبخ زيتون", type:"cashback", state:"paused",
       color:"#5C6B2F", color2:"#454f24", initial:"Z",
       tagline:"5% back on every bill", taglineAr:"٥٪ كاش باك على كل فاتورة",
       members:1129, passes:918, weekActivity:[41,44,0,0,0,0,0],
       stat1:{label:"Wallet balance out",v:"JOD 412"}, stat2:{label:"Paused",v:"12 days"},
+      links: { ig: "@zaytounkitchen", loc: "Swefieh, Amman", web: "zaytoun.jo" },
       goal:0, reward:"5% back, redeem from JOD 2", branch:"Swefieh",
       note:"Paused for renovation — balances stay redeemable." },
     { id:"sukkar", name:"Sukkar Bakery", ar:"مخبز سكر", type:"points", state:"review",
@@ -66,12 +73,14 @@ window.WASLA_DB = {
       tagline:"Every JOD = 10 points", taglineAr:"كل دينار = ١٠ نقاط",
       members:234, passes:0, weekActivity:[0,0,0,0,0,0,0],
       stat1:{label:"Submitted",v:"Yesterday"}, stat2:{label:"Reviewer",v:"Wasla · Omar"},
+      links: { ig: "@sukkarbakery", loc: "Rainbow St, Amman" },
       goal:0, reward:"500 pts → dozen ka'ak", branch:"Rainbow St" },
     { id:"ghaim", name:"Ghaim Studio", ar:"استوديو غيم", type:"membership", state:"draft",
       color:"#4E6E8E", color2:"#3a5570", initial:"G",
       tagline:"Monthly access pass", taglineAr:"اشتراك شهري",
       members:0, passes:0, weekActivity:[0,0,0,0,0,0,0],
       stat1:{label:"Last edited",v:"2 days ago"}, stat2:{label:"Step",v:"Configure"},
+      links: { ig: "@ghaimstudio", web: "ghaimstudio.jo" },
       goal:0, reward:"Unlimited classes", branch:"Swefieh" }
   ],
   types: [
@@ -124,7 +133,7 @@ window.WASLA_DB = {
     { name:"Khaled Mansour", ar:"خالد منصور", initials:"KM", phone:"+962 79 555 0166", card:"Zaytoun Kitchen", progress:"JOD 3.20 balance", joined:"Apr 2026", last:40, visits:17 },
     { name:"Rania Qasem", ar:"رانيا قاسم", initials:"RQ", phone:"+962 77 555 0143", card:"Layl Lounge", progress:"Silver", joined:"May 2026", last:9, visits:11 },
     { name:"Fadi Nabulsi", ar:"فادي النابلسي", initials:"FN", phone:"+962 78 555 0177", card:"Daraj Coffee", progress:"5 / 8 stamps", joined:"Jun 2026", last:33, visits:14 },
-    { name:"Dana Tahboub", ar:"دانا طهبوب", initials:"DT", phone:"+962 79 555 0192", card:"Zaytoun Kitchen", progress:"JOD 1.75 balance", joined:"Mar 2026", last:18, visits:9 },
+    { name:"Dana Tahboub", ar:"دانا طهبوب", initials:"DT", phone:"+962 79 555 0192", card:"Zaytoun Kitchen", progress:"JOD 3.40 balance", joined:"Mar 2026", last:18, visits:9 },
     { name:"Hala Odeh", ar:"هلا عودة", initials:"HO", phone:"+962 77 555 0155", card:"Daraj Coffee", progress:"1 / 8 stamps", joined:"Jul 2026", last:70, visits:1 },
     { name:"Zaid Barakat", ar:"زيد بركات", initials:"ZB", phone:"+962 78 555 0139", card:"Layl Lounge", progress:"Royal", joined:"Dec 2025", last:1, visits:58 },
     { name:"Maya Sabbagh", ar:"مايا صباغ", initials:"MS", phone:"+962 79 555 0128", card:"Daraj Coffee", progress:"3 / 8 stamps", joined:"Jun 2026", last:12, visits:7 },

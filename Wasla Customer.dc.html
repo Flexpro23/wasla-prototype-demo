@@ -24,6 +24,14 @@
   @keyframes burstPop{0%{transform:scale(0);opacity:0;}55%{transform:scale(1.18);opacity:1;}75%{transform:scale(.94);}100%{transform:scale(1);opacity:1;}}
   @keyframes confettiFall{0%{transform:translateY(-30px) rotate(0deg);opacity:0;}12%{opacity:1;}100%{transform:translateY(420px) rotate(340deg);opacity:0;}}
   @keyframes fadeScrim{from{opacity:0;}to{opacity:1;}}
+  /* dialogs · seeded pair so a re-open replays */
+  @keyframes dlgPop1{0%{opacity:0;transform:scale(.9) translateY(10px);}62%{transform:scale(1.014) translateY(0);}100%{opacity:1;transform:scale(1);}}
+  @keyframes dlgPop2{0%{opacity:0;transform:scale(.9) translateY(10px);}62%{transform:scale(1.014) translateY(0);}100%{opacity:1;transform:scale(1);}}
+  /* the verification code cell filling in */
+  @keyframes codeIn1{0%{opacity:0;transform:scale(.6);}62%{transform:scale(1.09);}100%{opacity:1;transform:scale(1);}}
+  @keyframes codeIn2{0%{opacity:0;transform:scale(.6);}62%{transform:scale(1.09);}100%{opacity:1;transform:scale(1);}}
+  /* the unread dot */
+  @keyframes unreadPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.55;transform:scale(.86);}}
 
   /* ── scene transitions · TWO names per beat so a repeat actually replays (a CSS
        animation only restarts when its NAME changes). Direction rides --sx, which the
@@ -97,6 +105,19 @@
   .wl-play{transition:transform .18s cubic-bezier(.22,.61,.36,1),background .25s,box-shadow .25s;}
   .wl-play:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(36,28,22,.16);}
   .wl-play:active{transform:scale(.98);}
+  .wl-lrow{transition:background .16s;}
+  .wl-lrow:hover{background:#FFF1EE !important;}
+
+  /* ── keyboard operability · every control in the phone is a div, so it carries
+       role="button" + tabIndex="0" + a shared onKeyDown that re-fires the click.
+       The focus ring has to be visible on BOTH the paper surfaces and the dark
+       pass faces, so it is a two-tone ring: amber core, dark halo. ── */
+  [role="button"]:focus-visible,[role="radio"]:focus-visible,[role="link"]:focus-visible,a:focus-visible{
+    outline:3px solid #FFB020;outline-offset:2px;border-radius:8px;
+    box-shadow:0 0 0 6px rgba(20,16,10,.35);
+  }
+  [role="button"]:focus,[role="radio"]:focus,[role="link"]:focus{outline:3px solid #FFB020;outline-offset:2px;}
+  [role="button"]:focus:not(:focus-visible),[role="radio"]:focus:not(:focus-visible),[role="link"]:focus:not(:focus-visible){outline:none;box-shadow:none;}
 
   /* ── reduced motion · every entrance here is fill-mode:both, so collapsing the
        duration still settles it on its 100% frame (opacity:1, transform:none) rather
@@ -121,7 +142,7 @@
     </div>
 
     <sc-if value="{{ hasNotif }}" hint-placeholder-val="{{ false }}">
-      <div onClick="{{ tapNotif }}" style="cursor:pointer;position:absolute;top:46px;left:12px;right:12px;z-index:60;background:rgba(28,28,32,.82);backdrop-filter:blur(14px);border-radius:18px;padding:9px 14px 12px;color:#FFFFFF;animation:{{ notifAnim }};box-shadow:0 14px 34px rgba(0,0,0,.3);">
+      <div onClick="{{ tapNotif }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ notifTitle }}" style="cursor:pointer;position:absolute;top:46px;left:12px;right:12px;z-index:60;background:rgba(28,28,32,.82);backdrop-filter:blur(14px);border-radius:18px;padding:9px 14px 12px;color:#FFFFFF;animation:{{ notifAnim }};box-shadow:0 14px 34px rgba(0,0,0,.3);">
         <div style="width:32px;height:3.5px;border-radius:99px;background:rgba(255,255,255,.32);margin:0 auto 7px;"></div>
         <div style="display:flex;align-items:center;gap:9px;">
           <div style="width:26px;height:26px;border-radius:7px;background:{{ notifColor }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;color:#FFFFFF;flex-shrink:0;">{{ notifInitial }}</div>
@@ -137,7 +158,7 @@
       <div style="position:absolute;inset:0;z-index:70;border-radius:37px;overflow:hidden;background:radial-gradient(520px 420px at 50% 18%, #2A2620, #0A0A0C 72%);display:flex;flex-direction:column;align-items:center;padding:78px 18px 26px;animation:lockWake .45s cubic-bezier(.22,.61,.36,1) both;">
         <div style="font-size:13px;font-weight:600;color:rgba(244,242,238,.72);letter-spacing:.02em;">{{ lockDate }}</div>
         <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:76px;line-height:1.05;color:#F4F2EE;letter-spacing:-.02em;font-variant-numeric:tabular-nums;" dir="ltr">9:41</div>
-        <div onClick="{{ lockTap }}" class="wl-press" style="cursor:pointer;margin-top:32px;width:100%;background:rgba(30,30,34,.72);backdrop-filter:blur(16px);border-radius:20px;padding:13px 15px;color:#FFFFFF;box-shadow:0 18px 44px rgba(0,0,0,.45);animation:lockCard .6s cubic-bezier(.22,.61,.36,1) .32s both;">
+        <div onClick="{{ lockTap }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ lockBody }}" class="wl-press" style="cursor:pointer;margin-top:32px;width:100%;background:rgba(30,30,34,.72);backdrop-filter:blur(16px);border-radius:20px;padding:13px 15px;color:#FFFFFF;box-shadow:0 18px 44px rgba(0,0,0,.45);animation:lockCard .6s cubic-bezier(.22,.61,.36,1) .32s both;">
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:30px;height:30px;border-radius:8px;background:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;flex-shrink:0;">D</div>
             <div style="min-width:0;flex:1;">
@@ -169,13 +190,14 @@
               <div style="font-size:8px;color:#93887A;letter-spacing:.06em;margin-top:10px;">wasla.app/j/daraj · no app needed · بدون تطبيق</div>
             </div>
           </div>
-          <div onClick="{{ goCamera }}" class="wl-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:999px;padding:13px 26px;animation:glowPulse 3s ease-in-out infinite;">{{ counterCta }}</div>
+          <div onClick="{{ goCamera }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:999px;padding:13px 26px;animation:glowPulse 3s ease-in-out infinite;">{{ counterCta }}</div>
+          <div onClick="{{ goRecover }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;font-size:11.5px;font-weight:700;color:#C96A14;margin-top:-8px;">{{ alreadyLabel }}</div>
         </div>
       </sc-if>
 
       <sc-if value="{{ isCamera }}" hint-placeholder-val="{{ false }}">
         <div style="flex:1;display:flex;flex-direction:column;background:#0B0B0D;position:relative;overflow:hidden;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
-          <span onClick="{{ goBack }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
+          <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
           <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative;">
             <div style="position:absolute;inset:26px;border-radius:20px;overflow:hidden;background:radial-gradient(420px 300px at 50% 40%, #2E2E34, #141416);">
               <div style="position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,rgba(232,128,36,.8),transparent);animation:{{ scanAnim }};"></div>
@@ -192,7 +214,7 @@
             <div style="position:absolute;bottom:40px;left:44px;width:26px;height:26px;border-bottom:3.5px solid {{ camCorner }};border-inline-start:3.5px solid {{ camCorner }};border-end-start-radius:8px;animation:{{ cornerAnim }};"></div>
             <div style="position:absolute;bottom:40px;right:44px;width:26px;height:26px;border-bottom:3.5px solid {{ camCorner }};border-inline-end:3.5px solid {{ camCorner }};border-end-end-radius:8px;animation:{{ cornerAnim }};"></div>
             <sc-if value="{{ camReady }}" hint-placeholder-val="{{ false }}">
-              <div onClick="{{ goSignup }}" class="wl-pill" style="cursor:pointer;position:absolute;bottom:56px;left:50%;transform:translateX(-50%);background:#FFD60A;color:#241C16;font-weight:800;font-size:13px;border-radius:999px;padding:11px 20px;display:flex;align-items:center;gap:8px;animation:pillSpring .58s cubic-bezier(.22,.61,.36,1) both;box-shadow:0 10px 26px rgba(0,0,0,.4);white-space:nowrap;">
+              <div onClick="{{ goSignup }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-pill" style="cursor:pointer;position:absolute;bottom:56px;left:50%;transform:translateX(-50%);background:#FFD60A;color:#241C16;font-weight:800;font-size:13px;border-radius:999px;padding:11px 20px;display:flex;align-items:center;gap:8px;animation:pillSpring .58s cubic-bezier(.22,.61,.36,1) both;box-shadow:0 10px 26px rgba(0,0,0,.4);white-space:nowrap;">
                 <span style="width:16px;height:16px;border-radius:5px;border:2px solid #241C16;display:inline-block;flex-shrink:0;"></span>{{ camPill }}
               </div>
             </sc-if>
@@ -203,7 +225,7 @@
 
       <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
         <div style="flex:1;background:#FFFFFF;display:flex;flex-direction:column;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
-          <span onClick="{{ goBack }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
+          <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
           <div style="background:linear-gradient(135deg,#1E5C43,#154232);padding:24px 20px 20px;text-align:center;color:#FFFFFF;">
             <div style="width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;margin:0 auto 10px;animation:{{ popAnim }};">D</div>
             <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;">{{ suTitle }}</div>
@@ -212,7 +234,7 @@
           <div style="padding:22px 20px;display:flex;flex-direction:column;gap:13px;">
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <div style="font-size:12.5px;font-weight:700;color:#5D5348;">{{ suJoinLine }}</div>
-              <div onClick="{{ toggleLang }}" class="wl-ghost wl-press" style="cursor:pointer;border:1px solid #E7E0D5;border-radius:999px;padding:5px 13px;font-size:11px;font-weight:700;color:#5D5348;">{{ langLabel }}</div>
+              <div onClick="{{ toggleLang }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ langLabel }}" class="wl-ghost wl-press" style="cursor:pointer;border:1px solid #E7E0D5;border-radius:999px;padding:5px 13px;font-size:11px;font-weight:700;color:#5D5348;">{{ langLabel }}</div>
             </div>
             <div><div style="font-size:11px;font-weight:700;color:#93887A;margin-bottom:5px;display:flex;align-items:center;gap:6px;"><span>{{ fName }}</span><sc-if value="{{ okName }}" hint-placeholder-val="{{ false }}"><span style="color:#2FAE66;font-size:12px;font-weight:900;animation:popIn .34s cubic-bezier(.22,.61,.36,1) both;">✓</span></sc-if></div>
               <input value="{{ formName }}" onChange="{{ setFormName }}" class="wl-inp" style="width:100%;border:1px solid {{ nameBorder }};border-radius:11px;padding:13px 14px;font-size:14.5px;background:#FFFFFF;"></div>
@@ -220,7 +242,7 @@
               <input value="{{ formPhone }}" onChange="{{ setFormPhone }}" class="wl-inp" style="width:100%;border:1px solid {{ phoneBorder }};border-radius:11px;padding:13px 14px;font-size:14.5px;background:#FFFFFF;font-variant-numeric:tabular-nums;" dir="ltr"></div>
             <div><div style="font-size:11px;font-weight:700;color:#93887A;margin-bottom:5px;">{{ fDrink }} <span style="font-weight:500;">{{ fDrinkHint }}</span></div>
               <input value="{{ formDrink }}" onChange="{{ setFormDrink }}" class="wl-inp" style="width:100%;border:1px solid #D8D0C2;border-radius:11px;padding:13px 14px;font-size:14.5px;background:#FFFFFF;"></div>
-            <div onClick="{{ submitSignup }}" class="{{ ctaClass }}" style="cursor:{{ ctaCursor }};background:{{ ctaBg }};color:{{ ctaFg }};font-weight:800;font-size:15px;border-radius:999px;padding:15px 0;text-align:center;margin-top:6px;">{{ suCta }}</div>
+            <div onClick="{{ submitSignup }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="{{ ctaClass }}" style="cursor:{{ ctaCursor }};background:{{ ctaBg }};color:{{ ctaFg }};font-weight:800;font-size:15px;border-radius:999px;padding:15px 0;text-align:center;margin-top:6px;">{{ suCta }}</div>
             <sc-if value="{{ showReason }}" hint-placeholder-val="{{ false }}">
               <div style="text-align:center;font-size:10.5px;font-weight:600;color:#B4753A;margin-top:-6px;animation:fadeUp .3s cubic-bezier(.22,.61,.36,1) both;">{{ suReason }}</div>
             </sc-if>
@@ -235,14 +257,14 @@
 
       <sc-if value="{{ isSuccess }}" hint-placeholder-val="{{ false }}">
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px;background:#FFFFFF;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
-          <span onClick="{{ goBack }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid #E7E0D5;color:#5D5348;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
+          <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid #E7E0D5;color:#5D5348;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
           <div style="width:70px;height:70px;border-radius:50%;background:#E7F6EE;color:#1E7D47;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;animation:{{ popAnim }};">✓</div>
           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;text-align:center;">{{ okTitle }}</div>
           <div style="font-size:13px;color:#5D5348;text-align:center;line-height:1.6;max-width:250px;">{{ okSub }}</div>
-          <div onClick="{{ addApple }}" class="wl-cta" style="cursor:pointer;background:#000000;color:#FFFFFF;font-weight:700;font-size:14px;border-radius:12px;padding:14px 26px;display:flex;align-items:center;gap:9px;margin-top:10px;"> {{ addAppleLabel }}</div>
-          <div onClick="{{ addGoogle }}" class="wl-cta" style="cursor:pointer;background:#FFFFFF;border:1.5px solid #D8D0C2;color:#241C16;font-weight:700;font-size:14px;border-radius:999px;padding:13px 26px;display:flex;align-items:center;gap:9px;">{{ addGoogleLabel }}</div>
+          <div onClick="{{ addApple }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;background:#000000;color:#FFFFFF;font-weight:700;font-size:14px;border-radius:12px;padding:14px 26px;display:flex;align-items:center;gap:9px;margin-top:10px;"> {{ addAppleLabel }}</div>
+          <div onClick="{{ addGoogle }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;background:#FFFFFF;border:1.5px solid #D8D0C2;color:#241C16;font-weight:700;font-size:14px;border-radius:999px;padding:13px 26px;display:flex;align-items:center;gap:9px;">{{ addGoogleLabel }}</div>
           <div style="font-size:10.5px;color:#93887A;">{{ okNote }}</div>
-          <div onClick="{{ scanAgain }}" class="wl-link" style="cursor:pointer;font-size:11px;font-weight:700;color:#C96A14;margin-top:-4px;">{{ scanAgainLabel }}</div>
+          <div onClick="{{ scanAgain }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;font-size:11px;font-weight:700;color:#C96A14;margin-top:-4px;">{{ scanAgainLabel }}</div>
         </div>
       </sc-if>
 
@@ -251,9 +273,9 @@
           <div style="flex:1;"></div>
           <div style="background:#F2F2F6;border-radius:22px 22px 0 0;padding:14px 16px 26px;animation:{{ sheetAnim }};">
             <div style="display:flex;justify-content:space-between;align-items:center;padding:2px 4px 14px;">
-              <span onClick="{{ backToSuccess }}" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:15px;">{{ cancelWord }}</span>
+              <span onClick="{{ backToSuccess }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:15px;">{{ cancelWord }}</span>
               <span style="font-weight:700;font-size:15px;">{{ addPassTitle }}</span>
-              <span onClick="{{ confirmAdd }}" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:15px;font-weight:700;">{{ addWord }}</span>
+              <span onClick="{{ confirmAdd }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:15px;font-weight:700;">{{ addWord }}</span>
             </div>
             <div style="border-radius:14px;background:linear-gradient(150deg,#1E5C43,#154232);color:#FFFFFF;padding:14px 15px 16px;box-shadow:0 14px 34px rgba(0,0,0,.25);">
               <div style="display:flex;align-items:center;gap:9px;">
@@ -276,16 +298,16 @@
       </sc-if>
 
       <sc-if value="{{ isWallet }}" hint-placeholder-val="{{ false }}">
-        <div style="flex:1;display:flex;flex-direction:column;padding:16px 14px 20px;--sx:{{ slideFrom }};animation:{{ enterAnim }};overflow:hidden;">
+        <div style="flex:1;display:flex;flex-direction:column;padding:16px 14px 20px;--sx:{{ slideFrom }};animation:{{ enterAnim }};overflow-y:auto;overflow-x:hidden;">
           <div style="display:flex;justify-content:space-between;align-items:center;color:#F4F2EE;padding:2px 6px 14px;">
             <div style="display:flex;align-items:center;gap:9px;">
-              <span onClick="{{ goBack }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;">‹</span>
+              <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;">‹</span>
               <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;">{{ walletWord }}</span>
             </div>
             <span style="font-size:10px;color:#8E8C96;letter-spacing:.06em;">{{ walletCount }}</span>
           </div>
           <sc-for list="{{ walletCards }}" as="wc" hint-placeholder-count="4">
-            <div onClick="{{ wc.pick }}" class="wl-card" style="cursor:pointer;border-radius:14px;background:linear-gradient(150deg,{{ wc.c }},{{ wc.c2 }});color:#FFFFFF;padding:13px 15px;margin-top:{{ wc.mt }};position:relative;box-shadow:0 -8px 28px rgba(0,0,0,.45);animation:{{ wc.anim }};">
+            <div onClick="{{ wc.pick }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ wc.aria }}" class="wl-card" style="cursor:pointer;border-radius:14px;background:linear-gradient(150deg,{{ wc.c }},{{ wc.c2 }});color:#FFFFFF;padding:13px 15px;margin-top:{{ wc.mt }};position:relative;box-shadow:0 -8px 28px rgba(0,0,0,.45);animation:{{ wc.anim }};">
               <div style="display:flex;align-items:center;gap:9px;">
                 <div style="width:25px;height:25px;border-radius:50%;background:rgba(255,255,255,.94);color:{{ wc.c }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;flex-shrink:0;">{{ wc.i }}</div>
                 <div style="min-width:0;"><div style="font-size:12px;font-weight:700;">{{ wc.name }}</div><div style="font-size:9px;opacity:.75;">{{ wc.merchant }}</div></div>
@@ -310,6 +332,23 @@
               </sc-if>
             </div>
           </sc-for>
+          <sc-if value="{{ walletRejoinOn }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ rejoin }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-press" style="cursor:pointer;margin-top:12px;border:1.5px dashed rgba(244,242,238,.28);border-radius:14px;padding:13px 15px;color:#E8C08A;font-size:11.5px;font-weight:700;text-align:center;line-height:1.5;">{{ walletRejoinLabel }}</div>
+          </sc-if>
+          <div style="margin-top:16px;background:rgba(255,255,255,.055);border:1px solid rgba(244,242,238,.1);border-radius:14px;overflow:hidden;flex-shrink:0;">
+            <sc-for list="{{ walletExtras }}" as="we" hint-placeholder-count="2">
+              <div onClick="{{ we.go }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ we.aria }}" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:11px;padding:12px 14px;border-bottom:1px solid rgba(244,242,238,.08);">
+                <div style="min-width:0;flex:1;">
+                  <div style="font-size:12.5px;font-weight:700;color:#F4F2EE;">{{ we.k }}</div>
+                  <div style="font-size:10px;color:#8E8C96;margin-top:2px;line-height:1.45;">{{ we.v }}</div>
+                </div>
+                <sc-if value="{{ we.hasBadge }}" hint-placeholder-val="{{ false }}">
+                  <span style="background:#E88024;color:#FFFFFF;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 5px;flex-shrink:0;">{{ we.badge }}</span>
+                </sc-if>
+                <span style="color:#6E6E73;font-size:14px;flex-shrink:0;">›</span>
+              </div>
+            </sc-for>
+          </div>
           <div style="margin-top:auto;padding-top:16px;text-align:center;line-height:1.6;">
             <div style="font-size:11px;font-weight:700;color:#C9C4BC;">{{ walletStackCaption }}</div>
             <div style="font-size:10.5px;color:#8E8C96;margin-top:5px;">{{ walletFootCaption }}</div>
@@ -320,15 +359,18 @@
       <sc-if value="{{ isPass }}" hint-placeholder-val="{{ false }}">
         <div style="flex:1;display:flex;flex-direction:column;padding:16px 14px 20px;min-height:0;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
           <div style="display:flex;justify-content:space-between;align-items:center;color:#F4F2EE;padding:2px 6px 14px;flex-shrink:0;">
-            <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;">{{ walletTitle }}</span>
-            <span onClick="{{ flipCard }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.5);color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;">i</span>
+            <div style="display:flex;align-items:center;gap:9px;min-width:0;">
+              <span onClick="{{ exitToWallet }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ walletExitAria }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;">‹</span>
+              <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;">{{ walletTitle }}</span>
+            </div>
+            <span onClick="{{ flipCard }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ flipAria }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.5);color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">i</span>
           </div>
           <div style="flex:1;min-height:0;position:relative;perspective:1500px;">
             <div style="position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.61,.36,1);transform:{{ flipT }};">
               <div aria-hidden="{{ backSide }}" style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;pointer-events:{{ frontPE }};">
                 <div style="animation:{{ settleAnim }};flex-shrink:0;">
                   <sc-if value="{{ isApplePass }}" hint-placeholder-val="{{ true }}">
-                    <div style="border-radius:14px;background:linear-gradient(150deg,#1E5C43,#154232);color:#FFFFFF;padding:15px 16px 17px;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};position:relative;overflow:hidden;">
+                    <div style="border-radius:14px;background:linear-gradient(150deg,#1E5C43,#154232);color:#FFFFFF;padding:15px 16px 17px;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};position:relative;overflow:hidden;filter:{{ passFilter }};transition:filter .5s;">
                       <div style="display:flex;align-items:center;gap:9px;">
                         <div style="width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;">D</div>
                         <div style="font-size:12.5px;font-weight:700;">Daraj Coffee</div>
@@ -337,8 +379,11 @@
                       <sc-if value="{{ rewardReady }}" hint-placeholder-val="{{ false }}">
                         <div style="position:absolute;top:0;bottom:0;left:0;width:44%;z-index:3;pointer-events:none;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,214,10,.16),rgba(255,255,255,.24),rgba(255,255,255,0));animation:shimmerSweep 3.4s cubic-bezier(.4,0,.5,1) infinite;"></div>
                       </sc-if>
+                      <sc-if value="{{ passStatusOn }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin:13px -16px 0;background:{{ passStatusBg }};padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-align:center;line-height:1.45;animation:{{ popAnim }};">{{ passStatusLine }}</div>
+                      </sc-if>
                       <sc-if value="{{ giftOn }}" hint-placeholder-val="{{ false }}">
-                        <div style="margin:13px -16px 0;background:linear-gradient(90deg,#E88024,#C96A14);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.04em;animation:{{ popAnim }};">A GIFT RIDES THIS CARD · هدية عيد ميلادك<span style="font-family:'IBM Plex Sans Arabic',sans-serif;"></span></div>
+                        <div onClick="{{ openGift }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ giftBannerAria }}" style="cursor:pointer;margin:13px -16px 0;background:linear-gradient(90deg,#E88024,#C96A14);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.04em;animation:{{ popAnim }};">A GIFT RIDES THIS CARD · هدية عيد ميلادك →<span style="font-family:'IBM Plex Sans Arabic',sans-serif;"></span></div>
                       </sc-if>
                       <div style="margin:14px -16px 12px;position:relative;aspect-ratio:375/123;overflow:hidden;display:flex;align-items:center;justify-content:center;">
                         <div aria-label="{{ stampsAria }}" style="display:flex;justify-content:center;align-items:center;gap:9px 14px;flex-wrap:wrap;max-width:232px;">
@@ -374,19 +419,27 @@
                         <div style="min-width:0;flex:1;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ rewardWord }}</div><div style="font-size:11.5px;font-weight:600;line-height:1.35;">{{ passRewardLine }}</div></div>
                         <div><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ memberWord }}</div><div style="font-size:11.5px;font-weight:600;">{{ memberFirst }}</div></div>
                       </div>
-                      <div style="background:#FFFFFF;border-radius:9px;padding:9px;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;z-index:1;">
-                        <div style="display:grid;grid-template-columns:repeat(17,3.6px);grid-auto-rows:3.6px;">
-                          <sc-for list="{{ qrCells }}" as="q4" hint-placeholder-count="0"><div style="background:{{ q4.c }};"></div></sc-for>
+                      <sc-if value="{{ qrOn }}" hint-placeholder-val="{{ true }}">
+                        <div style="background:#FFFFFF;border-radius:9px;padding:9px;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;z-index:1;opacity:{{ qrDim }};transition:opacity .45s;">
+                          <div style="display:grid;grid-template-columns:repeat(17,3.6px);grid-auto-rows:3.6px;">
+                            <sc-for list="{{ qrCells }}" as="q4" hint-placeholder-count="0"><div style="background:{{ q4.c }};"></div></sc-for>
+                          </div>
+                          <div style="font-size:7.5px;color:#5D5348;letter-spacing:.06em;display:flex;gap:4px;align-items:baseline;"><span>{{ memberWord }}</span><span dir="ltr">· 0114 2291</span></div>
+                          <sc-if value="{{ pausedBadgeOn }}" hint-placeholder-val="{{ false }}">
+                            <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-9deg);background:rgba(36,28,22,.86);color:#FFFFFF;font-size:10px;font-weight:900;letter-spacing:.16em;padding:5px 12px;border-radius:5px;">{{ pausedBadge }}</span>
+                          </sc-if>
                         </div>
-                        <div style="font-size:7.5px;color:#5D5348;letter-spacing:.06em;display:flex;gap:4px;align-items:baseline;"><span>{{ memberWord }}</span><span dir="ltr">· 0114 2291</span></div>
-                      </div>
+                      </sc-if>
+                      <sc-if value="{{ qrOff }}" hint-placeholder-val="{{ false }}">
+                        <div style="background:rgba(255,255,255,.09);border:1px dashed rgba(255,255,255,.26);border-radius:9px;padding:17px 9px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.04em;color:rgba(255,255,255,.6);position:relative;z-index:1;">{{ qrOffLabel }}</div>
+                      </sc-if>
                     </div>
                   </sc-if>
                   <sc-if value="{{ isGooglePass }}" hint-placeholder-val="{{ false }}">
                     <!-- Google Wallet renders a WHITE card: brand module on top, balance as the
                          headline, a hero image band, then a Details list and a centred barcode
                          block. Deliberately not the Apple layout in another colour. -->
-                    <div style="border-radius:16px;background:#FFFFFF;color:#241C16;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};overflow:hidden;">
+                    <div style="border-radius:16px;background:#FFFFFF;color:#241C16;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};overflow:hidden;filter:{{ passFilter }};transition:filter .5s;">
                       <div style="background:#1E5C43;color:#FFFFFF;padding:15px 17px 0;position:relative;overflow:hidden;">
                         <sc-if value="{{ rewardReady }}" hint-placeholder-val="{{ false }}">
                           <div style="position:absolute;top:0;bottom:0;left:0;width:44%;z-index:3;pointer-events:none;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,214,10,.16),rgba(255,255,255,.24),rgba(255,255,255,0));animation:shimmerSweep 3.4s cubic-bezier(.4,0,.5,1) infinite;"></div>
@@ -412,8 +465,14 @@
                           </div>
                         </div>
                       </div>
+                      <sc-if value="{{ passStatusOn }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:8px;padding:10px 17px;background:#F4F1EB;border-bottom:1px solid #F1EBE1;animation:{{ popAnim }};">
+                          <span style="width:6px;height:6px;border-radius:50%;background:#8A8177;flex-shrink:0;"></span>
+                          <span style="font-size:11.5px;font-weight:700;color:#6E675E;line-height:1.4;">{{ passStatusLine }}</span>
+                        </div>
+                      </sc-if>
                       <sc-if value="{{ giftOn }}" hint-placeholder-val="{{ false }}">
-                        <div style="display:flex;align-items:center;gap:8px;padding:10px 17px;background:linear-gradient(90deg,rgba(232,128,36,.16),rgba(201,106,20,.05));border-bottom:1px solid #F1EBE1;animation:{{ popAnim }};">
+                        <div onClick="{{ openGift }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ giftBannerAria }}" class="wl-row" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 17px;background:linear-gradient(90deg,rgba(232,128,36,.16),rgba(201,106,20,.05));border-bottom:1px solid #F1EBE1;animation:{{ popAnim }};">
                           <span style="width:6px;height:6px;border-radius:50%;background:#E88024;flex-shrink:0;"></span>
                           <span style="font-size:11.5px;font-weight:700;color:#B4753A;">{{ giftChip }}</span>
                         </div>
@@ -427,27 +486,50 @@
                           <span dir="{{ gd.dir }}" style="font-size:12.5px;font-weight:600;color:#241C16;text-align:end;">{{ gd.v }}</span>
                         </div>
                       </sc-for>
-                      <div style="padding:15px 17px 17px;display:flex;flex-direction:column;align-items:center;gap:8px;">
-                        <div style="background:#FFFFFF;border:1px solid #EDE7DC;border-radius:12px;padding:11px;display:flex;justify-content:center;box-shadow:0 1px 3px rgba(36,28,22,.07);">
-                          <div style="display:grid;grid-template-columns:repeat(17,3.8px);grid-auto-rows:3.8px;">
-                            <sc-for list="{{ qrCells }}" as="q5" hint-placeholder-count="0"><div style="background:{{ q5.c }};"></div></sc-for>
+                      <sc-if value="{{ qrOn }}" hint-placeholder-val="{{ true }}">
+                        <div style="padding:15px 17px 17px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+                          <div style="position:relative;background:#FFFFFF;border:1px solid #EDE7DC;border-radius:12px;padding:11px;display:flex;justify-content:center;box-shadow:0 1px 3px rgba(36,28,22,.07);opacity:{{ qrDim }};transition:opacity .45s;">
+                            <div style="display:grid;grid-template-columns:repeat(17,3.8px);grid-auto-rows:3.8px;">
+                              <sc-for list="{{ qrCells }}" as="q5" hint-placeholder-count="0"><div style="background:{{ q5.c }};"></div></sc-for>
+                            </div>
+                            <sc-if value="{{ pausedBadgeOn }}" hint-placeholder-val="{{ false }}">
+                              <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-9deg);background:rgba(36,28,22,.86);color:#FFFFFF;font-size:10px;font-weight:900;letter-spacing:.16em;padding:5px 12px;border-radius:5px;">{{ pausedBadge }}</span>
+                            </sc-if>
                           </div>
+                          <div dir="ltr" style="font-size:10.5px;color:#5D5348;letter-spacing:.09em;font-variant-numeric:tabular-nums;">{{ gBarcodeNo }}</div>
                         </div>
-                        <div dir="ltr" style="font-size:10.5px;color:#5D5348;letter-spacing:.09em;font-variant-numeric:tabular-nums;">{{ gBarcodeNo }}</div>
-                      </div>
+                      </sc-if>
+                      <sc-if value="{{ qrOff }}" hint-placeholder-val="{{ false }}">
+                        <div style="padding:19px 17px;text-align:center;font-size:11px;font-weight:700;color:#93887A;">{{ qrOffLabel }}</div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ passGoneOn }}" hint-placeholder-val="{{ false }}">
+                    <div style="border-radius:14px;background:linear-gradient(150deg,#26262B,#141417);color:#FFFFFF;padding:26px 20px;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};text-align:center;">
+                      <div style="width:46px;height:46px;border-radius:50%;border:1.5px dashed rgba(244,242,238,.4);display:flex;align-items:center;justify-content:center;font-size:20px;color:rgba(244,242,238,.55);margin:0 auto 13px;">D</div>
+                      <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;">{{ passGoneTitle }}</div>
+                      <div style="font-size:12px;line-height:1.65;color:rgba(244,242,238,.72);margin-top:9px;">{{ passGoneBody }}</div>
                     </div>
                   </sc-if>
                 </div>
                 <div style="margin-top:auto;display:flex;flex-direction:column;gap:9px;padding-top:18px;flex-shrink:0;">
                   <div style="text-align:center;font-size:10.5px;color:#8E8C96;letter-spacing:.06em;text-transform:uppercase;font-weight:800;">{{ tillLabel }}</div>
                   <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap;">
-                    <div onClick="{{ simStamp }}" class="wl-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 18px;">{{ stampBtnLabel }}</div>
+                    <sc-if value="{{ stampBtnOn }}" hint-placeholder-val="{{ true }}">
+                      <div onClick="{{ simStamp }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="{{ stampBtnClass }}" style="cursor:pointer;background:{{ stampBtnBg }};color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 18px;transition:background .35s;">{{ stampBtnLabel }}</div>
+                    </sc-if>
                     <sc-if value="{{ rewardReady }}" hint-placeholder-val="{{ false }}">
                       <div style="animation:{{ popAnim }};">
-                        <div onClick="{{ simRedeem }}" class="wl-cta" style="cursor:pointer;background:#2FAE66;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 18px;animation:glowGreen 2.6s ease-in-out infinite;">{{ redeemLabel }}</div>
+                        <div onClick="{{ simRedeem }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;background:#2FAE66;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 18px;animation:glowGreen 2.6s ease-in-out infinite;">{{ redeemLabel }}</div>
                       </div>
                     </sc-if>
+                    <sc-if value="{{ rejoinOn }}" hint-placeholder-val="{{ false }}">
+                      <div onClick="{{ rejoin }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 18px;animation:{{ popAnim }};">{{ rejoinLabel }}</div>
+                    </sc-if>
                   </div>
+                  <sc-if value="{{ tillNoteOn }}" hint-placeholder-val="{{ false }}">
+                    <div style="text-align:center;font-size:10.5px;color:#8E8C96;line-height:1.6;padding:0 8px;">{{ tillNote }}</div>
+                  </sc-if>
                 </div>
               </div>
               <div aria-hidden="{{ frontSide }}" style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);pointer-events:{{ backPE }};">
@@ -455,7 +537,7 @@
                   <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.45);">
                     <div style="padding:14px 18px;border-bottom:1px solid #F1EBE1;display:flex;justify-content:space-between;align-items:center;">
                       <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14.5px;">Daraj Coffee</span>
-                      <span onClick="{{ flipCard }}" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:13px;font-weight:600;">{{ doneWord }}</span>
+                      <span onClick="{{ flipCard }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:13px;font-weight:600;">{{ doneWord }}</span>
                     </div>
                     <sc-for list="{{ backRowsA }}" as="br" hint-placeholder-count="2">
                       <div style="padding:12px 18px;border-bottom:1px solid #F5F0E8;">
@@ -463,12 +545,12 @@
                         <div style="font-size:13px;font-weight:600;color:{{ br.color }};margin-top:3px;line-height:1.5;">{{ br.v }}</div>
                       </div>
                     </sc-for>
-                    <div onClick="{{ openShare }}" class="wl-row" style="cursor:pointer;padding:12px 18px;border-bottom:1px solid #F5F0E8;">
+                    <div onClick="{{ openShare }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ referralK }}" class="wl-row" style="cursor:pointer;padding:12px 18px;border-bottom:1px solid #F5F0E8;">
                       <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ referralK }}</div>
                       <div style="font-size:13px;font-weight:600;color:#C96A14;margin-top:3px;line-height:1.5;">{{ referralV }} →</div>
                     </div>
-                    <sc-for list="{{ backRowsB }}" as="br2" hint-placeholder-count="3">
-                      <div onClick="{{ br2.action }}" class="{{ br2.cls }}" style="padding:12px 18px;border-bottom:1px solid #F5F0E8;cursor:{{ br2.cursor }};">
+                    <sc-for list="{{ backRowsB }}" as="br2" hint-placeholder-count="5">
+                      <div onClick="{{ br2.action }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="{{ br2.tab }}" aria-label="{{ br2.k }}" class="{{ br2.cls }}" style="padding:12px 18px;border-bottom:1px solid #F5F0E8;cursor:{{ br2.cursor }};">
                         <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ br2.k }}</div>
                         <div style="font-size:13px;font-weight:600;color:{{ br2.color }};margin-top:3px;line-height:1.5;">{{ br2.v }}</div>
                       </div>
@@ -509,21 +591,21 @@
               <div style="flex:1;"></div>
               <div style="background:#1C1C1E;border-radius:20px 20px 0 0;padding:14px 16px 24px;animation:{{ sheetAnim }};box-shadow:0 -14px 40px rgba(0,0,0,.5);">
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:2px 4px 12px;">
-                  <span onClick="{{ closeShare }}" class="wl-link" style="cursor:pointer;color:#0A84FF;font-size:15px;">{{ cancelWord }}</span>
+                  <span onClick="{{ closeShare }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;color:#0A84FF;font-size:15px;">{{ cancelWord }}</span>
                   <span style="font-weight:700;font-size:13.5px;color:#F4F2EE;">{{ shareTitle }}</span>
                   <span style="width:44px;"></span>
                 </div>
                 <div style="text-align:center;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#8E8C96;margin:-6px 0 14px;">{{ shareTitleAlt }}</div>
                 <div style="background:#2C2C2E;border-radius:14px;overflow:hidden;">
-                  <div onClick="{{ shareWhatsapp }}" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #3A3A3C;">
+                  <div onClick="{{ shareWhatsapp }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="WhatsApp" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #3A3A3C;">
                     <span style="width:30px;height:30px;border-radius:9px;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">💬</span>
                     <span style="color:#F4F2EE;font-size:14px;font-weight:600;">WhatsApp</span>
                   </div>
-                  <div onClick="{{ shareMessages }}" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #3A3A3C;">
+                  <div onClick="{{ shareMessages }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="Messages" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #3A3A3C;">
                     <span style="width:30px;height:30px;border-radius:9px;background:#2FAE66;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">✉️</span>
                     <span style="color:#F4F2EE;font-size:14px;font-weight:600;">Messages</span>
                   </div>
-                  <div onClick="{{ shareCopy }}" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;">
+                  <div onClick="{{ shareCopy }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ copyCodeLabel }}" class="wl-drow" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;">
                     <span style="width:30px;height:30px;border-radius:9px;background:#8E8C96;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🔗</span>
                     <span style="color:#F4F2EE;font-size:14px;font-weight:600;">{{ copyCodeLabel }}</span>
                   </div>
@@ -534,7 +616,339 @@
           </sc-if>
         </div>
       </sc-if>
+
+      <!-- ══ MY DETAILS · the screen that closes most of the gaps. Her name, her
+               phone (which IS her identity), her birthday (which drives the gift),
+               her language, what this shop is allowed to interrupt her for, the
+               merchant's own question — and the door out. ══════════════════ -->
+      <sc-if value="{{ isDetails }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;background:#F2F2F6;--sx:{{ slideFrom }};animation:{{ enterAnim }};min-height:0;">
+          <div style="display:flex;align-items:center;gap:11px;padding:11px 14px 12px;background:#FFFFFF;border-bottom:1px solid #E7E0D5;flex-shrink:0;">
+            <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;width:27px;height:27px;border-radius:50%;border:1.5px solid #E7E0D5;color:#5D5348;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;">‹</span>
+            <div style="min-width:0;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;line-height:1.15;">{{ detailsTitle }}</div>
+              <div style="font-size:10.5px;color:#93887A;margin-top:2px;">{{ detailsSub }}</div>
+            </div>
+          </div>
+          <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 13px 22px;display:flex;flex-direction:column;gap:13px;">
+            <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(36,28,22,.06);">
+              <div style="padding:11px 14px 4px;font-size:9.5px;font-weight:800;letter-spacing:.09em;color:#93887A;text-transform:uppercase;">{{ detailsFieldsK }}</div>
+              <sc-for list="{{ detailFields }}" as="df" hint-placeholder-count="4">
+                <div style="padding:8px 14px 12px;border-bottom:1px solid #F5F0E8;">
+                  <div style="font-size:10.5px;font-weight:700;color:#93887A;margin-bottom:5px;">{{ df.k }}</div>
+                  <input value="{{ df.v }}" onChange="{{ df.set }}" aria-label="{{ df.aria }}" dir="{{ df.dir }}" class="wl-inp" style="width:100%;border:1px solid {{ df.border }};border-radius:10px;padding:11px 12px;font-size:14px;background:#FFFFFF;">
+                  <div style="font-size:10px;color:#93887A;margin-top:5px;line-height:1.55;">{{ df.hint }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(36,28,22,.06);">
+              <div style="padding:11px 14px 8px;font-size:9.5px;font-weight:800;letter-spacing:.09em;color:#93887A;text-transform:uppercase;">{{ langK }}</div>
+              <div style="display:flex;gap:8px;padding:0 14px 13px;">
+                <sc-for list="{{ langOpts }}" as="lo" hint-placeholder-count="2">
+                  <div onClick="{{ lo.pick }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ lo.aria }}" class="wl-press" style="cursor:pointer;flex:1;text-align:center;border:1.5px solid {{ lo.br }};background:{{ lo.bg }};color:{{ lo.fg }};font-weight:{{ lo.fw }};font-size:13px;border-radius:10px;padding:10px 0;">{{ lo.label }}</div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(36,28,22,.06);">
+              <div style="padding:11px 14px 6px;font-size:9.5px;font-weight:800;letter-spacing:.09em;color:#93887A;text-transform:uppercase;">{{ notifK }}</div>
+              <sc-for list="{{ notifOpts }}" as="no" hint-placeholder-count="3">
+                <div onClick="{{ no.pick }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ no.aria }}" class="wl-row" style="cursor:pointer;display:flex;align-items:flex-start;gap:11px;padding:11px 14px;border-top:1px solid #F5F0E8;">
+                  <span style="width:17px;height:17px;border-radius:50%;border:2px solid {{ no.dotBr }};background:{{ no.dotBg }};flex-shrink:0;margin-top:1px;box-shadow:inset 0 0 0 2.5px #FFFFFF;"></span>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:13px;font-weight:{{ no.fw }};color:#241C16;">{{ no.label }}</div>
+                    <div style="font-size:10.5px;color:#93887A;margin-top:2px;line-height:1.5;">{{ no.sub }}</div>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="padding:10px 14px 13px;border-top:1px solid #F5F0E8;font-size:10px;color:#93887A;line-height:1.6;">{{ notifFoot }}</div>
+            </div>
+
+            <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(36,28,22,.06);">
+              <div style="padding:11px 14px 6px;font-size:9.5px;font-weight:800;letter-spacing:.09em;color:#93887A;text-transform:uppercase;">{{ leaveK }}</div>
+              <div onClick="{{ openLeave }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ leaveLabel }}" class="wl-lrow" style="cursor:pointer;padding:11px 14px 13px;border-top:1px solid #F5F0E8;">
+                <div style="font-size:13px;font-weight:700;color:#C0392B;">{{ leaveLabel }}</div>
+                <div style="font-size:10.5px;color:#93887A;margin-top:3px;line-height:1.55;">{{ leaveSub }}</div>
+              </div>
+              <sc-if value="{{ leaveDisabled }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 14px 13px;font-size:10.5px;color:#B4753A;font-weight:600;">{{ leaveDoneNote }}</div>
+              </sc-if>
+            </div>
+            <div style="text-align:center;font-size:10px;color:#93887A;line-height:1.65;padding:0 8px;">{{ detailsFoot }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ══ PASS RECOVERY · step 1, the number ══════════════════════════ -->
+      <sc-if value="{{ isRecover }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;background:#FFFFFF;--sx:{{ slideFrom }};animation:{{ enterAnim }};min-height:0;">
+          <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
+          <div style="background:linear-gradient(135deg,#1E5C43,#154232);padding:26px 20px 20px;text-align:center;color:#FFFFFF;">
+            <div style="width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.94);color:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;margin:0 auto 10px;animation:{{ popAnim }};">D</div>
+            <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;line-height:1.25;">{{ recTitle }}</div>
+          </div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:13px;">
+            <div style="font-size:12.5px;color:#5D5348;line-height:1.65;">{{ recSub }}</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#93887A;margin-bottom:5px;">{{ recPhoneLabel }}</div>
+              <input value="{{ recPhoneV }}" onChange="{{ setRecPhone }}" aria-label="{{ recPhoneLabel }}" dir="ltr" class="wl-inp" style="width:100%;border:1px solid #D8D0C2;border-radius:11px;padding:13px 14px;font-size:15px;background:#FFFFFF;font-variant-numeric:tabular-nums;">
+            </div>
+            <div onClick="{{ submitRecover }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="{{ recCtaClass }}" style="cursor:{{ recCtaCursor }};background:{{ recCtaBg }};color:{{ recCtaFg }};font-weight:800;font-size:15px;border-radius:999px;padding:15px 0;text-align:center;">{{ recCta }}</div>
+            <sc-if value="{{ recErrOn }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#FDF1EE;border:1px solid #F0D4CB;border-radius:11px;padding:11px 13px;font-size:11.5px;font-weight:600;color:#B4402B;line-height:1.6;animation:fadeUp .3s cubic-bezier(.22,.61,.36,1) both;">{{ recErrMsg }}</div>
+            </sc-if>
+            <div onClick="{{ recJoin }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;text-align:center;font-size:11.5px;font-weight:700;color:#C96A14;">{{ recJoinLabel }}</div>
+            <div style="text-align:center;font-size:10.5px;color:#93887A;line-height:1.65;">{{ recFoot }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ══ PASS RECOVERY · step 2, the code ══════════════════════════ -->
+      <sc-if value="{{ isVerify }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;background:#FFFFFF;--sx:{{ slideFrom }};animation:{{ enterAnim }};min-height:0;">
+          <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;position:absolute;top:8px;left:12px;z-index:20;width:27px;height:27px;border-radius:50%;border:1.5px solid #E7E0D5;color:#5D5348;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">‹</span>
+          <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:52px 22px 24px;display:flex;flex-direction:column;gap:14px;">
+            <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;text-align:center;">{{ vTitle }}</div>
+            <div style="font-size:12.5px;color:#5D5348;text-align:center;line-height:1.65;">{{ vSub }}</div>
+            <div style="display:flex;gap:9px;justify-content:center;margin-top:4px;" aria-hidden="true">
+              <sc-for list="{{ vCells }}" as="vc" hint-placeholder-count="4">
+                <span style="width:48px;height:58px;border-radius:12px;border:1.5px solid {{ vc.br }};background:{{ vc.bg }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;color:#1E5C43;animation:{{ vc.anim }};" dir="ltr">{{ vc.ch }}</span>
+              </sc-for>
+            </div>
+            <input value="{{ vCodeV }}" onChange="{{ setRecCode }}" aria-label="{{ vTitle }}" dir="ltr" class="wl-inp" style="width:100%;border:1px solid #D8D0C2;border-radius:11px;padding:12px 14px;font-size:16px;text-align:center;letter-spacing:.5em;background:#FFFFFF;font-variant-numeric:tabular-nums;">
+            <div onClick="{{ submitVerify }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="{{ vCtaClass }}" style="cursor:{{ vCtaCursor }};background:{{ vCtaBg }};color:{{ vCtaFg }};font-weight:800;font-size:15px;border-radius:999px;padding:15px 0;text-align:center;">{{ vCta }}</div>
+            <sc-if value="{{ vErrOn }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#FDF1EE;border:1px solid #F0D4CB;border-radius:11px;padding:11px 13px;font-size:11.5px;font-weight:600;color:#B4402B;line-height:1.6;text-align:center;animation:fadeUp .3s cubic-bezier(.22,.61,.36,1) both;">{{ vErrMsg }}</div>
+            </sc-if>
+            <div onClick="{{ vResend }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;text-align:center;font-size:11.5px;font-weight:700;color:#C96A14;">{{ vResendLabel }}</div>
+            <div style="background:#FAF6EF;border:1px dashed #E3D8C6;border-radius:11px;padding:11px 13px;font-size:10.5px;color:#8A5A22;text-align:center;line-height:1.6;font-weight:600;">{{ vHint }}</div>
+            <div style="font-size:10.5px;color:#93887A;line-height:1.7;text-align:center;">{{ vVoidNote }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ══ MESSAGES · a broadcast that lives 3.6 seconds was never really sent ══ -->
+      <sc-if value="{{ isMessages }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;background:#F2F2F6;--sx:{{ slideFrom }};animation:{{ enterAnim }};min-height:0;">
+          <div style="display:flex;align-items:center;gap:11px;padding:11px 14px 12px;background:#FFFFFF;border-bottom:1px solid #E7E0D5;flex-shrink:0;">
+            <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;width:27px;height:27px;border-radius:50%;border:1.5px solid #E7E0D5;color:#5D5348;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;">‹</span>
+            <div style="min-width:0;">
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;line-height:1.15;">{{ msgTitle }}</div>
+              <div style="font-size:10.5px;color:#93887A;margin-top:2px;">{{ msgSubtitle }}</div>
+            </div>
+          </div>
+          <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 12px 20px;">
+            <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(36,28,22,.06);">
+              <sc-for list="{{ msgRows }}" as="ms" hint-placeholder-count="4">
+                <div onClick="{{ ms.open }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ ms.aria }}" class="wl-row" style="cursor:pointer;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-bottom:1px solid #F5F0E8;background:{{ ms.bg }};">
+                  <span style="width:7px;height:7px;border-radius:50%;background:{{ ms.dotBg }};flex-shrink:0;margin-top:6px;animation:unreadPulse 2.8s ease-in-out infinite;"></span>
+                  <span style="width:28px;height:28px;border-radius:8px;background:{{ ms.tone }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;flex-shrink:0;">D</span>
+                  <div style="min-width:0;flex:1;">
+                    <div style="display:flex;justify-content:space-between;gap:9px;align-items:baseline;">
+                      <span style="font-size:12.5px;font-weight:{{ ms.fw }};color:#241C16;">{{ ms.title }}</span>
+                      <span style="font-size:9.5px;color:#93887A;white-space:nowrap;flex-shrink:0;">{{ ms.when }}</span>
+                    </div>
+                    <div style="font-size:11px;color:#5D5348;margin-top:3px;line-height:1.5;">{{ ms.body }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="text-align:center;font-size:10px;color:#93887A;line-height:1.7;padding:14px 10px 0;">{{ msgFoot }}</div>
+          </div>
+          <sc-if value="{{ msgReaderOn }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;z-index:50;background:rgba(20,20,22,.5);backdrop-filter:blur(4px);display:flex;flex-direction:column;justify-content:flex-end;border-radius:37px;overflow:hidden;animation:{{ scrimAnim }};">
+              <div style="background:#FFFFFF;border-radius:22px 22px 0 0;padding:15px 18px 26px;animation:{{ sheetAnim }};max-height:78%;overflow-y:auto;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:12px;">
+                  <div style="display:flex;align-items:center;gap:9px;min-width:0;">
+                    <span style="width:28px;height:28px;border-radius:8px;background:{{ mrTone }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;flex-shrink:0;">D</span>
+                    <div style="min-width:0;"><div style="font-size:12px;font-weight:700;">{{ mrFrom }}</div><div style="font-size:9.5px;color:#93887A;">{{ mrWhen }}</div></div>
+                  </div>
+                  <span onClick="{{ closeMsg }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:14px;font-weight:600;flex-shrink:0;">{{ closeMsgLabel }}</span>
+                </div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;line-height:1.3;">{{ mrTitle }}</div>
+                <div style="font-size:13.5px;color:#3F382F;line-height:1.75;margin-top:9px;">{{ mrBody }}</div>
+                <sc-if value="{{ mrHasGo }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ mrGo }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;margin-top:16px;background:#E88024;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:13px 0;text-align:center;">{{ mrGoLabel }}</div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ══ THE OTHER THREE CARDS · one scene, three platform-faithful shapes:
+               cashback is money, VIP is status, a coupon is a single shot. ══ -->
+      <sc-if value="{{ isCard }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;padding:16px 14px 20px;min-height:0;--sx:{{ slideFrom }};animation:{{ enterAnim }};">
+          <div style="display:flex;justify-content:space-between;align-items:center;color:#F4F2EE;padding:2px 6px 14px;flex-shrink:0;">
+            <div style="display:flex;align-items:center;gap:9px;min-width:0;">
+              <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;">‹</span>
+              <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;">{{ walletTitle }}</span>
+            </div>
+            <span onClick="{{ flipCard }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ flipAria }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.5);color:#F4F2EE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">i</span>
+          </div>
+          <div style="flex:1;min-height:0;position:relative;perspective:1500px;">
+            <div style="position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.61,.36,1);transform:{{ flipT }};">
+              <div aria-hidden="{{ backSide }}" style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto;overflow-x:hidden;pointer-events:{{ frontPE }};">
+                <div aria-label="{{ cdAria }}" style="border-radius:16px;background:linear-gradient(150deg,{{ cdC }},{{ cdC2 }});color:#FFFFFF;padding:16px 17px 18px;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};filter:{{ cdDim }};transition:filter .5s;">
+                  <div style="display:flex;align-items:center;gap:9px;">
+                    <div style="width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.94);color:{{ cdC }};display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;flex-shrink:0;">{{ cdInitial }}</div>
+                    <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;">{{ cdName }}</div><div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px;opacity:.72;">{{ cdAr }} · <span style="font-family:'Plus Jakarta Sans',sans-serif;">{{ cdMerchant }}</span></div></div>
+                    <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ cdTagLabel }}</div><div style="font-size:13.5px;font-weight:800;font-variant-numeric:tabular-nums;">{{ cdTagValue }}</div></div>
+                  </div>
+                  <div style="margin-top:17px;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:33px;line-height:1.05;letter-spacing:-.01em;">{{ cdHero }}</div>
+                    <div style="font-size:11px;opacity:.78;margin-top:4px;">{{ cdHeroSub }}</div>
+                  </div>
+                  <div style="font-size:11px;line-height:1.65;opacity:.88;margin-top:13px;">{{ cdNote }}</div>
+
+                  <sc-if value="{{ cdHasPerks }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:16px;">
+                      <div style="font-size:8.5px;font-weight:800;letter-spacing:.09em;opacity:.68;text-transform:uppercase;">{{ cdPerksK }}</div>
+                      <sc-for list="{{ cdPerks }}" as="pk" hint-placeholder-count="4">
+                        <div style="display:flex;align-items:flex-start;gap:9px;margin-top:9px;opacity:{{ pk.op }};">
+                          <span style="width:19px;height:19px;border-radius:50%;background:{{ pk.markBg }};color:{{ pk.markFg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;">{{ pk.mark }}</span>
+                          <div style="min-width:0;"><div style="font-size:12px;font-weight:700;">{{ pk.label }}</div><div style="font-size:10.5px;opacity:.72;margin-top:1px;line-height:1.45;">{{ pk.sub }}</div></div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ cdHasProgress }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:17px;">
+                      <div style="font-size:10.5px;font-weight:700;opacity:.85;">{{ cdProgLabel }}</div>
+                      <div style="height:6px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden;margin-top:6px;">
+                        <div style="height:100%;border-radius:99px;background:linear-gradient(90deg,#E8B824,#F0D06A);width:{{ cdProgPct }};transition:width .6s cubic-bezier(.22,.61,.36,1);"></div>
+                      </div>
+                      <div style="font-size:10px;opacity:.66;margin-top:5px;line-height:1.5;">{{ cdProgNote }}</div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ cdHasCredits }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:17px;">
+                      <div style="font-size:8.5px;font-weight:800;letter-spacing:.09em;opacity:.68;text-transform:uppercase;">{{ cdCreditsK }}</div>
+                      <sc-for list="{{ cdCredits }}" as="cr" hint-placeholder-count="4">
+                        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.09);">
+                          <span style="font-size:11px;opacity:.86;min-width:0;">{{ cr.line }}</span>
+                          <span style="display:flex;gap:9px;align-items:baseline;flex-shrink:0;"><span style="font-size:9.5px;opacity:.55;">{{ cr.time }}</span><span dir="ltr" style="font-size:12px;font-weight:800;color:{{ cr.amtFg }};font-variant-numeric:tabular-nums;">{{ cr.amt }}</span></span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ cdBarcodeOn }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:17px;background:#FFFFFF;border-radius:10px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:5px;">
+                      <div style="display:grid;grid-template-columns:repeat(17,3.4px);grid-auto-rows:3.4px;">
+                        <sc-for list="{{ qrCells }}" as="q6" hint-placeholder-count="0"><div style="background:{{ q6.c }};"></div></sc-for>
+                      </div>
+                      <div dir="ltr" style="font-size:7.5px;color:#5D5348;letter-spacing:.08em;">{{ cdBarcodeNo }}</div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ cdBarcodeOff }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:17px;border:1px dashed rgba(255,255,255,.28);border-radius:10px;padding:16px 10px;text-align:center;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.62);">{{ cdBarcodeOffLabel }}</div>
+                  </sc-if>
+
+                  <div onClick="{{ cdCta }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="{{ cdCtaClass }}" style="cursor:{{ cdCtaCursor }};margin-top:15px;background:{{ cdCtaBg }};color:{{ cdCtaFg }};font-weight:800;font-size:13px;border-radius:999px;padding:12px 0;text-align:center;">{{ cdCtaLabel }}</div>
+                </div>
+              </div>
+              <div aria-hidden="{{ frontSide }}" style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);pointer-events:{{ backPE }};">
+                <div style="height:100%;overflow-y:auto;overflow-x:hidden;">
+                  <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.45);">
+                    <div style="padding:14px 18px;border-bottom:1px solid #F1EBE1;display:flex;justify-content:space-between;align-items:center;">
+                      <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14.5px;">{{ cdBackTitle }}</span>
+                      <span onClick="{{ flipCard }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:13px;font-weight:600;">{{ doneWord }}</span>
+                    </div>
+                    <sc-for list="{{ cdBackRows }}" as="cb" hint-placeholder-count="4">
+                      <div onClick="{{ cb.action }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ cb.k }}" class="{{ cb.cls }}" style="padding:12px 18px;border-bottom:1px solid #F5F0E8;cursor:{{ cb.cursor }};">
+                        <div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ cb.k }}</div>
+                        <div style="font-size:13px;font-weight:600;color:{{ cb.color }};margin-top:3px;line-height:1.5;">{{ cb.v }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ══ THE GIFT · the banner used to announce a present with nowhere to go ══ -->
+      <sc-if value="{{ isGift }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;padding:16px 14px 20px;min-height:0;--sx:{{ slideFrom }};animation:{{ enterAnim }};overflow-y:auto;overflow-x:hidden;">
+          <div style="display:flex;align-items:center;gap:9px;color:#F4F2EE;padding:2px 6px 14px;flex-shrink:0;">
+            <span onClick="{{ goBack }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ backAria }}" class="wl-ghost" style="cursor:pointer;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,242,238,.4);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;">‹</span>
+            <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;">{{ giftTitle }}</span>
+          </div>
+          <div style="border-radius:16px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.45);animation:{{ cardPopAnim }};background:#FFFFFF;">
+            <div style="position:relative;background:linear-gradient(115deg,#C96A14,#E88024 58%,#F0C74A);padding:20px 18px;display:flex;align-items:center;gap:14px;overflow:hidden;">
+              <div style="position:absolute;inset-inline-end:-30px;top:-40px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.1);"></div>
+              <div style="min-width:0;position:relative;z-index:1;">
+                <div style="font-size:9.5px;font-weight:800;letter-spacing:.1em;color:rgba(255,255,255,.82);text-transform:uppercase;">{{ giftFrom }}</div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:21px;color:#FFFFFF;line-height:1.2;margin-top:5px;">{{ giftName }}</div>
+              </div>
+              <sc-if value="{{ giftArtOn }}" hint-placeholder-val="{{ false }}">
+                <img src="{{ giftArt }}" alt="" style="width:66px;height:66px;object-fit:contain;flex-shrink:0;position:relative;z-index:1;filter:drop-shadow(0 5px 11px rgba(0,0,0,.4));">
+              </sc-if>
+            </div>
+            <div style="padding:15px 18px 6px;font-size:9.5px;font-weight:800;letter-spacing:.09em;color:#93887A;text-transform:uppercase;">{{ giftHowK }}</div>
+            <sc-for list="{{ giftHow }}" as="gh" hint-placeholder-count="3">
+              <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 18px;">
+                <span style="width:19px;height:19px;border-radius:50%;background:#FDF0E1;color:#C96A14;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:900;flex-shrink:0;">{{ gh.n }}</span>
+                <span style="font-size:12.5px;color:#3F382F;line-height:1.55;">{{ gh.line }}</span>
+              </div>
+            </sc-for>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:13px 18px;margin-top:6px;border-top:1px solid #F5F0E8;">
+              <span style="font-size:9.5px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;">{{ giftExpiryK }}</span>
+              <span style="font-size:12px;font-weight:600;color:#241C16;text-align:end;">{{ giftExpiry }}</span>
+            </div>
+            <div style="padding:0 18px 18px;">
+              <div onClick="{{ giftCta }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;background:#1E5C43;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:999px;padding:14px 0;text-align:center;">{{ giftCtaLabel }}</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:10.5px;color:#8E8C96;line-height:1.7;padding:16px 10px 0;">{{ giftFoot }}</div>
+        </div>
+      </sc-if>
     </div>
+
+    <!-- ══ TERMS · phone-level, so the Daraj back AND any sibling card can open it ══ -->
+    <sc-if value="{{ termsOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:58;display:flex;flex-direction:column;background:rgba(8,10,9,.62);backdrop-filter:blur(4px);border-radius:37px;overflow:hidden;animation:{{ scrimAnim }};">
+        <div style="flex:1;"></div>
+        <div style="background:#F2F2F6;border-radius:22px 22px 0 0;padding:14px 16px 24px;animation:{{ sheetAnim }};max-height:80%;overflow-y:auto;box-shadow:0 -14px 40px rgba(0,0,0,.4);">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:2px 2px 4px;">
+            <span style="width:44px;"></span>
+            <span style="font-weight:700;font-size:15px;">{{ termsTitle }}</span>
+            <span onClick="{{ closeTerms }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;color:#007AFF;font-size:15px;font-weight:700;">{{ termsDone }}</span>
+          </div>
+          <div style="text-align:center;font-size:11px;color:#8E8C96;margin:0 0 13px;">{{ termsTitleAlt }}</div>
+          <div style="background:#FFFFFF;border-radius:14px;overflow:hidden;">
+            <sc-for list="{{ termsRows }}" as="tr2" hint-placeholder-count="6">
+              <div style="padding:11px 15px;border-bottom:1px solid #F5F0E8;">
+                <div style="font-size:12.5px;font-weight:800;color:#241C16;">{{ tr2.k }}</div>
+                <div style="font-size:11.5px;color:#5D5348;margin-top:3px;line-height:1.6;">{{ tr2.v }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="text-align:center;font-size:10px;color:#93887A;margin-top:12px;">{{ termsFoot }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ══ LEAVING · a confirm that says what actually happens to her stamps ══ -->
+    <sc-if value="{{ leaveOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:62;display:flex;align-items:center;justify-content:center;padding:26px;background:rgba(8,10,9,.62);backdrop-filter:blur(5px);border-radius:37px;overflow:hidden;animation:{{ scrimAnim }};">
+        <div style="background:#FFFFFF;border-radius:18px;padding:20px 19px 16px;box-shadow:0 26px 60px rgba(0,0,0,.45);animation:{{ dlgAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;line-height:1.3;">{{ leaveTitle }}</div>
+          <div style="font-size:12.5px;color:#5D5348;line-height:1.7;margin-top:9px;">{{ leaveBody }}</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+            <div onClick="{{ cancelLeave }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;background:#1E5C43;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 0;text-align:center;">{{ leaveCancelLabel }}</div>
+            <div onClick="{{ confirmLeave }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-press wl-lrow" style="cursor:pointer;color:#C0392B;font-weight:700;font-size:13px;border-radius:999px;padding:10px 0;text-align:center;">{{ leaveConfirmLabel }}</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
     <div style="width:110px;height:4px;border-radius:99px;background:{{ homeBarColor }};margin:0 auto 8px;flex-shrink:0;"></div>
   </div>
 
@@ -548,7 +962,7 @@
     </div>
 
     <div style="background:{{ playBg }};border:1px solid {{ playBorder }};border-radius:16px;padding:14px 16px;">
-      <div onClick="{{ togglePlay }}" class="wl-play" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;background:{{ playBtnBg }};color:{{ playBtnFg }};border-radius:11px;padding:12px 14px;font-weight:800;font-size:13px;">{{ playLabel }}</div>
+      <div onClick="{{ togglePlay }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-play" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;background:{{ playBtnBg }};color:{{ playBtnFg }};border-radius:11px;padding:12px 14px;font-weight:800;font-size:13px;">{{ playLabel }}</div>
       <div style="font-size:10.5px;color:{{ playCapFg }};margin-top:10px;line-height:1.55;min-height:30px;">{{ playCaption }}</div>
       <sc-if value="{{ isPlaying }}" hint-placeholder-val="{{ false }}">
         <div style="height:3px;border-radius:99px;background:#EFE6D8;overflow:hidden;margin-top:2px;">
@@ -563,7 +977,7 @@
         <div style="position:absolute;inset-inline-start:20px;top:20px;height:{{ stepTrackH }};width:2px;background:#EFEDE8;border-radius:99px;"></div>
         <div style="position:absolute;inset-inline-start:20px;top:20px;height:{{ stepFillH }};width:2px;background:linear-gradient(180deg,#E88024,#C96A14);border-radius:99px;transition:height .5s cubic-bezier(.22,.61,.36,1);"></div>
         <sc-for list="{{ sceneChips }}" as="sc" hint-placeholder-count="6">
-          <div onClick="{{ sc.go }}" class="wl-steprow" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:{{ sc.bg }};position:relative;z-index:1;">
+          <div onClick="{{ sc.go }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ sc.label }}" class="wl-steprow" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:{{ sc.bg }};position:relative;z-index:1;">
             <span class="wl-stepdisc" style="width:22px;height:22px;border-radius:50%;background:{{ sc.numBg }};color:{{ sc.numFg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;box-shadow:0 0 0 3px #FFFFFF;animation:{{ sc.pulse }};">{{ sc.n }}</span>
             <div style="min-width:0;"><div style="font-size:12.5px;font-weight:{{ sc.fw }};color:{{ sc.fg }};">{{ sc.label }}</div></div>
           </div>
@@ -574,16 +988,25 @@
       <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">{{ momentsK }}</div>
       <div style="display:flex;flex-direction:column;gap:8px;">
         <sc-for list="{{ momentBtns }}" as="mb" hint-placeholder-count="3">
-          <div onClick="{{ mb.go }}" class="wl-ghost wl-press" style="cursor:pointer;border:1.5px solid {{ mb.br }};color:{{ mb.fg }};background:{{ mb.bg }};font-weight:700;font-size:12.5px;border-radius:11px;padding:10px 13px;">{{ mb.label }}<div style="font-size:10.5px;font-weight:500;color:#93887A;margin-top:2px;">{{ mb.sub }}</div></div>
+          <div onClick="{{ mb.go }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ mb.label }}" class="wl-ghost wl-press" style="cursor:pointer;border:1.5px solid {{ mb.br }};color:{{ mb.fg }};background:{{ mb.bg }};font-weight:700;font-size:12.5px;border-radius:11px;padding:10px 13px;">{{ mb.label }}<div style="font-size:10.5px;font-weight:500;color:#93887A;margin-top:2px;">{{ mb.sub }}</div></div>
         </sc-for>
       </div>
       <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.5;">{{ momentsHint }}</div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">{{ lifeK }}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <sc-for list="{{ lifeBtns }}" as="lb" hint-placeholder-count="3">
+          <div onClick="{{ lb.go }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ lb.label }}" class="wl-ghost wl-press" style="cursor:pointer;border:1.5px solid {{ lb.br }};color:{{ lb.fg }};background:{{ lb.bg }};font-weight:700;font-size:12.5px;border-radius:11px;padding:10px 13px;">{{ lb.label }}<div style="font-size:10.5px;font-weight:500;color:#93887A;margin-top:2px;line-height:1.45;">{{ lb.sub }}</div></div>
+        </sc-for>
+      </div>
+      <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.55;">{{ lifeHint }}</div>
     </div>
     <a href="Wasla Dashboard.dc.html" style="display:block;background:#26262B;color:#F4F2EE;border-radius:14px;padding:14px 16px;font-size:12.5px;font-weight:700;text-align:center;">{{ dashLink }}</a>
     <div style="display:flex;align-items:center;justify-content:center;gap:14px;padding-bottom:4px;">
       <a href="Wasla Demo.dc.html" class="wl-link" style="font-size:10.5px;font-weight:700;color:#93887A;letter-spacing:.03em;">{{ hubLink }}</a>
       <span style="width:3px;height:3px;border-radius:50%;background:#D8D0C2;"></span>
-      <span onClick="{{ resetDemo }}" class="wl-link" style="cursor:pointer;font-size:10.5px;font-weight:700;color:{{ resetFg }};letter-spacing:.03em;">{{ resetLabel }}</span>
+      <span onClick="{{ resetDemo }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-link" style="cursor:pointer;font-size:10.5px;font-weight:700;color:{{ resetFg }};letter-spacing:.03em;">{{ resetLabel }}</span>
     </div>
   </div>
 </div>
@@ -597,11 +1020,30 @@ class Component extends DCLogic {
     return {
       walletSel: 0, redeemFlash: false, scene: s0, lang: this.props.lang ?? 'en', platform: 'apple',
       stamps: 5, goal: 8, gift: false, backSide: false, camReady: false,
-      notif: null, notifOut: false, form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white' },
+      notif: null, notifOut: false, form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white', birthday: '14 Sep' },
       settled: false, shareSheet: false, joined: false,
-      navDir: 'fwd', navSeq: 0, stampSeq: 0, seen: { [s0]: true },
-      lock: false, playing: false, playIdx: 0, playCap: '',
-      refPending: false, refDone: false, histAdd: [], resetArm: false
+      navDir: 'fwd', navSeq: 0, stampSeq: 0, seen: { [s0]: true }, prev: 'counter',
+      lock: false, lockMsg: 'weekend', playing: false, playIdx: 0, playCap: '',
+      refPending: false, refDone: false, histAdd: [], resetArm: false,
+      /* ── MY DETAILS · the settings the member actually owns. `notifPref` is not
+           decoration: 'rewards' and 'mute' really do suppress the banner, and a muted
+           shop still lands in Messages — which is what muting a shop means. ── */
+      notifPref: 'all', leaveArm: false,
+      /* ── THE LIFE OF THE CARD (spec C9) · one axis, four honest endings.
+           live → the card earns. paused → shop-side, stamps safe, redemption alive.
+           retired → the programme ended: no barcode, "Expired", a thank-you.
+           left → the MEMBER removed the pass; the wallet drops it. ── */
+      cardState: 'live',
+      /* ── PASS RECOVERY · "I have a new phone" ── */
+      recPhone: '', recCode: '', recErr: '', recovered: false,
+      /* ── MESSAGES · the broadcast inbox. `inbox` holds catalogue keys, not copy, so
+           persistence stays tiny and every string still round-trips through T(). ── */
+      inbox: [], msgRead: [], msgOpen: null, msgSeq: 0,
+      /* ── the other three wallet cards, the shared terms sheet, the coupon's second ask ── */
+      cardOpen: 'nara', qamarUsed: false, couponArm: false, termsOpen: false,
+      /* bump-only, never persisted: a cross-tab dashboard edit nudges this so the
+         card back re-renders against the new overlay. */
+      linkSeq: 0
     };
   }
   /** ONE registry for every timer this component arms. Named handles still exist for
@@ -625,7 +1067,10 @@ class Component extends DCLogic {
           joined: !!s.joined, stamps: s.stamps, goal: s.goal, lang: s.lang, platform: s.platform,
           walletSel: s.walletSel, gift: !!s.gift, refDone: !!s.refDone,
           histAdd: (s.histAdd || []).slice(0, 4),
-          form: { name: f.name, phone: f.phone, drink: f.drink } }));
+          notifPref: s.notifPref, cardState: s.cardState,
+          recovered: !!s.recovered, qamarUsed: !!s.qamarUsed,
+          msgSeq: s.msgSeq, inbox: (s.inbox || []).slice(0, 6), msgRead: (s.msgRead || []).slice(0, 24),
+          form: { name: f.name, phone: f.phone, drink: f.drink, birthday: f.birthday } }));
       } catch (e) {}
     });
   }
@@ -671,9 +1116,18 @@ class Component extends DCLogic {
     const st = num(b.stamps, 0, 12); if (st !== null) p.stamps = st;
     const ws = num(b.walletSel, 0, 3); if (ws !== null) p.walletSel = ws;
     if (Array.isArray(b.histAdd)) p.histAdd = b.histAdd.filter(x => x && typeof x === 'object' && typeof x.id === 'string').slice(0, 4);
+    /* the newer keys — same posture: a value only survives if it is one of the
+       shapes this component can actually consume, otherwise the default stands */
+    if (b.notifPref === 'all' || b.notifPref === 'rewards' || b.notifPref === 'mute') p.notifPref = b.notifPref;
+    if (b.cardState === 'live' || b.cardState === 'paused' || b.cardState === 'retired' || b.cardState === 'left') p.cardState = b.cardState;
+    if (typeof b.recovered === 'boolean') p.recovered = b.recovered;
+    if (typeof b.qamarUsed === 'boolean') p.qamarUsed = b.qamarUsed;
+    const ms = num(b.msgSeq, 0, 9999); if (ms !== null) p.msgSeq = ms;
+    if (Array.isArray(b.inbox)) p.inbox = b.inbox.filter(x => x && typeof x === 'object' && typeof x.k === 'string' && typeof x.n === 'number' && isFinite(x.n)).slice(0, 6);
+    if (Array.isArray(b.msgRead)) p.msgRead = b.msgRead.filter(x => typeof x === 'string').slice(0, 24);
     if (b.form && typeof b.form === 'object' && !Array.isArray(b.form)) {
       const f = {};
-      ['name', 'phone', 'drink'].forEach(k => { if (typeof b.form[k] === 'string') f[k] = b.form[k].slice(0, 60); });
+      ['name', 'phone', 'drink', 'birthday'].forEach(k => { if (typeof b.form[k] === 'string') f[k] = b.form[k].slice(0, 60); });
       if (Object.keys(f).length) p.form = { ...(this.state.form || {}), ...f };
     }
     return Object.keys(p).length ? p : null;
@@ -687,6 +1141,9 @@ class Component extends DCLogic {
     if (!p) return false;
     this.state = { ...this.state, ...p };
     if (this.state.stamps > this.state.goal) this.state.stamps = this.state.goal;
+    /* a restored inbox must never hand out an id the counter could mint again */
+    const hi = (this.state.inbox || []).reduce((a, e) => Math.max(a, (e && e.n) || 0), 0);
+    if ((this.state.msgSeq || 0) < hi) this.state.msgSeq = hi;
     this.state.seen = { ...this.state.seen, counter: true };
     return true;
   }
@@ -729,22 +1186,23 @@ class Component extends DCLogic {
         backSide: onPass ? false : s.backSide,
         histAdd: [{ id: 'ref' }, ...(s.histAdd || [])].slice(0, 4)
       });
-      L.notify('Daraj Coffee', EN
+      // the payoff is a reward AND a message — it outlives its own banner now
+      L.broadcast('Daraj Coffee', EN
         ? (full ? 'Noor joined with your code — a bonus stamp is banked for your next card 🎉 · انضمّت نور برمزك'
                 : 'Noor joined with your code — you\'re both 1 stamp ahead 🎉 · انضمّت نور برمزك')
         : (full ? 'انضمّت نور برمزك — ختمك الإضافي محفوظ لبطاقتك القادمة 🎉'
-                : 'انضمّت نور برمزك — كلاكما متقدّم بختم 🎉'));
+                : 'انضمّت نور برمزك — كلاكما متقدّم بختم 🎉'), 'referral', 'reward');
       L.emitLive('referral', 'Noor joined from ' + L.firstName() + '’s code — bonus stamp');
       L.save();
     });
   }
 
   componentDidMount() { this.poke(); }
-  componentWillUnmount() { this.killAll(); }
+  componentWillUnmount() { this.killAll(); this.dropLinkSync(); }
   poke() { this.kill(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = this.after(2600, () => this.setState({ settled: true })); }
   componentDidUpdate() {
     const s = this.state;
-    const cur = [s.scene, s.lang, s.platform, s.stamps, s.gift, s.backSide, s.camReady, !!s.notif, s.notifOut, s.walletSel, s.redeemFlash, s.shareSheet, s.navSeq, s.stampSeq, s.lock, s.playing, s.playIdx, s.refDone, (s.histAdd || []).length, s.resetArm].join('|');
+    const cur = [s.scene, s.lang, s.platform, s.stamps, s.gift, s.backSide, s.camReady, !!s.notif, s.notifOut, s.walletSel, s.redeemFlash, s.shareSheet, s.navSeq, s.stampSeq, s.lock, s.playing, s.playIdx, s.refDone, (s.histAdd || []).length, s.resetArm, s.cardState, s.linkSeq, s.msgOpen, s.termsOpen, s.leaveArm, s.cardOpen].join('|');
     if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
     this._lastSig = cur;
   }
@@ -753,6 +1211,153 @@ class Component extends DCLogic {
     return this._qr;
   }
   firstName() { return ((this.state.form || {}).name || '').trim().split(' ')[0] || 'Sara'; }
+
+  /** ── back-of-card link resolution · one card's ig/wa/loc/web against WASLA_DB ──
+      Semantics per key:
+        - present on the card, non-empty string → OVERRIDE for this card
+        - present on the card as ""             → HIDDEN on this card
+        - absent from the card's `links`        → INHERIT the account default
+      Read defensively at every hop (WASLA_DB absent, malformed, card not found,
+      account block missing) — any failure collapses to FALLBACK, which mirrors
+      the literal values this pass shipped with before real data existed, so the
+      back of the card never renders empty.
+
+      `opts.inherit === false` cuts the account hop out. The wallet holds cards from
+      FOUR different merchants; only Daraj belongs to Tala Hospitality, so a Nara
+      Pharmacy card inheriting Tala's Instagram would be a data bug wearing a
+      correct-looking row. Override / hidden("") / absent semantics are untouched —
+      absent simply lands on the card's own fallback instead of the account's.
+
+      ── THE DASHBOARD OVERLAY ─────────────────────────────────────────────
+      WASLA_DB is the shipped data, not the current truth. When Yara edits a link
+      in the merchant dashboard, the edit lands in the DASHBOARD's own blob and
+      WASLA_DB never moves — so a resolver that reads only the data file shows Sara
+      yesterday's Instagram and turns the dashboard's "back of the card" preview
+      into a mirror of nothing. The overlay is therefore consulted FIRST, with the
+      dashboard's own three-state semantics preserved exactly:
+
+        cardLinks[cardId][k] = "value"  → this card overrides with it
+                             = ""       → hidden on this card
+                             = null     → the owner pressed *revert to inherit*,
+                                          which deliberately steps OVER the card's
+                                          own WASLA_DB.links and goes to the
+                                          account default. Matching that is the
+                                          whole point: preview and pass must agree.
+                   key absent           → fall through to WASLA_DB.
+
+      We are a READER. Nothing here ever writes the dashboard's key. */
+  dashKey() { return 'wasla_demo_dashboard_state'; }
+  LINK_KEYS() { return ['ig', 'wa', 'loc', 'web']; }
+  /** Pure: the dashboard blob → { acc, cards } or null. Version-checked, per-key
+      type-narrowed to string|null, and built by walking OUR four keys rather than
+      the blob's — which is what silently drops `<key>_was` parking slots and every
+      other key we do not understand. A corrupt, foreign or absent blob is null. */
+  parseDashLinks(raw) {
+    const KEYS = this.LINK_KEYS();
+    try {
+      const b = JSON.parse(raw);
+      if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return null;
+      const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v)) ? v : null;
+      const out = { acc: null, cards: null };
+      const a = obj(b.accLinks);
+      if (a) {
+        const row = {};
+        KEYS.forEach((k) => { if (typeof a[k] === 'string') row[k] = a[k]; });
+        if (Object.keys(row).length) out.acc = row;
+      }
+      const c = obj(b.cardLinks);
+      if (c) {
+        const cards = {};
+        Object.keys(c).forEach((cid) => {
+          const v = obj(c[cid]);
+          if (!v) return;
+          const row = {};
+          KEYS.forEach((k) => { const x = v[k]; if (typeof x === 'string' || x === null) row[k] = x; });
+          if (Object.keys(row).length) cards[cid] = row;
+        });
+        if (Object.keys(cards).length) out.cards = cards;
+      }
+      return (out.acc || out.cards) ? out : null;
+    } catch (e) { return null; }
+  }
+  /** Re-parses only when the stored STRING changes, so the resolver can be called
+      per card per render without paying for JSON.parse each time — and without a
+      cache that can go stale behind another tab's write. */
+  dashOverlay() {
+    let raw = null;
+    try { raw = this._lsGet(this.dashKey()); } catch (e) { raw = null; }
+    if (!raw) { this._dashRaw = null; this._dashOv = null; return null; }
+    if (raw === this._dashRaw) return this._dashOv;
+    this._dashRaw = raw;
+    this._dashOv = this.parseDashLinks(raw);
+    return this._dashOv;
+  }
+  cardLinks(cardId, fallback, opts) {
+    const FALLBACK = { ig: '@darajcoffee', wa: '+962 79 555 0100', loc: '', web: '' };
+    const F = Object.assign({}, FALLBACK, fallback || {});
+    const inherit = !(opts && opts.inherit === false);
+    const KEYS = this.LINK_KEYS();
+    const has = (o, k) => !!o && Object.prototype.hasOwnProperty.call(o, k);
+    const out = {};
+    try {
+      const db = (typeof window !== 'undefined') ? window.WASLA_DB : null;
+      const ov = this.dashOverlay();
+      const ovCard = (ov && ov.cards && ov.cards[cardId]) || {};
+      // steps 3 and 4 are the INHERIT tail — both are switched off together by
+      // inherit:false, because both of them are Tala Hospitality's values
+      const ovAcc = (inherit && ov && ov.acc) || {};
+      const acctLinks = (inherit && db && db.account && typeof db.account.links === 'object' && db.account.links) || {};
+      const cards = (db && Array.isArray(db.cards)) ? db.cards : [];
+      const card = cards.find((c) => c && c.id === cardId) || null;
+      const cardLinksObj = (card && typeof card.links === 'object' && card.links) || {};
+      const inherited = (k) => {
+        if (has(ovAcc, k)) return ovAcc[k];      // 3 · the account default the owner edited
+        if (has(acctLinks, k)) return acctLinks[k]; // 4 · the account default as shipped
+        return F[k];                              // 5 · nothing anywhere — safe fallback
+      };
+      KEYS.forEach((k) => {
+        if (has(ovCard, k)) {                     // 1 · what the dashboard says about THIS card
+          const v = ovCard[k];
+          out[k] = (v === null) ? inherited(k) : v;   // null = reverted to inherit
+          return;
+        }
+        if (has(cardLinksObj, k)) {               // 2 · the card's own shipped value
+          out[k] = cardLinksObj[k];               // override, or explicit "" → hidden
+          return;
+        }
+        out[k] = inherited(k);
+      });
+    } catch (e) {
+      KEYS.forEach((k) => { out[k] = F[k]; });
+    }
+    return out;
+  }
+  /** Yara edits a link in the dashboard tab; Sara's card back changes in this one.
+      Armed from renderVals for the same reason the welcome nudge is (componentDidMount
+      is skippable on the deferred mount path), latched on the HOST so a logic swap
+      cannot double-subscribe, and torn down in componentWillUnmount. `storage` only
+      fires in OTHER tabs, which is exactly the case this exists for. A null `key`
+      means someone cleared storage wholesale — that counts too. Silent: the value
+      changing under her is not news, it is just the truth. */
+  armLinkSync() {
+    const h = this.__host || this;
+    if (h.__wcLinkSync) return;
+    if (typeof window === 'undefined' || typeof window.addEventListener !== 'function') return;
+    const fn = (e) => {
+      if (e && e.key && e.key !== this.dashKey()) return;
+      const L = (this.__host && this.__host.logic) || this;
+      if (!L || !L.state) return;
+      L.setState((s) => ({ linkSeq: (s.linkSeq || 0) + 1 }));
+    };
+    h.__wcLinkSync = fn;
+    try { window.addEventListener('storage', fn); } catch (err) { h.__wcLinkSync = null; }
+  }
+  dropLinkSync() {
+    const h = this.__host || this;
+    if (!h.__wcLinkSync) return;
+    try { if (typeof window !== 'undefined' && window.removeEventListener) window.removeEventListener('storage', h.__wcLinkSync); } catch (e) {}
+    h.__wcLinkSync = null;
+  }
 
   /* ══ THE STAMP SYSTEM ═══════════════════════════════════════════════════
      Shared with the Dashboard and Scanner. stampKey/stampGlyphs/hexA/hashHue are
@@ -919,10 +1524,67 @@ class Component extends DCLogic {
     });
   }
 
+  /* ══ MESSAGES · the broadcast inbox ══════════════════════════════════════
+     A broadcast used to live 3.6 seconds and then be gone forever. It now lands
+     in a real inbox. `inbox` stores CATALOGUE KEYS + a monotonic serial, never
+     copy — so the persisted blob stays tiny, the same entry renders in whichever
+     language is live at read time, and a shop can send the same broadcast twice
+     without the two collapsing into one row.
+       runtime entry  { k: 'weekend', n: 7 }  → id 'weekend-7'
+       seeded entry   fixed ids s1..s3        → the history she already had
+     ══════════════════════════════════════════════════════════════════════ */
+  SEED_IDS() { return { weekend: 's1', birthday: 's2', welcome: 's3' }; }
+  pushMsg(k) {
+    if (!k) return;
+    this.setState((s) => {
+      const n = (s.msgSeq || 0) + 1;
+      return { msgSeq: n, inbox: [{ k, n }].concat(s.inbox || []).slice(0, 6) };
+    });
+  }
+  /** The id a catalogue key currently resolves to: newest runtime copy, else the seed. */
+  msgIdFor(k) {
+    const hit = (this.state.inbox || []).find((e) => e && e.k === k);
+    return hit ? (k + '-' + hit.n) : (this.SEED_IDS()[k] || null);
+  }
+  markRead(id) {
+    if (!id) return;
+    this.setState((s) => ({ msgRead: [id].concat((s.msgRead || []).filter((x) => x !== id)).slice(0, 24) }));
+    // persisted at the moment of reading, not when the reader closes — she may never close it
+    this.save();
+  }
+  openMsg(id) { this.userTouch(); this.markRead(id); this.setState({ msgOpen: id }); }
+  openMsgByKey(k) {
+    const id = this.msgIdFor(k);
+    this.markRead(id);
+    this.go('messages', { msgOpen: id });
+    this.save();
+  }
+  /** A broadcast is two things at once: a banner that passes, and a message that stays. */
+  broadcast(title, body, k, tier) { this.pushMsg(k); this.notify(title, body, k, tier); this.save(); }
+
   // ── notifications · spring in, slide out ──
-  notify(title, body) {
+  /** `msg` ties the banner to an inbox entry, so tapping it opens the message rather
+      than dumping her on the pass. `tier` meets the member's own preference: 'mute'
+      silences every banner (the message still lands in Messages, which is exactly what
+      muting a shop means), 'rewards' keeps only the ones worth interrupting for.
+
+      Two things the preference must NEVER swallow, or muting one shop would break the
+      phone: a banner from anyone other than Daraj (the wallet, Wasla's own verification
+      code, the other three merchants, an app opening), and a banner that is the direct
+      answer to a tap she just made — a refusal with no visible reason is worse than
+      no refusal at all. Those carry tier 'system'. */
+  notifyAllowed(title, tier) {
+    if (tier === 'system') return true;
+    if (title !== 'Daraj Coffee') return true;
+    const p = (this.state || {}).notifPref || 'all';
+    if (p === 'mute') return false;
+    if (p === 'rewards') return tier === 'reward';
+    return true;
+  }
+  notify(title, body, msg, tier) {
+    if (!this.notifyAllowed(title, tier)) { this.dismissNotifNow(); return; }
     this.kill(this._nt); this.kill(this._no);
-    this.setState({ notif: { title, body }, notifOut: false });
+    this.setState({ notif: { title, body, msg: msg || null }, notifOut: false });
     this._nt = this.after(3600, () => this.dismissNotif());
   }
   dismissNotif() {
@@ -938,6 +1600,11 @@ class Component extends DCLogic {
     const back = dir === 'back';
     this.setState((s) => ({
       scene, backSide: false, camReady: false, lock: false,
+      /* `prev` is what lets the screens that hang off two doors — My details,
+         Messages, a card, the gift — go back to the door they came through
+         instead of a hard-coded guess. Scenes with a real parent still use
+         backTargetByScene; prev only fills the gap. 'sheet' is never a door. */
+      prev: (s.scene === scene || s.scene === 'sheet') ? (s.prev || 'counter') : s.scene,
       navDir: back ? 'back' : 'fwd', navSeq: (s.navSeq || 0) + 1,
       seen: { ...(s.seen || {}), [scene === 'sheet' ? 'success' : scene]: true },
       ...(extra || {})
@@ -955,20 +1622,113 @@ class Component extends DCLogic {
   userTouch() { if (this._auto) return; if (this.state.playing) this.stopPlay(); }
 
   // ── the lock-screen moment (spec C6) ──
-  showLock() {
+  /** `kind` picks which message is on the glass: the weekend broadcast, or the
+      programme's own goodbye. Either way the message also lands in the inbox —
+      a lock-screen card that vanishes with no record is the bug this fixes. */
+  showLock(kind) {
+    const k = kind || 'weekend';
     this.kill(this._lk);
     this.dismissNotifNow();
-    this.setState({ lock: true });
+    this.pushMsg(k);
+    this.setState({ lock: true, lockMsg: k });
+    this.save();
     this._lk = this.after(2600, () => this.setState({ lock: false }));
   }
-  lockTap() { this.kill(this._lk); this.go('pass'); }
+  lockTap() {
+    this.kill(this._lk);
+    const k = this.state.lockMsg || 'weekend';
+    if (k === 'birthday') { this.go('gift'); return; }
+    this.go('pass');
+  }
+
+  /* ══ PASS RECOVERY · "I have a new phone" ════════════════════════════════
+     The success screen promises "Already a member? The same QR opens your card."
+     This is the machinery that makes the promise true. The phone number is the
+     identity, so it is matched against the real member list rather than waved
+     through: a number with no Daraj card gets an honest dead end and a way to
+     join instead. The code is fixed and shown in the open — a demo that pretends
+     to send an SMS is lying about the one step it cannot perform. ═══════════ */
+  DEMO_CODE() { return '4417'; }
+  normPhone(p) { return String(p || '').replace(/\D/g, '').slice(-9); }
+  lookupMember(phone) {
+    const n = this.normPhone(phone);
+    if (n.length < 9) return null;
+    try {
+      const db = (typeof window !== 'undefined') ? window.WASLA_DB : null;
+      const list = (db && Array.isArray(db.members)) ? db.members : [];
+      const m = list.find((x) => x && x.card === 'Daraj Coffee' && this.normPhone(x.phone) === n);
+      if (!m) return null;
+      const g = String(m.progress || '').match(/(\d+)\s*\/\s*(\d+)/);
+      const goal = g ? Math.max(1, Math.min(12, +g[2])) : 8;
+      return { name: m.name || '', stamps: g ? Math.min(+g[1], goal) : 0, goal, birthday: m.birthday || '' };
+    } catch (e) { return null; }
+  }
+  sendCode() {
+    this.kill(this._vc);
+    this._vc = this.after(1400, () => {
+      const L = (this.__host && this.__host.logic) || this;
+      if (!L || !L.state || L.state.scene !== 'verify') return;
+      const EN = L.state.lang === 'en';
+      L.notify('Wasla', EN
+        ? 'Your Daraj code is ' + this.DEMO_CODE() + ' — it expires in 10 minutes.'
+        : 'رمز الدرج هو ' + this.DEMO_CODE() + ' — ينتهي خلال 10 دقائق.', null, 'system');
+    });
+  }
+  doRestore() {
+    const phone = this.state.recPhone || '';
+    const m = this.lookupMember(phone) || {};
+    const EN = this.state.lang === 'en';
+    this.kill(this._vc);
+    this.setState((s) => ({
+      joined: true, recovered: true, cardState: 'live',
+      stamps: typeof m.stamps === 'number' ? m.stamps : Math.max(s.stamps, 6),
+      goal: m.goal || s.goal,
+      stampSeq: (s.stampSeq || 0) + 1, recCode: '', recErr: '',
+      histAdd: [{ id: 'reissue' }].concat((s.histAdd || []).filter((x) => x && x.id !== 'reissue')).slice(0, 4),
+      form: { ...s.form, name: m.name || s.form.name, phone: phone || s.form.phone, birthday: m.birthday || s.form.birthday }
+    }));
+    this.go('pass', { platform: 'apple' });
+    this.broadcast('Daraj Coffee', EN
+      ? 'Your card is on this phone. The pass on the old one is void.'
+      : 'بطاقتك على هذا الهاتف. البطاقة على الهاتف القديم لم تعد صالحة.', 'recovered');
+    this.emitLive('renew', 'pass re-issued to a new device — the old barcode is void');
+    this.save();
+  }
+
+  /* ══ THE LIFE OF THE CARD · pause, retire, and the member's own goodbye ══ */
+  setCardState(next) {
+    const EN = this.state.lang === 'en';
+    this.setState({ cardState: next, couponArm: false, leaveArm: false });
+    this.go('pass');
+    if (next === 'paused') {
+      this.broadcast('Daraj Coffee', EN
+        ? 'We are pausing the card while Rainbow St is refitted — your stamps are safe.'
+        : 'أوقفنا البطاقة مؤقتاً بينما نجدّد فرع الرينبو — أختامك محفوظة.', 'paused');
+    } else if (next === 'retired') {
+      this.setState({ gift: false });
+      this.showLock('farewell');
+    } else {
+      this.notify('Daraj Coffee', EN ? 'The card is live again — stamps resume today.' : 'البطاقة عادت للعمل — الأختام تُستأنف اليوم.', null, 'system');
+    }
+    this.save();
+  }
+  doLeave() {
+    const EN = this.state.lang === 'en';
+    this.setState((s) => ({ cardState: 'left', leaveArm: false, gift: false, shareSheet: false, termsOpen: false, backSide: false,
+      histAdd: [{ id: 'left' }].concat((s.histAdd || []).filter((x) => x && x.id !== 'left')).slice(0, 4) }));
+    this.go('wallet');
+    this.notify('Wallet', EN
+      ? 'Daraj Coffee was removed from your wallet.'
+      : 'أُزيلت قهوة الدرج من محفظتك.');
+    this.save();
+  }
 
   // ── the beats themselves, shared by the buttons and by autoplay ──
   doSignup() {
     const first = this.firstName(), EN = this.state.lang === 'en';
     this.setState({ joined: true });
     this.go('success');
-    this.notify('Daraj Coffee', (EN ? 'Welcome, ' : 'أهلاً ') + first + (EN ? ' — your card is ready.' : ' — بطاقتك جاهزة.'));
+    this.notify('Daraj Coffee', (EN ? 'Welcome, ' : 'أهلاً ') + first + (EN ? ' — your card is ready.' : ' — بطاقتك جاهزة.'), null, 'system');
     this.emitLive('join', this.memberName() + ' joined from the counter QR');
     this.save();
   }
@@ -976,7 +1736,7 @@ class Component extends DCLogic {
     const first = this.firstName(), EN = this.state.lang === 'en';
     this.setState({ joined: true });
     this.go('pass', { platform: 'apple', stamps: 0, stampSeq: 0, gift: false });
-    this.notify('Daraj Coffee', (EN ? 'In your wallet. First coffee = first stamp, ' : 'في محفظتك. أول قهوة = أول ختم يا ') + first + '.');
+    this.notify('Daraj Coffee', (EN ? 'In your wallet. First coffee = first stamp, ' : 'في محفظتك. أول قهوة = أول ختم يا ') + first + '.', null, 'system');
     this.save();
   }
   doRedeem() {
@@ -985,7 +1745,7 @@ class Component extends DCLogic {
     this._rf = this.after(3200, () => {
       const EN = this.state.lang === 'en', first = this.firstName();
       this.setState({ redeemFlash: false, stamps: 0, stampSeq: 0 });
-      this.notify('Daraj Coffee', EN ? 'Enjoy, ' + first + '! A fresh card is already counting.' : 'صحتين يا ' + first + '! بطاقة جديدة بدأت العدّ.');
+      this.notify('Daraj Coffee', EN ? 'Enjoy, ' + first + '! A fresh card is already counting.' : 'صحتين يا ' + first + '! بطاقة جديدة بدأت العدّ.', null, 'reward');
       // fired at the reset, not at the tap — that is the moment the card actually turns over
       this.emitLive('reward', 'redeemed: free drink — card reset');
       this.save();
@@ -994,15 +1754,24 @@ class Component extends DCLogic {
   simStamp = () => {
     this.userTouch();
     const st = this.state, first = this.firstName(), EN = st.lang === 'en';
+    /* A paused card cannot earn — the till's barcode is grey. Saying so out loud
+       is the whole point of the paused state; silently doing nothing is the bug. */
+    if (st.cardState === 'paused') {
+      this.notify('Daraj Coffee', EN
+        ? 'The card is paused — your ' + st.stamps + ' stamps are safe, and rewards still redeem.'
+        : 'البطاقة موقوفة مؤقتاً — أختامك الـ' + st.stamps + ' محفوظة، والمكافآت ما زالت تُستبدل.', null, 'system');
+      return;
+    }
+    if (st.cardState === 'retired' || st.cardState === 'left') return;
     if (st.stamps >= st.goal) {
-      this.notify('Daraj Coffee', EN ? 'Your reward is still waiting, ' + first + ' — redeem it at the till.' : 'مكافأتك ما زالت تنتظر يا ' + first + ' — استبدلها عند الكاشير.');
+      this.notify('Daraj Coffee', EN ? 'Your reward is still waiting, ' + first + ' — redeem it at the till.' : 'مكافأتك ما زالت تنتظر يا ' + first + ' — استبدلها عند الكاشير.', null, 'system');
       return;
     }
     const n = st.stamps + 1;
     this.setState((s) => ({ stamps: n, scene: 'pass', backSide: false, stampSeq: (s.stampSeq || 0) + 1 }));
     this.notify('Daraj Coffee', EN
       ? (n >= st.goal ? first + ', your ' + st.goal + 'th coffee is on us — the reward is READY.' : 'Stamp added — ' + n + ' of ' + st.goal + ' · ' + (st.goal - n) + ' to your free drink.')
-      : (n >= st.goal ? 'يا ' + first + '، قهوتك رقم ' + st.goal + ' علينا — المكافأة جاهزة.' : 'أُضيف ختم — ' + n + ' من ' + st.goal + ' · بقي ' + (st.goal - n) + ' لمشروبك المجاني.'));
+      : (n >= st.goal ? 'يا ' + first + '، قهوتك رقم ' + st.goal + ' علينا — المكافأة جاهزة.' : 'أُضيف ختم — ' + n + ' من ' + st.goal + ' · بقي ' + (st.goal - n) + ' لمشروبك المجاني.'), null, n >= st.goal ? 'reward' : 'all');
     this.emitLive('earn', 'earned a stamp — ' + n + ' of ' + st.goal);
     this.save();
   };
@@ -1040,14 +1809,17 @@ class Component extends DCLogic {
     step(0, 0);
   }
   startPlay() {
-    this.kill(this._play); this.kill(this._tf); this.kill(this._lk);
+    this.kill(this._play); this.kill(this._tf); this.kill(this._lk); this.kill(this._vc);
     this.dismissNotifNow();
-    this.setState({
+    this.setState((s) => ({
       playing: true, playIdx: 0, playCap: '',
       lock: false, shareSheet: false, redeemFlash: false, backSide: false, gift: false,
       stamps: 0, stampSeq: 0, joined: false, platform: 'apple', camReady: false,
-      form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white' }
-    });
+      /* the journey plays from a live card with a listening member — a paused pass
+         or a muted phone would silently swallow half the beats */
+      cardState: 'live', notifPref: 'all', termsOpen: false, leaveArm: false, couponArm: false, msgOpen: null,
+      form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white', birthday: s.form && s.form.birthday || '14 Sep' }
+    }));
     this.playNext(0);
   }
   playNext(i) {
@@ -1070,7 +1842,7 @@ class Component extends DCLogic {
   }
   doReset() {
     this.kill(this._play); this._play = null; this.kill(this._tf); this._tf = null;
-    this.kill(this._lk); this.kill(this._rt); this.kill(this._ra); this.kill(this._rf); this.kill(this._ct);
+    this.kill(this._lk); this.kill(this._rt); this.kill(this._ra); this.kill(this._rf); this.kill(this._ct); this.kill(this._vc); this.kill(this._cp);
     this.dismissNotifNow();
     this.clearSaved();
     this.clearLive();
@@ -1080,23 +1852,33 @@ class Component extends DCLogic {
     this.setState((s) => ({
       walletSel: 0, redeemFlash: false, scene: 'counter', platform: 'apple', stamps: 5, goal: 8,
       gift: false, backSide: false, camReady: false, shareSheet: false, joined: false,
-      navDir: 'fwd', navSeq: (s.navSeq || 0) + 1, stampSeq: 0, seen: { counter: true },
-      lock: false, playing: false, playIdx: 0, playCap: '',
+      navDir: 'fwd', navSeq: (s.navSeq || 0) + 1, stampSeq: 0, seen: { counter: true }, prev: 'counter',
+      lock: false, lockMsg: 'weekend', playing: false, playIdx: 0, playCap: '',
       refPending: false, refDone: false, histAdd: [], resetArm: false,
-      form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white' }
+      notifPref: 'all', leaveArm: false, cardState: 'live',
+      recPhone: '', recCode: '', recErr: '', recovered: false,
+      inbox: [], msgRead: [], msgOpen: null, msgSeq: 0,
+      cardOpen: 'nara', qamarUsed: false, couponArm: false, termsOpen: false, linkSeq: 0,
+      form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white', birthday: '14 Sep' }
     }));
   }
 
   renderVals() {
     this.armWelcome();
     this.armReferral();
+    this.armLinkSync();
     const st = this.state, EN = st.lang === 'en';
     const T = (en, ar) => EN ? en : ar;
     const AN = (n, du, dl) => st.settled ? 'none' : n + ' ' + du + ' cubic-bezier(.22,.61,.36,1) ' + (dl || '0s') + ' both';
     const HOUSE = ' cubic-bezier(.22,.61,.36,1) ';
     const first = this.firstName();
+    // ── the life of the card · every face reads these four, never st.cardState directly ──
+    const cs = st.cardState || 'live';
+    const paused = cs === 'paused', retired = cs === 'retired', left = cs === 'left', liveCard = cs === 'live';
     const full = st.stamps >= st.goal;
-    const dark = st.scene === 'camera' || st.scene === 'pass' || st.scene === 'sheet' || st.scene === 'wallet';
+    const DARK = { camera: 1, pass: 1, sheet: 1, wallet: 1, card: 1, gift: 1 };
+    const PAPER = { details: 1, messages: 1, recover: 1, verify: 1 };
+    const dark = !!DARK[st.scene];
     // ── seeded animation names · a CSS animation only replays when its NAME changes, and
     //    keying on navSeq (not on `settled`) means an unrelated setState cannot re-trigger an
     //    entrance. Quiet state therefore holds the 100% frame instead of looping. ──
@@ -1135,14 +1917,21 @@ class Component extends DCLogic {
     };
     const TIME_AR = { 'Today 08:41': 'اليوم 08:41', 'Tue 08:37': 'الثلاثاء 08:37', 'Jul 18': '18 يوليو', 'Jul 02': '2 يوليو', 'Mar 04': '4 مارس', 'Today 09:12': 'اليوم 09:12', 'Mon 17:20': 'الاثنين 17:20', 'Feb 11': '11 فبراير' };
     const rawHistory = (typeof window !== 'undefined' && window.WASLA_DB && window.WASLA_DB.memberTimelines && window.WASLA_DB.memberTimelines['Sara Al-Amin']) || fallbackHistory;
-    const refRow = { time: T('Just now', 'الآن'), line: T('Noor joined from your code — bonus stamp', 'انضمّت نور برمزك — ختم إضافي'), bg: '#FDF6EE', fw: 700 };
-    const addedRows = (st.histAdd || []).map(x => (x && x.id === 'ref') ? refRow : null).filter(Boolean);
+    const EXTRA_ROWS = {
+      ref: { time: T('Just now', 'الآن'), line: T('Noor joined from your code — bonus stamp', 'انضمّت نور برمزك — ختم إضافي'), bg: '#FDF6EE', fw: 700 },
+      reissue: { time: T('Just now', 'الآن'), line: T('Pass re-issued to this phone — the old barcode is void', 'أُعيد إصدار البطاقة لهذا الهاتف — الباركود القديم لاغٍ'), bg: '#EEF5FD', fw: 700 },
+      left: { time: T('Just now', 'الآن'), line: T('You removed this pass — stamps held for 90 days', 'أزلتِ هذه البطاقة — الأختام محفوظة 90 يوماً'), bg: '#FDF0EE', fw: 700 }
+    };
+    const addedRows = (st.histAdd || []).map(x => (x && EXTRA_ROWS[x.id]) || null).filter(Boolean);
     const historyRows = addedRows.concat(rawHistory.slice(0, 5).map(row => ({
       time: EN ? row[0] : (TIME_AR[row[0]] || row[0]),
       line: EN ? row[1] : (HIST_AR[row[1]] || row[1]),
       bg: 'transparent', fw: 600
     }))).slice(0, 6);
-    const backTargetByScene = { camera: 'counter', signup: 'camera', success: 'signup', wallet: 'pass' };
+    /* Scenes with ONE real parent name it here. The rest (details, messages, a card,
+       the gift) hang off two doors and fall through to st.prev, so the chevron goes
+       back where she actually came from. */
+    const backTargetByScene = { camera: 'counter', signup: 'camera', success: 'signup', wallet: 'pass', pass: 'wallet', recover: 'counter', verify: 'recover' };
     const scenes = [
       ['counter', T('The counter — a poster and a camera', 'الكاشير — ملصق وكاميرا')],
       ['camera', T('The camera finds the QR', 'الكاميرا تجد الرمز')],
@@ -1151,7 +1940,12 @@ class Component extends DCLogic {
       ['pass', T('The card, alive on the phone', 'البطاقة، حيّة على الهاتف')],
       ['wallet', T('One wallet, the whole high street', 'محفظة واحدة، الشارع كله')]
     ];
-    const idx = Math.max(0, scenes.findIndex(x => x[0] === (st.scene === 'sheet' ? 'success' : st.scene)));
+    /* The stepper still tells the six-step story. The screens that hang off it —
+       settings, the inbox, a sibling card, the gift, the recovery path — resolve to
+       the step they belong to instead of collapsing the stepper back to step 1. */
+    const CHIP_BASE = { sheet: 'success', details: 'pass', messages: 'pass', gift: 'pass', card: 'wallet', recover: 'camera', verify: 'camera' };
+    const chipScene = CHIP_BASE[st.scene] || st.scene;
+    const idx = Math.max(0, scenes.findIndex(x => x[0] === chipScene));
     const sceneChips = scenes.map(([key, label], i) => {
       const cur = idx === i, visited = !!(st.seen || {})[key], done = visited && i < idx;
       return {
@@ -1166,23 +1960,226 @@ class Component extends DCLogic {
       };
     });
     const onPass = st.scene === 'pass';
+    // the birthday is HERS now — set in My details, not baked into this label
+    const bday = ((st.form || {}).birthday || '').trim();
+    const bdayLabel = bday || T('not set yet', 'غير محدّد بعد');
     const momentBtns = [
       { label: T('A visit — staff add a stamp', 'زيارة — الطاقم يضيف ختماً'), sub: T('Lock-screen moment · the grid fills', 'لحظة على شاشة القفل · الشبكة تمتلئ'), go: () => { this.userTouch(); if (!onPass) { this.go('pass'); return; } this.simStamp(); } },
-      { label: T('Her birthday — Sept 14', 'عيد ميلادها — 14 سبتمبر'), sub: T('A gift ribbon rides the strip art', 'شريط هدية يركب صورة البطاقة'), go: () => { this.userTouch(); if (!onPass) this.go('pass'); this.setState({ gift: !st.gift }); this.notify('Daraj Coffee', st.gift ? T('The gift was lovely — see you soon, ' + first + '.', 'كانت الهدية جميلة — نراك قريباً يا ' + first + '.') : T('Happy birthday, ' + first + '! A gift is riding your card today.', 'كل عام وأنتِ بخير يا ' + first + '! هدية تركب بطاقتك اليوم.')); this.save(); } },
-      { label: T('The weekend broadcast', 'رسالة نهاية الأسبوع'), sub: T('One message, every wallet, 10:00 sharp', 'رسالة واحدة، كل المحافظ، 10:00 تماماً'), go: () => { this.userTouch(); this.showLock(); } }
+      { label: T('Her birthday — ' + bdayLabel, 'عيد ميلادها — ' + bdayLabel), sub: bday ? T('A gift ribbon rides the strip art', 'شريط هدية يركب صورة البطاقة') : T('Set a birthday in My details first', 'اضبط تاريخ الميلاد في تفاصيلي أولاً'), go: () => { this.userTouch(); if (!bday) { this.go('details'); this.notify('Daraj Coffee', T('Set a birthday and the gift knows when to arrive.', 'اضبط تاريخ ميلادك ليعرف موعد وصول الهدية.'), null, 'system'); return; } if (!onPass) this.go('pass'); this.setState({ gift: !st.gift }); if (st.gift) { this.notify('Daraj Coffee', T('The gift was lovely — see you soon, ' + first + '.', 'كانت الهدية جميلة — نراك قريباً يا ' + first + '.'), null, 'system'); } else { this.broadcast('Daraj Coffee', T('Happy birthday, ' + first + '! A gift is riding your card today.', 'كل عام وأنتِ بخير يا ' + first + '! هدية تركب بطاقتك اليوم.'), 'birthday'); } this.save(); } },
+      { label: T('The weekend broadcast', 'رسالة نهاية الأسبوع'), sub: T('One message, every wallet, 10:00 sharp', 'رسالة واحدة، كل المحافظ، 10:00 تماماً'), go: () => { this.userTouch(); this.showLock('weekend'); } }
     ].map(m => ({ ...m, br: '#E7E0D5', fg: '#241C16', bg: '#FFFFFF' }));
+    /* ── the life of the card (spec C9) · the endings sit BESIDE reward-ready, not
+         somewhere else, because "the card fills" and "the card ends" are the same
+         question asked twice: what does this thing do when it stops being routine? ── */
+    const lifeBtns = [
+      { label: T('The card fills — reward ready', 'تمتلئ البطاقة — المكافأة جاهزة'), sub: T('8 of 8 · the shimmer starts, the till waits', '8 من 8 · يبدأ اللمعان، والكاشير ينتظر'), on: liveCard && full,
+        go: () => { this.userTouch(); this.setState((s) => ({ cardState: 'live', stamps: s.goal, stampSeq: (s.stampSeq || 0) + 1 })); this.go('pass'); this.notify('Daraj Coffee', T(first + ', your ' + st.goal + 'th coffee is on us — the reward is READY.', 'يا ' + first + '، قهوتك رقم ' + st.goal + ' علينا — المكافأة جاهزة.'), null, 'reward'); this.save(); } },
+      { label: T('The shop pauses the card', 'المحل يوقف البطاقة مؤقتاً'), sub: T('Barcode greys · stamps safe · redemption still works', 'الباركود يبهت · الأختام محفوظة · الاستبدال يعمل'), on: paused,
+        go: () => { this.userTouch(); this.setCardState('paused'); } },
+      { label: T('The programme ends', 'ينتهي البرنامج'), sub: T('No barcode · “Expired” · a thank-you on the lock screen', 'بلا باركود · «منتهية» · شكر على شاشة القفل'), on: retired,
+        go: () => { this.userTouch(); this.setCardState('retired'); } }
+    ].concat(liveCard ? [] : [{ label: T('Back to live', 'عودة للعمل'), sub: T('The shop reopens — stamps resume today', 'المحل يفتح — الأختام تُستأنف اليوم'), on: false, go: () => { this.userTouch(); this.setCardState('live'); } }])
+     .map((m) => ({ ...m, br: m.on ? '#E88024' : '#E7E0D5', fg: m.on ? '#C96A14' : '#241C16', bg: m.on ? '#FDF4EC' : '#FFFFFF' }));
     // ── signup validation ──
     const nameOk = (st.form.name || '').trim().length >= 2;
     const phoneDigits = ((st.form.phone || '').match(/\d/g) || []).length;
     const phoneOk = phoneDigits >= 9;
     const formOk = nameOk && phoneOk;
+    // ── recovery validation · the same 9-digit floor as signup, then a 4-digit code ──
+    const recPhoneOk = ((st.recPhone || '').match(/\d/g) || []).length >= 9;
+    const codeDigits = String(st.recCode || '').replace(/\D/g, '').slice(0, 4);
     const beatCount = 14;
+    // ── back-of-card link rows · resolved from WASLA_DB, not literals. Fixed
+    //    order Instagram → WhatsApp → Location → Website, each row included
+    //    only when its resolved value is non-empty. Terms always closes the
+    //    list and now OPENS the terms sheet rather than sitting inert. ──
+    const darajLinks = this.cardLinks('daraj');
+    const backRowsB = [];
+    if (darajLinks.ig) backRowsB.push({ k: 'Instagram', v: darajLinks.ig, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('Instagram', T('Opening ' + darajLinks.ig + '…', 'جارٍ فتح ' + darajLinks.ig + '…')); } });
+    if (darajLinks.wa) backRowsB.push({ k: 'WhatsApp', v: darajLinks.wa, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('WhatsApp', T('Starting a chat with Daraj Coffee…', 'بدء محادثة مع قهوة الدرج…')); } });
+    if (darajLinks.loc) backRowsB.push({ k: T('Location', 'الموقع'), v: darajLinks.loc, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('Maps', T('Opening Maps…', 'جارٍ فتح الخرائط…')); } });
+    if (darajLinks.web) backRowsB.push({ k: T('Website', 'الموقع الإلكتروني'), v: darajLinks.web, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('Safari', T('Opening ' + darajLinks.web + '…', 'جارٍ فتح ' + darajLinks.web + '…')); } });
+    const openTerms = () => { this.userTouch(); this.setState({ termsOpen: true }); };
+    backRowsB.push({ k: T('My details', 'تفاصيلي'), v: T('Name, phone, birthday, notifications — and leaving', 'الاسم والهاتف والميلاد والإشعارات — والمغادرة') + ' →', color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.go('details'); } });
+    backRowsB.push({ k: T('Messages', 'الرسائل'), v: T('Everything Daraj has sent you', 'كل ما أرسله لك الدرج') + ' →', color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.go('messages'); } });
+    backRowsB.push({ k: T('Terms', 'الشروط'), v: T('One stamp per visit · rewards never expire while the card is live', 'ختم واحد لكل زيارة · المكافآت لا تنتهي ما دامت البطاقة حيّة') + ' →', color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: openTerms });
+    // an inert row must not answer to the keyboard either — the tab stop follows the action
+    backRowsB.forEach((r) => { r.tab = r.action ? '0' : '-1'; });
+
+    /* ══ MESSAGES · catalogue + the list ══════════════════════════════════
+       The seeded rows come from WASLA_DB.broadcasts (Daraj, actually sent) plus the
+       two moments that already existed in her timeline, so the inbox is never empty
+       on first open. Runtime deliveries unshift on top of them. ═══════════════ */
+    const BCAST = (() => { try { const d = window.WASLA_DB; return (d && Array.isArray(d.broadcasts)) ? d.broadcasts : []; } catch (e) { return []; } })();
+    const bc0 = BCAST.filter(b => b && b.card === 'Daraj Coffee' && b.state === 'sent')[0] || null;
+    const MSGCAT = {
+      weekend: { t: T(bc0 ? bc0.title : 'Weekend special', 'عرض نهاية الأسبوع'),
+        b: T(bc0 ? bc0.body : 'Double stamps all Friday ☕ — see you on the stairs.', (bc0 && bc0.bodyAr) ? bc0.bodyAr + ' ☕ — نراكم على الدرج.' : 'أختام مضاعفة طوال الجمعة ☕ — نراكم على الدرج.'),
+        when: T(bc0 ? bc0.sent : 'Today · 10:00', 'اليوم · 10:00'), tone: '#1E5C43' },
+      birthday: { t: T('Happy birthday, ' + first, 'كل عام وأنتِ بخير يا ' + first),
+        b: T('A gift is riding your card today — a free dessert with any drink. Show the pass at the till, no minimum spend.', 'هدية على بطاقتك اليوم — حلوى مجانية مع أي مشروب. أظهري البطاقة عند الكاشير، بلا حد أدنى.'),
+        when: T('Today', 'اليوم'), tone: '#C96A14', goK: 'gift' },
+      referral: { t: T('Noor joined with your code', 'انضمّت نور برمزك'),
+        b: T('Your friend is in — a bonus stamp landed on your card, and hers started one ahead.', 'صديقتك انضمّت — ختم إضافي هبط على بطاقتك، وبطاقتها بدأت متقدّمة بختم.'),
+        when: T('Just now', 'الآن'), tone: '#C96A14' },
+      paused: { t: T('We are pausing the card for a bit', 'سنوقف البطاقة مؤقتاً'),
+        b: T('Rainbow St is being refitted, so new stamps stop for now. Your ' + st.stamps + ' stamps are safe and rewards still redeem at any branch.', 'نجدّد فرع الرينبو، لذا تتوقّف الأختام الجديدة مؤقتاً. أختامك الـ' + st.stamps + ' محفوظة والمكافآت تُستبدل في أي فرع.'),
+        when: T('Today', 'اليوم'), tone: '#8A8177' },
+      farewell: { t: T('Thank you — from all of us at Daraj', 'شكراً لكم — من كل فريق الدرج'),
+        b: T('The stamp card programme ends today. The pass stays in your wallet as a keepsake, the barcode stops working, and the coffee is still good. Thank you for every visit.', 'ينتهي برنامج بطاقة الأختام اليوم. تبقى البطاقة في محفظتك كذكرى، ويتوقّف الباركود، والقهوة ما زالت طيبة. شكراً على كل زيارة.'),
+        when: T('Today', 'اليوم'), tone: '#8A8177' },
+      recovered: { t: T('Your card moved to this phone', 'انتقلت بطاقتك إلى هذا الهاتف'),
+        b: T('We re-issued your pass. The barcode on your old phone no longer works — your stamps came with you.', 'أصدرنا بطاقتك من جديد. الباركود على هاتفك القديم لم يعد يعمل — وأختامك جاءت معك.'),
+        when: T('Just now', 'الآن'), tone: '#1E5C43' },
+      welcome: { t: T('Welcome to Daraj Coffee', 'أهلاً بك في قهوة الدرج'),
+        b: T('Your card is live. Buy 7, the 8th is on us — one stamp per visit, at any branch.', 'بطاقتك تعمل. اشترِ ٧ والثامن علينا — ختم لكل زيارة، في أي فرع.'),
+        when: T('Mar 04', '4 مارس'), tone: '#1E5C43' }
+    };
+    const seededMsgs = [
+      { id: 's1', k: 'weekend', when: MSGCAT.weekend.when, seedRead: false },
+      { id: 's2', k: 'birthday', when: T('Jul 02', '2 يوليو'), seedRead: true },
+      { id: 's3', k: 'welcome', when: T('Mar 04', '4 مارس'), seedRead: true }
+    ];
+    const readSet = st.msgRead || [];
+    const msgRows = (st.inbox || []).map((e) => ({ id: e.k + '-' + e.n, k: e.k, when: MSGCAT[e.k] ? MSGCAT[e.k].when : T('Just now', 'الآن'), seedRead: false }))
+      .concat(seededMsgs)
+      .filter((e) => MSGCAT[e.k])
+      .map((e) => {
+        const c = MSGCAT[e.k], unread = !e.seedRead && readSet.indexOf(e.id) < 0;
+        return { id: e.id, k: e.k, title: c.t, body: c.b, when: e.when, tone: c.tone, goK: c.goK || '',
+          unread, fw: unread ? 800 : 600, dotBg: unread ? '#E88024' : 'transparent',
+          bg: unread ? '#FFFBF6' : '#FFFFFF',
+          aria: (unread ? T('Unread message: ', 'رسالة غير مقروءة: ') : T('Message: ', 'رسالة: ')) + c.t,
+          open: () => this.openMsg(e.id) };
+      });
+    const unreadN = msgRows.filter(m => m.unread).length;
+    const openMsgRow = msgRows.find(m => m.id === st.msgOpen) || null;
+
+    /* ══ MY DETAILS · the four fields she owns, in one loop ══════════════ */
+    const bdOk = bday.length >= 3;
+    const detailFields = [
+      { k: T('Full name', 'الاسم الكامل'), v: (st.form || {}).name || '', dir: 'auto', border: nameOk ? '#B6DCC6' : '#E3B7A0',
+        hint: T('This is the name the till sees when your pass is scanned.', 'هذا الاسم يظهر للكاشير عند مسح بطاقتك.'),
+        set: (e) => { this.userTouch(); this.setState({ form: { ...st.form, name: e.target.value } }); this.save(); } },
+      { k: T('Phone', 'رقم الهاتف'), v: (st.form || {}).phone || '', dir: 'ltr', border: phoneOk ? '#B6DCC6' : '#E3B7A0',
+        hint: T('Your phone IS your card. Get it wrong at the counter and nothing can find this pass again — fix it here.', 'هاتفك هو بطاقتك. إن أُدخل خطأً عند الكاشير فلن يجد أحد هذه البطاقة — صحّحه هنا.'),
+        set: (e) => { this.userTouch(); this.setState({ form: { ...st.form, phone: e.target.value } }); this.save(); } },
+      { k: T('Birthday', 'تاريخ الميلاد'), v: bday, dir: 'auto', border: bdOk ? '#B6DCC6' : '#D8D0C2',
+        hint: T('Day and month only — Daraj sends a gift, never a birth year.', 'اليوم والشهر فقط — الدرج يرسل هدية، لا يطلب سنة الميلاد.'),
+        set: (e) => { this.userTouch(); this.setState({ form: { ...st.form, birthday: e.target.value } }); this.save(); } },
+      { k: T('Favourite drink', 'مشروبك المفضل') + ' · ' + T('Daraj asks this one', 'سؤال من الدرج'), v: (st.form || {}).drink || '', dir: 'auto', border: '#D8D0C2',
+        hint: T('The shop’s own question, asked at signup — and editable ever after.', 'سؤال المحل نفسه، يُطرح عند الانضمام — ويبقى قابلاً للتعديل.'),
+        set: (e) => { this.userTouch(); this.setState({ form: { ...st.form, drink: e.target.value } }); this.save(); } }
+    ].map(f => ({ ...f, aria: f.k }));
+    const langOpts = [
+      { code: 'en', label: 'English' }, { code: 'ar', label: 'العربية' }
+    ].map(o => ({ ...o, on: st.lang === o.code, bg: st.lang === o.code ? '#241C16' : '#FFFFFF', fg: st.lang === o.code ? '#FFFFFF' : '#5D5348', br: st.lang === o.code ? '#241C16' : '#E7E0D5', fw: st.lang === o.code ? 800 : 600,
+        aria: T('Language: ', 'اللغة: ') + o.label,
+        pick: () => { this.userTouch(); this.setState({ lang: o.code }); this.save(); } }));
+    const notifOpts = [
+      { code: 'all', label: T('Everything', 'كل شيء'), sub: T('Stamps, rewards, gifts and shop news.', 'الأختام والمكافآت والهدايا وأخبار المحل.') },
+      { code: 'rewards', label: T('Rewards only', 'المكافآت فقط'), sub: T('Only when something is ready for you. Broadcasts still arrive in Messages.', 'فقط حين يجهز لك شيء. تبقى الرسائل تصل إلى صندوق الرسائل.') },
+      { code: 'mute', label: T('Mute Daraj Coffee', 'كتم قهوة الدرج'), sub: T('No banners at all. Nothing is lost — every message still lands in Messages.', 'بلا إشعارات إطلاقاً. لا شيء يُفقد — كل رسالة تصل إلى صندوق الرسائل.') }
+    ].map(o => ({ ...o, on: (st.notifPref || 'all') === o.code, fw: (st.notifPref || 'all') === o.code ? 800 : 600,
+        dotBr: (st.notifPref || 'all') === o.code ? '#E88024' : '#CFC7BA', dotBg: (st.notifPref || 'all') === o.code ? '#E88024' : 'transparent',
+        aria: o.label, pick: () => { this.userTouch(); this.setState({ notifPref: o.code }); this.save(); } }));
+
+    /* ══ THE OTHER WALLET CARDS · one generic detail scene, three platform-faithful
+         shapes. Nara is money, Marmar is status, Qamar is a single shot. ═══════ */
+    const cardDefs = {
+      nara: { name: 'Nara Care', ar: 'نارة كير', merchant: T('Nara Pharmacy · Swefieh', 'صيدلية نارا · الصويفية'), i: 'N', c: '#0F5B63', c2: '#093A40', kind: 'cashback',
+        links: { ig: '@naracare', wa: '+962 79 555 0452', loc: 'Swefieh, Amman', web: 'narapharmacy.jo' } },
+      marmar: { name: 'Marmar Gold', ar: 'مرمر الذهبية', merchant: T('Marmar Lounge · Abdali', 'صالة مرمر · العبدلي'), i: 'M', c: '#26262B', c2: '#141417', kind: 'vip',
+        links: { ig: '@marmarlounge', wa: '+962 78 555 0229', loc: 'Abdali Boulevard, Amman', web: '' } },
+      qamar: { name: 'Qamar Eid Coupon', ar: 'كوبون قمر', merchant: T('Qamar Sweets · downtown', 'حلويات قمر · وسط البلد'), i: 'Q', c: '#B14A32', c2: '#7C3121', kind: 'coupon',
+        links: { ig: '@qamarsweets', wa: '', loc: 'Al-Malek Faisal St, Amman', web: '' } }
+    };
+    const cdId = cardDefs[st.cardOpen] ? st.cardOpen : 'nara';
+    const cd = cardDefs[cdId];
+    /* cardLinks() is the same resolver the Daraj back uses. These three belong to OTHER
+       merchants, so they pass inherit:false — a Nara card must never fall through to
+       Tala Hospitality's Instagram. Overrides/hidden/"" semantics are unchanged. */
+    const cdLinks = this.cardLinks(cdId, cd.links, { inherit: false });
+    const cdBackRows = [];
+    if (cdLinks.ig) cdBackRows.push({ k: 'Instagram', v: cdLinks.ig, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('Instagram', T('Opening ' + cdLinks.ig + '…', 'جارٍ فتح ' + cdLinks.ig + '…')); } });
+    if (cdLinks.wa) cdBackRows.push({ k: 'WhatsApp', v: cdLinks.wa, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('WhatsApp', T('Starting a chat with ' + cd.name + '…', 'بدء محادثة مع ' + cd.name + '…')); } });
+    if (cdLinks.loc) cdBackRows.push({ k: T('Location', 'الموقع'), v: cdLinks.loc, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('Maps', T('Opening Maps…', 'جارٍ فتح الخرائط…')); } });
+    if (cdLinks.web) cdBackRows.push({ k: T('Website', 'الموقع الإلكتروني'), v: cdLinks.web, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify(cd.name, T('Opening ' + cdLinks.web + '…', 'جارٍ فتح ' + cdLinks.web + '…')); } });
+    cdBackRows.push({ k: T('Terms', 'الشروط'), v: T('Tap for the short version', 'اضغط للنسخة المختصرة') + ' →', color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: openTerms });
+    const couponUsed = !!st.qamarUsed;
+    const CD = {
+      cashback: {
+        tagLabel: T('BALANCE', 'الرصيد'), tagValue: 'JOD 4.50', hero: 'JOD 4.50',
+        heroSub: T('yours to spend, like cash', 'رصيدك، يُنفق كالنقد'),
+        note: T('7% of every bill comes back. Spend it from JOD 2 up — part of it or all of it, at any Nara counter. It never expires while the card is live.', '7% من كل فاتورة تعود إليك. أنفقه ابتداءً من دينارين — جزءاً منه أو كله، في أي فرع لنارا. ولا ينتهي ما دامت البطاقة تعمل.'),
+        creditsK: T('Recent credits', 'آخر الإضافات'),
+        credits: [
+          { line: T('Bill JOD 9.00 · Swefieh', 'فاتورة 9.00 د.أ · الصويفية'), amt: '+0.63', time: T('Today 11:20', 'اليوم 11:20') },
+          { line: T('Bill JOD 21.50 · Swefieh', 'فاتورة 21.50 د.أ · الصويفية'), amt: '+1.51', time: T('Sun 18:04', 'الأحد 18:04') },
+          { line: T('Redeemed at the till', 'استُبدل عند الكاشير'), amt: '−2.00', time: T('Jul 22', '22 يوليو') },
+          { line: T('Bill JOD 34.00 · Swefieh', 'فاتورة 34.00 د.أ · الصويفية'), amt: '+2.38', time: T('Jul 19', '19 يوليو') }
+        ],
+        ctaLabel: T('Spend JOD 2.00 at the till', 'أنفق 2.00 د.أ عند الكاشير'),
+        cta: () => { this.userTouch(); this.notify('Nara Care', T('Show this pass — the cashier types the amount and the balance updates on your card.', 'أظهر هذه البطاقة — يُدخل الكاشير المبلغ ويتحدّث الرصيد على بطاقتك.')); },
+        barcodeNo: '0452 7736'
+      },
+      vip: {
+        tagLabel: T('TIER', 'الفئة'), tagValue: 'GOLD ★', hero: T('Gold', 'ذهبية'),
+        heroSub: T('since January · 18 visits', 'منذ يناير · 18 زيارة'),
+        note: T('Two more visits and Royal opens: a standing table, a plus-one on Thursdays, and the rooftop before it opens to the floor.', 'زيارتان أخريان وتُفتح الفئة الملكية: طاولة دائمة، ومرافق يوم الخميس، والسطح قبل فتحه للجميع.'),
+        perksK: T('What Gold gets you', 'ما تمنحه الذهبية'),
+        perks: [
+          { label: T('Skip the line', 'بلا طابور'), sub: T('Any night, any door.', 'كل ليلة، وكل باب.') },
+          { label: T('15% off the bill', 'خصم 15% على الفاتورة'), sub: T('Applied at the till, no code.', 'يُطبّق عند الكاشير بلا رمز.') },
+          { label: T('The corner booth', 'طاولة الزاوية'), sub: T('Held until 21:00 on weekends.', 'محجوزة حتى 21:00 في العطلة.') },
+          { label: T('Royal only', 'للملكية فقط'), sub: T('Rooftop early access — 2 visits away.', 'دخول مبكر للسطح — على بُعد زيارتين.'), off: true }
+        ],
+        progLabel: T('18 of 20 visits to Royal', '18 من 20 زيارة للملكية'), progPct: '90%',
+        progNote: T('Visits reset every 12 months. Yours reset in February.', 'تُعاد الزيارات كل 12 شهراً. تبدأ سنتك في فبراير.'),
+        ctaLabel: T('Show my tier at the door', 'أظهر فئتي عند الباب'),
+        cta: () => { this.userTouch(); this.notify('Marmar Lounge', T('Scanned at the door: Gold — skip the line, 15% off.', 'مُسحت عند الباب: ذهبية — بلا طابور، وخصم 15%.')); },
+        barcodeNo: '2290 8814'
+      },
+      coupon: {
+        tagLabel: couponUsed ? T('USED', 'مستخدم') : T('EXPIRES', 'تنتهي'), tagValue: couponUsed ? T('1 AUG', '1 أغسطس') : '15 AUG',
+        hero: T('Free knafeh slice', 'قطعة كنافة مجانية'),
+        heroSub: couponUsed ? T('used on 1 August — kept as a receipt', 'استُخدم في 1 أغسطس — يُحفظ كإيصال') : T('one use · no minimum spend', 'استخدام واحد · بلا حد أدنى'),
+        note: couponUsed
+          ? T('Spent. Qamar keeps the pass in your wallet for a week so you have the receipt, then it retires itself.', 'استُخدم. يبقي قمر البطاقة في محفظتك أسبوعاً لتكون إيصالك، ثم تتقاعد وحدها.')
+          : T('Valid to 15 August at the downtown counter. Redeeming is irreversible, so the scanner asks twice — and so does this button.', 'صالح حتى 15 أغسطس في فرع وسط البلد. الاستبدال لا يُلغى، لذا يسأل الماسح مرتين — وكذلك هذا الزر.'),
+        ctaLabel: couponUsed ? T('Already used', 'استُخدم بالفعل') : (st.couponArm ? T('Sure? Tap again to use it', 'متأكد؟ اضغط مرة أخرى لاستخدامه') : T('Use the coupon', 'استخدم الكوبون')),
+        cta: () => {
+          this.userTouch();
+          if (couponUsed) { this.notify('Qamar Sweets', T('This one is spent — the pass stays a week as your receipt.', 'هذا استُخدم — تبقى البطاقة أسبوعاً كإيصال لك.')); return; }
+          if (!st.couponArm) { this.setState({ couponArm: true }); this.kill(this._cp); this._cp = this.after(3200, () => this.setState({ couponArm: false })); return; }
+          this.kill(this._cp);
+          this.setState({ qamarUsed: true, couponArm: false });
+          this.notify('Qamar Sweets', T('Redeemed — enjoy the knafeh. The coupon retires itself now.', 'تم الاستبدال — بالهناء والشفاء. يتقاعد الكوبون الآن.'), null, 'reward');
+          this.save();
+        },
+        barcodeNo: '7743 0091'
+      }
+    }[cd.kind];
+
+    /* ══ THE GIFT · the banner used to announce a present with nowhere to go ══ */
+    const giftArt = (this.stampArt('dessert') || this.stampArt('coffee') || {}).filled || null;
+
+    /* ══ TERMS · short, honest, and the same in both languages ══════════════ */
+    const termsRows = [
+      { k: T('One stamp per visit', 'ختم واحد لكل زيارة'), v: T('However many coffees are on the tray. Staff can correct a mis-scan the same day.', 'مهما كان عدد الأكواب على الصينية. ويمكن للطاقم تصحيح مسح خاطئ في نفس اليوم.') },
+      { k: T('The reward waits', 'المكافأة تنتظر'), v: T('A full card never expires while the programme is live. Redeem it whenever you come back.', 'البطاقة الممتلئة لا تنتهي ما دام البرنامج قائماً. استبدلها متى عدت.') },
+      { k: T('If Daraj pauses or ends it', 'إذا أوقف الدرج البرنامج أو أنهاه'), v: T('You are told on the card itself. Stamps you already earned stay redeemable for 30 days after the last day.', 'تُخبَر على البطاقة نفسها. وتبقى أختامك المكتسبة قابلة للاستبدال 30 يوماً بعد آخر يوم.') },
+      { k: T('What the pass holds', 'ما تحمله البطاقة'), v: T('Your name, your phone number, your stamp count, and the one question Daraj asked. Nothing else, and no location tracking.', 'اسمك ورقم هاتفك وعدد أختامك والسؤال الوحيد الذي طرحه الدرج. لا شيء غير ذلك، ولا تتبّع للموقع.') },
+      { k: T('Leaving', 'المغادرة'), v: T('Remove the pass any time from My details. Daraj holds your stamps for 90 days in case you come back.', 'أزل البطاقة متى شئت من «تفاصيلي». يحتفظ الدرج بأختامك 90 يوماً إن عدت.') },
+      { k: T('Who runs what', 'من يدير ماذا'), v: T('Daraj Coffee owns the programme and the rewards. Wasla runs the pass and the reminders.', 'قهوة الدرج تملك البرنامج والمكافآت. وواصلة تشغّل البطاقة والتذكيرات.') }
+    ];
     return {
       dir: EN ? 'ltr' : 'rtl', langLabel: EN ? 'عربي' : 'EN',
       toggleLang: () => { this.userTouch(); this.setState({ lang: EN ? 'ar' : 'en' }); this.save(); },
       enterAnim: 'sceneIn' + seq + ' .44s' + HOUSE + 'both',
       slideFrom: slidePx + 'px',
       sheetAnim: 'sheetUp' + seq + ' .42s' + HOUSE + 'both',
+      dlgAnim: 'dlgPop' + seq + ' .34s' + HOUSE + 'both',
       scrimAnim: 'scrimIn' + seq + ' .3s ease-out both',
       cardPopAnim: 'cardPop' + seq + ' .5s' + HOUSE + 'both',
       settleAnim: st.stampSeq ? 'settle' + stSeq + ' .5s' + HOUSE + 'both' : 'none',
@@ -1190,9 +2187,22 @@ class Component extends DCLogic {
       revealQrAnim: 'fadeUp .42s' + HOUSE + '.16s both',
       popAnim: AN('popIn', '.5s'),
       qrCells: this.qr(),
-      phoneBg: dark ? (st.scene === 'pass' ? '#111114' : '#0B0B0D') : '#F3EFE9',
+      phoneBg: dark ? ((st.scene === 'pass' || st.scene === 'card' || st.scene === 'gift') ? '#111114' : '#0B0B0D') : (PAPER[st.scene] ? '#F2F2F6' : '#F3EFE9'),
       statusColor: dark ? '#F4F2EE' : '#241C16', homeBarColor: dark ? 'rgba(244,242,238,.4)' : 'rgba(36,28,22,.35)',
       isCounter: st.scene === 'counter', isCamera: st.scene === 'camera', isSignup: st.scene === 'signup', isSuccess: st.scene === 'success', isSheet: st.scene === 'sheet', isPass: st.scene === 'pass',
+      /* ── the shared keyboard bridge · ONE handler for every div-as-button in the
+           phone. Enter/Space re-fire the element's own click, so a control never has
+           to carry two copies of its behaviour to become operable. ── */
+      keyGo: (e) => {
+        if (!e) return;
+        const k = e.key;
+        if (k !== 'Enter' && k !== ' ' && k !== 'Spacebar') return;
+        if (e.preventDefault) e.preventDefault();
+        const t = e.currentTarget || e.target;
+        if (t && typeof t.click === 'function') t.click();
+      },
+      backAria: T('Back', 'رجوع'),
+      flipAria: st.backSide ? T('Show the front of the card', 'أظهر وجه البطاقة') : T('Card details and links', 'تفاصيل البطاقة وروابطها'),
       counterLabel: T('The counter at Daraj Coffee', 'كاشير قهوة الدرج'),
       counterCta: T('Open the camera', 'افتح الكاميرا'),
       camReady: st.camReady, goCamera: () => { this.userTouch(); this.go('camera'); },
@@ -1209,13 +2219,14 @@ class Component extends DCLogic {
           const back = Math.max(st.stamps, 6);
           this.dismissNotifNow();
           this.go('pass', { stamps: back, goal: 8 });
-          this.notify('Daraj Coffee', EN ? 'Welcome back, ' + first + ' — ' + back + '/8 stamps · أهلاً بعودتك' : 'أهلاً بعودتك يا ' + first + ' — ' + back + '/8 أختام');
+          this.notify('Daraj Coffee', EN ? 'Welcome back, ' + first + ' — ' + back + '/8 stamps · أهلاً بعودتك' : 'أهلاً بعودتك يا ' + first + ' — ' + back + '/8 أختام', null, 'system');
           return;
         }
         this.go('signup');
       },
-      goBack: () => { this.userTouch(); this.go(backTargetByScene[st.scene] || 'counter', {}, 'back'); },
-      tapNotif: () => { this.userTouch(); this.dismissNotif(); this.go('pass'); },
+      goBack: () => { this.userTouch(); this.go(backTargetByScene[st.scene] || st.prev || 'counter', {}, 'back'); },
+      // a banner tied to a message opens the MESSAGE; everything else still lands on the pass
+      tapNotif: () => { this.userTouch(); const mk = (st.notif || {}).msg; this.dismissNotif(); if (mk) { this.openMsgByKey(mk); return; } this.go('pass'); },
       scanAgain: () => { this.userTouch(); this.go('camera'); },
       scanAgainLabel: T('Scan again — as a returning member ↻', 'امسح مجدداً — كعضو عائد ↻'),
       suTitle: T('Join Daraj Coffee', 'انضم إلى قهوة الدرج'), suTitleAlt: 'انضم إلى قهوة الدرج — الثامن علينا',
@@ -1232,9 +2243,12 @@ class Component extends DCLogic {
       suReason: !nameOk ? T('Add your name — two letters is enough.', 'أضف اسمك — حرفان يكفيان.') : T('A phone number with at least 9 digits.', 'رقم هاتف من 9 أرقام على الأقل.'),
       suCta: EN ? 'Get my card' : 'أعطني بطاقتي', suFoot: EN ? 'No app · no password · your card lives in your wallet' : 'بدون تطبيق · بدون كلمة سر · بطاقتك في محفظتك',
       suPowered: 'Powered by Wasla · تعمل بواصلة',
-      submitSignup: () => { this.userTouch(); if (!formOk) { this.notify('Daraj Coffee', T('Name and phone first — then the card is yours.', 'الاسم والهاتف أولاً — ثم البطاقة لك.')); return; } this.doSignup(); },
+      submitSignup: () => { this.userTouch(); if (!formOk) { this.notify('Daraj Coffee', T('Name and phone first — then the card is yours.', 'الاسم والهاتف أولاً — ثم البطاقة لك.'), null, 'system'); return; } this.doSignup(); },
       okTitle: (EN ? 'You\'re in, ' : 'أهلاً بك، ') + first + '.', okSub: EN ? 'One tap left — put the card where it can never be forgotten.' : 'نقرة واحدة — ضع البطاقة حيث لا تُنسى أبداً.',
+      // the promise this screen has always made — now with somewhere to go
       okNote: EN ? 'Already a member? The same QR opens your card.' : 'عضو من قبل؟ نفس الرمز يفتح بطاقتك.',
+      alreadyLabel: T('Already a member? Move my card here →', 'عضو من قبل؟ انقل بطاقتي إلى هنا ←'),
+      goRecover: () => { this.userTouch(); this.go('recover'); },
       addAppleLabel: T('Add to Apple Wallet', 'أضف إلى Apple Wallet'), addGoogleLabel: T('Add to Google Wallet', 'أضف إلى Google Wallet'),
       addApple: () => { this.userTouch(); this.go('sheet', { platform: 'apple' }); },
       addGoogle: () => { this.userTouch(); this.go('pass', { platform: 'google', stamps: 0, stampSeq: 0 }); this.notify('Google Wallet', T('Daraj Coffee was saved to Google Wallet.', 'حُفظت قهوة الدرج في Google Wallet.')); this.save(); },
@@ -1246,14 +2260,38 @@ class Component extends DCLogic {
       // iOS renders the real pass artwork in this sheet, so it gets cups, not discs.
       sheetStamps: this.stampCupRow(0, 8, { ...DARAJ, size: 30, next: false, emptyOpacity: .62 }),
       walletTitle: st.platform === 'apple' ? T('Wallet', 'المحفظة') : 'Google Wallet',
-      isApplePass: st.platform === 'apple', isGooglePass: st.platform === 'google',
+      isApplePass: st.platform === 'apple' && !left, isGooglePass: st.platform === 'google' && !left,
       frontSide: !st.backSide, backSide: st.backSide,
       flipT: st.backSide ? 'rotateY(180deg)' : 'rotateY(0deg)',
       frontPE: st.backSide ? 'none' : 'auto', backPE: st.backSide ? 'auto' : 'none',
       flipCard: () => { this.userTouch(); this.setState({ backSide: !st.backSide }); },
-      passHeadLabel: full ? T('REWARD', 'المكافأة') : T('STAMPS', 'الأختام'),
-      passHeadValue: full ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal,
-      passHeadColor: full ? '#FFD60A' : '#FFFFFF',
+      /* ── THE ENDINGS (spec C9) · a retired pass is not a live pass in grey. Apple
+           and Google both keep an expired pass in the wallet, strip the barcode, and
+           write "Expired" where the balance was. A paused pass keeps everything and
+           greys only the thing that stopped working: the barcode. ── */
+      passHeadLabel: retired ? T('STATUS', 'الحالة') : (paused ? T('PAUSED', 'موقوفة') : (full ? T('REWARD', 'المكافأة') : T('STAMPS', 'الأختام'))),
+      passHeadValue: retired ? T('EXPIRED', 'منتهية') : (paused ? st.stamps + ' / ' + st.goal : (full ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal)),
+      passHeadColor: retired ? 'rgba(255,255,255,.58)' : (paused ? 'rgba(255,255,255,.72)' : (full ? '#FFD60A' : '#FFFFFF')),
+      passFilter: retired ? 'grayscale(.72) contrast(.94)' : 'none',
+      passStatusOn: paused || retired,
+      passStatusLine: retired
+        ? T('This programme ended · your card is a keepsake now', 'انتهى هذا البرنامج · بطاقتك ذكرى الآن')
+        : T('Paused — your stamps are safe · redemption still works', 'موقوفة مؤقتاً — أختامك محفوظة · والاستبدال يعمل'),
+      passStatusBg: retired ? 'linear-gradient(90deg,rgba(255,255,255,.13),rgba(255,255,255,.04))' : 'linear-gradient(90deg,#8A8177,#6E675E)',
+      qrOn: !retired, qrOff: retired,
+      qrDim: paused ? '.28' : '1',
+      qrOffLabel: T('No barcode — this programme ended', 'بلا باركود — انتهى هذا البرنامج'),
+      pausedBadgeOn: paused,
+      pausedBadge: T('PAUSED', 'موقوفة'),
+      // she left: the wallet drops the card, and the pass screen says so plainly
+      passGoneOn: left,
+      passGoneTitle: T('You left this programme', 'غادرتِ هذا البرنامج'),
+      passGoneBody: T('The pass was removed from your wallet. Daraj holds your ' + st.stamps + ' stamps for 90 days — rejoin with the same phone number and they come straight back.', 'أُزيلت البطاقة من محفظتك. يحتفظ الدرج بأختامك الـ' + st.stamps + ' لمدة 90 يوماً — انضمّي بنفس الرقم وتعود فوراً.'),
+      rejoinOn: left, rejoinLabel: T('Get my card back', 'أعيدوا لي بطاقتي'),
+      rejoin: () => { this.userTouch(); this.go('recover'); },
+      // the in-frame way out of the most important screen in the product
+      exitToWallet: () => { this.userTouch(); this.go('wallet', {}, 'back'); },
+      walletExitAria: T('Back to the wallet', 'العودة إلى المحفظة'),
       rewardWord: T('REWARD', 'المكافأة'), memberWord: T('MEMBER', 'العضو'),
       // ── the Google Wallet face · text-first, Details list, centred barcode ──
       gProgram: 'Daraj Coffee',
@@ -1262,23 +2300,35 @@ class Component extends DCLogic {
       gHasHeroArt: !!heroArt, gHeroArt: heroArt || '',
       gDetailsK: T('Details', 'التفاصيل'),
       gDetails: [
-        { k: T('Reward', 'المكافأة'), v: full ? T('Free drink — show this at the till', 'مشروب مجاني — أظهر هذه عند الكاشير') : T('Free drink at ' + st.goal + ' stamps', 'مشروب مجاني عند ' + st.goal + ' أختام'), dir: EN ? 'ltr' : 'rtl' },
+        { k: T('Reward', 'المكافأة'), v: retired ? T('This programme has ended', 'انتهى هذا البرنامج') : (full ? T('Free drink — show this at the till', 'مشروب مجاني — أظهر هذه عند الكاشير') : T('Free drink at ' + st.goal + ' stamps', 'مشروب مجاني عند ' + st.goal + ' أختام')), dir: EN ? 'ltr' : 'rtl' },
         { k: T('Member', 'العضو'), v: (st.form.name || '').trim() || 'Sara Al-Amin', dir: 'auto' },
         { k: T('Member ID', 'رقم العضوية'), v: '0114 2291', dir: 'ltr' }
-      ],
+      ].concat(liveCard ? [] : [{ k: T('Status', 'الحالة'), v: retired ? T('Expired — 12 Aug 2026', 'منتهية — 12 أغسطس 2026') : T('Paused — stamps safe, rewards still redeem', 'موقوفة — الأختام محفوظة والمكافآت تُستبدل'), dir: EN ? 'ltr' : 'rtl' }]),
       gBarcodeNo: '0114 2291',
-      giftChip: T('A gift rides this card today', 'هدية على بطاقتك اليوم'),
-      passStamps, giftOn: st.gift,
+      giftChip: T('A gift rides this card today', 'هدية على بطاقتك اليوم') + ' →',
+      giftBannerAria: T('Open your birthday gift', 'افتح هدية عيد ميلادك'),
+      openGift: () => { this.userTouch(); this.go('gift'); },
+      passStamps, giftOn: st.gift && !retired && !left,
       // the cups carry alt="" — one label on the row beats eight identical ones
       stampsAria: T(st.stamps + ' of ' + st.goal + ' stamps collected', st.stamps + ' من ' + st.goal + ' أختام'),
       sheetStampsAria: T('0 of 8 stamps — a new card', '0 من 8 أختام — بطاقة جديدة'),
-      passRewardLine: full ? T('Free drink — show this at the till', 'مشروب مجاني — أظهر هذه عند الكاشير') : T('Free drink at ' + st.goal + ' stamps', 'مشروب مجاني عند ' + st.goal + ' أختام'),
+      passRewardLine: retired
+        ? T('The programme ended — thank you for every visit', 'انتهى البرنامج — شكراً على كل زيارة')
+        : (paused ? T('Paused — your stamps are safe, rewards still redeem', 'موقوفة — أختامك محفوظة والمكافآت تُستبدل')
+          : (full ? T('Free drink — show this at the till', 'مشروب مجاني — أظهر هذه عند الكاشير') : T('Free drink at ' + st.goal + ' stamps', 'مشروب مجاني عند ' + st.goal + ' أختام'))),
       memberFirst: (st.form.name || '').trim() || 'Sara Al-Amin',
-      gTitleLine: full ? T('Reward ready', 'المكافأة جاهزة') : T(st.stamps + ' of ' + st.goal + ' stamps', st.stamps + ' من ' + st.goal + ' أختام'),
-      rewardReady: full,
+      gTitleLine: retired ? T('Expired', 'منتهية') : (full ? T('Reward ready', 'المكافأة جاهزة') : T(st.stamps + ' of ' + st.goal + ' stamps', st.stamps + ' من ' + st.goal + ' أختام')),
+      rewardReady: full && !retired && !left,
       tillLabel: T('At the till · عند الكاشير', 'عند الكاشير · At the till'),
-      stampBtnLabel: full ? T('Scan again (reward waits)', 'امسح مجدداً (المكافأة تنتظر)') : T('+ A stamp lands', '+ يهبط ختم'),
+      stampBtnOn: !retired && !left,
+      stampBtnLabel: paused ? T('Card paused — why?', 'البطاقة موقوفة — لماذا؟') : (full ? T('Scan again (reward waits)', 'امسح مجدداً (المكافأة تنتظر)') : T('+ A stamp lands', '+ يهبط ختم')),
+      stampBtnBg: paused ? '#5D5348' : '#E88024',
+      stampBtnClass: paused ? 'wl-press' : 'wl-cta',
       redeemLabel: T('Redeem the reward', 'استبدل المكافأة'),
+      tillNoteOn: retired || left,
+      tillNote: retired
+        ? T('The barcode stopped working on 12 Aug. Nothing left to scan — thank you for 34 visits.', 'توقّف الباركود في 12 أغسطس. لا شيء ليُمسح — شكراً على 34 زيارة.')
+        : T('Nothing to scan — this pass is no longer in your wallet.', 'لا شيء ليُمسح — لم تعد هذه البطاقة في محفظتك.'),
       simStamp: this.simStamp,
       simRedeem: () => { this.userTouch(); this.doRedeem(); },
       redeemFlash: st.redeemFlash,
@@ -1289,45 +2339,65 @@ class Component extends DCLogic {
       flashFoot: T('A fresh card starts counting the moment it’s poured.', 'بطاقة جديدة تبدأ العدّ لحظة سكب القهوة.'),
       confetti: Array.from({ length: 14 }, (_, i) => ({ x: (6 + (i * 67) % 88) + '%', c: ['#E88024', '#2FAE66', '#F0C74A', '#7FA6C9'][i % 4], dur: (2.1 + (i % 5) * 0.25) + 's', delay: (0.08 * (i % 7)) + 's' })),
       isWallet: st.scene === 'wallet',
-      walletWord: T('Wallet', 'المحفظة'), walletCount: T('4 CARDS · 0 APPS', '4 بطاقات · 0 تطبيقات'),
+      walletWord: T('Wallet', 'المحفظة'),
+      walletCount: left ? T('3 CARDS · 0 APPS', '3 بطاقات · 0 تطبيقات') : T('4 CARDS · 0 APPS', '4 بطاقات · 0 تطبيقات'),
       oneQrLine: T('One QR, every till.', 'رمز واحد، كل الكاشيرات.'),
       walletStackCaption: T('Four shops · one wallet · صفّ واحد', 'أربعة محال · محفظة واحدة · صفّ واحد'),
       walletFootCaption: T('Rainbow St to Abdali — the whole high street, one swipe from the lock screen.', 'من الرينبو إلى العبدلي — الشارع كله، على بُعد سحبة من شاشة القفل.'),
       walletCards: [
-        { name: 'Daraj Coffee', merchant: T('Tala Group · Rainbow St', 'مجموعة تالا · شارع الرينبو'), i: 'D', c: '#1E5C43', c2: '#123D2C', tagLabel: full ? T('REWARD', 'المكافأة') : T('STAMPS', 'الأختام'), tagValue: full ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal, hero: full ? T('Reward ready', 'المكافأة جاهزة') : T(st.stamps + ' of ' + st.goal, st.stamps + ' من ' + st.goal), line: full ? T('Your free drink waits at the till.', 'مشروبك المجاني ينتظر عند الكاشير.') : T((st.goal - st.stamps) + ' stamps to your free drink — the 8th is on us.', 'بقي ' + (st.goal - st.stamps) + ' أختام لمشروبك المجاني — الثامن علينا.'), memberCaption: 'MEMBER · 0114 2291',
+        { id: 'daraj', name: 'Daraj Coffee', merchant: T('Tala Group · Rainbow St', 'مجموعة تالا · شارع الرينبو'), i: 'D', c: retired ? '#4A4E4B' : '#1E5C43', c2: retired ? '#2E312F' : '#123D2C',
+          tagLabel: retired ? T('STATUS', 'الحالة') : (paused ? T('PAUSED', 'موقوفة') : (full ? T('REWARD', 'المكافأة') : T('STAMPS', 'الأختام'))),
+          tagValue: retired ? T('EXPIRED', 'منتهية') : (full && !paused ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal),
+          hero: retired ? T('Programme ended', 'انتهى البرنامج') : (full ? T('Reward ready', 'المكافأة جاهزة') : T(st.stamps + ' of ' + st.goal, st.stamps + ' من ' + st.goal)),
+          line: retired ? T('Kept as a keepsake — the barcode stopped on 12 Aug.', 'محفوظة كذكرى — توقّف الباركود في 12 أغسطس.')
+            : (paused ? T('Paused while Rainbow St is refitted — your stamps are safe.', 'موقوفة بينما يُجدَّد فرع الرينبو — أختامك محفوظة.')
+              : (full ? T('Your free drink waits at the till.', 'مشروبك المجاني ينتظر عند الكاشير.') : T((st.goal - st.stamps) + ' stamps to your free drink — the 8th is on us.', 'بقي ' + (st.goal - st.stamps) + ' أختام لمشروبك المجاني — الثامن علينا.'))),
+          memberCaption: 'MEMBER · 0114 2291',
           // mini row: under 16px, so disc + ring + tilt with the glyph dropped
           mini: this.stampRow(st.stamps, st.goal, { ...DARAJ, size: 11, next: false }) },
-        { name: 'Nara Care', merchant: T('Nara Pharmacy · Swefieh', 'صيدلية نارا · الصويفية'), i: 'N', c: '#0F5B63', c2: '#093A40', tagLabel: T('BALANCE', 'الرصيد'), tagValue: 'JOD 4.50', hero: 'JOD 4.50', line: T('7% of every bill comes back — spend it like cash from JOD 2.', '7% من كل فاتورة تعود لك — أنفقها كنقد ابتداءً من دينارين.'), memberCaption: 'MEMBER · 0452 7736' },
-        { name: 'Marmar Gold', merchant: T('Marmar Lounge · Abdali', 'صالة مرمر · العبدلي'), i: 'M', c: '#26262B', c2: '#141417', tagLabel: T('TIER', 'الفئة'), tagValue: 'GOLD ★', hero: T('Gold', 'ذهبية'), line: T('2 visits from Royal — skip the line, 15% off, the corner booth.', 'زيارتان من الفئة الملكية — بلا طابور، خصم 15%، وطاولة الزاوية.'), memberCaption: 'GOLD · 2290 8814' },
-        { name: 'Qamar Eid Coupon', merchant: T('Qamar Sweets · downtown', 'حلويات قمر · وسط البلد'), i: 'Q', c: '#B14A32', c2: '#7C3121', tagLabel: T('EXPIRES', 'تنتهي'), tagValue: '15 AUG', hero: T('Free knafeh slice', 'قطعة كنافة مجانية'), line: T('One use, then it retires itself. The scanner asks twice.', 'استخدام واحد ثم تتقاعد وحدها. الماسح يسأل مرتين.'), memberCaption: 'COUPON · 7743 0091' }
-      ].map((wc, i) => ({ ...wc,
+        { id: 'nara', name: 'Nara Care', merchant: T('Nara Pharmacy · Swefieh', 'صيدلية نارا · الصويفية'), i: 'N', c: '#0F5B63', c2: '#093A40', tagLabel: T('BALANCE', 'الرصيد'), tagValue: 'JOD 4.50', hero: 'JOD 4.50', line: T('7% of every bill comes back — spend it like cash from JOD 2.', '7% من كل فاتورة تعود لك — أنفقها كنقد ابتداءً من دينارين.'), memberCaption: 'MEMBER · 0452 7736' },
+        { id: 'marmar', name: 'Marmar Gold', merchant: T('Marmar Lounge · Abdali', 'صالة مرمر · العبدلي'), i: 'M', c: '#26262B', c2: '#141417', tagLabel: T('TIER', 'الفئة'), tagValue: 'GOLD ★', hero: T('Gold', 'ذهبية'), line: T('2 visits from Royal — skip the line, 15% off, the corner booth.', 'زيارتان من الفئة الملكية — بلا طابور، خصم 15%، وطاولة الزاوية.'), memberCaption: 'GOLD · 2290 8814' },
+        { id: 'qamar', name: 'Qamar Eid Coupon', merchant: T('Qamar Sweets · downtown', 'حلويات قمر · وسط البلد'), i: 'Q', c: '#B14A32', c2: '#7C3121', tagLabel: couponUsed ? T('USED', 'مستخدم') : T('EXPIRES', 'تنتهي'), tagValue: couponUsed ? T('1 AUG', '1 أغسطس') : '15 AUG', hero: T('Free knafeh slice', 'قطعة كنافة مجانية'), line: couponUsed ? T('Spent on 1 August — kept a week as your receipt.', 'استُخدم في 1 أغسطس — يبقى أسبوعاً كإيصال.') : T('One use, then it retires itself. The scanner asks twice.', 'استخدام واحد ثم تتقاعد وحدها. الماسح يسأل مرتين.'), memberCaption: 'COUPON · 7743 0091' }
+      ].filter((wc) => !(left && wc.id === 'daraj'))
+       .map((wc, i) => ({ ...wc,
         hasMini: !!wc.mini, mini: wc.mini || [],
         open: st.walletSel === i,
+        aria: wc.name + ' — ' + wc.tagLabel + ' ' + wc.tagValue,
         mt: i === 0 ? '0' : (st.walletSel === i - 1 ? '10px' : '-4px'),
         anim: 'fanIn' + seq + ' .52s' + HOUSE + (0.05 + i * 0.07).toFixed(2) + 's both',
-        pick: () => { this.userTouch(); if (i === 0 && st.walletSel === i) { this.go('pass'); return; } this.setState({ walletSel: i }); this.save(); } })),
+        /* Second tap on an OPEN card opens it — for every card now, not just Daraj.
+           Daraj goes to its own pass; the other three go to the generic card scene
+           in their own platform-faithful shape. */
+        pick: () => {
+          this.userTouch();
+          if (st.walletSel === i) { if (wc.id === 'daraj') { this.go('pass'); return; } this.go('card', { cardOpen: wc.id }); this.save(); return; }
+          this.setState({ walletSel: i }); this.save();
+        } })),
+      // the two doors the wallet was missing
+      walletExtras: [
+        { k: T('My details', 'تفاصيلي'), v: T('Name, phone, birthday, notifications', 'الاسم والهاتف والميلاد والإشعارات'), badge: '', go: () => { this.userTouch(); this.go('details'); } },
+        { k: T('Messages', 'الرسائل'), v: T('Everything the shops have sent you', 'كل ما أرسلته لك المحال'), badge: unreadN ? String(unreadN) : '', go: () => { this.userTouch(); this.go('messages'); } }
+      ].map(x => ({ ...x, hasBadge: !!x.badge, aria: x.k + (x.badge ? ' · ' + x.badge + T(' unread', ' غير مقروءة') : '') })),
+      walletRejoinOn: left,
+      walletRejoinLabel: T('Daraj Coffee was removed — get it back →', 'أُزيلت قهوة الدرج — استعدها ←'),
       backRowsA: [
         { k: T('Branches · الفروع', 'الفروع · Branches'), v: T('Rainbow St · Swefieh · Abdali Mall', 'شارع الرينبو · الصويفية · مول العبدلي'), color: '#241C16' },
-        { k: T('Latest message', 'آخر رسالة'), v: T('Double stamps all Friday — see you on the stairs.', 'أختام مضاعفة طوال الجمعة — نراكم على الدرج.'), color: '#241C16' }
-      ],
+        { k: T('Latest message', 'آخر رسالة'), v: msgRows.length ? msgRows[0].body : T('Double stamps all Friday — see you on the stairs.', 'أختام مضاعفة طوال الجمعة — نراكم على الدرج.'), color: '#241C16' }
+      ].concat(st.recovered ? [{ k: T('This device', 'هذا الجهاز'), v: T('Re-issued to this phone · the old barcode is void', 'أُعيد إصدارها لهذا الهاتف · الباركود القديم لاغٍ'), color: '#B4753A' }] : []),
       referralK: T('Your referral code · بشّر صاحبك', 'رمز الدعوة · بشّر صاحبك'),
       referralV: T('DARAJ-' + first.toUpperCase() + '-114 — share it, you both get a head start', 'DARAJ-' + first.toUpperCase() + '-114 — شاركه، وتبدآن متقدّمَين'),
       referralCode: 'DARAJ-' + first.toUpperCase() + '-114',
       openShare: () => { this.userTouch(); this.setState({ shareSheet: true }); },
-      backRowsB: [
-        { k: 'Instagram', v: '@darajcoffee', color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('Instagram', T('Opening @darajcoffee…', 'جارٍ فتح @darajcoffee…')); } },
-        { k: 'WhatsApp', v: '+962 79 555 0100', color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('WhatsApp', T('Starting a chat with Daraj Coffee…', 'بدء محادثة مع قهوة الدرج…')); } },
-        { k: T('Terms', 'الشروط'), v: T('One stamp per visit · rewards never expire while the card is live', 'ختم واحد لكل زيارة · المكافآت لا تنتهي ما دامت البطاقة حيّة'), color: '#93887A', cursor: 'default', cls: '', action: undefined }
-      ],
+      backRowsB,
       historyK: T('History · السجل', 'السجل · History'), historyRows,
       doneWord: T('Done', 'تم'),
       shareSheet: st.shareSheet,
       shareTitle: T('Share your Daraj card', 'شارك بطاقة الدرج'), shareTitleAlt: 'شارك بطاقتك',
       copyCodeLabel: T('Copy code', 'انسخ الرمز'),
       closeShare: () => { this.userTouch(); this.setState({ shareSheet: false }); },
-      shareWhatsapp: () => { this.userTouch(); this.setState({ shareSheet: false, refPending: !st.refDone }); this.notify('Daraj Coffee', T('Sent — when Noor joins you both get a head start · وصلت الدعوة', 'وصلت الدعوة — حين تنضم نور تبدآن متقدّمَين')); },
-      shareMessages: () => { this.userTouch(); this.setState({ shareSheet: false, refPending: !st.refDone }); this.notify('Daraj Coffee', T('Sent — when Noor joins you both get a head start · وصلت الدعوة', 'وصلت الدعوة — حين تنضم نور تبدآن متقدّمَين')); },
-      shareCopy: () => { this.userTouch(); this.setState({ shareSheet: false }); this.notify('Daraj Coffee', T('Code copied — DARAJ-' + first.toUpperCase() + '-114', 'نُسخ الرمز — DARAJ-' + first.toUpperCase() + '-114')); },
+      shareWhatsapp: () => { this.userTouch(); this.setState({ shareSheet: false, refPending: !st.refDone }); this.notify('Daraj Coffee', T('Sent — when Noor joins you both get a head start · وصلت الدعوة', 'وصلت الدعوة — حين تنضم نور تبدآن متقدّمَين'), null, 'system'); },
+      shareMessages: () => { this.userTouch(); this.setState({ shareSheet: false, refPending: !st.refDone }); this.notify('Daraj Coffee', T('Sent — when Noor joins you both get a head start · وصلت الدعوة', 'وصلت الدعوة — حين تنضم نور تبدآن متقدّمَين'), null, 'system'); },
+      shareCopy: () => { this.userTouch(); this.setState({ shareSheet: false }); this.notify('Daraj Coffee', T('Code copied — DARAJ-' + first.toUpperCase() + '-114', 'نُسخ الرمز — DARAJ-' + first.toUpperCase() + '-114'), null, 'system'); },
       hasNotif: !!st.notif && !st.lock,
       notifAnim: st.notifOut ? 'notifExit .26s cubic-bezier(.4,0,1,1) both' : 'notifSpring .5s' + HOUSE + 'both',
       notifTitle: (st.notif || {}).title || '', notifBody: (st.notif || {}).body || '',
@@ -1335,10 +2405,154 @@ class Component extends DCLogic {
       nowWord: T('now', 'الآن'),
       isLock: st.lock,
       lockDate: T('Friday, 14 September', 'الجمعة، 14 سبتمبر'),
-      lockBody: T('Double stamps all Friday — see you on the stairs.', 'أختام مضاعفة طوال الجمعة — نراكم على الدرج.'),
-      lockFoot: T('One message · every wallet · 10:00 sharp', 'رسالة واحدة · كل المحافظ · 10:00 تماماً'),
+      // the glass carries whichever message raised it — the weekend push, or the goodbye
+      lockBody: st.lockMsg === 'farewell'
+        ? T('Thank you for every coffee. The stamp card ends today — the pass stays with you.', 'شكراً على كل قهوة. تنتهي بطاقة الأختام اليوم — وتبقى البطاقة معك.')
+        : T('Double stamps all Friday — see you on the stairs.', 'أختام مضاعفة طوال الجمعة — نراكم على الدرج.'),
+      lockFoot: st.lockMsg === 'farewell'
+        ? T('The last message a programme ever sends · and it is kept in Messages', 'آخر رسالة يرسلها برنامج · وتُحفظ في الرسائل')
+        : T('One message · every wallet · 10:00 sharp', 'رسالة واحدة · كل المحافظ · 10:00 تماماً'),
       lockTap: () => { this.userTouch(); this.lockTap(); },
-      sceneChips, momentBtns,
+      sceneChips, momentBtns, lifeBtns,
+      lifeK: T('Life of the card', 'عمر البطاقة'),
+      lifeHint: T('Every card ends somehow. These are the three endings a wallet can actually show — and the shop has to say each of them out loud.', 'كل بطاقة تنتهي بطريقة ما. هذه هي النهايات الثلاث التي تستطيع المحفظة إظهارها فعلاً — وعلى المحل أن يقول كلاً منها بصوت مسموع.'),
+
+      /* ══ MY DETAILS ══════════════════════════════════════════════════ */
+      isDetails: st.scene === 'details',
+      detailsTitle: T('My details', 'تفاصيلي'),
+      detailsSub: T('Daraj Coffee · member since March 2026', 'قهوة الدرج · عضوة منذ مارس 2026'),
+      detailsFieldsK: T('You', 'أنتِ'), detailFields,
+      langK: T('Language', 'اللغة'), langOpts,
+      notifK: T('Notifications from this shop', 'إشعارات هذا المحل'), notifOpts,
+      notifFoot: T('Muting is not deleting — messages keep arriving in Messages, they just stop interrupting you.', 'الكتم ليس حذفاً — تستمر الرسائل بالوصول إلى صندوق الرسائل، لكنها تتوقّف عن مقاطعتك.'),
+      leaveK: T('Leaving', 'المغادرة'),
+      leaveLabel: T('Remove this pass from my wallet', 'أزل هذه البطاقة من محفظتي'),
+      leaveSub: T('You keep nothing on the phone; Daraj keeps your stamps for 90 days.', 'لا يبقى شيء على الهاتف؛ ويحتفظ الدرج بأختامك 90 يوماً.'),
+      leaveDisabled: left,
+      leaveDoneNote: T('This pass is already out of your wallet.', 'هذه البطاقة خارج محفظتك بالفعل.'),
+      openLeave: () => { this.userTouch(); if (left) return; this.setState({ leaveArm: true }); },
+      leaveOn: st.leaveArm,
+      leaveTitle: T('Remove the Daraj Coffee pass?', 'إزالة بطاقة قهوة الدرج؟'),
+      leaveBody: T('Your ' + st.stamps + ' stamps do not disappear — Daraj holds them against your phone number for 90 days, and rejoining with the same number brings them back. After that they are deleted for good. Nothing else about you is kept.', 'أختامك الـ' + st.stamps + ' لا تختفي — يحتفظ بها الدرج مرتبطةً برقم هاتفك 90 يوماً، والانضمام بنفس الرقم يعيدها. وبعدها تُحذف نهائياً. ولا يُحتفظ بشيء آخر عنك.'),
+      leaveCancelLabel: T('Keep the card', 'أبقِ البطاقة'),
+      leaveConfirmLabel: T('Remove it', 'أزلها'),
+      cancelLeave: () => { this.userTouch(); this.setState({ leaveArm: false }); },
+      confirmLeave: () => { this.userTouch(); this.doLeave(); },
+      detailsFoot: T('Everything here is saved the moment you type it. Daraj sees your name, phone and answer — nothing else.', 'كل شيء هنا يُحفظ لحظة كتابته. يرى الدرج اسمك وهاتفك وإجابتك — لا شيء غير ذلك.'),
+
+      /* ══ PASS RECOVERY ══════════════════════════════════════════════ */
+      isRecover: st.scene === 'recover', isVerify: st.scene === 'verify',
+      recTitle: T('Move your card to this phone', 'انقل بطاقتك إلى هذا الهاتف'),
+      recSub: T('Your phone number is the card. Type it and we will re-issue the pass here — with the stamps you already earned.', 'رقم هاتفك هو البطاقة. اكتبه وسنُصدر البطاقة هنا من جديد — بأختامك التي جمعتها.'),
+      recPhoneLabel: T('The number you joined with', 'الرقم الذي انضممت به'),
+      recPhoneV: st.recPhone, setRecPhone: (e) => { this.userTouch(); this.setState({ recPhone: e.target.value, recErr: '' }); },
+      recCta: T('Send me a code', 'أرسل لي رمزاً'),
+      recCtaBg: recPhoneOk ? '#1E5C43' : '#E6E1D8', recCtaFg: recPhoneOk ? '#FFFFFF' : '#A79E92',
+      recCtaCursor: recPhoneOk ? 'pointer' : 'not-allowed', recCtaClass: recPhoneOk ? 'wl-cta wl-press' : 'wl-off',
+      recErrOn: st.recErr === 'nomatch' || st.recErr === 'short',
+      recErrMsg: st.recErr === 'nomatch'
+        ? T('No Daraj card on that number. Typos at the counter happen — check it, or join as a new member.', 'لا توجد بطاقة درج بهذا الرقم. أخطاء الإدخال عند الكاشير واردة — تحقّق منه، أو انضم كعضو جديد.')
+        : T('A phone number with at least 9 digits.', 'رقم هاتف من 9 أرقام على الأقل.'),
+      recJoinLabel: T('Join as a new member instead →', 'انضم كعضو جديد بدلاً من ذلك ←'),
+      recJoin: () => { this.userTouch(); this.go('signup'); },
+      recFoot: T('No password, no app. The number and one code — the same as joining.', 'بلا كلمة سر وبلا تطبيق. الرقم ورمز واحد — كما لو كنت تنضم.'),
+      submitRecover: () => {
+        this.userTouch();
+        if (!recPhoneOk) { this.setState({ recErr: 'short' }); return; }
+        if (!this.lookupMember(st.recPhone)) { this.setState({ recErr: 'nomatch' }); return; }
+        this.go('verify', { recCode: '', recErr: '' });
+        this.sendCode();
+      },
+      vTitle: T('Check your messages', 'راجع رسائلك'),
+      vSub: T('We sent a 4-digit code to ' + (st.recPhone || '').trim() + '. It expires in 10 minutes.', 'أرسلنا رمزاً من 4 أرقام إلى ' + (st.recPhone || '').trim() + '. ينتهي خلال 10 دقائق.'),
+      vCells: Array.from({ length: 4 }, (_, i) => {
+        const ch = codeDigits[i] || '';
+        return { ch, filled: !!ch, empty: !ch,
+          bg: ch ? '#FFFFFF' : '#F7F4EF', br: ch ? '#1E5C43' : '#D8D0C2',
+          anim: ch ? ('codeIn' + (codeDigits.length % 2 ? '1' : '2') + ' .28s' + HOUSE + 'both') : 'none' };
+      }),
+      vCodeV: st.recCode, setRecCode: (e) => { this.userTouch(); this.setState({ recCode: String(e.target.value || '').replace(/\D/g, '').slice(0, 4), recErr: '' }); },
+      vCta: T('Restore my card', 'استعد بطاقتي'),
+      vCtaBg: codeDigits.length === 4 ? '#1E5C43' : '#E6E1D8', vCtaFg: codeDigits.length === 4 ? '#FFFFFF' : '#A79E92',
+      vCtaCursor: codeDigits.length === 4 ? 'pointer' : 'not-allowed', vCtaClass: codeDigits.length === 4 ? 'wl-cta wl-press' : 'wl-off',
+      vErrOn: st.recErr === 'badcode',
+      vErrMsg: T('That code does not match. Check the message, or send a new one.', 'الرمز غير مطابق. راجع الرسالة أو اطلب رمزاً جديداً.'),
+      // a demo that pretends to send a real SMS is lying about the one step it cannot do
+      vHint: T('This is a demo — the code is ' + this.DEMO_CODE() + ', and it also arrives as a notification.', 'هذا عرض توضيحي — الرمز هو ' + this.DEMO_CODE() + '، ويصل أيضاً كإشعار.'),
+      vResendLabel: T('Send it again', 'أرسله مرة أخرى'),
+      vResend: () => { this.userTouch(); this.setState({ recErr: '' }); this.sendCode(); },
+      submitVerify: () => {
+        this.userTouch();
+        if (codeDigits.length !== 4) return;
+        if (codeDigits !== this.DEMO_CODE()) { this.setState({ recErr: 'badcode' }); return; }
+        this.doRestore();
+      },
+      vVoidNote: T('When this works, the pass on your old phone stops working. One card, one phone — that is what keeps a barcode worth trusting.', 'حين ينجح هذا، تتوقّف البطاقة على هاتفك القديم. بطاقة واحدة لهاتف واحد — وهذا ما يجعل الباركود جديراً بالثقة.'),
+
+      /* ══ MESSAGES ══════════════════════════════════════════════════ */
+      isMessages: st.scene === 'messages',
+      msgTitle: T('Messages', 'الرسائل'),
+      msgSubtitle: unreadN ? T(unreadN + ' unread', unreadN + ' غير مقروءة') : T('All caught up', 'لا جديد'),
+      msgRows,
+      msgFoot: T('Every broadcast Daraj has sent you, kept. A message that only exists for four seconds is a message you were never really sent.', 'كل رسالة أرسلها لك الدرج، محفوظة. الرسالة التي تعيش أربع ثوانٍ فقط رسالة لم تصلك حقاً.'),
+      msgReaderOn: !!openMsgRow,
+      mrTitle: openMsgRow ? openMsgRow.title : '',
+      mrBody: openMsgRow ? openMsgRow.body : '',
+      mrWhen: openMsgRow ? openMsgRow.when : '',
+      mrFrom: 'Daraj Coffee', mrTone: openMsgRow ? openMsgRow.tone : '#1E5C43',
+      mrHasGo: !!(openMsgRow && openMsgRow.goK === 'gift'),
+      mrGoLabel: T('Open the gift →', 'افتح الهدية ←'),
+      mrGo: () => { this.userTouch(); this.setState({ msgOpen: null }); this.go('gift'); },
+      closeMsg: () => { this.userTouch(); this.setState({ msgOpen: null }); this.save(); },
+      closeMsgLabel: T('Done', 'تم'),
+
+      /* ══ THE OTHER WALLET CARDS ══════════════════════════════════════ */
+      isCard: st.scene === 'card',
+      cdName: cd.name, cdAr: cd.ar, cdMerchant: cd.merchant, cdInitial: cd.i, cdC: cd.c, cdC2: cd.c2,
+      cdTagLabel: CD.tagLabel, cdTagValue: CD.tagValue,
+      cdHero: CD.hero, cdHeroSub: CD.heroSub, cdNote: CD.note,
+      cdHasPerks: !!CD.perks, cdPerksK: CD.perksK || '', cdPerks: (CD.perks || []).map(p => ({ ...p, mark: p.off ? '·' : '✓', markBg: p.off ? 'rgba(255,255,255,.12)' : 'rgba(232,184,36,.22)', markFg: p.off ? 'rgba(255,255,255,.45)' : '#E8B824', op: p.off ? '.5' : '1' })),
+      cdHasProgress: !!CD.progLabel, cdProgLabel: CD.progLabel || '', cdProgPct: CD.progPct || '0%', cdProgNote: CD.progNote || '',
+      cdHasCredits: !!CD.credits, cdCreditsK: CD.creditsK || '',
+      cdCredits: (CD.credits || []).map(c => ({ ...c, amtFg: c.amt.charAt(0) === '−' ? '#F0A08A' : '#9FE7C4' })),
+      cdBarcodeNo: CD.barcodeNo, cdBarcodeOn: !(cd.kind === 'coupon' && couponUsed),
+      cdBarcodeOff: cd.kind === 'coupon' && couponUsed,
+      cdBarcodeOffLabel: T('Redeemed — nothing left to scan', 'استُخدم — لا شيء ليُمسح'),
+      cdCtaLabel: CD.ctaLabel, cdCta: CD.cta,
+      cdCtaBg: (cd.kind === 'coupon' && couponUsed) ? 'rgba(255,255,255,.14)' : (st.couponArm && cd.kind === 'coupon' ? '#C0392B' : 'rgba(255,255,255,.94)'),
+      cdCtaFg: (cd.kind === 'coupon' && couponUsed) ? 'rgba(255,255,255,.6)' : (st.couponArm && cd.kind === 'coupon' ? '#FFFFFF' : cd.c),
+      cdCtaClass: (cd.kind === 'coupon' && couponUsed) ? 'wl-off' : 'wl-cta',
+      cdCtaCursor: (cd.kind === 'coupon' && couponUsed) ? 'not-allowed' : 'pointer',
+      cdDim: (cd.kind === 'coupon' && couponUsed) ? 'grayscale(.55)' : 'none',
+      cdBackRows, cdBackTitle: cd.name,
+      cdAria: cd.name + ' — ' + CD.tagLabel + ' ' + CD.tagValue,
+
+      /* ══ THE GIFT ══════════════════════════════════════════════════ */
+      isGift: st.scene === 'gift',
+      giftTitle: T('Your birthday gift', 'هدية عيد ميلادك'),
+      giftName: T('A free dessert with any drink', 'حلوى مجانية مع أي مشروب'),
+      giftFrom: T('From Daraj Coffee · ' + (bday || T('today', 'اليوم')), 'من قهوة الدرج · ' + (bday || 'اليوم')),
+      giftArtOn: !!giftArt, giftArt: giftArt || '',
+      giftHowK: T('How to use it', 'كيف تستخدمها'),
+      giftHow: [
+        T('Show this pass at the till — the gift is already on it.', 'أظهري البطاقة عند الكاشير — الهدية عليها بالفعل.'),
+        T('Any branch, any dessert on the counter.', 'أي فرع، وأي حلوى على الطاولة.'),
+        T('No minimum spend, and it does not touch your stamps.', 'بلا حد أدنى، ولا تمسّ أختامك.')
+      ].map((line, i) => ({ line, n: String(i + 1) })),
+      giftExpiryK: T('Good for', 'صالحة لـ'),
+      giftExpiry: T('Today only — birthdays do not carry over.', 'اليوم فقط — أعياد الميلاد لا تُرحَّل.'),
+      giftCtaLabel: T('Show it at the till', 'أظهرها عند الكاشير'),
+      giftCta: () => { this.userTouch(); this.notify('Daraj Coffee', T('Scanned — dessert on the house. Happy birthday, ' + first + '.', 'مُسحت — الحلوى على حسابنا. كل عام وأنتِ بخير يا ' + first + '.'), null, 'reward'); },
+      giftFoot: T('Placed by the birthday job at 06:00, quietly, on every card whose owner told us the day.', 'وُضعت بمهمة أعياد الميلاد عند 06:00، بهدوء، على كل بطاقة أخبرَنا صاحبها بيومه.'),
+
+      /* ══ TERMS ══════════════════════════════════════════════════════ */
+      termsOn: st.termsOpen, termsRows,
+      termsTitle: T('The short version', 'النسخة المختصرة'),
+      termsTitleAlt: T('Daraj Coffee · stamp card', 'قهوة الدرج · بطاقة أختام'),
+      closeTerms: () => { this.userTouch(); this.setState({ termsOpen: false }); },
+      termsDone: T('Done', 'تم'),
+      termsFoot: T('Six lines, because six lines is all this actually is.', 'ستة سطور، لأن هذا كل ما في الأمر فعلاً.'),
+
       panelTitle: T('The customer side', 'جهة الزبون'),
       panelSub: T('Ten seconds to a member · no app', 'عشر ثوانٍ ليصبح عضواً · بدون تطبيق'),
       journeyK: T('The journey', 'الرحلة'), momentsK: T('Life with the card', 'الحياة مع البطاقة'),
