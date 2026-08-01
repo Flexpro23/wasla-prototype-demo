@@ -133,7 +133,9 @@
 
   <div style="width:402px;max-width:96vw;height:830px;border-radius:48px;border:11px solid #1B1B1F;box-shadow:0 34px 80px rgba(20,16,10,.38);overflow:hidden;background:{{ phoneBg }};display:flex;flex-direction:column;position:relative;transition:background .5s;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 26px 6px;flex-shrink:0;position:relative;z-index:5;color:{{ statusColor }};">
-      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13.5px;">9:41</div>
+      <!-- the demo's own clock · Thursday 30 July 2026, minutes after the 10:00
+           broadcast, so the lock screen is not showing a message from the future -->
+      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13.5px;">10:04</div>
       <div style="display:flex;align-items:center;gap:5px;">
         <span style="width:5px;height:5px;border-radius:50%;background:currentColor;"></span>
         <span style="width:5px;height:5px;border-radius:50%;background:currentColor;"></span>
@@ -157,7 +159,7 @@
     <sc-if value="{{ isLock }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;inset:0;z-index:70;border-radius:37px;overflow:hidden;background:radial-gradient(520px 420px at 50% 18%, #2A2620, #0A0A0C 72%);display:flex;flex-direction:column;align-items:center;padding:78px 18px 26px;animation:lockWake .45s cubic-bezier(.22,.61,.36,1) both;">
         <div style="font-size:13px;font-weight:600;color:rgba(244,242,238,.72);letter-spacing:.02em;">{{ lockDate }}</div>
-        <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:76px;line-height:1.05;color:#F4F2EE;letter-spacing:-.02em;font-variant-numeric:tabular-nums;" dir="ltr">9:41</div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:76px;line-height:1.05;color:#F4F2EE;letter-spacing:-.02em;font-variant-numeric:tabular-nums;" dir="ltr">10:04</div>
         <div onClick="{{ lockTap }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ lockBody }}" class="wl-press" style="cursor:pointer;margin-top:32px;width:100%;background:rgba(30,30,34,.72);backdrop-filter:blur(16px);border-radius:20px;padding:13px 15px;color:#FFFFFF;box-shadow:0 18px 44px rgba(0,0,0,.45);animation:lockCard .6s cubic-bezier(.22,.61,.36,1) .32s both;">
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:30px;height:30px;border-radius:8px;background:#1E5C43;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;flex-shrink:0;">D</div>
@@ -771,6 +773,9 @@
                 <sc-if value="{{ mrHasGo }}" hint-placeholder-val="{{ false }}">
                   <div onClick="{{ mrGo }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;margin-top:16px;background:#E88024;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:13px 0;text-align:center;">{{ mrGoLabel }}</div>
                 </sc-if>
+                <sc-if value="{{ mrNoteOn }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:16px;background:#FAF6EF;border:1px dashed #E3D8C6;border-radius:11px;padding:11px 13px;font-size:11.5px;font-weight:600;color:#8A5A22;line-height:1.6;text-align:center;">{{ mrNote }}</div>
+                </sc-if>
               </div>
             </div>
           </sc-if>
@@ -1034,8 +1039,15 @@ class Component extends DCLogic {
            retired → the programme ended: no barcode, "Expired", a thank-you.
            left → the MEMBER removed the pass; the wallet drops it. ── */
       cardState: 'live',
-      /* ── PASS RECOVERY · "I have a new phone" ── */
-      recPhone: '', recCode: '', recErr: '', recovered: false,
+      /* What she LEFT with, captured at the moment she removed the pass:
+           { p: <normalised phone>, n: <stamps>, g: <goal> }
+         The shop holds her stamps against her number for 90 days, and the leave
+         dialog promises exactly that — so a rejoin on this device must hand back
+         the count she actually left with, never a number from the data file. */
+      leftCard: null,
+      /* ── PASS RECOVERY · "I have a new phone" (recovered) vs "I came back" (rejoined) ──
+           Two different events that must never wear each other's copy. */
+      recPhone: '', recCode: '', recErr: '', recovered: false, rejoined: false,
       /* ── MESSAGES · the broadcast inbox. `inbox` holds catalogue keys, not copy, so
            persistence stays tiny and every string still round-trips through T(). ── */
       inbox: [], msgRead: [], msgOpen: null, msgSeq: 0,
@@ -1067,8 +1079,8 @@ class Component extends DCLogic {
           joined: !!s.joined, stamps: s.stamps, goal: s.goal, lang: s.lang, platform: s.platform,
           walletSel: s.walletSel, gift: !!s.gift, refDone: !!s.refDone,
           histAdd: (s.histAdd || []).slice(0, 4),
-          notifPref: s.notifPref, cardState: s.cardState,
-          recovered: !!s.recovered, qamarUsed: !!s.qamarUsed,
+          notifPref: s.notifPref, cardState: s.cardState, leftCard: s.leftCard || null,
+          recovered: !!s.recovered, rejoined: !!s.rejoined, qamarUsed: !!s.qamarUsed,
           msgSeq: s.msgSeq, inbox: (s.inbox || []).slice(0, 6), msgRead: (s.msgRead || []).slice(0, 24),
           form: { name: f.name, phone: f.phone, drink: f.drink, birthday: f.birthday } }));
       } catch (e) {}
@@ -1081,7 +1093,11 @@ class Component extends DCLogic {
        key   'wasla_demo_live_events'
        value JSON array, NEWEST FIRST, capped 20
        entry { at: Date.now(), kind: 'earn'|'reward'|'join'|'redeem'|'renew'|'referral'|'leave',
-               who, what, card }
+               who, what, card, acct }
+     `acct` names the ACCOUNT the event belongs to — every card on this phone that
+     Wasla can write about is Daraj Coffee, which is Tala Hospitality Group's. The
+     Dashboard reads it to keep one tenant's feed clear of another's events; a reader
+     that predates the field simply ignores it, so adding it breaks nothing.
      Read-modify-write rather than keeping an in-memory copy, so two demo tabs writing
      at once interleave instead of one clobbering the other. `who` is always the
      CARDHOLDER — including the referral, where the card that moved is Sara's — so the
@@ -1092,16 +1108,37 @@ class Component extends DCLogic {
      this kind: it is a genuine 'join' (see doRestore), so the feed reads as a full
      story rather than only the exit. ──────── */
   liveKey() { return 'wasla_demo_live_events'; }
+  /** The tenant her events belong to. Read from the shared database — the same
+      string the dashboard's consoleAcct() and the scanner's acctName() join on —
+      so renaming the account in one place cannot silently strip her rows out of
+      the merchant's feed. The literal is only the no-database floor. */
+  ACCT() {
+    try {
+      const A = ((typeof window !== 'undefined' && window.WASLA_DB) || {}).account || {};
+      if (typeof A.company === 'string' && A.company) return A.company;
+    } catch (e) {}
+    return 'Tala Hospitality Group';
+  }
   emitLive(kind, what) {
     try {
       let list = [];
       const raw = this._lsGet(this.liveKey());
       if (raw) { try { const p = JSON.parse(raw); if (Array.isArray(p)) list = p; } catch (e) { list = []; } }
-      list.unshift({ at: Date.now(), kind, who: this.memberName(), what, card: 'Daraj Coffee' });
+      list.unshift({ at: Date.now(), kind, who: this.memberName(), what, card: 'Daraj Coffee', acct: this.ACCT(), src: 'cust' });
       this._lsSet(this.liveKey(), JSON.stringify(list.slice(0, 20)));
     } catch (e) {}
   }
-  clearLive() { try { localStorage.removeItem(this.liveKey()); } catch (e) {} }
+  /** Her reset drops the rows SHE wrote and nothing else. The bus is shared with
+      the till and the merchant dashboard, so removing the key wholesale would
+      erase their history to clear hers. Untagged rows predate `src` and are not
+      hers to claim. */
+  clearLive() {
+    let arr = [];
+    try { const raw = this._lsGet(this.liveKey()); const a = raw ? JSON.parse(raw) : null; arr = Array.isArray(a) ? a : []; } catch (e) { return; }
+    const keep = arr.filter(e => !(e && typeof e === 'object' && e.src === 'cust'));
+    if (keep.length === arr.length) return;
+    try { this._lsSet(this.liveKey(), JSON.stringify(keep)); } catch (e) {}
+  }
   memberName() { return ((this.state.form || {}).name || '').trim() || 'Sara Al-Amin'; }
   /** Pure: a bad/foreign blob is ignored, never thrown. */
   readSaved() {
@@ -1119,12 +1156,29 @@ class Component extends DCLogic {
     const g = num(b.goal, 1, 12); if (g !== null) p.goal = g;
     const st = num(b.stamps, 0, 12); if (st !== null) p.stamps = st;
     const ws = num(b.walletSel, 0, 3); if (ws !== null) p.walletSel = ws;
-    if (Array.isArray(b.histAdd)) p.histAdd = b.histAdd.filter(x => x && typeof x === 'object' && typeof x.id === 'string').slice(0, 4);
+    /* A history entry is REBUILT rather than adopted: the id, then only the numbers
+       this component knows how to print. Anything else a foreign blob carries is
+       dropped, so a row can never render "Stamp null of 8". */
+    if (Array.isArray(b.histAdd)) p.histAdd = b.histAdd
+      .filter(x => x && typeof x === 'object' && typeof x.id === 'string')
+      .map(x => {
+        const o = { id: x.id.slice(0, 12) };
+        ['n', 'g'].forEach(k => { const v = num(x[k], 0, 12); if (v !== null) o[k] = v; });
+        if (x.held === true) o.held = true;
+        return o;
+      }).slice(0, 4);
     /* the newer keys — same posture: a value only survives if it is one of the
        shapes this component can actually consume, otherwise the default stands */
     if (b.notifPref === 'all' || b.notifPref === 'rewards' || b.notifPref === 'mute') p.notifPref = b.notifPref;
     if (b.cardState === 'live' || b.cardState === 'paused' || b.cardState === 'retired' || b.cardState === 'left') p.cardState = b.cardState;
+    /* the goodbye receipt · only a fully-formed one survives, and the stamp count
+       is clamped by the same rule as st.stamps */
+    if (b.leftCard && typeof b.leftCard === 'object' && !Array.isArray(b.leftCard) && typeof b.leftCard.p === 'string') {
+      const ln = num(b.leftCard.n, 0, 12), lg = num(b.leftCard.g, 1, 12);
+      if (ln !== null) p.leftCard = { p: b.leftCard.p.slice(0, 20), n: ln, g: lg === null ? 8 : lg };
+    }
     if (typeof b.recovered === 'boolean') p.recovered = b.recovered;
+    if (typeof b.rejoined === 'boolean') p.rejoined = b.rejoined;
     if (typeof b.qamarUsed === 'boolean') p.qamarUsed = b.qamarUsed;
     const ms = num(b.msgSeq, 0, 9999); if (ms !== null) p.msgSeq = ms;
     if (Array.isArray(b.inbox)) p.inbox = b.inbox.filter(x => x && typeof x === 'object' && typeof x.k === 'string' && typeof x.n === 'number' && isFinite(x.n)).slice(0, 6);
@@ -1183,20 +1237,28 @@ class Component extends DCLogic {
       const L = (this.__host && this.__host.logic) || this;
       if (!L || !L.state || L.state.refDone) return;
       const s = L.state, EN = s.lang === 'en', full = s.stamps >= s.goal, onPass = s.scene === 'pass';
+      /* A paused card cannot earn — the pass, the wallet row and the paused broadcast
+         all say so. A referral bonus that landed anyway would contradict all three, so
+         it is HELD instead of dropped: the friend still joined, the stamp still exists,
+         it simply waits for a card that can take it (same as a full card banking it). */
+      const liveNow = (s.cardState || 'live') === 'live';
+      const lands = liveNow && !full;
       L.setState({
         refDone: true, refPending: false,
-        stamps: full ? s.stamps : s.stamps + 1,
-        stampSeq: (s.stampSeq || 0) + (full ? 0 : 1),
+        stamps: lands ? s.stamps + 1 : s.stamps,
+        stampSeq: (s.stampSeq || 0) + (lands ? 1 : 0),
         backSide: onPass ? false : s.backSide,
-        histAdd: [{ id: 'ref' }, ...(s.histAdd || [])].slice(0, 4)
+        histAdd: [lands ? { id: 'ref' } : { id: 'ref', held: true }, ...(s.histAdd || [])].slice(0, 4)
       });
       // the payoff is a reward AND a message — it outlives its own banner now
       L.broadcast('Daraj Coffee', EN
-        ? (full ? 'Noor joined with your code — a bonus stamp is banked for your next card 🎉 · انضمّت نور برمزك'
-                : 'Noor joined with your code — you\'re both 1 stamp ahead 🎉 · انضمّت نور برمزك')
-        : (full ? 'انضمّت نور برمزك — ختمك الإضافي محفوظ لبطاقتك القادمة 🎉'
-                : 'انضمّت نور برمزك — كلاكما متقدّم بختم 🎉'), 'referral', 'reward');
-      L.emitLive('referral', 'Noor joined from ' + L.firstName() + '’s code — bonus stamp');
+        ? (lands ? 'Noor joined with your code — you\'re both 1 stamp ahead 🎉 · انضمّت نور برمزك'
+                 : (full ? 'Noor joined with your code — a bonus stamp is banked for your next card 🎉 · انضمّت نور برمزك'
+                         : 'Noor joined with your code — your bonus stamp waits until the card is live again 🎉 · انضمّت نور برمزك'))
+        : (lands ? 'انضمّت نور برمزك — كلاكما متقدّم بختم 🎉'
+                 : (full ? 'انضمّت نور برمزك — ختمك الإضافي محفوظ لبطاقتك القادمة 🎉'
+                         : 'انضمّت نور برمزك — ختمك الإضافي ينتظر عودة البطاقة 🎉')), lands ? 'referral' : 'referralHeld', 'reward');
+      L.emitLive('referral', 'Noor joined from ' + L.firstName() + '’s code — ' + (lands ? 'bonus stamp' : 'bonus stamp held'));
       L.save();
     });
   }
@@ -1634,6 +1696,21 @@ class Component extends DCLogic {
     this.kill(this._lk);
     this.dismissNotifNow();
     this.pushMsg(k);
+    /* Her preference owns the GLASS too, not just the banner. "No banners at all" that
+       still takes over the whole screen is not muting, it is the loudest interruption
+       the phone has. The message still lands in the inbox — that is what an inbox is
+       for — and the only thing that reaches her is a 'system' answer to the tap she
+       just made, which is the one thing mute must never swallow. */
+    const tier = k === 'birthday' ? 'reward' : 'all';
+    if (!this.notifyAllowed('Daraj Coffee', tier)) {
+      const EN = this.state.lang === 'en', muted = (this.state.notifPref || 'all') === 'mute';
+      this.setState({ lock: false, lockMsg: k });
+      this.save();
+      this.notify('Daraj Coffee', muted
+        ? (EN ? 'Daraj is muted — the message went straight to Messages.' : 'قهوة الدرج مكتومة — ذهبت الرسالة مباشرة إلى الرسائل.')
+        : (EN ? 'Banners are set to rewards only — the message is waiting in Messages.' : 'الإشعارات مضبوطة على المكافآت فقط — الرسالة تنتظر في الرسائل.'), k, 'system');
+      return;
+    }
     this.setState({ lock: true, lockMsg: k });
     this.save();
     this._lk = this.after(2600, () => this.setState({ lock: false }));
@@ -1685,24 +1762,39 @@ class Component extends DCLogic {
     // captured before the state flips: this is what tells a genuine "she came back
     // after leaving" apart from an ordinary "same member, new phone" reissue.
     const wasLeft = this.state.cardState === 'left';
+    /* THE COUNT SHE LEFT WITH. The leave dialog promises her N stamps come back if she
+       rejoins with the same number, so a rejoin on this device pays that promise out of
+       the receipt taken at goodbye — not out of the member list, whose row is whatever
+       the data file happens to say. A different number is a different member: the list
+       is right for them, and for every ordinary new-phone reissue. */
+    const lc = this.state.leftCard;
+    const sameMember = wasLeft && !!lc && !!lc.p && lc.p === this.normPhone(phone);
+    const goal = (sameMember ? lc.g : 0) || m.goal || this.state.goal || 8;
+    const back = Math.max(0, Math.min(sameMember ? lc.n : (typeof m.stamps === 'number' ? m.stamps : this.state.stamps), goal));
     this.kill(this._vc);
     this.setState((s) => ({
-      joined: true, recovered: true, cardState: 'live',
-      stamps: typeof m.stamps === 'number' ? m.stamps : Math.max(s.stamps, 6),
-      goal: m.goal || s.goal,
+      joined: true, recovered: !wasLeft, rejoined: wasLeft, cardState: 'live', leftCard: null,
+      stamps: back, goal,
       stampSeq: (s.stampSeq || 0) + 1, recCode: '', recErr: '',
-      histAdd: [{ id: 'reissue' }].concat((s.histAdd || []).filter((x) => x && x.id !== 'reissue')).slice(0, 4),
+      histAdd: [wasLeft ? { id: 'rejoin', n: back } : { id: 'reissue' }]
+        .concat((s.histAdd || []).filter((x) => x && x.id !== 'reissue' && x.id !== 'rejoin')).slice(0, 4),
       form: { ...s.form, name: m.name || s.form.name, phone: phone || s.form.phone, birthday: m.birthday || s.form.birthday }
     }));
     this.go('pass', { platform: 'apple' });
-    this.broadcast('Daraj Coffee', EN
-      ? 'Your card is on this phone. The pass on the old one is void.'
-      : 'بطاقتك على هذا الهاتف. البطاقة على الهاتف القديم لم تعد صالحة.', 'recovered');
-    // a recovery after LEFT is a genuine return — the feed should read it as a
-    // join, same as a first signup, not as a device swap.
+    /* Two different events, two sets of words. Nothing moved between phones when she
+       simply came back to the one in her hand, and no barcode was voided — saying so
+       would be inventing a device swap that never happened. */
     if (wasLeft) {
-      this.emitLive('join', this.memberName() + ' rejoined the programme — stamps restored');
+      this.broadcast('Daraj Coffee', EN
+        ? 'Welcome back — your card is in your wallet again, with the ' + back + ' stamps you left with.'
+        : 'أهلاً بعودتك — بطاقتك في محفظتك من جديد، بأختامك الـ' + back + ' التي غادرتِ بها.', 'rejoined');
+      // a recovery after LEFT is a genuine return — the feed should read it as a
+      // join, same as a first signup, not as a device swap.
+      this.emitLive('join', this.memberName() + ' rejoined the programme — ' + back + ' stamps restored');
     } else {
+      this.broadcast('Daraj Coffee', EN
+        ? 'Your card is on this phone. The pass on the old one is void.'
+        : 'بطاقتك على هذا الهاتف. البطاقة على الهاتف القديم لم تعد صالحة.', 'recovered');
       this.emitLive('renew', 'pass re-issued to a new device — the old barcode is void');
     }
     this.save();
@@ -1729,6 +1821,8 @@ class Component extends DCLogic {
     const EN = this.state.lang === 'en';
     const stamps = this.state.stamps;
     this.setState((s) => ({ cardState: 'left', leaveArm: false, gift: false, shareSheet: false, termsOpen: false, backSide: false,
+      // the receipt the rejoin pays out of — her number, her count, her goal
+      leftCard: { p: this.normPhone((s.form || {}).phone), n: s.stamps, g: s.goal },
       histAdd: [{ id: 'left' }].concat((s.histAdd || []).filter((x) => x && x.id !== 'left')).slice(0, 4) }));
     this.go('wallet');
     this.notify('Wallet', EN
@@ -1743,7 +1837,10 @@ class Component extends DCLogic {
   // ── the beats themselves, shared by the buttons and by autoplay ──
   doSignup() {
     const first = this.firstName(), EN = this.state.lang === 'en';
-    this.setState({ joined: true });
+    /* A completed join IS a live card. Without this, a demo that has visited an
+       ending once carries `cardState` forward and the happy path lands on the screen
+       that says she left — a successful signup announcing her own departure. */
+    this.setState({ joined: true, cardState: 'live' });
     this.go('success');
     this.notify('Daraj Coffee', (EN ? 'Welcome, ' : 'أهلاً ') + first + (EN ? ' — your card is ready.' : ' — بطاقتك جاهزة.'), null, 'system');
     this.emitLive('join', this.memberName() + ' joined from the counter QR');
@@ -1752,7 +1849,8 @@ class Component extends DCLogic {
   doConfirmAdd() {
     const first = this.firstName(), EN = this.state.lang === 'en';
     this.setState({ joined: true });
-    this.go('pass', { platform: 'apple', stamps: 0, stampSeq: 0, gift: false });
+    // same rule as doSignup: the pass she just added is a live pass
+    this.go('pass', { platform: 'apple', stamps: 0, stampSeq: 0, gift: false, cardState: 'live' });
     this.notify('Daraj Coffee', (EN ? 'In your wallet. First coffee = first stamp, ' : 'في محفظتك. أول قهوة = أول ختم يا ') + first + '.', null, 'system');
     this.save();
   }
@@ -1761,7 +1859,9 @@ class Component extends DCLogic {
     this.kill(this._rf);
     this._rf = this.after(3200, () => {
       const EN = this.state.lang === 'en', first = this.firstName();
-      this.setState({ redeemFlash: false, stamps: 0, stampSeq: 0 });
+      // the card's own History is the member's receipt — a redemption has to leave a mark on it
+      this.setState((s) => ({ redeemFlash: false, stamps: 0, stampSeq: 0,
+        histAdd: [{ id: 'redeem' }].concat(s.histAdd || []).slice(0, 4) }));
       this.notify('Daraj Coffee', EN ? 'Enjoy, ' + first + '! A fresh card is already counting.' : 'صحتين يا ' + first + '! بطاقة جديدة بدأت العدّ.', null, 'reward');
       // fired at the reset, not at the tap — that is the moment the card actually turns over
       this.emitLive('reward', 'redeemed: free drink — card reset');
@@ -1779,13 +1879,31 @@ class Component extends DCLogic {
         : 'البطاقة موقوفة مؤقتاً — أختامك الـ' + st.stamps + ' محفوظة، والمكافآت ما زالت تُستبدل.', null, 'system');
       return;
     }
-    if (st.cardState === 'retired' || st.cardState === 'left') return;
+    /* Neither of these can earn either — and neither may fail SILENTLY. A control that
+       does nothing at all is the one thing this file refuses to ship, so each ending
+       says its own reason out loud, and the removed pass points at the way back
+       (the pass screen carries "Get my card back"). */
+    if (st.cardState === 'retired') {
+      this.notify('Daraj Coffee', EN
+        ? 'The programme ended — nothing new can be stamped. Your card is a keepsake now.'
+        : 'انتهى البرنامج — لا يمكن إضافة أختام جديدة. بطاقتك ذكرى الآن.', null, 'system');
+      return;
+    }
+    if (st.cardState === 'left') {
+      this.notify('Daraj Coffee', EN
+        ? 'This pass is not in your wallet. Rejoin with the same number and your ' + st.stamps + ' stamps come back.'
+        : 'هذه البطاقة ليست في محفظتك. انضمّي بنفس الرقم وتعود أختامك الـ' + st.stamps + '.', null, 'system');
+      if (st.scene !== 'pass') this.go('pass');
+      return;
+    }
     if (st.stamps >= st.goal) {
       this.notify('Daraj Coffee', EN ? 'Your reward is still waiting, ' + first + ' — redeem it at the till.' : 'مكافأتك ما زالت تنتظر يا ' + first + ' — استبدلها عند الكاشير.', null, 'system');
       return;
     }
     const n = st.stamps + 1;
-    this.setState((s) => ({ stamps: n, scene: 'pass', backSide: false, stampSeq: (s.stampSeq || 0) + 1 }));
+    this.setState((s) => ({ stamps: n, scene: 'pass', backSide: false, stampSeq: (s.stampSeq || 0) + 1,
+      // every stamp the demo lands is a real line in her History, like every other one there
+      histAdd: [{ id: 'stamp', n, g: st.goal }].concat(s.histAdd || []).slice(0, 4) }));
     this.notify('Daraj Coffee', EN
       ? (n >= st.goal ? first + ', your ' + st.goal + 'th coffee is on us — the reward is READY.' : 'Stamp added — ' + n + ' of ' + st.goal + ' · ' + (st.goal - n) + ' to your free drink.')
       : (n >= st.goal ? 'يا ' + first + '، قهوتك رقم ' + st.goal + ' علينا — المكافأة جاهزة.' : 'أُضيف ختم — ' + n + ' من ' + st.goal + ' · بقي ' + (st.goal - n) + ' لمشروبك المجاني.'), null, n >= st.goal ? 'reward' : 'all');
@@ -1872,8 +1990,8 @@ class Component extends DCLogic {
       navDir: 'fwd', navSeq: (s.navSeq || 0) + 1, stampSeq: 0, seen: { counter: true }, prev: 'counter',
       lock: false, lockMsg: 'weekend', playing: false, playIdx: 0, playCap: '',
       refPending: false, refDone: false, histAdd: [], resetArm: false,
-      notifPref: 'all', leaveArm: false, cardState: 'live',
-      recPhone: '', recCode: '', recErr: '', recovered: false,
+      notifPref: 'all', leaveArm: false, cardState: 'live', leftCard: null,
+      recPhone: '', recCode: '', recErr: '', recovered: false, rejoined: false,
       inbox: [], msgRead: [], msgOpen: null, msgSeq: 0,
       cardOpen: 'nara', qamarUsed: false, couponArm: false, termsOpen: false, linkSeq: 0,
       form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white', birthday: '14 Sep' }
@@ -1934,12 +2052,33 @@ class Component extends DCLogic {
     };
     const TIME_AR = { 'Today 08:41': 'اليوم 08:41', 'Tue 08:37': 'الثلاثاء 08:37', 'Jul 18': '18 يوليو', 'Jul 02': '2 يوليو', 'Mar 04': '4 مارس', 'Today 09:12': 'اليوم 09:12', 'Mon 17:20': 'الاثنين 17:20', 'Feb 11': '11 فبراير' };
     const rawHistory = (typeof window !== 'undefined' && window.WASLA_DB && window.WASLA_DB.memberTimelines && window.WASLA_DB.memberTimelines['Sara Al-Amin']) || fallbackHistory;
-    const EXTRA_ROWS = {
-      ref: { time: T('Just now', 'الآن'), line: T('Noor joined from your code — bonus stamp', 'انضمّت نور برمزك — ختم إضافي'), bg: '#FDF6EE', fw: 700 },
-      reissue: { time: T('Just now', 'الآن'), line: T('Pass re-issued to this phone — the old barcode is void', 'أُعيد إصدار البطاقة لهذا الهاتف — الباركود القديم لاغٍ'), bg: '#EEF5FD', fw: 700 },
-      left: { time: T('Just now', 'الآن'), line: T('You removed this pass — stamps held for 90 days', 'أزلتِ هذه البطاقة — الأختام محفوظة 90 يوماً'), bg: '#FDF0EE', fw: 700 }
+    /* ── what the DEMO writes into History ─────────────────────────────────
+       A card whose History records the months-old past but nothing that happens while
+       she is holding it is a receipt with the last page torn out. Every earning and
+       every redemption lands here beside the referral, the re-issue and the goodbye.
+       Stamps and redemptions repeat, so their numbers ride on the entry rather than
+       being baked into the copy; the one-offs stay one-offs. A shape this builder
+       does not recognise (a foreign blob, an older save) returns null and is dropped. */
+    const NOW_T = T('Just now', 'الآن');
+    const rowFor = (x) => {
+      if (!x || typeof x.id !== 'string') return null;
+      const n = (typeof x.n === 'number' && isFinite(x.n)) ? x.n : null;
+      const g = (typeof x.g === 'number' && isFinite(x.g)) ? x.g : st.goal;
+      if (x.id === 'stamp') return n === null ? null
+        : { time: NOW_T, line: T('Stamp ' + n + ' of ' + g + ' · Rainbow St', 'ختم ' + n + ' من ' + g + ' · شارع الرينبو'), bg: '#F1F7F3', fw: 700 };
+      if (x.id === 'redeem') return { time: NOW_T, line: T('Redeemed: free drink — card reset', 'استُبدلت: مشروب مجاني — أُعيد ضبط البطاقة'), bg: '#EAF6EF', fw: 700 };
+      if (x.id === 'ref') return { time: NOW_T, line: x.held
+        ? T('Noor joined from your code — bonus stamp held', 'انضمّت نور برمزك — ختم إضافي محفوظ')
+        : T('Noor joined from your code — bonus stamp', 'انضمّت نور برمزك — ختم إضافي'), bg: '#FDF6EE', fw: 700 };
+      if (x.id === 'reissue') return { time: NOW_T, line: T('Pass re-issued to this phone — the old barcode is void', 'أُعيد إصدار البطاقة لهذا الهاتف — الباركود القديم لاغٍ'), bg: '#EEF5FD', fw: 700 };
+      // she came back to the same phone: nothing moved, nothing was voided
+      if (x.id === 'rejoin') return { time: NOW_T, line: n === null
+        ? T('You rejoined — your stamps came back', 'عدتِ إلى البرنامج — عادت أختامك')
+        : T('You rejoined — your ' + n + ' stamps came back', 'عدتِ إلى البرنامج — عادت أختامك الـ' + n), bg: '#EEF5FD', fw: 700 };
+      if (x.id === 'left') return { time: NOW_T, line: T('You removed this pass — stamps held for 90 days', 'أزلتِ هذه البطاقة — الأختام محفوظة 90 يوماً'), bg: '#FDF0EE', fw: 700 };
+      return null;
     };
-    const addedRows = (st.histAdd || []).map(x => (x && EXTRA_ROWS[x.id]) || null).filter(Boolean);
+    const addedRows = (st.histAdd || []).map(rowFor).filter(Boolean);
     const historyRows = addedRows.concat(rawHistory.slice(0, 5).map(row => ({
       time: EN ? row[0] : (TIME_AR[row[0]] || row[0]),
       line: EN ? row[1] : (HIST_AR[row[1]] || row[1]),
@@ -1990,12 +2129,19 @@ class Component extends DCLogic {
          question asked twice: what does this thing do when it stops being routine? ── */
     const lifeBtns = [
       { label: T('The card fills — reward ready', 'تمتلئ البطاقة — المكافأة جاهزة'), sub: T('8 of 8 · the shimmer starts, the till waits', '8 من 8 · يبدأ اللمعان، والكاشير ينتظر'), on: liveCard && full,
-        go: () => { this.userTouch(); this.setState((s) => ({ cardState: 'live', stamps: s.goal, stampSeq: (s.stampSeq || 0) + 1 })); this.go('pass'); this.notify('Daraj Coffee', T(first + ', your ' + st.goal + 'th coffee is on us — the reward is READY.', 'يا ' + first + '، قهوتك رقم ' + st.goal + ' علينا — المكافأة جاهزة.'), null, 'reward'); this.save(); } },
+        /* A pass the MEMBER removed is not the shop's to switch back on — she comes
+           back through the door she was promised, the same one the pass screen and the
+           wallet already point at. */
+        go: () => { this.userTouch(); if (left) { this.go('recover'); this.notify('Daraj Coffee', T('This pass is out of your wallet — the same phone number brings it back, stamps and all.', 'هذه البطاقة خارج محفظتك — نفس رقم الهاتف يعيدها بأختامها.'), null, 'system'); return; } this.setState((s) => ({ cardState: 'live', stamps: s.goal, stampSeq: (s.stampSeq || 0) + 1 })); this.go('pass'); this.notify('Daraj Coffee', T(first + ', your ' + st.goal + 'th coffee is on us — the reward is READY.', 'يا ' + first + '، قهوتك رقم ' + st.goal + ' علينا — المكافأة جاهزة.'), null, 'reward'); this.save(); } },
       { label: T('The shop pauses the card', 'المحل يوقف البطاقة مؤقتاً'), sub: T('Barcode greys · stamps safe · redemption still works', 'الباركود يبهت · الأختام محفوظة · الاستبدال يعمل'), on: paused,
         go: () => { this.userTouch(); this.setCardState('paused'); } },
       { label: T('The programme ends', 'ينتهي البرنامج'), sub: T('No barcode · “Expired” · a thank-you on the lock screen', 'بلا باركود · «منتهية» · شكر على شاشة القفل'), on: retired,
         go: () => { this.userTouch(); this.setCardState('retired'); } }
-    ].concat(liveCard ? [] : [{ label: T('Back to live', 'عودة للعمل'), sub: T('The shop reopens — stamps resume today', 'المحل يفتح — الأختام تُستأنف اليوم'), on: false, go: () => { this.userTouch(); this.setCardState('live'); } }])
+    /* "Back to live" is the SHOP undoing the shop's own decision, so it only appears
+       for the two states the shop caused. It must never resurrect a pass the member
+       herself deleted — that is her call to reverse, through the recovery flow. */
+    ].concat((paused || retired) ? [{ label: T('Back to live', 'عودة للعمل'), sub: T('The shop reopens — stamps resume today', 'المحل يفتح — الأختام تُستأنف اليوم'), on: false, go: () => { this.userTouch(); this.setCardState('live'); } }] : [])
+     .concat(left ? [{ label: T('She comes back', 'تعود هي'), sub: T('The member rejoins with her own number — her stamps come with her', 'تنضم العضوة برقمها — وتعود أختامها معها'), on: false, go: () => { this.userTouch(); this.go('recover'); } }] : [])
      .map((m) => ({ ...m, br: m.on ? '#E88024' : '#E7E0D5', fg: m.on ? '#C96A14' : '#241C16', bg: m.on ? '#FDF4EC' : '#FFFFFF' }));
     // ── signup validation ──
     const nameOk = (st.form.name || '').trim().length >= 2;
@@ -2039,6 +2185,10 @@ class Component extends DCLogic {
       referral: { t: T('Noor joined with your code', 'انضمّت نور برمزك'),
         b: T('Your friend is in — a bonus stamp landed on your card, and hers started one ahead.', 'صديقتك انضمّت — ختم إضافي هبط على بطاقتك، وبطاقتها بدأت متقدّمة بختم.'),
         when: T('Just now', 'الآن'), tone: '#C96A14' },
+      // the same payoff on a card that could not take the stamp — a full one, or a paused one
+      referralHeld: { t: T('Noor joined with your code', 'انضمّت نور برمزك'),
+        b: T('Your friend is in, and she started one stamp ahead. Your bonus stamp is being held until your card can take it.', 'صديقتك انضمّت وبدأت متقدّمة بختم. وختمك الإضافي محفوظ حتى تستطيع بطاقتك استقباله.'),
+        when: T('Just now', 'الآن'), tone: '#C96A14' },
       paused: { t: T('We are pausing the card for a bit', 'سنوقف البطاقة مؤقتاً'),
         b: T('Rainbow St is being refitted, so new stamps stop for now. Your ' + st.stamps + ' stamps are safe and rewards still redeem at any branch.', 'نجدّد فرع الرينبو، لذا تتوقّف الأختام الجديدة مؤقتاً. أختامك الـ' + st.stamps + ' محفوظة والمكافآت تُستبدل في أي فرع.'),
         when: T('Today', 'اليوم'), tone: '#8A8177' },
@@ -2047,6 +2197,11 @@ class Component extends DCLogic {
         when: T('Today', 'اليوم'), tone: '#8A8177' },
       recovered: { t: T('Your card moved to this phone', 'انتقلت بطاقتك إلى هذا الهاتف'),
         b: T('We re-issued your pass. The barcode on your old phone no longer works — your stamps came with you.', 'أصدرنا بطاقتك من جديد. الباركود على هاتفك القديم لم يعد يعمل — وأختامك جاءت معك.'),
+        when: T('Just now', 'الآن'), tone: '#1E5C43' },
+      /* Coming BACK is not a device swap. Nothing moved phones and no barcode was
+         voided, so this path gets its own words rather than borrowing the re-issue's. */
+      rejoined: { t: T('Welcome back to Daraj Coffee', 'أهلاً بعودتك إلى قهوة الدرج'),
+        b: T('Your pass is in your wallet again, with the stamps you left with. Nothing was voided — you picked up exactly where you stopped.', 'بطاقتك في محفظتك من جديد، بأختامك التي غادرتِ بها. لم يُلغَ شيء — عدتِ من حيث توقّفتِ تماماً.'),
         when: T('Just now', 'الآن'), tone: '#1E5C43' },
       welcome: { t: T('Welcome to Daraj Coffee', 'أهلاً بك في قهوة الدرج'),
         b: T('Your card is live. Buy 7, the 8th is on us — one stamp per visit, at any branch.', 'بطاقتك تعمل. اشترِ ٧ والثامن علينا — ختم لكل زيارة، في أي فرع.'),
@@ -2071,6 +2226,15 @@ class Component extends DCLogic {
       });
     const unreadN = msgRows.filter(m => m.unread).length;
     const openMsgRow = msgRows.find(m => m.id === st.msgOpen) || null;
+    /* ── the gift call-to-action · a button that offers a redeemable present has to be
+         backed by a present that is actually on the card. The seeded 'Jul 02' message
+         is a month-old record of a gift she used the same day (her History says so), so
+         it never carries one; a runtime birthday message carries one only while the
+         gift is still riding a card that can hold it. Either way the reader SAYS which,
+         because a message that quietly loses its button explains nothing. ── */
+    const giftLive = !!(st.gift && !retired && !left);
+    const openGiftMsg = !!(openMsgRow && openMsgRow.goK === 'gift');
+    const openGiftLive = openGiftMsg && openMsgRow.id !== 's2' && giftLive;
 
     /* ══ MY DETAILS · the four fields she owns, in one loop ══════════════ */
     const bdOk = bday.length >= 3;
@@ -2131,7 +2295,7 @@ class Component extends DCLogic {
         note: T('7% of every bill comes back. Spend it from JOD 2 up — part of it or all of it, at any Nara counter. It never expires while the card is live.', '7% من كل فاتورة تعود إليك. أنفقه ابتداءً من دينارين — جزءاً منه أو كله، في أي فرع لنارا. ولا ينتهي ما دامت البطاقة تعمل.'),
         creditsK: T('Recent credits', 'آخر الإضافات'),
         credits: [
-          { line: T('Bill JOD 9.00 · Swefieh', 'فاتورة 9.00 د.أ · الصويفية'), amt: '+0.63', time: T('Today 11:20', 'اليوم 11:20') },
+          { line: T('Bill JOD 9.00 · Swefieh', 'فاتورة 9.00 د.أ · الصويفية'), amt: '+0.63', time: T('Today 09:12', 'اليوم 09:12') },
           { line: T('Bill JOD 21.50 · Swefieh', 'فاتورة 21.50 د.أ · الصويفية'), amt: '+1.51', time: T('Sun 18:04', 'الأحد 18:04') },
           { line: T('Redeemed at the till', 'استُبدل عند الكاشير'), amt: '−2.00', time: T('Jul 22', '22 يوليو') },
           { line: T('Bill JOD 34.00 · Swefieh', 'فاتورة 34.00 د.أ · الصويفية'), amt: '+2.38', time: T('Jul 19', '19 يوليو') }
@@ -2158,9 +2322,11 @@ class Component extends DCLogic {
         barcodeNo: '2290 8814'
       },
       coupon: {
-        tagLabel: couponUsed ? T('USED', 'مستخدم') : T('EXPIRES', 'تنتهي'), tagValue: couponUsed ? T('1 AUG', '1 أغسطس') : '15 AUG',
+        /* the coupon is spent inside the demo, on the demo's own day — dating it after
+           the anchor would put a used receipt in the future */
+        tagLabel: couponUsed ? T('USED', 'مستخدم') : T('EXPIRES', 'تنتهي'), tagValue: couponUsed ? T('TODAY', 'اليوم') : '15 AUG',
         hero: T('Free knafeh slice', 'قطعة كنافة مجانية'),
-        heroSub: couponUsed ? T('used on 1 August — kept as a receipt', 'استُخدم في 1 أغسطس — يُحفظ كإيصال') : T('one use · no minimum spend', 'استخدام واحد · بلا حد أدنى'),
+        heroSub: couponUsed ? T('used today — kept as a receipt', 'استُخدم اليوم — يُحفظ كإيصال') : T('one use · no minimum spend', 'استخدام واحد · بلا حد أدنى'),
         note: couponUsed
           ? T('Spent. Qamar keeps the pass in your wallet for a week so you have the receipt, then it retires itself.', 'استُخدم. يبقي قمر البطاقة في محفظتك أسبوعاً لتكون إيصالك، ثم تتقاعد وحدها.')
           : T('Valid to 15 August at the downtown counter. Redeeming is irreversible, so the scanner asks twice — and so does this button.', 'صالح حتى 15 أغسطس في فرع وسط البلد. الاستبدال لا يُلغى، لذا يسأل الماسح مرتين — وكذلك هذا الزر.'),
@@ -2230,13 +2396,25 @@ class Component extends DCLogic {
       camQrShadow: st.camReady ? '0 0 0 3px rgba(255,214,10,.9),0 20px 44px rgba(0,0,0,.5)' : '0 20px 44px rgba(0,0,0,.5)',
       camPill: T('Open “wasla.app” →', 'افتح “wasla.app” ←'),
       camFoot: T('No app — the camera is the whole install.', 'بدون تطبيق — الكاميرا هي كل التثبيت.'),
+      /* A returning member's scan OPENS her card. It does not write to it: the QR at
+         the counter is the same one she joined with, and a scan that quietly rewrote
+         her stamp count to a fixed number would be the pass lying about her own
+         progress on the one screen she trusts to be true. */
       goSignup: () => {
         this.userTouch();
         if (st.joined) {
-          const back = Math.max(st.stamps, 6);
           this.dismissNotifNow();
-          this.go('pass', { stamps: back, goal: 8 });
-          this.notify('Daraj Coffee', EN ? 'Welcome back, ' + first + ' — ' + back + '/8 stamps · أهلاً بعودتك' : 'أهلاً بعودتك يا ' + first + ' — ' + back + '/8 أختام', null, 'system');
+          if (left) {
+            this.go('recover');
+            this.notify('Daraj Coffee', EN
+              ? 'This pass is not in your wallet any more — the same number brings it back.'
+              : 'لم تعد هذه البطاقة في محفظتك — نفس الرقم يعيدها.', null, 'system');
+            return;
+          }
+          this.go('pass');
+          this.notify('Daraj Coffee', EN
+            ? 'Welcome back, ' + first + ' — ' + st.stamps + '/' + st.goal + ' stamps · أهلاً بعودتك'
+            : 'أهلاً بعودتك يا ' + first + ' — ' + st.stamps + '/' + st.goal + ' أختام', null, 'system');
           return;
         }
         this.go('signup');
@@ -2268,7 +2446,8 @@ class Component extends DCLogic {
       goRecover: () => { this.userTouch(); this.go('recover'); },
       addAppleLabel: T('Add to Apple Wallet', 'أضف إلى Apple Wallet'), addGoogleLabel: T('Add to Google Wallet', 'أضف إلى Google Wallet'),
       addApple: () => { this.userTouch(); this.go('sheet', { platform: 'apple' }); },
-      addGoogle: () => { this.userTouch(); this.go('pass', { platform: 'google', stamps: 0, stampSeq: 0 }); this.notify('Google Wallet', T('Daraj Coffee was saved to Google Wallet.', 'حُفظت قهوة الدرج في Google Wallet.')); this.save(); },
+      // same three truths as the Apple path: a live card, a fresh count, no inherited gift
+      addGoogle: () => { this.userTouch(); this.go('pass', { platform: 'google', stamps: 0, stampSeq: 0, gift: false, cardState: 'live' }); this.notify('Google Wallet', T('Daraj Coffee was saved to Google Wallet.', 'حُفظت قهوة الدرج في Google Wallet.')); this.save(); },
       backToSuccess: () => { this.userTouch(); this.go('success', {}, 'back'); },
       confirmAdd: () => { this.userTouch(); this.doConfirmAdd(); },
       cancelWord: T('Cancel', 'إلغاء'), addWord: T('Add', 'إضافة'), addPassTitle: T('Add Pass', 'إضافة بطاقة'),
@@ -2320,7 +2499,7 @@ class Component extends DCLogic {
         { k: T('Reward', 'المكافأة'), v: retired ? T('This programme has ended', 'انتهى هذا البرنامج') : (full ? T('Free drink — show this at the till', 'مشروب مجاني — أظهر هذه عند الكاشير') : T('Free drink at ' + st.goal + ' stamps', 'مشروب مجاني عند ' + st.goal + ' أختام')), dir: EN ? 'ltr' : 'rtl' },
         { k: T('Member', 'العضو'), v: (st.form.name || '').trim() || 'Sara Al-Amin', dir: 'auto' },
         { k: T('Member ID', 'رقم العضوية'), v: '0114 2291', dir: 'ltr' }
-      ].concat(liveCard ? [] : [{ k: T('Status', 'الحالة'), v: retired ? T('Expired — 12 Aug 2026', 'منتهية — 12 أغسطس 2026') : T('Paused — stamps safe, rewards still redeem', 'موقوفة — الأختام محفوظة والمكافآت تُستبدل'), dir: EN ? 'ltr' : 'rtl' }]),
+      ].concat(liveCard ? [] : [{ k: T('Status', 'الحالة'), v: retired ? T('Expired — 30 July 2026', 'منتهية — 30 يوليو 2026') : T('Paused — stamps safe, rewards still redeem', 'موقوفة — الأختام محفوظة والمكافآت تُستبدل'), dir: EN ? 'ltr' : 'rtl' }]),
       gBarcodeNo: '0114 2291',
       giftChip: T('A gift rides this card today', 'هدية على بطاقتك اليوم') + ' →',
       giftBannerAria: T('Open your birthday gift', 'افتح هدية عيد ميلادك'),
@@ -2344,7 +2523,7 @@ class Component extends DCLogic {
       redeemLabel: T('Redeem the reward', 'استبدل المكافأة'),
       tillNoteOn: retired || left,
       tillNote: retired
-        ? T('The barcode stopped working on 12 Aug. Nothing left to scan — thank you for 34 visits.', 'توقّف الباركود في 12 أغسطس. لا شيء ليُمسح — شكراً على 34 زيارة.')
+        ? T('The barcode stopped working today. Nothing left to scan — thank you for 34 visits.', 'توقّف الباركود اليوم. لا شيء ليُمسح — شكراً على 34 زيارة.')
         : T('Nothing to scan — this pass is no longer in your wallet.', 'لا شيء ليُمسح — لم تعد هذه البطاقة في محفظتك.'),
       simStamp: this.simStamp,
       simRedeem: () => { this.userTouch(); this.doRedeem(); },
@@ -2366,7 +2545,7 @@ class Component extends DCLogic {
           tagLabel: retired ? T('STATUS', 'الحالة') : (paused ? T('PAUSED', 'موقوفة') : (full ? T('REWARD', 'المكافأة') : T('STAMPS', 'الأختام'))),
           tagValue: retired ? T('EXPIRED', 'منتهية') : (full && !paused ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal),
           hero: retired ? T('Programme ended', 'انتهى البرنامج') : (full ? T('Reward ready', 'المكافأة جاهزة') : T(st.stamps + ' of ' + st.goal, st.stamps + ' من ' + st.goal)),
-          line: retired ? T('Kept as a keepsake — the barcode stopped on 12 Aug.', 'محفوظة كذكرى — توقّف الباركود في 12 أغسطس.')
+          line: retired ? T('Kept as a keepsake — the barcode stopped today.', 'محفوظة كذكرى — توقّف الباركود اليوم.')
             : (paused ? T('Paused while Rainbow St is refitted — your stamps are safe.', 'موقوفة بينما يُجدَّد فرع الرينبو — أختامك محفوظة.')
               : (full ? T('Your free drink waits at the till.', 'مشروبك المجاني ينتظر عند الكاشير.') : T((st.goal - st.stamps) + ' stamps to your free drink — the 8th is on us.', 'بقي ' + (st.goal - st.stamps) + ' أختام لمشروبك المجاني — الثامن علينا.'))),
           memberCaption: 'MEMBER · 0114 2291',
@@ -2374,7 +2553,7 @@ class Component extends DCLogic {
           mini: this.stampRow(st.stamps, st.goal, { ...DARAJ, size: 11, next: false }) },
         { id: 'nara', name: 'Nara Care', merchant: T('Nara Pharmacy · Swefieh', 'صيدلية نارا · الصويفية'), i: 'N', c: '#0F5B63', c2: '#093A40', tagLabel: T('BALANCE', 'الرصيد'), tagValue: 'JOD 4.50', hero: 'JOD 4.50', line: T('7% of every bill comes back — spend it like cash from JOD 2.', '7% من كل فاتورة تعود لك — أنفقها كنقد ابتداءً من دينارين.'), memberCaption: 'MEMBER · 0452 7736' },
         { id: 'marmar', name: 'Marmar Gold', merchant: T('Marmar Lounge · Abdali', 'صالة مرمر · العبدلي'), i: 'M', c: '#26262B', c2: '#141417', tagLabel: T('TIER', 'الفئة'), tagValue: 'GOLD ★', hero: T('Gold', 'ذهبية'), line: T('2 visits from Royal — skip the line, 15% off, the corner booth.', 'زيارتان من الفئة الملكية — بلا طابور، خصم 15%، وطاولة الزاوية.'), memberCaption: 'GOLD · 2290 8814' },
-        { id: 'qamar', name: 'Qamar Eid Coupon', merchant: T('Qamar Sweets · downtown', 'حلويات قمر · وسط البلد'), i: 'Q', c: '#B14A32', c2: '#7C3121', tagLabel: couponUsed ? T('USED', 'مستخدم') : T('EXPIRES', 'تنتهي'), tagValue: couponUsed ? T('1 AUG', '1 أغسطس') : '15 AUG', hero: T('Free knafeh slice', 'قطعة كنافة مجانية'), line: couponUsed ? T('Spent on 1 August — kept a week as your receipt.', 'استُخدم في 1 أغسطس — يبقى أسبوعاً كإيصال.') : T('One use, then it retires itself. The scanner asks twice.', 'استخدام واحد ثم تتقاعد وحدها. الماسح يسأل مرتين.'), memberCaption: 'COUPON · 7743 0091' }
+        { id: 'qamar', name: 'Qamar Eid Coupon', merchant: T('Qamar Sweets · downtown', 'حلويات قمر · وسط البلد'), i: 'Q', c: '#B14A32', c2: '#7C3121', tagLabel: couponUsed ? T('USED', 'مستخدم') : T('EXPIRES', 'تنتهي'), tagValue: couponUsed ? T('TODAY', 'اليوم') : '15 AUG', hero: T('Free knafeh slice', 'قطعة كنافة مجانية'), line: couponUsed ? T('Spent today — kept a week as your receipt.', 'استُخدم اليوم — يبقى أسبوعاً كإيصال.') : T('One use, then it retires itself. The scanner asks twice.', 'استخدام واحد ثم تتقاعد وحدها. الماسح يسأل مرتين.'), memberCaption: 'COUPON · 7743 0091' }
       ].filter((wc) => !(left && wc.id === 'daraj'))
        .map((wc, i) => ({ ...wc,
         hasMini: !!wc.mini, mini: wc.mini || [],
@@ -2393,14 +2572,20 @@ class Component extends DCLogic {
       // the two doors the wallet was missing
       walletExtras: [
         { k: T('My details', 'تفاصيلي'), v: T('Name, phone, birthday, notifications', 'الاسم والهاتف والميلاد والإشعارات'), badge: '', go: () => { this.userTouch(); this.go('details'); } },
-        { k: T('Messages', 'الرسائل'), v: T('Everything the shops have sent you', 'كل ما أرسلته لك المحال'), badge: unreadN ? String(unreadN) : '', go: () => { this.userTouch(); this.go('messages'); } }
+        /* Only Daraj runs a Wasla programme in this wallet, so only Daraj can send
+           here. Promising "the shops" plural is a promise the inbox cannot keep. */
+        { k: T('Messages', 'الرسائل'), v: T('Everything Daraj Coffee has sent you', 'كل ما أرسلته لك قهوة الدرج'), badge: unreadN ? String(unreadN) : '', go: () => { this.userTouch(); this.go('messages'); } }
       ].map(x => ({ ...x, hasBadge: !!x.badge, aria: x.k + (x.badge ? ' · ' + x.badge + T(' unread', ' غير مقروءة') : '') })),
       walletRejoinOn: left,
       walletRejoinLabel: T('Daraj Coffee was removed — get it back →', 'أُزيلت قهوة الدرج — استعدها ←'),
       backRowsA: [
         { k: T('Branches · الفروع', 'الفروع · Branches'), v: T('Rainbow St · Swefieh · Abdali Mall', 'شارع الرينبو · الصويفية · مول العبدلي'), color: '#241C16' },
         { k: T('Latest message', 'آخر رسالة'), v: msgRows.length ? msgRows[0].body : T('Double stamps all Friday — see you on the stairs.', 'أختام مضاعفة طوال الجمعة — نراكم على الدرج.'), color: '#241C16' }
-      ].concat(st.recovered ? [{ k: T('This device', 'هذا الجهاز'), v: T('Re-issued to this phone · the old barcode is void', 'أُعيد إصدارها لهذا الهاتف · الباركود القديم لاغٍ'), color: '#B4753A' }] : []),
+      /* the third place the two recoveries used to wear the same words — a rejoin
+         moved nothing between phones, so it says what it actually was */
+      ].concat(st.rejoined
+        ? [{ k: T('This card', 'هذه البطاقة'), v: T('You rejoined on this phone · your stamps came back with you', 'عدتِ على هذا الهاتف · وعادت أختامك معك'), color: '#3C7A5B' }]
+        : (st.recovered ? [{ k: T('This device', 'هذا الجهاز'), v: T('Re-issued to this phone · the old barcode is void', 'أُعيد إصدارها لهذا الهاتف · الباركود القديم لاغٍ'), color: '#B4753A' }] : [])),
       referralK: T('Your referral code · بشّر صاحبك', 'رمز الدعوة · بشّر صاحبك'),
       referralV: T('DARAJ-' + first.toUpperCase() + '-114 — share it, you both get a head start', 'DARAJ-' + first.toUpperCase() + '-114 — شاركه، وتبدآن متقدّمَين'),
       referralCode: 'DARAJ-' + first.toUpperCase() + '-114',
@@ -2421,7 +2606,10 @@ class Component extends DCLogic {
       notifInitial: ((st.notif || {}).title || 'D')[0], notifColor: ((st.notif || {}).title || '').includes('Google') ? '#4285F4' : '#1E5C43',
       nowWord: T('now', 'الآن'),
       isLock: st.lock,
-      lockDate: T('Friday, 14 September', 'الجمعة، 14 سبتمبر'),
+      /* The demo's one clock: Thursday 30 July 2026, shared with the Console and the
+         Sales app. The glass is the first thing on screen in this scene, so a date
+         from another season is the loudest possible untruth. */
+      lockDate: T('Thursday, 30 July', 'الخميس، 30 يوليو'),
       // the glass carries whichever message raised it — the weekend push, or the goodbye
       lockBody: st.lockMsg === 'farewell'
         ? T('Thank you for every coffee. The stamp card ends today — the pass stays with you.', 'شكراً على كل قهوة. تنتهي بطاقة الأختام اليوم — وتبقى البطاقة معك.')
@@ -2459,8 +2647,13 @@ class Component extends DCLogic {
 
       /* ══ PASS RECOVERY ══════════════════════════════════════════════ */
       isRecover: st.scene === 'recover', isVerify: st.scene === 'verify',
-      recTitle: T('Move your card to this phone', 'انقل بطاقتك إلى هذا الهاتف'),
-      recSub: T('Your phone number is the card. Type it and we will re-issue the pass here — with the stamps you already earned.', 'رقم هاتفك هو البطاقة. اكتبه وسنُصدر البطاقة هنا من جديد — بأختامك التي جمعتها.'),
+      /* One flow, two errands. "New phone" is a re-issue; "I want it back" is a return
+         to the wallet it never left — and telling her the second is the first is how
+         this screen used to invent a device swap that never happened. */
+      recTitle: left ? T('Get your card back', 'استعيدي بطاقتك') : T('Move your card to this phone', 'انقل بطاقتك إلى هذا الهاتف'),
+      recSub: left
+        ? T('Your phone number is the card. Type it and Daraj puts the pass back in your wallet — with the stamps you left with.', 'رقم هاتفك هو البطاقة. اكتبيه ويعيد الدرج البطاقة إلى محفظتك — بأختامك التي غادرتِ بها.')
+        : T('Your phone number is the card. Type it and we will re-issue the pass here — with the stamps you already earned.', 'رقم هاتفك هو البطاقة. اكتبه وسنُصدر البطاقة هنا من جديد — بأختامك التي جمعتها.'),
       recPhoneLabel: T('The number you joined with', 'الرقم الذي انضممت به'),
       recPhoneV: st.recPhone, setRecPhone: (e) => { this.userTouch(); this.setState({ recPhone: e.target.value, recErr: '' }); },
       recCta: T('Send me a code', 'أرسل لي رمزاً'),
@@ -2504,7 +2697,9 @@ class Component extends DCLogic {
         if (codeDigits !== this.DEMO_CODE()) { this.setState({ recErr: 'badcode' }); return; }
         this.doRestore();
       },
-      vVoidNote: T('When this works, the pass on your old phone stops working. One card, one phone — that is what keeps a barcode worth trusting.', 'حين ينجح هذا، تتوقّف البطاقة على هاتفك القديم. بطاقة واحدة لهاتف واحد — وهذا ما يجعل الباركود جديراً بالثقة.'),
+      vVoidNote: left
+        ? T('Nothing moves between phones here — this is the wallet you removed the pass from. The code only proves the number is yours.', 'لا شيء ينتقل بين الهواتف هنا — هذه المحفظة نفسها التي أزلتِ منها البطاقة. الرمز يثبت أن الرقم رقمك فقط.')
+        : T('When this works, the pass on your old phone stops working. One card, one phone — that is what keeps a barcode worth trusting.', 'حين ينجح هذا، تتوقّف البطاقة على هاتفك القديم. بطاقة واحدة لهاتف واحد — وهذا ما يجعل الباركود جديراً بالثقة.'),
 
       /* ══ MESSAGES ══════════════════════════════════════════════════ */
       isMessages: st.scene === 'messages',
@@ -2517,7 +2712,11 @@ class Component extends DCLogic {
       mrBody: openMsgRow ? openMsgRow.body : '',
       mrWhen: openMsgRow ? openMsgRow.when : '',
       mrFrom: 'Daraj Coffee', mrTone: openMsgRow ? openMsgRow.tone : '#1E5C43',
-      mrHasGo: !!(openMsgRow && openMsgRow.goK === 'gift'),
+      mrHasGo: openGiftLive,
+      mrNoteOn: openGiftMsg && !openGiftLive,
+      mrNote: (openMsgRow && openMsgRow.id === 's2')
+        ? T('That gift was used the day it arrived — this is the record of it, not a second one.', 'استُخدمت تلك الهدية يوم وصولها — هذا سجلها، لا هدية ثانية.')
+        : T('This gift is no longer on your card.', 'لم تعد هذه الهدية على بطاقتك.'),
       mrGoLabel: T('Open the gift →', 'افتح الهدية ←'),
       mrGo: () => { this.userTouch(); this.setState({ msgOpen: null }); this.go('gift'); },
       closeMsg: () => { this.userTouch(); this.setState({ msgOpen: null }); this.save(); },

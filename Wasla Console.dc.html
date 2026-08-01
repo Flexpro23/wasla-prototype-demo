@@ -148,7 +148,7 @@
             </sc-for>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:20px;align-items:start;">
-            <div onClick="{{ goApprovals }}" style="cursor:pointer;background:#FFFFFF;border:1.5px solid #E88024;border-radius:18px;padding:20px;transition:transform .2s;" style-hover="transform:translateY(-2px)">
+            <div onClick="{{ heroGo }}" style="cursor:pointer;background:#FFFFFF;border:1.5px solid #E88024;border-radius:18px;padding:20px;transition:transform .2s;" style-hover="transform:translateY(-2px)">
               <div style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:#E88024;animation:pulse 1.6s infinite;"></span><span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">{{ apprCountLine }}</span></div>
               <div style="font-size:12.5px;color:#5D5348;margin-top:8px;line-height:1.55;">{{ apprPreviewLine }}</div>
               <div style="font-size:11.5px;font-weight:800;color:#C96A14;margin-top:10px;">{{ apprCta }}</div>
@@ -690,8 +690,13 @@
                       <sc-if value="{{ supAccCanOpen }}" hint-placeholder-val="{{ true }}">
                         <div class="wc-press wc-chip" onClick="{{ supAccGo }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:11px;font-weight:800;border-radius:999px;padding:6px 14px;white-space:nowrap;">→ {{ supAccName }}</div>
                       </sc-if>
-                      <a class="wc-press wc-chip" href="{{ supViewAsHref }}" onClick="{{ supViewAs }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-size:11px;font-weight:800;border-radius:999px;padding:6px 14px;white-space:nowrap;">View as client</a>
+                      <sc-if value="{{ supCanViewAs }}" hint-placeholder-val="{{ true }}">
+                        <a class="wc-press wc-chip" href="{{ supViewAsHref }}" onClick="{{ supViewAs }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-size:11px;font-weight:800;border-radius:999px;padding:6px 14px;white-space:nowrap;">View as client</a>
+                      </sc-if>
                     </div>
+                    <sc-if value="{{ supScopeShow }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:10.5px;color:#93887A;line-height:1.55;margin-top:9px;">{{ supScopeLine }}</div>
+                    </sc-if>
                   </div>
                 </sc-if>
                 <div style="margin-top:14px;">
@@ -710,8 +715,13 @@
                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
                   <div class="wc-cta" onClick="{{ supReissue }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-size:12px;font-weight:800;border-radius:999px;padding:9px 17px;">Re-issue the pass</div>
                   <div class="wc-press wc-chip" onClick="{{ supFix }}" style="cursor:pointer;border:1.5px solid {{ supFixBr }};color:{{ supFixFg }};font-size:12px;font-weight:700;border-radius:999px;padding:9px 17px;">Fix a contact detail</div>
-                  <div class="wc-press wc-chip" onClick="{{ corrToggle }}" style="cursor:pointer;border:1.5px solid {{ corrTogBr }};color:{{ corrTogFg }};font-size:12px;font-weight:700;border-radius:999px;padding:9px 17px;">Balance correction…</div>
+                  <sc-if value="{{ corrCanShow }}" hint-placeholder-val="{{ true }}">
+                    <div class="wc-press wc-chip" onClick="{{ corrToggle }}" style="cursor:pointer;border:1.5px solid {{ corrTogBr }};color:{{ corrTogFg }};font-size:12px;font-weight:700;border-radius:999px;padding:9px 17px;">Balance correction…</div>
+                  </sc-if>
                 </div>
+                <sc-if value="{{ corrCantShow }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:10.5px;color:#93887A;line-height:1.55;margin-top:9px;">{{ corrCantLine }}</div>
+                </sc-if>
                 <sc-if value="{{ supFixOpen }}" hint-placeholder-val="{{ false }}">
                   <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:14px;margin-top:12px;animation:{{ corrSlideAnim }};">
                     <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Mobile number on file</div>
@@ -722,10 +732,15 @@
                 </sc-if>
                 <sc-if value="{{ corrOpen }}" hint-placeholder-val="{{ false }}">
                   <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:14px;margin-top:12px;animation:{{ corrSlideAnim }};">
+                    <div style="font-size:10.5px;color:#93887A;line-height:1.5;margin-bottom:9px;">{{ corrBalLine }}</div>
                     <div style="display:flex;gap:8px;align-items:center;margin-bottom:9px;flex-wrap:wrap;">
                       <sc-for list="{{ corrAmts }}" as="ca" hint-placeholder-count="4">
                         <div class="wc-chip wc-press" onClick="{{ ca.pick }}" style="cursor:pointer;border:1.5px solid {{ ca.br }};background:{{ ca.bg }};color:{{ ca.fg }};font-size:11.5px;font-weight:800;border-radius:999px;padding:6px 13px;font-variant-numeric:tabular-nums;animation:{{ ca.anim }};">{{ ca.label }}</div>
                       </sc-for>
+                    </div>
+                    <div style="background:#FFFFFF;border:1px solid #EFE8DC;border-radius:10px;padding:10px 12px;margin-bottom:9px;">
+                      <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;font-variant-numeric:tabular-nums;color:{{ corrPreviewFg }};">{{ corrPreview }}</div>
+                      <div style="font-size:10px;color:#93887A;line-height:1.5;margin-top:4px;">{{ corrPreviewNote }}</div>
                     </div>
                     <input value="{{ corrReason }}" onChange="{{ setCorrReason }}" placeholder="Why — the client and the log both see this, verbatim" style="width:100%;border:1px solid {{ corrInputBr }};border-radius:9px;padding:10px 12px;font-size:12.5px;background:#FFFFFF;transition:border-color .25s;">
                     <div style="font-size:10px;font-weight:700;color:{{ corrCounterFg }};margin-top:7px;font-variant-numeric:tabular-nums;">{{ corrCounter }}</div>
@@ -733,6 +748,13 @@
                   </div>
                 </sc-if>
                 <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.5;">Every action here is append-only: your name, the reason, the member — forever.</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ supNoSel }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#FFFFFF;border:1px dashed #E0D8CB;border-radius:18px;padding:26px 22px;animation:{{ slideAnim }};min-width:0;text-align:center;">
+                <div style="width:46px;height:46px;border-radius:50%;background:#F4F1EA;color:#B0A594;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;margin:0 auto 12px;">?</div>
+                <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;color:#241C16;">{{ supNoSelTitle }}</div>
+                <div style="font-size:11.5px;color:#93887A;line-height:1.6;margin-top:7px;">{{ supNoSelLine }}</div>
               </div>
             </sc-if>
           </div>
@@ -1031,6 +1053,54 @@
           </sc-if>
           <sc-if value="{{ apprQueueTab }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;max-width:760px;">
+            <sc-if value="{{ editAny }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:11px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;margin-top:2px;">Staged card edits</div>
+              <div style="font-size:11.5px;color:#93887A;line-height:1.55;margin-top:-6px;">{{ editHeadLine }}</div>
+              <sc-for list="{{ editRows }}" as="ed" hint-placeholder-count="1">
+                <div style="background:#FFFFFF;border:1.5px solid #EDE9F5;border-radius:16px;padding:16px 20px;animation:{{ ed.anim }};">
+                  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+                    <div style="width:40px;height:40px;border-radius:12px;background:{{ ed.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;flex-shrink:0;">{{ ed.initial }}</div>
+                    <div style="min-width:0;flex:1;">
+                      <div style="font-size:14.5px;font-weight:800;">{{ ed.card }} <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500;color:#93887A;font-size:12px;">{{ ed.ar }}</span></div>
+                      <div style="font-size:11.5px;color:#93887A;margin-top:3px;">{{ ed.account }} · staged in the client’s own editor</div>
+                    </div>
+                    <span style="display:inline-flex;align-items:center;gap:6px;background:#EDE9F5;color:#5B4A8A;font-size:10.5px;font-weight:800;border-radius:999px;padding:5px 13px;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:#7B68AE;flex-shrink:0;"></span>STAGED EDIT</span>
+                    <sc-if value="{{ ed.isGranted }}" hint-placeholder-val="{{ false }}"><span style="background:{{ ed.verdictBg }};color:{{ ed.verdictFg }};font-size:10px;font-weight:800;border-radius:999px;padding:4px 11px;white-space:nowrap;">{{ ed.verdictChip }}</span></sc-if>
+                    <sc-if value="{{ ed.isDeclined }}" hint-placeholder-val="{{ false }}"><span style="background:{{ ed.verdictBg }};color:{{ ed.verdictFg }};font-size:10px;font-weight:800;border-radius:999px;padding:4px 11px;white-space:nowrap;">{{ ed.verdictChip }}</span></sc-if>
+                  </div>
+                  <div style="font-size:10.5px;color:#93887A;line-height:1.5;margin-top:11px;">{{ ed.countLine }}</div>
+                  <sc-for list="{{ ed.rows }}" as="ef" hint-placeholder-count="2">
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid #F5F0E8;animation:{{ ef.anim }};">
+                      <span style="font-size:10px;font-weight:800;letter-spacing:.05em;color:#93887A;text-transform:uppercase;width:150px;flex-shrink:0;">{{ ef.label }}</span>
+                      <span style="font-size:12px;color:#8C877F;text-decoration:line-through;min-width:0;flex:1;">{{ ef.from }}</span>
+                      <span style="font-size:12px;color:#B0A594;flex-shrink:0;">→</span>
+                      <span style="font-size:12.5px;font-weight:800;color:#241C16;min-width:0;flex:1;">{{ ef.to }}</span>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ ed.canAnswer }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+                      <div class="wc-cta" onClick="{{ ed.approve }}" style="cursor:pointer;background:#2FAE66;color:#FFFFFF;font-size:12px;font-weight:800;border-radius:999px;padding:9px 18px;white-space:nowrap;">Approve — the new values go live</div>
+                      <div class="wc-press wc-chip" onClick="{{ ed.declineOpen }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:12px;font-weight:700;border-radius:999px;padding:9px 18px;white-space:nowrap;">Send back…</div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ ed.declining }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:14px;margin-top:11px;animation:{{ editDeclineSlide }};">
+                      <input value="{{ edReason }}" onChange="{{ setEdReason }}" placeholder="What is wrong with the change — they read this, word for word" style="width:100%;border:1px solid {{ edInputBr }};border-radius:9px;padding:10px 12px;font-size:12.5px;background:#FFFFFF;transition:border-color .25s;">
+                      <div style="font-size:10px;font-weight:700;color:{{ edCounterFg }};margin-top:7px;">{{ edCounter }}</div>
+                      <div class="{{ edBtnCls }}" onClick="{{ ed.declineDo }}" style="cursor:{{ edBtnCursor }};background:{{ edBtnBg }};color:{{ edBtnFg }};font-size:12px;font-weight:800;border-radius:999px;padding:10px 0;text-align:center;margin-top:9px;transition:background .3s;">{{ edBtnLabel }}</div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ ed.isGranted }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:11.5px;color:#5D5348;line-height:1.55;margin-top:11px;animation:{{ ed.settleAnim }};">{{ ed.verdictLine }}</div>
+                  </sc-if>
+                  <sc-if value="{{ ed.isDeclined }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:11.5px;color:#5D5348;line-height:1.55;margin-top:11px;animation:{{ ed.settleAnim }};">{{ ed.verdictLine }}</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+              <div style="font-size:10.5px;color:#93887A;line-height:1.55;">{{ editFoot }}</div>
+              <div style="font-size:11px;font-weight:800;letter-spacing:.07em;color:#93887A;text-transform:uppercase;margin-top:6px;">Cards and edits submitted for review</div>
+            </sc-if>
             <sc-for list="{{ apprRows }}" as="ap" hint-placeholder-count="2">
               <div class="wc-row wc-lift" onClick="{{ ap.open }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;background:#FFFFFF;border:1.5px solid {{ ap.border }};border-radius:16px;padding:16px 20px;flex-wrap:wrap;animation:{{ ap.anim }};">
                 <div style="width:40px;height:40px;border-radius:12px;background:{{ ap.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;flex-shrink:0;">{{ ap.initial }}</div>
@@ -2041,6 +2111,12 @@
                     </sc-if>
                   </div>
                 </sc-for>
+                <sc-if value="{{ secSessionsEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px dashed #E0D8CB;border-radius:12px;padding:16px 14px;text-align:center;">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13.5px;color:#241C16;">No open sessions.</div>
+                    <div style="font-size:11px;color:#93887A;line-height:1.6;margin-top:6px;">{{ secSessionsEmptyLine }}</div>
+                  </div>
+                </sc-if>
                 <div style="font-size:10.5px;color:#93887A;margin-top:11px;line-height:1.55;">{{ secSessionFoot }}</div>
                 <div class="wc-press wc-danger" onClick="{{ secSignOutAll }}" style="cursor:pointer;border:1.5px solid #E2563A;color:#E2563A;font-size:12px;font-weight:800;border-radius:999px;padding:10px 0;text-align:center;margin-top:13px;">{{ secSignOutLabel }}</div>
               </div>
@@ -2112,6 +2188,15 @@ const TODAY = Date.UTC(CLOCK.y, CLOCK.mo, CLOCK.d);
 const clockLabel = (mins) => Math.floor(mins / 60) + ':' + String(mins % 60).padStart(2, '0');
 // the invite preview's "Sent" timestamp — 33 minutes before NOW_MIN, same clock, no second anchor
 const INVITE_STAMP = clockLabel(NOW_MIN - 33);
+// ── ONE statutory deadline · the privacy queue used to quote 30 days in its header and 28 in the
+//    body, the confirmation, the home tile and the desk digest — inside the same card. A deadline
+//    is a fact about the law, not a turn of phrase, so every mention on this console reads off
+//    this one number and there is nowhere left for a second one to hide. PRIV_HOLD_DAYS is a
+//    DIFFERENT fact (how long an erased record is held before it is actually gone) and is named
+//    separately on purpose, so nobody folds the two together again. ──
+const PRIV_DAYS = 30;
+const PRIV_HOLD_DAYS = 30;
+const PRIV_DEADLINE = PRIV_DAYS + ' days';
 
 class Component extends DCLogic {
   state = { role: this.props.role ?? 'admin', screen: 'home', accIdx: null, apprId: null, checks: {}, rejecting: false, decided: {}, invBiz: 'Louma Chocolate', invOwner: 'Reem Louma', invPhone: '+962 79 555 0433', invPlan: 'Growth', invSent: false, toast: '', tick: 0, settled: false, apprTab: 'queue', supQuery: '', supIdx: 0, corrOpen: false, corrAmt: '+ JOD 1.50', corrReason: '', logFilter: 'all', accMods: {}, confirm: null, supPrivacy: 'pending', privReason: '', leadSel: null, leadMods: {}, leadsAdded: [], leadFormOpen: false, leadNewBiz: '', leadNewOwner: '', leadTrail: {}, leadMoved: null, converted: {}, escal: [], escalDone: {}, pipeRep: null, hoverDay: null, lfAr: '', lfPhone: '', lfEmail: '', lfVertical: 'Café', lfCity: 'Amman', lfAreas: [], lfLocs: [''], lfTypes: [], lfPlan: 'Growth', lfValue: '79', lfSource: 'Referral', lfFollow: 'Tomorrow', lfNotes: '', sessionLog: [], ownerOpen: false, ownerName: '', ownerPhone: '', supFixOpen: false, supPhoneDraft: '', supPhones: {}, teamSel: null, teamMods: {}, teamAdded: [], teamRemoved: [], teamFormOpen: false, teamNewName: '', teamNewRole: 'Sales', billPaid: {}, billJust: null, winbacks: {}, noticesSent: [], noticeOpen: false, noticeAud: 'All clients', noticeMsg: '', apprJust: null, decidedView: null, rvHover: null, escalOpen: null, escalVerdict: '', escalJust: null, invOpened: false, invPulse: 0,
@@ -2136,7 +2221,15 @@ class Component extends DCLogic {
     accQuery: '', accState: 'all', accPlan: 'all', accSort: 'name',
     privReqs: [], privNewOpen: false, privNewName: '', privNewKind: 'erasure', privRowOpen: null, privRowReason: '',
     // the verbatim send-back reason, kept so the decided ledger can quote what the client read
-    rvFree: '', decidedWhy: {} };
+    rvFree: '', decidedWhy: {},
+    // 9 · THE BALANCE REGISTER · a support correction has to actually move a number. Seeded
+    //     lazily from each member's own `progress` string (only the ones carried in JOD hold a
+    //     balance at all), written by the correction, and read back by Standing.
+    balances: {},
+    // 10 · THE STAGED-EDIT CHANNEL · the merchant dashboard stages card edits for review in its
+    //      own blob; the verdicts this console publishes live in `wasla_demo_edit_verdicts`,
+    //      mirrored here so a decision renders the same second it is taken.
+    editVerdicts: {}, edDecline: null, edReason: '', edJust: null };
   // ── session persistence · ONE blob, deliberately separate from the Sukkar key ──
   consoleKey() { return 'wasla_demo_console_state'; }
   _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -2159,6 +2252,8 @@ class Component extends DCLogic {
           leadDeleted: s.leadDeleted, invites: s.invites, inviteMods: s.inviteMods,
           acctNotes: s.acctNotes, cardMods: s.cardMods, takedowns: s.takedowns,
           asks: s.asks, askDone: s.askDone, billReversed: s.billReversed, privReqs: s.privReqs, decidedWhy: s.decidedWhy,
+          // ── the two registers added in this pass — both are consumed on the way back in ──
+          balances: s.balances, editVerdicts: s.editVerdicts,
           pwChanged: s.pwChanged, tfaSelf: s.tfaSelf, sessRevoked: s.sessRevoked,
           invSent: s.invSent, invBiz: s.invBiz, invOwner: s.invOwner, invPhone: s.invPhone, invPlan: s.invPlan }));
       } catch (e) {}
@@ -2183,6 +2278,12 @@ class Component extends DCLogic {
     if (arr(b.takedowns)) p.takedowns = b.takedowns.filter(t => t && typeof t === 'object' && typeof t.card === 'string' && t.card);
     if (arr(b.asks)) p.asks = b.asks.filter(a => a && typeof a === 'object' && typeof a.id === 'string' && typeof a.acct === 'string' && a.acct);
     if (arr(b.privReqs)) p.privReqs = b.privReqs.filter(r => r && typeof r === 'object' && typeof r.id === 'string' && typeof r.member === 'string' && r.member);
+    // ── the balance register · numbers only, never negative, never NaN. A garbage entry is
+    //    dropped rather than restored, so a corrupt blob degrades to "seeded from progress". ──
+    if (obj(b.balances)) { const bal = {}; Object.keys(b.balances).forEach(k => { const v = b.balances[k]; if (typeof v === 'number' && isFinite(v) && v >= 0) bal[k] = Math.round(v * 100) / 100; }); p.balances = bal; }
+    // ── the staged-edit verdicts this console published · same narrowing the localStorage
+    //    channel gets, so the mirror can never carry a shape the channel would reject. ──
+    if (obj(b.editVerdicts)) { const ev = {}; Object.keys(b.editVerdicts).forEach(k => { const v = obj(b.editVerdicts[k]); if (!v) return; if (v.state !== 'approved' && v.state !== 'rejected') return; const row = { state: v.state }; if (typeof v.reason === 'string' && v.reason) row.reason = v.reason; if (typeof v.by === 'string' && v.by) row.by = v.by; if (typeof v.at === 'string' && v.at) row.at = v.at; ev[k] = row; }); p.editVerdicts = ev; }
     if (arr(b.sessRevoked)) p.sessRevoked = b.sessRevoked.filter(x => typeof x === 'string');
     if (typeof b.pwChanged === 'boolean') p.pwChanged = b.pwChanged;
     if (typeof b.tfaSelf === 'boolean') p.tfaSelf = b.tfaSelf;
@@ -2212,11 +2313,23 @@ class Component extends DCLogic {
     this.state = { ...this.state, ...p };
     return true;
   }
-  /** Clears ONLY this console's blob. The Sukkar hand-off key is never touched. */
+  /** Clears the three keys this console WRITES, and nothing else on the machine.
+      Those are: its own session blob, the Sukkar hand-off (`sukkarKey()`), and the staged-edit
+      verdicts (`editVerdictKey()`). The old behaviour cleared `decided` and left the hand-off
+      standing, which produced a live contradiction the demo could not talk its way out of — the
+      console forgot it had approved Sukkar while the client dashboard still showed it live in
+      wallets. A reset that leaves a published verdict behind is not a reset, it is a lie with a
+      button on it. Clearing the channel returns it to "no verdict yet", which is exactly what
+      "this console has forgotten it decided" means on the other side of the seam.
+      What is NOT touched: `wasla_demo_dashboard_state`. That blob belongs to the merchant
+      dashboard — this surface reads it defensively and never writes it, so it is not ours to
+      clear, and a reset here must never delete a client's own staged work. */
   resetConsole() {
     clearTimeout(this._sv);
     this.disarmInvite();
     try { localStorage.removeItem(this.consoleKey()); } catch (e) {}
+    try { localStorage.removeItem(this.sukkarKey()); } catch (e) {}
+    try { localStorage.removeItem(this.editVerdictKey()); } catch (e) {}
     this.setState({ accMods: {}, decided: {}, billPaid: {}, billJust: null, winbacks: {},
       escalOpen: null, escalVerdict: '', escalJust: null, invOpened: false, invPulse: 0,
       leadMods: {}, leadsAdded: [], leadTrail: {}, converted: {}, leadSel: null, leadMoved: null, leadFormOpen: false,
@@ -2236,6 +2349,9 @@ class Component extends DCLogic {
       acceptPw: '', acceptPw2: '', pwCur: '', pwNew: '', pwNew2: '', pwChanged: false, tfaSelf: true, sessRevoked: [],
       accQuery: '', accState: 'all', accPlan: 'all', accSort: 'name',
       privReqs: [], privNewOpen: false, privNewName: '', privNewKind: 'erasure', privRowOpen: null, privRowReason: '', rvFree: '', decidedWhy: {},
+      // the two registers added in this pass go back to how they ship, in step with the two
+      // localStorage keys removed above — the mirror can never outlive the channel
+      balances: {}, editVerdicts: {}, edDecline: null, edReason: '', edJust: null,
       checks: {}, rejecting: false, confirm: null, accIdx: null, apprJust: null, decidedView: null, rvHover: null });
   }
   __restored = this.bootRestore();
@@ -2345,9 +2461,13 @@ class Component extends DCLogic {
       name by de-duping on kind+line, so re-delivering the same blob a second time finds nothing
       new and is a total no-op — which is also the no-storm guarantee: nothing new means no
       setState, no toast, no slog, no save, so this can never cascade into itself or into the
-      field app's own listener. The diff (new lead vs stage move vs a trail-only note/ping) is
-      derived by comparing incoming against the state captured just before the merge — the writer
-      never says which one it did. */
+      field app's own listener. The diff (new lead vs stage move vs a trail-only note/ping vs a
+      newly-raised escalation) is derived by comparing incoming against the state captured just
+      before the merge — the writer never says which one it did.
+      Every merge here is a UNION or a per-field overlay, never a replacement: a trail entry that
+      crosses over is carried as the object the writer wrote, unknown keys and all (the phone tags
+      its own lines `src: 'phone'` so its reset can retract exactly what it authored), and nothing
+      in this file ever rebuilds a trail entry field-by-field. */
   onStorageSync(e) {
     try {
       if (e && e.key != null && e.key !== this.consoleKey()) return;
@@ -2402,23 +2522,40 @@ class Component extends DCLogic {
         if (!newLeads.some(l => l.name === name) && !stageEvents.some(x => x.name === name)) noteEvents.push({ name, line: fresh[0].line });
       });
 
+      // ── 4. escal · the rep's phone raises escalations into the SAME blob, in the shape
+      //      readConsole() already validates: { id: 'e-<lead>', lead, rep, ask }. Union by id and
+      //      nothing else — additive, so it can never clobber an escalation raised here, and
+      //      idempotent, so re-delivering the blob finds nothing new. `escalDone` stays ours
+      //      alone: the phone reads the verdict, it never writes one, and a foreign tab must not
+      //      be able to mark an escalation answered on this console's behalf. An escalation whose
+      //      lead this console deleted, or which has already been answered here, does not return. ──
+      const prevEscal = Array.isArray(st.escal) ? st.escal : [];
+      const haveEscal = new Set([...prevEscal.map(e => e && e.id).filter(Boolean), ...Object.keys(st.escalDone || {})]);
+      const incomingEscal = Array.isArray(patch.escal) ? patch.escal : [];
+      const newEscal = incomingEscal.filter(e => e && typeof e === 'object' && typeof e.id === 'string' && e.id && typeof e.lead === 'string'
+        && !haveEscal.has(e.id) && !tombstones.has(e.lead));
+      const mergedEscal = newEscal.length ? [...prevEscal, ...newEscal] : prevEscal;
+
       // nothing actually new arrived (e.g. this blob was already absorbed) — no-op, on purpose
-      if (!newLeads.length && !stageEvents.length && !noteEvents.length) return;
+      if (!newLeads.length && !stageEvents.length && !noteEvents.length && !newEscal.length) return;
 
       const primary = newLeads.length ? { kind: 'new', name: newLeads[0].name, by: newLeads[0].by || '' }
         : stageEvents.length ? { kind: 'stage', name: stageEvents[0].name, from: stageEvents[0].from, to: stageEvents[0].to }
-        : { kind: 'note', name: noteEvents[0].name, line: noteEvents[0].line };
+        : noteEvents.length ? { kind: 'note', name: noteEvents[0].name, line: noteEvents[0].line }
+          : { kind: 'escalate', name: newEscal[0].lead, by: newEscal[0].rep || 'a rep', ask: newEscal[0].ask || 'needs a decision' };
 
-      this.setState({ leadsAdded: mergedLeadsAdded, leadMods: mergedLeadMods, leadTrail: mergedLeadTrail, leadMoved: primary.name });
+      this.setState({ leadsAdded: mergedLeadsAdded, leadMods: mergedLeadMods, leadTrail: mergedLeadTrail, escal: mergedEscal, leadMoved: primary.name });
 
       const toast = primary.kind === 'new' ? ((primary.by ? primary.by + ' added ' : 'Added ') + primary.name + ' from the field')
         : primary.kind === 'stage' ? (primary.name + ' moved to ' + primary.to + ' — from the field')
-        : (primary.name + ' — from the field');
+          : primary.kind === 'escalate' ? (primary.by + ' escalated ' + primary.name + ' — it is on Home under “Needs an eye”')
+            : (primary.name + ' — from the field');
       this.say(toast);
 
       newLeads.forEach(l => this.slog('client', (l.by || 'A rep') + ' added ' + l.name + ' to the pipeline from the field' + (l.vertical ? ' — ' + l.vertical : '') + (l.value ? ', JOD ' + l.value + '/month' : '')));
       stageEvents.forEach(x => this.slog('client', x.name + ' moved ' + x.from + ' → ' + x.to + ' — from the field'));
       noteEvents.forEach(x => this.slog('client', x.name + ' — ' + x.line + ' — from the field'));
+      newEscal.forEach(e => this.slog('money', (e.rep || 'A rep') + ' escalated ' + e.lead + ' from the field — asks: ' + (e.ask || 'needs a decision')));
     } catch (err) { /* a storage handler must never throw */ }
   }
   componentWillUnmount() {
@@ -2441,12 +2578,28 @@ class Component extends DCLogic {
       JSON.stringify(s.acctNotes).length, s.mgrOpen, s.mgrPick, JSON.stringify(s.cardMods), (s.takedowns || []).length, s.tdOpen,
       (s.asks || []).length, JSON.stringify(s.askDone), s.askDecline, s.askJust, s.planReqOpen, JSON.stringify(s.billReversed),
       s.authView, s.authStage, s.pwChanged, s.tfaSelf, (s.sessRevoked || []).length,
+      JSON.stringify(s.balances), JSON.stringify(s.editVerdicts), s.edDecline, (s.edReason || '').length, s.edJust,
       s.accQuery, s.accState, s.accPlan, s.accSort, (s.privReqs || []).length, s.privNewOpen, s.privRowOpen].join('|');
     if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
     this._lastSig = cur;
   }
   db() { return (window.WASLA_DB || {}).console || { accounts: [], approvals: [], leads: [], leaderboard: [], health: { cert: {}, jobs: [], totals: {} } }; }
   sukkarKey() { const D = window.WASLA_DB; return (D && D.demoFlags && D.demoFlags.sukkarKey) || 'wasla_demo_sukkar_state'; }
+  /** The staged-edit verdict channel · `{ [cardId]: { state, reason?, by?, at? } }`.
+      This console is the writer; the merchant dashboard is the reader. Deliberately NOT the
+      dashboard's own blob (`wasla_demo_dashboard_state`), which this surface only ever reads. */
+  editVerdictKey() { return 'wasla_demo_edit_verdicts'; }
+  /** The Sukkar hand-off, in the shape the shared contract now specifies: an OBJECT carrying the
+      state, the verbatim reason (canned or free-typed), who decided it and when. The reader half
+      accepts both this and the legacy bare string, so an older dashboard build still resolves —
+      and a legacy bare string written from the other side is still readable here, because this
+      console never reads the key back. One writer, one shape, one place it is built. */
+  sukkarHandoff(state, reason, by) {
+    const payload = { state: state, by: by || 'Omar Haddad' };
+    if (reason) payload.reason = String(reason);
+    try { payload.at = new Date().toISOString(); } catch (e) {}
+    try { localStorage.setItem(this.sukkarKey(), JSON.stringify(payload)); } catch (e) {}
+  }
   qr() { if (!this._qr) { this._qr = []; let s = 7; for (let i = 0; i < 289; i++) { s = (s * 1103515245 + 12345) % 2147483648; const row = Math.floor(i / 17), col = i % 17; const finder = (row < 5 && col < 5) || (row < 5 && col > 11) || (row > 11 && col < 5); const on = finder ? ((row % 4 === 0 || col % 4 === 0 || (row > 0 && row < 4 && col > 0 && col < 4)) ? (row === 2 && col === 2) || row % 4 === 0 || col % 4 === 0 : false) : (s / 2147483648) < 0.46; this._qr.push({ c: on ? '#1C1C20' : 'transparent' }); } } return this._qr; }
   say(msg) { clearTimeout(this._tt); this.setState({ toast: msg }); this._tt = setTimeout(() => this.setState({ toast: '' }), 3200); }
   ask(title, body, ok, color, fn) { this._onConfirm = fn; this.setState({ confirm: { title, body, ok, color } }); }
@@ -2495,8 +2648,8 @@ class Component extends DCLogic {
     //    Six states, one vocabulary, everywhere a card state is shown in this console: the account's
     //    card list, the approvals queue, and the decided ledger. The names are the dashboard's names
     //    on purpose — "Sent back" is what the client is told, so "Sent back" is what we call it here
-    //    too (the stored verdict key stays `rejected`, because the Sukkar hand-off writes that
-    //    literal string into localStorage and the dashboard reads it).
+    //    too (the stored verdict key stays `rejected`, because that is the `state` the Sukkar
+    //    hand-off carries across to the dashboard — see sukkarHandoff()).
     const lifeBadge = (s) => ({
       live: { label: 'Live', bg: '#E7F6EE', fg: '#1E7D47', dot: '#2FAE66', anim: 'pulse 1.6s infinite', deco: 'none' },
       paused: { label: 'Paused', bg: '#FDF1DC', fg: '#9A6B12', dot: '#F0A92B', anim: 'none', deco: 'none' },
@@ -2569,10 +2722,46 @@ class Component extends DCLogic {
       const rows = CARD_SEED[(a || {}).name] || [];
       return rows.map(([name, ar, type, state, members, push]) => {
         const m = (st.cardMods || {})[cardKey(a.name, name)] || {};
-        return { name, ar, type, state: m.state || state, members, push: m.state === 'retired' ? ((m.when || 'Just now') + ' — taken down by Wasla') : push, tdReason: m.reason || '', tdWhen: m.when || '', tdBy: m.by || '' };
+        // the push column has to survive a verdict too: "never — waiting on approval" is a lie
+        // the moment the approval happens, in either direction
+        const pushLine = m.state === 'retired' ? ((m.when || 'Just now') + ' — taken down by Wasla')
+          : (m.decided === 'approved' && m.state === 'live') ? ('never — approved ' + String(m.when || 'just now').toLowerCase() + ', the first push is theirs to send')
+          : (m.decided === 'rejected' && m.state === 'returned') ? ('never — sent back ' + String(m.when || 'just now').toLowerCase() + ', theirs to resubmit')
+          : push;
+        return { name, ar, type, state: m.state || state, members, push: pushLine, tdReason: m.reason || '', tdWhen: m.when || '', tdBy: m.by || '', decided: m.decided || '' };
       });
     };
     const cardSlots = (a) => cardsOf(a).filter(c => c.state !== 'retired').length;
+    // ── THE LAST BROADCAST THIS ACCOUNT ACTUALLY SENT ──────────────────────────────────────────
+    //    The relationship timeline used to hand every account the same four invented rows,
+    //    including a broadcast titled “Weekend special” — which is Tala's Daraj Coffee push, and
+    //    it was being shown on Rawi's timeline and Petra's as well. Every account's own last push
+    //    is already sitting in CARD_SEED, one string per card, so the row can simply be read
+    //    rather than made up. A card that has never pushed says so instead of borrowing one.
+    const pushAge = (s) => {
+      const t = String(s || '').trim(); let m;
+      if (!t || /^never/i.test(t)) return null;
+      if (/^today/i.test(t)) return 0;
+      if (/^yesterday/i.test(t)) return 1;
+      if ((m = /^(\d+)\s*days?\s*ago/i.exec(t))) return Number(m[1]);
+      if ((m = /^(\d+)\s*weeks?\s*ago/i.exec(t))) return Number(m[1]) * 7;
+      if ((m = /^(\d+)\s*months?\s*ago/i.exec(t))) return Number(m[1]) * 30;
+      if (/^(mon|tue|wed|thu|fri|sat|sun)/i.test(t)) return 3;
+      return 30;
+    };
+    const lastPushOf = (a) => {
+      let best = null;
+      cardsOf(a).forEach(c => {
+        if (c.state === 'retired' || c.state === 'draft' || c.state === 'review') return;
+        const age = pushAge(c.push);
+        if (age == null) return;
+        if (!best || age < best.age) {
+          const q = /[“"']([^”"']+)[”"']/.exec(String(c.push || ''));
+          best = { age, card: c.name, when: String(c.push || '').split('·')[0].trim(), title: q ? q[1] : '', reach: Math.round((Number(c.members) || 0) * 0.9) };
+        }
+      });
+      return best;
+    };
     // “12 Aug 2026” minus n months — the invoice history reads back from the renewal date
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const shiftMonth = (renewal, back) => {
@@ -2679,10 +2868,45 @@ class Component extends DCLogic {
     // the catalogue tiles wear the type's own hero as a glyph — except stamps, whose hero is a
     // word rather than a mark
     const TYPE_GLYPH = { stamps: '•••', cashback: '5%', points: '250', discount: '−15%', coupon: '1×', vip: '★', challenge: '3/5', membership: 'ID' };
-    const withPhone = (m) => m ? { ...m, phone: st.supPhones[m.name] || m.phone } : {};
+    // ── SUPPORT · THE BALANCE REGISTER ─────────────────────────────────────────────────────────
+    //    "Balance correction" was the flagship support tool and it moved nothing: it toasted, it
+    //    logged, and the number on screen never budged — because there was no number, only a
+    //    static `progress` string. It was also offered on every member, including the ones whose
+    //    standing is stamps or a VIP tier, where there is no balance to correct in the first
+    //    place. This is the register that was missing. It is seeded from the member's OWN
+    //    standing string — a standing carried in JOD is money and therefore correctable; a
+    //    standing carried in stamps or tiers is a position and is not — corrections write into
+    //    it, and Standing renders off it, so the desk quotes the number it just moved.
+    const BAL_RE = /JOD\s*([0-9]+(?:\.[0-9]+)?)/i;
+    const seedBal = (m) => { const x = BAL_RE.exec(String((m || {}).progress || '')); if (!x) return null; const v = parseFloat(x[1]); return isFinite(v) ? Math.round(v * 100) / 100 : null; };
+    const money = (n) => 'JOD ' + (Math.round((Number(n) || 0) * 100) / 100).toFixed(2);
+    /** null means "this member holds no balance" — not "zero". The two are different answers and
+        the tool is only offered for the first one. */
+    const balOf = (m) => {
+      const seed = seedBal(m);
+      if (seed == null) return null;
+      const v = (st.balances || {})[(m || {}).name];
+      return (typeof v === 'number' && isFinite(v) && v >= 0) ? Math.round(v * 100) / 100 : seed;
+    };
+    const standingOf = (m) => { const b = balOf(m); return b == null ? String((m || {}).progress || '—') : (money(b) + ' balance'); };
+    const withPhone = (m) => m ? { ...m, phone: st.supPhones[m.name] || m.phone, progress: standingOf(m), bal: balOf(m) } : {};
     const supList = M.filter(m => { const q = st.supQuery.trim().toLowerCase(); return !q || m.name.toLowerCase().includes(q) || m.phone.replace(/\s/g, '').includes(q.replace(/\s/g, '')); }).slice(0, 5).map(withPhone);
-    const supSelM = supList[st.supIdx] || withPhone(M[0]);
+    // ── a search that matches nobody must not fall back to somebody. It used to land on M[0] and
+    //    render a full record — name, mobile, standing, device and every live action — for a
+    //    member the query had just proved does not exist. ──
+    const supSelM = supList[st.supIdx] || supList[0] || {};
+    const supHasSelV = supList.length > 0;
     const supPhoneReady = (st.supPhoneDraft || '').replace(/\D/g, '').length >= 9 && (st.supPhoneDraft || '').trim() !== (supSelM.phone || '');
+    // ── the correction, as arithmetic · the chip is parsed, not just quoted ──
+    const corrDelta = (() => { const x = /([+−–-])\s*JOD\s*([0-9]+(?:\.[0-9]+)?)/.exec(String(st.corrAmt || '')); if (!x) return 0; const v = parseFloat(x[2]) || 0; return x[1] === '+' ? v : -v; })();
+    const corrBal = supHasSelV ? balOf(supSelM) : null;
+    const corrCan = corrBal != null;
+    const corrNextRaw = corrCan ? Math.round((corrBal + corrDelta) * 100) / 100 : null;
+    const corrNext = corrCan ? Math.max(0, corrNextRaw) : null;
+    const corrClamped = corrCan && corrNextRaw < 0;
+    const corrReady = corrCan && st.corrReason.trim().length >= 8;
+    // the member the desk can demonstrate this on, named rather than hinted at
+    const balExample = (M.find(m => seedBal(m) != null) || {}).name || '';
     const selB = stBadge(selAcc.state);
     const rv = C.approvals.find(a => a.id === st.apprId) || C.approvals[0] || {};
     const allChecked = (rv.checks || []).every((_, i) => st.checks[rv.id + i]);
@@ -2781,7 +3005,14 @@ class Component extends DCLogic {
       this.say('WhatsApp sent to ' + names.join(', ') + ' — in Arabic, from your number');
       this.slog('client', 'swept ' + stage + ' for stalls — pinged ' + names.join(', ') + ' after ' + STALE_DAYS + '+ quiet days');
     };
-    const isConv = (n) => !!(st.converted || {})[n];
+    // ── THE LEADS THAT SHIPPED ALREADY CONVERTED ──────────────────────────────────────────────
+    //    Al-Quds Falafel sits on the Activations register as an invite Lina sent yesterday, and
+    //    the pipeline was, at the same moment, offering "Convert — send the invite" on the same
+    //    business. One business, one truth. Seeded here rather than folded into `converted` in
+    //    state, so a blob saved before today (which carries `converted: {}`) cannot restore over
+    //    the top of it and bring the contradiction back.
+    const CONV_SEED = { 'Al-Quds Falafel': true };
+    const isConv = (n) => !!(st.converted || {})[n] || !!CONV_SEED[n];
     // ── the lead↔account seam · one business, two registers. Matching is by name, both ways:
     //    a converted card jumps to the account (or, honestly, to the invite that is all it is
     //    yet), and the account's timeline jumps back to the lead. ──
@@ -2812,6 +3043,68 @@ class Component extends DCLogic {
     const escalOpenRow = escalRaw.find(e => e.id === st.escalOpen) || null;
     const escalReady = (st.escalVerdict || '').trim().length >= 8;
     const leadEsc = !!leadSel && escalAll.some(e => e.lead === leadSel.name);
+
+    // ── THE SALES HOME'S OWN HERO, AND ITS OWN NUMBERS ─────────────────────────────────────────
+    //    The big highlighted panel on Home is one component shared by three roles, and for a rep
+    //    it advertised the approvals queue: the headline counted cards awaiting review, the
+    //    preview named them, and the button — labelled "Open the pipeline →" — quietly went
+    //    somewhere else entirely, because the role matrix this same console prints bars Sales
+    //    from approvals outright. A hero a role cannot act on is an advert. Everything below is
+    //    scoped to the signed-in rep's own book, the way every other sales screen already is:
+    //    the headline numbers used to count all three reps' pipelines while the stage snapshot
+    //    directly beneath them counted only Omar's.
+    const myLeads = allLeads.filter(l => (l.by || 'Omar') === 'Omar');
+    const myStale = myLeads.filter(isStale).slice().sort((a, b) => (Number(b.touch) || 0) - (Number(a.touch) || 0));
+    const myDueToday = myLeads.filter(l => /^today$/i.test(String(l.follow || '').trim()));
+    const myDueNext = myLeads.filter(l => !/^today$/i.test(String(l.follow || '').trim()));
+    const myEscOpen = escalAll.filter(e => e.rep === 'Omar');
+    const myDemo = myLeads.find(l => l.stage === 'Demo booked') || null;
+    const myWon = myLeads.filter(l => l.stage === 'Won').length;
+    const demoWhen = myDemo ? String(myDemo.follow || '').trim() : '';
+    const demoDay = demoWhen ? demoWhen.split(/\s+/)[0].slice(0, 3) : '—';
+    const demoRest = demoWhen ? demoWhen.split(/\s+/).slice(1).join(' ') : '';
+    // the account in the rep's OWN book that is drifting hardest — at risk, or quiet 14 days+
+    const myDrifting = myAccounts.filter(a => a.state !== 'closed').map(a => ({ a, q: quietOf(a), d: RD[a.name] }))
+      .filter(x => x.a.state === 'at-risk' || (x.q != null && x.q >= 14))
+      .sort((x, y) => (y.q == null ? -1 : y.q) - (x.q == null ? -1 : x.q))[0] || null;
+    const myNudge = myAccounts.filter(a => a.state !== 'closed' && (a.state === 'at-risk' || (quietOf(a) != null && quietOf(a) >= 14))).length;
+    const myActivations = (((C.leaderboard || []).find(r => r && r[0] === 'Omar') || [null, 0])[1]) || 0;
+    const boardMax = (C.leaderboard || []).reduce((n, r) => Math.max(n, (r && r[1]) || 0), 0);
+    const openLead = (name) => this.setState({ screen: 'leads', leadSel: name, leadFormOpen: false, leadMoved: null, leadEditOpen: false, leadEdit: null });
+    const openMyAccount = (name) => { const i = C.accounts.findIndex(x => x.name === name); if (i >= 0) goAccount(i); else this.setState({ screen: 'accounts' }); };
+    const salesHero = (() => {
+      if (myDueToday.length) {
+        const l = myDueToday[0];
+        return { count: myDueToday.length + ' follow-up' + (myDueToday.length === 1 ? '' : 's') + ' due today',
+          preview: myDueToday.map(x => x.name + ' · ' + (x.owner || 'the owner')).join(' · ') + ' — a follow-up you never make is a lead you already lost.',
+          cta: 'Open ' + l.name + ' on the board →', go: () => openLead(l.name) };
+      }
+      if (myEscOpen.length) {
+        const e = myEscOpen[0];
+        return { count: myEscOpen.length + ' escalation' + (myEscOpen.length === 1 ? '' : 's') + ' with an admin',
+          preview: e.lead + ' — you asked: ' + e.ask + '. The answer lands on the lead’s trail word for word, and you quote it to the client.',
+          cta: 'Open ' + e.lead + ' →', go: () => openLead(e.lead) };
+      }
+      if (myDrifting) {
+        const a = myDrifting.a, q = myDrifting.q, d = myDrifting.d;
+        return { count: a.name + ' is going quiet' + (q == null ? '' : ' — ' + q + ' days'),
+          preview: (a.owner || 'The owner') + ' has ' + (a.members || 0).toLocaleString('en-US') + ' members holding a pass nobody is scanning' + (d != null ? ', and JOD ' + (planPrice[a.plan] || 0) + ' renews in ' + d + ' days' : '') + '. One WhatsApp, in Arabic, usually settles which way this goes.',
+          cta: 'Open the account →', go: () => openMyAccount(a.name) };
+      }
+      if (myStale.length) {
+        const l = myStale[0];
+        return { count: l.name + ' has drifted — ' + (Number(l.touch) || 0) + ' days untouched',
+          preview: 'Sitting in ' + l.stage + ' at JOD ' + leadVal(l) + '/month' + (myStale.length > 1 ? ', and ' + (myStale.length - 1) + ' more like it on your board' : '') + '. Nothing here moves on its own.',
+          cta: 'Open the pipeline →', go: () => openLead(l.name) };
+      }
+      if (myDueNext.length) {
+        const l = myDueNext[0];
+        return { count: 'Next up · ' + l.name + ' ' + String(l.follow || 'this week').toLowerCase(),
+          preview: (l.owner || 'The owner') + ' · ' + l.stage + ' · JOD ' + leadVal(l) + '/month expected' + (myDueNext.length > 1 ? ' — ' + (myDueNext.length - 1) + ' other lead' + (myDueNext.length === 2 ? '' : 's') + ' waiting behind it' : '') + '.',
+          cta: 'Open the pipeline →', go: () => openLead(l.name) };
+      }
+      return { count: 'Nothing is waiting on you', preview: 'Every lead in your book has a next step, and every account in it has been touched. An empty version of this panel means exactly that — not that there is nothing here.', cta: 'Open the pipeline →', go: () => this.setState({ screen: 'leads' }) };
+    })();
     // rich capture form
     const lfLocs = (st.lfLocs && st.lfLocs.length ? st.lfLocs : ['']);
     const lfPhoneDigits = (st.lfPhone || '').replace(/\D/g, '').length;
@@ -2884,9 +3177,14 @@ class Component extends DCLogic {
     // ── ACTIVITY LOG · a row opens the thing it names, when that thing exists and you may see it ──
     const accByLen = C.accounts.map(a => a.name).sort((a, b) => b.length - a.length);
     const memByLen = M.map(m => m.name).sort((a, b) => b.length - a.length);
+    // a row may only open what this role may open. The Accounts screen already filters a rep down
+    // to their own book (`myAccounts`); the log's row-jump did not, so a single click on a line
+    // that happened to name Rawi Coffee House walked a Sales rep straight into Lina's account —
+    // past the boundary the screen next door enforces. Same list, same boundary, both places.
+    const logOpenable = sales ? new Set(myAccounts.map(a => a.name)) : null;
     const logTarget = (line) => {
       const s = String(line || '');
-      if (!supportRole) { const a = accByLen.find(n => s.includes(n)); if (a) { const i = C.accounts.findIndex(x => x.name === a); if (i >= 0) return { hint: 'open account →', go: () => goAccount(i) }; } }
+      if (!supportRole) { const a = accByLen.find(n => s.includes(n) && (!logOpenable || logOpenable.has(n))); if (a) { const i = C.accounts.findIndex(x => x.name === a); if (i >= 0) return { hint: 'open account →', go: () => goAccount(i) }; } }
       if (admin || supportRole) { const m2 = memByLen.find(n => s.includes(n)); if (m2) return { hint: 'open member →', go: () => this.setState({ screen: 'support', supQuery: m2, supIdx: 0, corrOpen: false, corrReason: '', supFixOpen: false }) }; }
       return null;
     };
@@ -2915,13 +3213,43 @@ class Component extends DCLogic {
     const withNote = (name, line, who) => ({ ...(st.acctNotes || {}), [name]: [{ t: 'Just now', by: who || 'Omar Haddad', line }, ...notesOf(name)] });
     const addAcctNote = (name, line, who) => this.setState({ acctNotes: withNote(name, line, who) });
 
+    // ── A VERDICT IS A FACT ABOUT THE ACCOUNT THAT OWNS THE CARD ───────────────────────────────
+    //    Approving Sukkar Bakery toasted "LIVE — it is in wallets" and then Tala's own card list
+    //    went on showing it "In review", in the same console, two clicks apart. A decision that
+    //    only lands in `decided` is a decision only the approvals screen believes. This returns
+    //    the rest of the patch — the card's lifecycle state on its account, and the line on that
+    //    account's timeline — so both screens move on the same setState.
+    //    Scope: only a NEW card changes lifecycle state. An EDIT verdict is a verdict about a
+    //    value, not about the card: Nara Care is live before the rate change and live after it,
+    //    whichever way the edit goes — so it gets the timeline line and nothing else.
+    const cardVerdictPatch = (a, verdict, reason) => {
+      const acct = (a || {}).account, card = (a || {}).card;
+      if (!acct || !card) return {};
+      const isEdit = (a || {}).kind === 'edit';
+      const field = ((a || {}).diff || {}).field || 'the staged change';
+      const line = verdict === 'approved'
+        ? (isEdit ? ('Approved the ' + String(field).toLowerCase() + ' change on ' + card + ' — the new value is live in every pass that carries it.')
+          : (card + ' approved — live in wallets, and ' + ((a || {}).by || 'the client') + ' has the WhatsApp.'))
+        : (isEdit ? ('Sent the ' + String(field).toLowerCase() + ' change on ' + card + ' back — “' + reason + '”. The old value stays live until they resubmit.')
+          : (card + ' sent back — “' + reason + '”. Nothing reached a wallet.'));
+      const patch = { acctNotes: { ...(st.acctNotes || {}), [acct]: [{ t: 'Just now', by: 'Omar Haddad', line }, ...notesOf(acct)] } };
+      if (!isEdit) {
+        patch.cardMods = { ...(st.cardMods || {}), [cardKey(acct, card)]: {
+          state: verdict === 'approved' ? 'live' : 'returned',
+          reason: verdict === 'approved' ? '' : String(reason || ''),
+          when: 'Just now', by: 'Omar Haddad', decided: verdict } };
+      }
+      return patch;
+    };
+
     // ── ACTIVATIONS · the invite register ────────────────────────────────────────────────────
     //    An invite used to live in four single-slot state keys, so sending one left no record and
     //    the whole gap between "sent" and "account live" had nowhere to be. This is that register.
     //    Three sources feed it and none of them can disagree, because status is DERIVED, never
     //    stored: an in-flight seed, every invite this console sent, and every invite the rep's
-    //    phone app sent (which arrives as a leadTrail line of kind `invite` through the same
-    //    storage sync that carries everything else from the field).
+    //    phone app sent — which now arrives as a first-class row in `invites` (the shared blob, in
+    //    this register's own shape, tagged `origin: 'field'`), with the older leadTrail line of
+    //    kind `invite` still read so an earlier phone build is not silently dropped.
     const INVITE_SEED = [
       { id: 'iv-louma', biz: 'Louma Chocolate', owner: 'Reem Louma', phone: '+962 79 555 0433', plan: 'Growth', by: 'Omar', when: '4 days ago', origin: 'console', seedStatus: 'opened' },
       { id: 'iv-quds', biz: 'Al-Quds Falafel', owner: 'Abu Shadi', phone: '+962 77 555 0290', plan: 'Starter', by: 'Lina', when: 'Yesterday 15:20', origin: 'console', seedStatus: 'sent' },
@@ -2942,21 +3270,83 @@ class Component extends DCLogic {
       });
       return out;
     })();
-    const inviteRaw = [...INVITE_SEED, ...fieldInvites, ...(st.invites || [])]
-      .filter((v, i, a) => a.findIndex(x => sameName(x.biz, v.biz)) === i);
     const INV_STEPS = ['sent', 'opened', 'password', 'live'];
+    const INV_RANK = (s) => INV_STEPS.indexOf(String(s || ''));
+    // ── DE-DUPE, WITH A PRECEDENCE THAT IS NOT "WHICHEVER ARRAY CAME FIRST" ────────────────────
+    //    The old rule kept the FIRST row for a business name, and the shipped seed was first —
+    //    so the seed's `iv-quds` (status `sent`) outranked a live invite for the same business
+    //    coming off the rep's phone, and this screen would have gone on reporting `sent` forever
+    //    while the phone reported `password`. Two rules replace it:
+    //      · IDENTITY (owner, phone, plan, who sent it, when, origin) comes from the LIVE row —
+    //        the rep's phone or this console's own send — because a shipped seed is the weakest
+    //        claim in the building.
+    //      · STATUS is MERGED, not replaced: whichever source got furthest is the one telling the
+    //        truth, because an invite does not walk backwards. Nothing is lost by a merge; a lot
+    //        is lost by a replace in the wrong direction.
+    //    Both source ids are carried on the merged row, so a resend or a cancellation recorded
+    //    against either id still attaches (see invModOf).
+    const inviteRaw = (() => {
+      const order = [], byName = {};
+      const push = (v, tier) => {
+        if (!v || typeof v !== 'object') return;
+        const k = String(v.biz || '').trim().toLowerCase();
+        if (!k) return;
+        const row = { ...v, __tier: tier, ids: [v.id] };
+        const prev = byName[k];
+        if (!prev) { byName[k] = row; order.push(k); return; }
+        const live = tier >= prev.__tier ? row : prev, weak = tier >= prev.__tier ? prev : row;
+        const merged = { ...weak, ...live };
+        merged.__tier = Math.max(tier, prev.__tier);
+        merged.id = live.id;
+        merged.ids = [...prev.ids, ...row.ids].filter((x, i, a) => x && a.indexOf(x) === i);
+        merged.seedStatus = INV_RANK(row.seedStatus) > INV_RANK(prev.seedStatus) ? row.seedStatus : prev.seedStatus;
+        byName[k] = merged;
+      };
+      INVITE_SEED.forEach(v => push(v, 1));
+      // tier 2 · anything live. The rep's phone now writes its invites straight into the shared
+      // blob's `invites` in this register's own shape; the trail-derived rows stay supported so an
+      // older phone build is still heard.
+      fieldInvites.forEach(v => push(v, 2));
+      (st.invites || []).forEach(v => push(v, 2));
+      return order.map(k => byName[k]);
+    })();
+    /** Mods are looked up under EVERY id the merged row absorbed — a cancellation recorded against
+        the seed id must still cancel the row after a field invite takes over its identity. */
+    const invModOf = (v) => {
+      const ids = (v && v.ids && v.ids.length) ? v.ids : [(v || {}).id];
+      const out = { cancelled: false, resends: 0, status: '' };
+      ids.forEach(id => {
+        const m = (st.inviteMods || {})[id];
+        if (!m || typeof m !== 'object') return;
+        if (m.cancelled) out.cancelled = true;
+        if (typeof m.resends === 'number' && m.resends > out.resends) out.resends = m.resends;
+        if (typeof m.status === 'string' && INV_RANK(m.status) > INV_RANK(out.status)) out.status = m.status;
+      });
+      return out;
+    };
     const invStatusOf = (v) => {
-      const m = (st.inviteMods || {})[v.id] || {};
+      const m = invModOf(v);
       if (m.cancelled) return 'cancelled';
       // an invite whose business is already in the register is not in flight — it is an account
       if (accIdxByName(v.biz) >= 0) return 'live';
-      // the invite this console is holding open right now reports its own live tracking
-      if (st.invSent && sameName(st.invBiz, v.biz)) return st.invOpened ? 'opened' : 'sent';
-      return m.status || v.seedStatus || 'sent';
+      // furthest progress wins across every signal — a stored `password` is not demoted to `sent`
+      // by a seed default, nor by this console's own live tracking of the same business
+      let best = 'sent';
+      const bid = (s) => { if (INV_RANK(s) > INV_RANK(best)) best = s; };
+      bid(v.seedStatus);
+      bid(m.status);
+      if (st.invSent && sameName(st.invBiz, v.biz)) bid(st.invOpened ? 'opened' : 'sent');
+      return best;
     };
     const INV_TONE = { sent: ['#F0E7DB', '#7A5A2E', '#B99A6B'], opened: ['#FDF1DC', '#9A6B12', '#F0A92B'], password: ['#EDE9F5', '#5B4A8A', '#7B68AE'], live: ['#E7F6EE', '#1E7D47', '#2FAE66'], cancelled: ['#EFEDE8', '#8C877F', '#8C877F'] };
     const INV_LABEL = { sent: 'Sent', opened: 'Opened', password: 'Password set', live: 'Account live', cancelled: 'Cancelled' };
-    const inviteRows0 = inviteRaw.map(v => ({ ...v, status: invStatusOf(v), resends: (((st.inviteMods || {})[v.id] || {}).resends) || 0 }));
+    const inviteRows0 = inviteRaw.map(v => ({ ...v, status: invStatusOf(v), resends: invModOf(v).resends }));
+    /** "Has this business been invited?" — asked of the REGISTER, not of the one invite the
+        invite screen happens to be holding open. That narrower test is why Al-Quds Falafel read
+        "INVITE READY — NOT SENT" on the pipeline while the Activations screen, three clicks away,
+        showed the very same invite as sent yesterday by Lina. A cancelled invite is not a sent
+        one — cancelling kills the link, and the board has to say so. */
+    const inviteSentFor = (name) => (st.invSent && sameName(st.invBiz, name)) || inviteRows0.some(v => sameName(v.biz, name) && v.status !== 'cancelled');
     const invLiveN = inviteRows0.filter(v => v.status !== 'live' && v.status !== 'cancelled').length;
 
     // ── CLIENT ASKS · the inbox the merchant dashboard has been writing into a void ─────────────
@@ -3016,12 +3406,116 @@ class Component extends DCLogic {
       this.slog('client', 'declined ' + a.who + '’s ' + a.field.toLowerCase() + ' request on ' + a.acct + ' — sent verbatim: ' + why);
     };
 
+    // ── STAGED CARD EDITS · the review the merchant dashboard was promising into a void ────────
+    //    The dashboard stages a card edit rather than applying it — it writes the staged values
+    //    into `wasla_demo_dashboard_state.edits[<cardId>]` with `pending: true` and tells the
+    //    client, in as many words, that Omar has them. Nothing in this console ever showed one,
+    //    let alone resolved one, so "with Wasla" meant "nowhere". This is the reviewer's half.
+    //
+    //    Read side · defensive to the point of rudeness. The dashboard's blob is not ours: it is
+    //    version-checked, every level is type-narrowed, an entry that is not `pending` is skipped,
+    //    a staged value equal to the live one is not a change, and the whole thing is wrapped so a
+    //    corrupt or foreign blob is "no staged edits" rather than a thrown render.
+    //
+    //    Write side · verdicts go into OUR OWN key, `wasla_demo_edit_verdicts`, never back into
+    //    the dashboard's blob. Read-modify-write: entries this console did not write are copied
+    //    across untouched, exactly as they were found, including shapes we do not understand.
+    const DASH_CARDS = ((window.WASLA_DB || {}).cards) || [];
+    const EDIT_FIELDS = [['Card name', 'name'], ['Arabic name', 'ar'], ['Reward', 'reward'], ['Stamps to a reward', 'goal']];
+    const readDashEdits = () => {
+      try {
+        const raw = this._lsGet('wasla_demo_dashboard_state');
+        if (!raw) return [];
+        const b = JSON.parse(raw);
+        if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return [];
+        const E = b.edits;
+        if (!E || typeof E !== 'object' || Array.isArray(E)) return [];
+        const out = [];
+        Object.keys(E).forEach(cid => {
+          if (typeof cid !== 'string' || !cid) return;
+          const e = E[cid];
+          if (!e || typeof e !== 'object' || Array.isArray(e) || !e.pending) return;
+          const seed = DASH_CARDS.find(c => c && c.id === cid) || {};
+          const changes = [];
+          EDIT_FIELDS.forEach(([label, key]) => {
+            const v = e[key];
+            if (v === undefined || v === null || typeof v === 'object') return;
+            const to = String(v).trim(), from = (seed[key] === undefined || seed[key] === null) ? '' : String(seed[key]).trim();
+            if (!to || to === from) return;
+            // only a stamp card counts in stamps — every other type's goal is just a goal
+            changes.push({ label: (key === 'goal' && seed.type !== 'stamps') ? 'Reward goal' : label, from: from || '—', to });
+          });
+          const rules = (e.rules && typeof e.rules === 'object' && !Array.isArray(e.rules)) ? e.rules : {};
+          const seedRules = (seed.rules && typeof seed.rules === 'object' && !Array.isArray(seed.rules)) ? seed.rules : {};
+          Object.keys(rules).forEach(rk => {
+            const v = rules[rk];
+            if (v === undefined || v === null || typeof v === 'object' || typeof v === 'function') return;
+            const to = String(v).trim(), from = (seedRules[rk] === undefined || seedRules[rk] === null) ? '' : String(seedRules[rk]).trim();
+            if (!to || to === from) return;
+            changes.push({ label: 'Rule · ' + rk, from: from || '—', to });
+          });
+          if (!changes.length) return;
+          out.push({ id: cid, card: String(seed.name || cid), ar: String(seed.ar || ''),
+            account: 'Tala Hospitality Group', color: String(seed.color || '#7A5A2E'),
+            initial: String(seed.initial || String(seed.name || cid).charAt(0)).toUpperCase(), changes });
+        });
+        return out;
+      } catch (e) { return []; }
+    };
+    const readEditVerdicts = () => {
+      try {
+        const raw = this._lsGet(this.editVerdictKey());
+        if (!raw) return {};
+        const b = JSON.parse(raw);
+        if (!b || typeof b !== 'object' || Array.isArray(b)) return {};
+        const out = {};
+        Object.keys(b).forEach(k => {
+          const v = b[k];
+          if (!v || typeof v !== 'object' || Array.isArray(v)) return;
+          if (v.state !== 'approved' && v.state !== 'rejected') return;
+          const row = { state: v.state };
+          if (typeof v.reason === 'string' && v.reason) row.reason = v.reason;
+          if (typeof v.by === 'string' && v.by) row.by = v.by;
+          if (typeof v.at === 'string' && v.at) row.at = v.at;
+          out[k] = row;
+        });
+        return out;
+      } catch (e) { return {}; }
+    };
+    /** Read-modify-write. Everything under a key we are not deciding is carried over BYTE FOR
+        BYTE from the parsed blob — not from the narrowed read above — so another writer's entry
+        survives us intact even if we would not have accepted it ourselves. */
+    const writeEditVerdict = (cid, state, reason) => {
+      let cur = {};
+      try { const raw = this._lsGet(this.editVerdictKey()); if (raw) { const b = JSON.parse(raw); if (b && typeof b === 'object' && !Array.isArray(b)) cur = b; } } catch (e) { cur = {}; }
+      const next = {};
+      Object.keys(cur).forEach(k => { if (k !== cid) next[k] = cur[k]; });
+      const row = { state: state, by: 'Omar Haddad' };
+      if (reason) row.reason = String(reason);
+      try { row.at = new Date().toISOString(); } catch (e) {}
+      next[cid] = row;
+      try { this._lsSet(this.editVerdictKey(), JSON.stringify(next)); } catch (e) {}
+      return row;
+    };
+    // the channel is the truth; `st.editVerdicts` is the mirror that makes a decision render the
+    // same second it is taken, and the only one of the two that survives a reload of this console
+    const editVerdicts = { ...readEditVerdicts(), ...((st.editVerdicts && typeof st.editVerdicts === 'object' && !Array.isArray(st.editVerdicts)) ? st.editVerdicts : {}) };
+    const editItems = readDashEdits();
+    const editPending = editItems.filter(e => !editVerdicts[e.id]);
+    const editReady = (st.edReason || '').trim().length >= 8;
+    // one number for "how much is waiting on a decision", so the sidebar badge, the queue tab and
+    // the home hero cannot disagree about what the queue holds
+    const apprTotal = pending.length + editPending.length;
+
     // ── PRIVACY QUEUE · a count over a hardcoded sentence was never a queue ─────────────────────
     //    Dana's request keeps its own two state keys byte-for-byte (supPrivacy / privReason) so a
     //    blob written before today still restores exactly as it did; everything support logs from
     //    now on lives in `privReqs` beside her, with the same grant / decline-with-a-reason gate.
+    //    Every "how long do we have" line on this console — this card's header, its bodies, its
+    //    confirmations, the support home tiles and the desk digest — now reads off PRIV_DAYS at
+    //    the top of this script. It quoted 30 in the header and 28 in the body of the SAME card.
     const privRaw = [
-      { id: 'priv-dana', member: 'Dana Tahboub', kind: 'erasure', body: 'asked for full deletion (GDPR-style). 28 days to act.', state: st.supPrivacy, reason: st.privReason, seed: true },
+      { id: 'priv-dana', member: 'Dana Tahboub', kind: 'erasure', body: 'asked for full deletion (GDPR-style). ' + PRIV_DEADLINE + ' to act.', state: st.supPrivacy, reason: st.privReason, seed: true },
       ...(st.privReqs || []).map(r => ({ ...r, seed: false }))
     ];
     const privPendingN = privRaw.filter(r => r.state === 'pending').length;
@@ -3058,7 +3552,12 @@ class Component extends DCLogic {
       ['Reassign an account manager', true, false, false],
       ['Take a live card down', true, false, false],
       ['Reverse a payment', true, false, false],
-      ['Answer a client ask', true, 'raise only', false]
+      ['Answer a client ask', true, 'raise only', false],
+      // the power that used to contradict the row above it, now stated in the grid it belongs in
+      ['Open a client’s dashboard, read-only', true, 'their book only', false],
+      // and the flagship support tool, scoped honestly — a balance is money on a card, and only
+      // some cards carry money
+      ['Correct a member’s balance', true, false, 'cards that carry one']
     ];
     const matrixAll = [...(C.matrix || []).map(r => MATRIX_FIX[r[0]] ? [r[0], ...MATRIX_FIX[r[0]]] : r), ...MATRIX_ADD];
 
@@ -3183,7 +3682,7 @@ class Component extends DCLogic {
     const mgrReady = !!st.mgrPick && st.mgrPick !== selAcc.manager && (st.mgrNote || '').trim().length >= 6;
 
     // ── THE SIDEBAR · built last, because a badge is a live count off a register above ─────────
-    const navBadge = (k) => k === 'approvals' ? pending.length : k === 'asks' ? askPending.length : 0;
+    const navBadge = (k) => k === 'approvals' ? apprTotal : k === 'asks' ? askPending.length : 0;
     const navItems = navDef.map(([key, label]) => {
       const active = st.screen === key || (key === 'accounts' && st.screen === 'account') || (key === 'approvals' && st.screen === 'review');
       const n = navBadge(key);
@@ -3234,21 +3733,25 @@ class Component extends DCLogic {
       goAccounts: () => this.setState({ screen: 'accounts' }), goApprovals: () => this.setState({ screen: admin ? 'approvals' : supportRole ? 'support' : 'leads' }),
       startInvite: () => this.setState({ screen: 'invite' }),
       homeTitle: admin ? 'Good morning, Omar.' : sales ? 'Your book, Omar.' : 'The desk is open, Omar.',
-      homeSub: admin ? 'The platform slept well — one job needs an eye.' : sales ? 'Five leads moving · two accounts need a nudge.' : 'One privacy request on the clock · every tool here is logged with your name.',
+      homeSub: admin ? 'The platform slept well — one job needs an eye.'
+        : sales ? (myLeads.length + ' lead' + (myLeads.length === 1 ? '' : 's') + ' moving · ' + (myNudge ? (myNudge + ' account' + (myNudge === 1 ? ' needs' : 's need') + ' a nudge.') : 'every account in your book has been touched.'))
+          : (privPendingN ? (privPendingN + ' privacy request' + (privPendingN === 1 ? '' : 's') + ' on the clock · every tool here is logged with your name.') : 'Privacy queue clear · every tool here is logged with your name.'),
       homeStats: (admin ? [
         ['Accounts', Math.round((T.accounts || 0) * tick), T.active + ' active', '#241C16'],
         ['Cards live', Math.round((T.cardsLive || 0) * tick), 'across all accounts', '#241C16'],
         ['Passes in wallets', Math.round((T.passes || 0) * tick).toLocaleString('en-US'), 'Apple + Google', '#241C16'],
         // the SLA sub-line is read off the same waitedMins() the queue header uses — the two can no longer drift
-        ['Awaiting review', pending.length, pending.length ? (oldest ? 'oldest waiting ' + waitLabel(oldest.mins) : 'all just in') : 'queue clear', pending.length ? '#C96A14' : '#1E7D47']
+        ['Awaiting review', apprTotal, apprTotal ? (oldest ? ('oldest waiting ' + waitLabel(oldest.mins)) : (editPending.length ? (editPending.length + ' staged edit' + (editPending.length === 1 ? '' : 's')) : 'all just in')) : 'queue clear', apprTotal ? '#C96A14' : '#1E7D47']
       ] : sales ? [
-        ['My accounts', myAccounts.length, bookRisk + ' at risk', '#241C16'],
-        ['Pipeline', allLeads.length, '1 won this week', '#241C16'],
-        ['Activations Q3', 6, 'leading the board', '#C96A14'],
-        ['Next demo', 'Thu', 'Tuta Juice · 11:00', '#241C16']
+        // ── every one of these is the signed-in rep's own book, the way the stage snapshot
+        //    directly beneath them always was. "Pipeline" used to count all three reps'. ──
+        ['My accounts', myAccounts.length, bookRisk ? bookRisk + ' at risk' : 'none at risk', '#241C16'],
+        ['My pipeline', myLeads.length, myWon ? (myWon + ' won, not yet activated') : (myStale.length ? (myStale.length + ' drifting') : 'all moving'), '#241C16'],
+        ['Activations Q3', myActivations, myActivations >= boardMax ? 'leading the board' : ((boardMax - myActivations) + ' behind the lead'), '#C96A14'],
+        ['Next demo', demoDay, myDemo ? (myDemo.name + (demoRest ? ' · ' + demoRest : '')) : 'nothing booked yet', '#241C16']
       ] : [
         ['Members on file', Math.round(M.length * tick), 'searchable by name or phone', '#241C16'],
-        ['Privacy queue', privPendingN, privPendingN ? '28 days to act' : 'cleared — logged forever', privPendingN ? '#C96A14' : '#1E7D47'],
+        ['Privacy queue', privPendingN, privPendingN ? (PRIV_DEADLINE + ' to act') : 'cleared — logged forever', privPendingN ? '#C96A14' : '#1E7D47'],
         ['Re-issues today', 4, 'old barcodes voided', '#241C16'],
         ['Corrections today', 2, 'each one with a reason', '#241C16']
       ]).map(([label, value, sub, color], i) => ({ label, value: String(value), sub, color, anim: AN('fadeUp', '.5s', (0.05 * i) + 's') })),
@@ -3279,26 +3782,33 @@ class Component extends DCLogic {
       pipeSnapNote: escalAll.length ? escalAll[0].lead + ' is stuck — ' + escalAll[0].rep + ' escalated it to admin.' : 'Nothing stuck — every lead has a next step.',
       quickMoves: (admin ? [
         ['Invite a client', 'account born on a phone', '#E88024', () => this.setState({ screen: 'invite' })],
-        ['Open the approvals queue', pending.length ? pending.length + ' waiting' : 'queue clear', '#F0A92B', () => this.setState({ screen: 'approvals' })],
+        ['Open the approvals queue', apprTotal ? apprTotal + ' waiting' : 'queue clear', '#F0A92B', () => this.setState({ screen: 'approvals' })],
         ['The sales pipeline', allLeads.length + ' leads · JOD ' + allLeads.reduce((n, l) => n + (Number(l.value) || 0), 0) + '/month in play', '#7B68AE', () => this.setState({ screen: 'leads' })],
         ['The certificate clock', '41 days — calendar held', '#2FAE66', () => this.setState({ screen: 'health' })],
         ['The append-only log', 'every decision, forever', '#26262B', () => this.setState({ screen: 'log' })]
       ] : sales ? [
         ['Invite a client', 'WhatsApp, one minute', '#E88024', () => this.setState({ screen: 'invite' })],
-        ['My pipeline', '5 leads · 1 demo Thursday', '#F0A92B', () => this.setState({ screen: 'leads' })],
-        ['Ping Wared Flowers', '19 quiet days — send the nudge', '#E2563A', () => { this.say('WhatsApp nudge sent to Dalia — logged on the account'); this.slog('money', 'nudged Wared Flowers on WhatsApp — 19 quiet days, renewal in 6'); }],
-        ['The demo kit', 'poster + script for Thursday', '#26262B', () => this.say('Demo kit: counter poster, sample pass, 4-minute script — in your inbox')]
+        ['My pipeline', myLeads.length + ' lead' + (myLeads.length === 1 ? '' : 's') + (myDemo ? (' · demo ' + (demoWhen || 'booked').toLowerCase()) : ' · no demo booked'), '#F0A92B', () => this.setState({ screen: 'leads' })],
+        ...(myDrifting ? [['Ping ' + myDrifting.a.name, (myDrifting.q == null ? 'gone quiet' : myDrifting.q + ' quiet days') + ' — send the nudge', '#E2563A', () => {
+          const a = myDrifting.a, q = myDrifting.q, d = myDrifting.d;
+          this.say('WhatsApp nudge sent to ' + ((a.owner || 'the owner').split(' ')[0]) + ' — logged on the account');
+          this.slog('money', 'nudged ' + a.name + ' on WhatsApp — ' + (q == null ? 'gone quiet' : q + ' quiet days') + (d == null ? '' : ', renewal in ' + d));
+        }]] : []),
+        ['The demo kit', 'poster + script for ' + (myDemo ? (demoWhen || 'the next one').toLowerCase() : 'the next one'), '#26262B', () => this.say('Demo kit: counter poster, sample pass, 4-minute script — in your inbox')]
       ] : [
         ['Find a member', 'the answer to “I lost my card”', '#E88024', () => this.setState({ screen: 'support' })],
-        ['The privacy queue', privPendingN ? (privPendingN + ' request' + (privPendingN === 1 ? '' : 's') + ' · 28 days to act') : 'clear — every decision logged', '#F0A92B', () => this.setState({ screen: 'support' })],
+        ['The privacy queue', privPendingN ? (privPendingN + ' request' + (privPendingN === 1 ? '' : 's') + ' · ' + PRIV_DEADLINE + ' to act') : 'clear — every decision logged', '#F0A92B', () => this.setState({ screen: 'support' })],
         ['The append-only log', 'every action, with your name', '#26262B', () => this.setState({ screen: 'log' })]
       ]).map(([a, b, dot, go]) => ({ a, b, dot, go })),
       // ── HOME · across the platform, this morning ──
       homeFeed: (() => { let last = null; return fullLog.slice(0, 6).map((l, i) => { const g = feedGroup(l.t), k = kindTone(l.kind), show = g !== last; last = g; return { ...l, group: g, showGroup: show, kindDot: k[0], kindRing: k[1], anim: AN('fadeUp', '.45s', (0.05 * i) + 's'), avBg: l.tag === 'Client' ? '#E88024' : '#26262B', tagBg: l.tag === 'Client' ? '#FDF4EC' : '#EFEDE8', tagFg: l.tag === 'Client' ? '#C96A14' : '#6B6760' }; }); })(),
       goLog: () => this.setState({ screen: 'log' }), goLeads: () => this.setState({ screen: 'leads' }),
-      apprCountLine: supportRole ? (privPendingN ? (privPendingN + ' privacy request' + (privPendingN === 1 ? '' : 's') + ' on the clock') : 'Privacy queue is clear') : pending.length ? pending.length + ' waiting for a pair of eyes' : 'Approvals queue is clear',
-      apprPreviewLine: supportRole ? (privPendingN ? (privRaw.filter(r => r.state === 'pending').map(r => r.member + ' (' + (r.kind === 'erasure' ? 'erasure' : 'export') + ')').join(' · ') + ' — 28 days to grant or decline, in writing.') : 'Decided, with a reason she can read — and it is in the log forever.') : pending.length ? pending.map(p => p.card + ' (' + (p.kind === 'new' ? 'new' : 'edit') + ')').join(' · ') : 'Nothing reaches a wallet unreviewed — and right now, everything has been.',
-      apprCta: supportRole ? 'Open support tools →' : admin ? 'Open the queue →' : 'Open the pipeline →',
+      apprCountLine: sales ? salesHero.count : supportRole ? (privPendingN ? (privPendingN + ' privacy request' + (privPendingN === 1 ? '' : 's') + ' on the clock') : 'Privacy queue is clear') : apprTotal ? apprTotal + ' waiting for a pair of eyes' : 'Approvals queue is clear',
+      apprPreviewLine: sales ? salesHero.preview : supportRole ? (privPendingN ? (privRaw.filter(r => r.state === 'pending').map(r => r.member + ' (' + (r.kind === 'erasure' ? 'erasure' : 'export') + ')').join(' · ') + ' — ' + PRIV_DEADLINE + ' to grant or decline, in writing.') : 'Decided, with a reason she can read — and it is in the log forever.') : apprTotal ? [...pending.map(p => p.card + ' (' + (p.kind === 'new' ? 'new' : 'edit') + ')'), ...editPending.map(e => e.card + ' (staged edit)')].join(' · ') : 'Nothing reaches a wallet unreviewed — and right now, everything has been.',
+      apprCta: sales ? salesHero.cta : supportRole ? 'Open support tools →' : 'Open the queue →',
+      // the hero's destination is its own — `goApprovals` still belongs to the review screen's
+      // back link, which is admin-only ground and must keep going to the queue
+      heroGo: sales ? salesHero.go : () => this.setState({ screen: admin ? 'approvals' : 'support' }),
       homePanel2Title: admin ? (escalAll.length ? 'Needs an eye · ' + escalAll.length + ' from sales' : 'Needs an eye') : sales ? 'Today' : 'At the desk',
       // admin rows carry the live sales escalations, each with a resolve affordance
       homePanel2Rows: (admin ? [
@@ -3307,12 +3817,12 @@ class Component extends DCLogic {
         ['Birthday job', '— 3 pushes failed, retrying at 12:00.', '#F0A92B', null, false],
         ['Wared Flowers', 'quiet for 19 days, renewal in 6 — Omar pinged.', '#E2563A', null, false],
         ['Certificate', 'renews in ' + ((H.cert || {}).days || '—') + ' days — calendar held.', '#2FAE66', null, false]
-      ] : sales ? [
-        ['Tuta Juice', '— demo Thursday 11:00, deck ready.', '#C96A14', null, false],
-        ['Louma Chocolate', 'opened the invite — no password yet. Nudge?', '#F0A92B', null, false],
-        ['Al-Quds Falafel', 'first card is in review — tell them today.', '#2FAE66', null, false]
-      ] : [
-        ...privRaw.filter(r => r.state === 'pending').slice(0, 2).map(r => [r.member, (r.kind === 'erasure' ? 'asked for full deletion — 28 days to answer.' : 'asked for a copy of everything on file — 28 days to answer.'), '#E2563A', null, false]),
+      ] : sales ? (myLeads.length
+        // the rep's OWN board — this list used to include Al-Quds Falafel, which is Lina's lead
+        ? myLeads.slice(0, 3).map(l => [l.name, '— ' + (String(l.note || '').trim() || (l.stage + ', follow up ' + String(l.follow || 'soon').toLowerCase())) + '.', stageBar[l.stage] || '#C96A14', null, false])
+        : [['Your board', '— nothing on it. Capture a lead and it shows up here the same second.', '#8C877F', null, false]]
+      ) : [
+        ...privRaw.filter(r => r.state === 'pending').slice(0, 2).map(r => [r.member, (r.kind === 'erasure' ? ('asked for full deletion — ' + PRIV_DEADLINE + ' to answer.') : ('asked for a copy of everything on file — ' + PRIV_DEADLINE + ' to answer.')), '#E2563A', null, false]),
         ...(privPendingN ? [] : [['Privacy queue', '— clear. Every request was answered in writing.', '#2FAE66', null, false]]),
         ['Birthday job', '— 3 pushes failed, retrying at 12:00.', '#F0A92B', null, false],
         ['Sara Al-Amin', 'pass re-issued at 09:58 — SMS delivered.', '#2FAE66', null, false]
@@ -3375,13 +3885,31 @@ class Component extends DCLogic {
         // and the row opens that lead
         if (selLead) rows.push(['From the pipeline', 'won by ' + (selLead.by || 'sales') + ' · came in from ' + String(selLead.source || 'an unrecorded source').toLowerCase() + '.', '#7B68AE',
           () => this.setState({ screen: 'leads', leadSel: selLead.name, leadFormOpen: false, leadMoved: null, leadEditOpen: false, leadEdit: null }), 'open the lead →']);
-        rows.push(['Invited', 'by ' + (selAcc.manager || '—') + ' · WhatsApp, accepted same day.', '#2FAE66']);
-        rows.push(['First card live', 'within 2 days of signup.', '#2FAE66']);
+        // ── everything below this line is DERIVED from this account's own record. It used to be
+        //    four invented rows, identical on all eight accounts, one of which borrowed Tala's
+        //    “Weekend special” broadcast and showed it on Rawi's timeline and Petra's. Nothing
+        //    here now says anything the account has not itself supplied. ──
+        rows.push(['Invited', 'by ' + (selAcc.manager || '—') + ' — one WhatsApp, and the account was born on ' + selOwnerFirst + '’s phone.', '#2FAE66']);
+        const tlLive = selCardList.filter(c => c.state === 'live').length;
+        const tlReview = selCardList.filter(c => c.state === 'review').length;
+        const tlRetired = selCardList.filter(c => c.state === 'retired').length;
+        if (!selClosed) {
+          rows.push(tlLive
+            ? ['Issuing passes', tlLive + ' card' + (tlLive === 1 ? '' : 's') + ' live of ' + selCardList.length + ' on the account' + (tlReview ? ' · ' + tlReview + ' waiting on review' : '') + (tlRetired ? ' · ' + tlRetired + ' retired' : '') + '.', '#2FAE66']
+            : ['Nothing live yet', selCardList.length ? (selCardList.length + ' card' + (selCardList.length === 1 ? '' : 's') + ' on the account and not one of them in a wallet' + (tlReview ? ' — ' + tlReview + ' waiting on review' : '') + '.') : 'No card has been built on this account yet — the first one is born in the client’s own dashboard.', '#8C877F']);
+        }
         if (selClosed) {
           rows.push(['Closed', (selClosedWhen || 'earlier') + ' — every pass voided, the data exported inside the 30-day window.', '#8C877F']);
         } else {
-          rows.push(['Last broadcast', '“Weekend special” · reached ' + Math.round((selAcc.members || 0) * 0.9).toLocaleString('en-US') + ' wallets.', '#C96A14']);
-          rows.push([selAcc.state === 'at-risk' ? 'Going quiet' : 'Healthy', selAcc.state === 'at-risk' ? (selQuiet == null ? 19 : selQuiet) + ' days without a scan — win-back suggested.' : 'scans this week on every live card.', selAcc.state === 'at-risk' ? '#E2563A' : '#2FAE66']);
+          const lp = lastPushOf(selAcc);
+          rows.push(lp
+            ? ['Last broadcast', (lp.title ? '“' + lp.title + '” on ' + lp.card : lp.card + ' — no title kept with it') + ' · ' + lp.when + ' · reached about ' + lp.reach.toLocaleString('en-US') + ' wallets.', '#C96A14']
+            : ['No broadcast yet', 'Nothing has ever gone out to these wallets — the first push is ' + selOwnerFirst + '’s to send, from their own dashboard.', '#8C877F']);
+          rows.push([selAcc.state === 'at-risk' ? 'Going quiet' : 'Healthy',
+            selAcc.state === 'at-risk'
+              ? ((selQuiet == null ? 'nobody has scanned a pass in a while' : selQuiet + ' days without a scan') + ' — win-back suggested.')
+              : (selQuiet == null ? 'no scan gap worth reporting.' : selQuiet === 0 ? 'a pass was scanned today.' : 'last scan ' + selQuiet + ' day' + (selQuiet === 1 ? '' : 's') + ' ago.'),
+            selAcc.state === 'at-risk' ? '#E2563A' : '#2FAE66']);
         }
         const soft = { '#2FAE66': 'rgba(47,174,102,.16)', '#C96A14': 'rgba(232,128,36,.16)', '#E2563A': 'rgba(226,86,58,.16)', '#7B68AE': 'rgba(123,104,174,.18)', '#8C877F': 'rgba(140,135,127,.20)', '#E88024': 'rgba(232,128,36,.18)' };
         return rows.map(([a, b, dot, go, jump], i) => ({ a, b, dot, ring: soft[dot] || 'rgba(201,191,175,.2)', hasLine: i < rows.length - 1,
@@ -3418,7 +3946,7 @@ class Component extends DCLogic {
         return { name: c.name, ar: c.ar, type: c.type, members: (c.members || 0).toLocaleString('en-US'), push: c.push,
           badge: b.label, badgeBg: b.bg, badgeFg: b.fg, badgeDot: b.dot, badgeAnim: b.anim, deco: b.deco,
           op: c.state === 'retired' ? '.62' : '1',
-          hasReason: !!c.tdReason, reason: c.tdReason ? ('“' + c.tdReason + '” — ' + (c.tdBy || 'Wasla') + ', ' + (c.tdWhen || 'earlier')) : '',
+          hasReason: !!c.tdReason, reason: c.tdReason ? ((c.decided === 'rejected' ? 'Sent back: “' : '“') + c.tdReason + '” — ' + (c.tdBy || 'Wasla') + ', ' + (c.tdWhen || 'earlier')) : '',
           canDown, downLabel: open ? 'Cancel' : 'Take down…',
           downBr: open ? '#93887A' : '#E2563A', downFg: open ? '#5D5348' : '#E2563A',
           isOpen: open,
@@ -3507,7 +4035,61 @@ class Component extends DCLogic {
           : ('Opening read-only as ' + selAcc.name + ' — heads up: the demo dashboard models Tala Hospitality Group, so the numbers you land on are Tala’s, not ' + ((selAcc.owner || 'the owner').split(' ')[0]) + '’s. The visit still lands in the view-as trail.'));
         window.location.href = 'Wasla Dashboard.dc.html?viewas=1&acct=' + slugOf(selAcc.name);
       },
-      apprRows, queueEmpty: pending.length === 0,
+      apprRows, queueEmpty: apprTotal === 0,
+      // ── STAGED CARD EDITS · the reviewable item the dashboard has been staging into a void ──
+      editAny: editItems.length > 0,
+      editHeadLine: editPending.length
+        ? (editPending.length + ' staged card edit' + (editPending.length === 1 ? '' : 's') + ' from the client’s own editor — the card keeps running on its live values until one of these is answered.')
+        : 'Every staged edit has been answered. The client sees the verdict on their own card screen.',
+      editRows: editItems.map((e, i) => {
+        const verdict = editVerdicts[e.id] || null;
+        const declining = st.edDecline === e.id;
+        return { card: e.card, ar: e.ar, account: e.account, initial: e.initial, color: e.color,
+          rows: e.changes.map((c, ci) => ({ label: c.label, from: c.from, to: c.to, anim: AN('fadeUp', '.34s', (0.03 * ci) + 's') })),
+          countLine: e.changes.length + ' field' + (e.changes.length === 1 ? '' : 's') + ' staged · the live value is on the left, what they are asking for is on the right',
+          pending: !verdict, declining: declining && !verdict,
+          canAnswer: admin && !verdict,
+          isGranted: !!verdict && verdict.state === 'approved',
+          isDeclined: !!verdict && verdict.state === 'rejected',
+          verdictChip: verdict ? (verdict.state === 'approved' ? 'APPROVED' : 'SENT BACK') : '',
+          verdictBg: verdict && verdict.state === 'approved' ? '#E7F6EE' : '#FBE6E1',
+          verdictFg: verdict && verdict.state === 'approved' ? '#1E7D47' : '#B23420',
+          verdictLine: verdict
+            ? (verdict.state === 'approved'
+              ? ('Approved — the new values are live on ' + e.card + ', and the client’s editor says so. ' + (verdict.by || 'Wasla') + '.')
+              : ('Sent back, verbatim: “' + (verdict.reason || '—') + '” — ' + (verdict.by || 'Wasla') + '. The card kept its live values; the edit is theirs to fix and resubmit.'))
+            : '',
+          declineOpen: () => { if (!admin || verdict) return; this.setState({ edDecline: declining ? null : e.id, edReason: '' }); },
+          approve: () => {
+            if (!admin || verdict) return;
+            const row = writeEditVerdict(e.id, 'approved', '');
+            this.setState({ editVerdicts: { ...(st.editVerdicts || {}), [e.id]: row }, edDecline: null, edReason: '', edJust: e.id });
+            this.saveConsole();
+            this.say(e.card + ' — staged edit approved · the new values are live, and it shows on the client’s own card screen');
+            this.slog('approve', 'approved the staged edit on ' + e.card + ' (' + e.account + ') — ' + e.changes.map(c => c.label.toLowerCase() + ' “' + c.from + '” → “' + c.to + '”').join(', '));
+          },
+          declineDo: () => {
+            if (!admin || verdict) return;
+            const why = (st.edReason || '').trim();
+            if (why.length < 8) return;
+            const row = writeEditVerdict(e.id, 'rejected', why);
+            this.setState({ editVerdicts: { ...(st.editVerdicts || {}), [e.id]: row }, edDecline: null, edReason: '', edJust: e.id });
+            this.saveConsole();
+            this.say('Sent back with your words — ' + e.card + ' kept its live values, nothing moved in a wallet');
+            this.slog('approve', 'sent the staged edit on ' + e.card + ' (' + e.account + ') back — reason sent verbatim: ' + why);
+          },
+          anim: st.edJust === e.id ? AN('popIn', '.5s') : AN('fadeUp', '.45s', (0.05 * i) + 's'),
+          settleAnim: AN('settleIn', '.5s') };
+      }),
+      editDeclineSlide: AN('slideDown', '.32s'),
+      edReason: st.edReason, setEdReason: (e) => this.setState({ edReason: e.target.value }),
+      edInputBr: editReady ? '#9AD3B4' : ((st.edReason || '').length ? '#F0A92B' : '#D8D0C2'),
+      edCounter: (() => { const n = (st.edReason || '').trim().length, left = 8 - n; return left > 0 ? (left + ' more character' + (left === 1 ? '' : 's') + '… they read this on the card they staged it from') : 'Long enough — this exact sentence is what the client reads, in Arabic first'; })(),
+      edCounterFg: editReady ? '#1E7D47' : '#9A6B12',
+      edBtnBg: editReady ? '#E2563A' : '#EFEDE8', edBtnFg: editReady ? '#FFFFFF' : '#93887A',
+      edBtnCls: editReady ? 'wc-cta' : 'wc-off', edBtnCursor: editReady ? 'pointer' : 'not-allowed',
+      edBtnLabel: editReady ? 'Send it back with these words' : 'Write the sentence they read',
+      editFoot: 'A staged edit is not a new card: nothing about it has ever reached a wallet, so approving one changes values on a card that is already live and sending one back changes nothing at all. The verdict is written where the client’s dashboard reads it — this console never writes into the dashboard’s own record, and it never edits their staged values for them.',
       // ── APPROVALS · the SLA header, only when something has actually gone amber ──
       apprShowOldest: !!oldest && waitTone(oldest.mins).level > 0,
       apprOldestLine: oldest ? ('Oldest waiting ' + waitLabel(oldest.mins) + ' · ' + (oldest.a.card || '') + (waitTone(oldest.mins).level === 2 ? ' — past a day, answer it first' : ' — past six hours')) : '',
@@ -3548,11 +4130,11 @@ class Component extends DCLogic {
       rvApproveBg: canApprove ? '#2FAE66' : '#EFEDE8', rvApproveFg: canApprove ? '#FFFFFF' : '#93887A',
       rvApproveCls: canApprove ? 'wc-cta' : 'wc-off', rvApproveCursor: canApprove ? 'pointer' : 'not-allowed',
       rvApproveLabel: rv.kind === 'edit' ? 'Approve — new value goes live' : (allChecked ? 'Approve — it goes live now' : 'Tick the four checks first'),
-      rvApprove: () => { if (!canApprove) return; if (rv.id === 'sukkar') { try { localStorage.setItem(this.sukkarKey(), 'approved'); } catch (e) {} } this.setState({ decided: { ...st.decided, [rv.id]: 'approved' }, screen: 'approvals', apprTab: 'queue', apprJust: rv.id, rvHover: null }); this.say((rv.card || '') + ' is LIVE — ' + (rv.by || '') + ' just got the WhatsApp' + (rv.id === 'sukkar' ? ' · open the dashboard, it\u2019s live there too' : '')); this.slog('approve', 'approved ' + (rv.card || '') + ' — live in wallets, ' + (rv.by || 'the client') + ' notified by WhatsApp'); },
+      rvApprove: () => { if (!canApprove) return; if (rv.id === 'sukkar') { this.sukkarHandoff('approved', '', 'Omar Haddad'); } this.setState({ ...cardVerdictPatch(rv, 'approved', ''), decided: { ...st.decided, [rv.id]: 'approved' }, screen: 'approvals', apprTab: 'queue', apprJust: rv.id, rvHover: null }); this.say((rv.card || '') + ' is LIVE — ' + (rv.by || '') + ' just got the WhatsApp' + (rv.id === 'sukkar' ? ' · open the dashboard, it\u2019s live there too' : '')); this.slog('approve', 'approved ' + (rv.card || '') + ' — live in wallets, ' + (rv.by || 'the client') + ' notified by WhatsApp'); },
       rvRejectLabel: st.rejecting ? 'Send back… ✕' : 'Send back…',
       rvRejectOpen: () => this.setState({ rejecting: !st.rejecting }), rvRejecting: st.rejecting,
       rvRejectAnim: AN('slideDown', '.34s'),
-      rvReasons: ['Reward text unclear', 'Logo unreadable at pass size', 'Terms missing'].map((label, i) => ({ label, anim: AN('fadeUp', '.34s', (0.05 + 0.05 * i) + 's'), send: () => { if (rv.id === 'sukkar') { try { localStorage.setItem(this.sukkarKey(), 'rejected'); } catch (e) {} } this.setState({ decided: { ...st.decided, [rv.id]: 'rejected' }, decidedWhy: { ...(st.decidedWhy || {}), [rv.id]: label }, rvFree: '', screen: 'approvals', rejecting: false, apprTab: 'queue', apprJust: rv.id, rvHover: null }); this.say('Sent back with the note — nothing changed in wallets' + (rv.id === 'sukkar' ? ' · the dashboard shows it too' : '')); this.slog('approve', 'sent ' + (rv.card || '') + ' back — reason sent verbatim: ' + label.toLowerCase()); } })),
+      rvReasons: ['Reward text unclear', 'Logo unreadable at pass size', 'Terms missing'].map((label, i) => ({ label, anim: AN('fadeUp', '.34s', (0.05 + 0.05 * i) + 's'), send: () => { if (rv.id === 'sukkar') { this.sukkarHandoff('rejected', label, 'Omar Haddad'); } this.setState({ ...cardVerdictPatch(rv, 'rejected', label), decided: { ...st.decided, [rv.id]: 'rejected' }, decidedWhy: { ...(st.decidedWhy || {}), [rv.id]: label }, rvFree: '', screen: 'approvals', rejecting: false, apprTab: 'queue', apprJust: rv.id, rvHover: null }); this.say('Sent back with the note — nothing changed in wallets' + (rv.id === 'sukkar' ? ' · the dashboard shows it too' : '')); this.slog('approve', 'sent ' + (rv.card || '') + ' back — reason sent verbatim: ' + label.toLowerCase()); } })),
       // ── the chips are shortcuts, not the vocabulary. The copy above them has always promised the
       //    reason goes to the client word for word; a card can be wrong in a way none of three
       //    canned sentences describes, and until now there was nowhere to say so. ──
@@ -3570,8 +4152,8 @@ class Component extends DCLogic {
         const why = (st.rvFree || '').trim();
         if (why.length < 8) return;
         // same path the chips take, down to the Sukkar hand-off — only the sentence differs
-        if (rv.id === 'sukkar') { try { localStorage.setItem(this.sukkarKey(), 'rejected'); } catch (e) {} }
-        this.setState({ decided: { ...st.decided, [rv.id]: 'rejected' }, decidedWhy: { ...(st.decidedWhy || {}), [rv.id]: why }, rvFree: '', screen: 'approvals', rejecting: false, apprTab: 'queue', apprJust: rv.id, rvHover: null });
+        if (rv.id === 'sukkar') { this.sukkarHandoff('rejected', why, 'Omar Haddad'); }
+        this.setState({ ...cardVerdictPatch(rv, 'rejected', why), decided: { ...st.decided, [rv.id]: 'rejected' }, decidedWhy: { ...(st.decidedWhy || {}), [rv.id]: why }, rvFree: '', screen: 'approvals', rejecting: false, apprTab: 'queue', apprJust: rv.id, rvHover: null });
         this.say('Sent back with your words — nothing changed in wallets' + (rv.id === 'sukkar' ? ' · the dashboard shows it too' : ''));
         this.slog('approve', 'sent ' + (rv.card || '') + ' back — reason sent verbatim: ' + why);
       },
@@ -3618,7 +4200,7 @@ class Component extends DCLogic {
             const touch = Number(l.touch) || 0, stale = isStale(l);
             const canConv = l.stage === 'Won' && !conv;
             const cAcc = conv ? accIdxByName(l.name) : -1;
-            const convSent = conv && st.invSent && sameName(st.invBiz, l.name);
+            const convSent = conv && inviteSentFor(l.name);
             return {
               name: l.name, ar: l.ar || '', owner: l.owner || '—', by: l.by || '—',
               repBg: repTone(l.by)[0], repFg: repTone(l.by)[1],
@@ -3648,12 +4230,12 @@ class Component extends DCLogic {
       leadStBg: (stageStyle[(leadSel || {}).stage] || ['#EFEDE8'])[0], leadStFg: (stageStyle[(leadSel || {}).stage] || ['', '#6B6760'])[1],
       leadIsConverted: !!leadSel && isConv(leadSel.name),
       // ── SALES · the same seam on the detail panel, saying the same honest thing ──
-      leadConvLabel: (() => { if (!leadSel) return ''; const i = accIdxByName(leadSel.name); return i >= 0 ? '→ ACCOUNT' : (st.invSent && sameName(st.invBiz, leadSel.name)) ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT'; })(),
-      leadConvTip: (() => { if (!leadSel) return ''; const i = accIdxByName(leadSel.name); return i >= 0 ? ('Open ' + leadSel.name + '’s account') : ((st.invSent && sameName(st.invBiz, leadSel.name)) ? (leadSel.name + ' is an invite, not an account — it is born the second they set a password') : ('The invite for ' + leadSel.name + ' is prefilled but not sent yet')); })(),
+      leadConvLabel: (() => { if (!leadSel) return ''; const i = accIdxByName(leadSel.name); return i >= 0 ? '→ ACCOUNT' : inviteSentFor(leadSel.name) ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT'; })(),
+      leadConvTip: (() => { if (!leadSel) return ''; const i = accIdxByName(leadSel.name); return i >= 0 ? ('Open ' + leadSel.name + '’s account') : (inviteSentFor(leadSel.name) ? (leadSel.name + ' is an invite, not an account — it is born the second they set a password') : ('The invite for ' + leadSel.name + ' is prefilled but not sent yet')); })(),
       leadConvBg: (leadSel && accIdxByName(leadSel.name) >= 0) ? '#E7F6EE' : '#FDF1DC',
       leadConvFg: (leadSel && accIdxByName(leadSel.name) >= 0) ? '#1E7D47' : '#9A6B12',
       leadConvBr: (leadSel && accIdxByName(leadSel.name) >= 0) ? '#9AD3B4' : '#F6DDB0',
-      leadConvGo: () => { if (!leadSel) return; openConverted(leadSel, accIdxByName(leadSel.name), !!(st.invSent && sameName(st.invBiz, leadSel.name))); },
+      leadConvGo: () => { if (!leadSel) return; openConverted(leadSel, accIdxByName(leadSel.name), inviteSentFor(leadSel.name)); },
       leadSubLine: leadSel ? [leadSel.owner, leadSel.phone, leadSel.vertical, 'owned by ' + (leadSel.by || '—'), 'follow-up ' + (leadSel.follow || '—')].filter(Boolean).join(' · ') : '',
       leadGroups: (leadSel ? [
         ['Contact', [['Owner', leadSel.owner || '—'], ['Phone', leadSel.phone || '—'], ['Email', leadSel.email || '—'], ['Vertical', leadSel.vertical || '—'], ['Source', leadSel.source || '—']]],
@@ -3903,7 +4485,7 @@ class Component extends DCLogic {
       })(),
       invTrackFoot: 'There is no half-made account on our side: until that third node lights, nothing exists but a link. No credential anybody here could leak, and no login to hand over.',
       // approvals tabs + decided
-      apprTabs: [['queue', 'The queue' + (pending.length ? ' · ' + pending.length : '')], ['decided', 'Decided']].map(([k, label]) => ({ label, go: () => this.setState({ apprTab: k }), br: st.apprTab === k ? '#E88024' : '#E7E0D5', bg: st.apprTab === k ? '#E88024' : '#FFFFFF', fg: st.apprTab === k ? '#FFFFFF' : '#5D5348' })),
+      apprTabs: [['queue', 'The queue' + (apprTotal ? ' · ' + apprTotal : '')], ['decided', 'Decided']].map(([k, label]) => ({ label, go: () => this.setState({ apprTab: k }), br: st.apprTab === k ? '#E88024' : '#E7E0D5', bg: st.apprTab === k ? '#E88024' : '#FFFFFF', fg: st.apprTab === k ? '#FFFFFF' : '#5D5348' })),
       apprQueueTab: st.apprTab === 'queue', apprDecidedTab: st.apprTab === 'decided',
       decidedRows: decidedList.map((d, i) => { const t = verdictTone(d.verdict); const open = st.decidedView === d.key; return {
         card: d.card, account: d.account, when: d.when, by: d.by,
@@ -4009,7 +4591,12 @@ class Component extends DCLogic {
       supRows: supList.map((m, i) => { const on = st.supIdx === i; return { ...m, open: () => this.setState({ supIdx: i, corrOpen: false, corrReason: '', supFixOpen: false }), bg: on ? '#FAF4EA' : 'transparent', accent: on ? '#E88024' : 'transparent', fg: on ? '#C96A14' : '#241C16', fw: on ? 800 : 700, anim: AN('fadeUp', '.38s', (0.045 * i) + 's') }; }),
       supNoRows: supList.length === 0,
       supNoRowsLine: 'Nobody on file matches “' + (st.supQuery || '').trim() + '”. Try the first name, or the last four digits of the number.',
-      supHasSel: true,
+      // ── an honest empty state · no match means no record, not somebody else's record ──
+      supHasSel: supHasSelV, supNoSel: !supHasSelV,
+      supNoSelTitle: (st.supQuery || '').trim() ? 'No member called “' + (st.supQuery || '').trim() + '”.' : 'Nobody is selected.',
+      supNoSelLine: (st.supQuery || '').trim()
+        ? 'There is no record to show, so this panel is showing none. A member who cannot be found cannot be re-issued a pass, cannot have a contact detail fixed and certainly cannot have a balance corrected — every one of those needs a real person on the other end. Search the first name, or the last four digits of the mobile on the pass.'
+        : 'Search a name or a mobile number above and the record opens here. Nothing is assumed: this panel only ever shows a member the search actually found.',
       supSel: supSelM,
       // ── SUPPORT · the card names its account, and the account is one tap away ──
       supHasAcc: supAccIdx >= 0, supAccName,
@@ -4018,7 +4605,18 @@ class Component extends DCLogic {
       supAccAnim: AN('fadeUp', '.42s', '.06s'),
       supAccGo: () => { if (supAccIdx < 0 || supportRole) return; goAccount(supAccIdx); },
       supViewAsHref: 'Wasla Dashboard.dc.html?viewas=1&acct=' + slugOf(supAccName || ''),
-      supViewAs: () => { if (supAccIdx < 0) return; this.slog('viewas', 'viewed ' + supAccName + ' as client from the support desk — read-only, every screen logged'); this.say('Opening ' + supAccName + ' read-only — every number matches what ' + supAccOwner + ' sees · the whole visit lands in the view-as trail' + (sameName(supAccName, 'Tala Hospitality Group') ? '' : ' · note: the demo dashboard models Tala')); window.location.href = 'Wasla Dashboard.dc.html?viewas=1&acct=' + slugOf(supAccName || ''); },
+      // ── THE ROLE MATRIX WINS · this console prints "Support · named only — the member panel
+      //    names the account and stops there", and then handed Support a working door into the
+      //    client's entire merchant dashboard. Two answers to one question is one answer too
+      //    many. The decision: GATE IT. The matrix cell was the honest one — Support exists to
+      //    answer "I lost my card", and that job never needs the owner's revenue, their staff
+      //    list or their broadcast history. The power is now written into the grid explicitly
+      //    (see MATRIX_ADD) rather than living undocumented in a chip on this panel. An admin
+      //    standing on this same screen keeps the door; a rep keeps it for their own book. ──
+      supCanViewAs: supAccIdx >= 0 && !supportRole,
+      supScopeShow: supAccIdx >= 0 && supportRole,
+      supScopeLine: 'Support sees which account a card belongs to and stops there — no accounts register, and no read-only trip into the client’s own dashboard. That is the row this console prints on the Team screen, and it is the row this panel obeys. Escalate to an admin or to ' + supAccName + '’s account manager if the answer is on their side of that line.',
+      supViewAs: () => { if (supAccIdx < 0 || supportRole) return; this.slog('viewas', 'viewed ' + supAccName + ' as client from the support desk — read-only, every screen logged'); this.say('Opening ' + supAccName + ' read-only — every number matches what ' + supAccOwner + ' sees · the whole visit lands in the view-as trail' + (sameName(supAccName, 'Tala Hospitality Group') ? '' : ' · note: the demo dashboard models Tala')); window.location.href = 'Wasla Dashboard.dc.html?viewas=1&acct=' + slugOf(supAccName || ''); },
       // ── SUPPORT · what has already been done to this member ──
       supActs: supActsRaw.map((r, i) => { const k = kindTone(r.kind); return { line: r.line, t: r.t, dot: k[0], ring: k[1], anim: AN('fadeUp', '.38s', (0.05 * i) + 's') }; }),
       supActsEmpty: supActsRaw.length === 0,
@@ -4035,17 +4633,34 @@ class Component extends DCLogic {
       supPhoneLabel: supPhoneReady ? 'Save — she confirms by SMS' : ((st.supPhoneDraft || '').trim() === (supSelM.phone || '') ? 'Change the number to save it' : 'A full mobile number, please'),
       supPhoneNote: 'The old number keeps receiving passes until the new one answers the confirmation SMS.',
       supPhoneSave: () => { if (!supPhoneReady) return; const was = supSelM.phone, now = st.supPhoneDraft.trim(); this.setState({ supPhones: { ...st.supPhones, [supSelM.name]: now }, supFixOpen: false }); this.say('Phone changed to ' + now + ' — a confirmation SMS is on its way to ' + (supSelM.name || 'the member').split(' ')[0]); this.slog('support', 'changed ' + (supSelM.name || 'a member') + '’s phone from ' + was + ' to ' + now + ' — confirmation SMS sent'); },
-      corrToggle: () => this.setState({ corrOpen: !st.corrOpen }), corrOpen: st.corrOpen,
+      // ── the correction tool is only offered where there is a balance to correct ──
+      corrCanShow: corrCan, corrCantShow: supHasSelV && !corrCan,
+      corrCantLine: (supSelM.name || 'This member').split(' ')[0] + '’s standing is ' + String(supSelM.progress || '—').toLowerCase() + ' — a position on a card, not money on one. There is nothing here a correction could move: balance corrections exist for cards that carry a balance, like Zaytoun Kitchen’s cashback' + (balExample ? ' (' + balExample + ' holds one)' : '') + '.',
+      corrToggle: () => { if (!corrCan) { this.say((supSelM.name || 'This member').split(' ')[0] + ' holds no balance — there is nothing to correct'); return; } this.setState({ corrOpen: !st.corrOpen }); }, corrOpen: st.corrOpen && corrCan,
+      corrBalNow: corrCan ? money(corrBal) : '—',
+      corrBalLine: corrCan ? ('On the pass right now: ' + money(corrBal) + ' — this is the number the correction moves, and the number Standing above reads off.') : '',
       corrAmts: ['+ JOD 0.50', '+ JOD 1.50', '− JOD 0.50', '− JOD 1.00'].map((a, i) => ({ label: a, pick: () => this.setState({ corrAmt: a }), br: st.corrAmt === a ? '#E88024' : '#E7E0D5', bg: st.corrAmt === a ? '#FDF4EC' : '#FFFFFF', fg: st.corrAmt === a ? '#C96A14' : '#5D5348', anim: AN('fadeUp', '.32s', (0.04 * i) + 's') })),
+      corrPreview: corrCan ? (money(corrBal) + '  →  ' + money(corrNext)) : '',
+      corrPreviewFg: corrDelta >= 0 ? '#1E7D47' : '#B23420',
+      corrPreviewNote: !corrCan ? '' : corrClamped
+        ? ('A balance cannot go below zero, so ' + st.corrAmt + ' lands at ' + money(0) + ' rather than ' + money(corrNextRaw) + '. The reason still reaches the client word for word.')
+        : ('The pass updates in the wallet the same second — no reinstall, no new barcode, and nothing else on the card moves.'),
       corrReason: st.corrReason, setCorrReason: (e) => this.setState({ corrReason: e.target.value }),
-      corrBg: st.corrReason.trim().length >= 8 ? '#E88024' : '#EFEDE8', corrFg: st.corrReason.trim().length >= 8 ? '#FFFFFF' : '#93887A',
-      corrApplyCls: st.corrReason.trim().length >= 8 ? 'wc-cta' : 'wc-off', corrApplyCursor: st.corrReason.trim().length >= 8 ? 'pointer' : 'not-allowed',
+      corrBg: corrReady ? '#E88024' : '#EFEDE8', corrFg: corrReady ? '#FFFFFF' : '#93887A',
+      corrApplyCls: corrReady ? 'wc-cta' : 'wc-off', corrApplyCursor: corrReady ? 'pointer' : 'not-allowed',
       corrInputBr: st.corrReason.trim().length >= 8 ? '#9AD3B4' : (st.corrReason.length ? '#F0A92B' : '#D8D0C2'),
       // a gate you can watch close — the count is the whole feedback loop
       corrCounter: (() => { const n = st.corrReason.trim().length, left = 8 - n; return left > 0 ? (left + ' more character' + (left === 1 ? '' : 's') + '… the client reads this word for word') : 'Long enough — this exact sentence reaches the client and the log'; })(),
       corrCounterFg: st.corrReason.trim().length >= 8 ? '#1E7D47' : '#9A6B12',
-      corrLabel: st.corrReason.trim().length >= 8 ? 'Apply ' + st.corrAmt + ' — logged with your name' : 'A reason is required — the client reads it',
-      corrApply: () => { if (st.corrReason.trim().length < 8) return; const why = st.corrReason.trim(); this.setState({ corrOpen: false, corrReason: '' }); this.say('Corrected ' + st.corrAmt + ' — in the log forever, client notified'); this.slog('support', 'balance correction ' + st.corrAmt + ' for ' + (supSelM.name || 'a member') + ' — reason: ' + why); },
+      corrLabel: corrReady ? ('Apply ' + st.corrAmt + ' — ' + money(corrBal) + ' becomes ' + money(corrNext)) : 'A reason is required — the client reads it',
+      corrApply: () => {
+        if (!corrCan || st.corrReason.trim().length < 8) return;
+        const why = st.corrReason.trim(), nm = supSelM.name || 'a member', was = corrBal, now = corrNext;
+        this.setState({ balances: { ...(st.balances || {}), [nm]: now }, corrOpen: false, corrReason: '' });
+        this.saveConsole();
+        this.say('Corrected ' + st.corrAmt + ' — ' + money(was) + ' → ' + money(now) + ' on ' + nm.split(' ')[0] + '’s pass, client notified');
+        this.slog('support', 'balance correction ' + st.corrAmt + ' for ' + nm + ' — ' + money(was) + ' → ' + money(now) + ', reason: ' + why);
+      },
       // ══ PRIVACY QUEUE · a count over a hardcoded sentence was never a queue ═══════════════════
       //    Dana's row still reads and writes the original two keys, so a blob saved before today
       //    restores her decision unchanged. Every request support logs from now on sits beside her
@@ -4057,7 +4672,7 @@ class Component extends DCLogic {
       privSlideAnim: AN('slideDown', '.32s'),
       privSettleAnim: AN('settleIn', '.5s'),
       privHeadLine: privPendingN
-        ? (privPendingN + ' waiting · a request has 30 days to be answered, and the clock does not stop for a weekend')
+        ? (privPendingN + ' waiting · a request has ' + PRIV_DEADLINE + ' to be answered, and the clock does not stop for a weekend')
         : 'Nothing waiting. Every request here was answered, and the answer is in the log with your name.',
       privRows: privRaw.map((r, i) => {
         const pending = r.state === 'pending', declining = st.privRowOpen === r.id;
@@ -4066,24 +4681,24 @@ class Component extends DCLogic {
           member: r.member,
           kindLabel: isErase ? 'ERASURE' : 'EXPORT',
           kindBg: isErase ? '#FBE6E1' : '#E8EDF3', kindFg: isErase ? '#B23420' : '#4E6E8E',
-          body: r.body || (isErase ? 'asked for full deletion (GDPR-style). 28 days to act.' : 'asked for a copy of everything held on them. 28 days to act.'),
+          body: r.body || (isErase ? ('asked for full deletion (GDPR-style). ' + PRIV_DEADLINE + ' to act.') : ('asked for a copy of everything held on them. ' + PRIV_DEADLINE + ' to act.')),
           bodyFg: pending ? '#5D5348' : '#A79C8D',
           pending, resolved: !pending, declining,
           declineBr: declining ? '#93887A' : '#E7E0D5',
           chip: r.state === 'granted' ? 'GRANTED' : 'DECLINED', chipBg: '#EFEDE8', chipFg: '#8C877F',
           resolvedLine: r.state === 'granted'
-            ? (isErase ? 'Erasure scheduled — 30-day hold, then her record is gone. Omar Haddad, just now.' : 'Export built — a single file, sent to the number on file. Omar Haddad, just now.')
+            ? (isErase ? ('Erasure scheduled — ' + PRIV_HOLD_DAYS + '-day hold, then her record is gone. Omar Haddad, just now.') : 'Export built — a single file, sent to the number on file. Omar Haddad, just now.')
             : ((isErase ? 'She keeps her card. ' : 'No export. ') + 'Sent to her verbatim: “' + String(r.reason || '').trim() + '” — Omar Haddad, just now.'),
           grant: () => {
             if (!pending) return;
             this.ask(isErase ? ('Erase ' + r.member + '?') : ('Export everything on ' + r.member + '?'),
-              isErase ? 'Her pass voids, her history anonymizes, her number is forgotten. 30-day legal hold, then gone. This cannot be undone.'
+              isErase ? ('Her pass voids, her history anonymizes, her number is forgotten. ' + PRIV_HOLD_DAYS + '-day legal hold, then gone. This cannot be undone.')
                 : 'Everything held on ' + r.member + ' — passes, balances, every scan and every correction with the reason attached — goes into one file and to the number on file. Nothing is redacted, including what we did to her record and who did it.',
               isErase ? 'Grant — erase her' : 'Grant — build the export', '#E2563A', () => {
                 if (r.seed) this.setState({ supPrivacy: 'granted', privRowOpen: null, privRowReason: '' });
                 else this.setState({ privReqs: (st.privReqs || []).map(x => x.id === r.id ? { ...x, state: 'granted' } : x), privRowOpen: null, privRowReason: '' });
                 this.say(isErase ? ('Erasure scheduled — ' + r.member.split(' ')[0] + ' gets a confirmation SMS') : ('Export built — ' + r.member.split(' ')[0] + ' gets the file and a confirmation SMS'));
-                this.slog('support', 'granted ' + r.member + '’s ' + (isErase ? 'erasure' : 'export') + ' request — ' + (isErase ? 'pass voided, 30-day legal hold, then gone' : 'one file, nothing redacted, sent to the number on file'));
+                this.slog('support', 'granted ' + r.member + '’s ' + (isErase ? 'erasure' : 'export') + ' request — ' + (isErase ? ('pass voided, ' + PRIV_HOLD_DAYS + '-day legal hold, then gone') : 'one file, nothing redacted, sent to the number on file'));
               });
           },
           declineOpen: () => { if (!pending) return; this.setState({ privRowOpen: declining ? null : r.id, privRowReason: '' }); },
@@ -4115,8 +4730,8 @@ class Component extends DCLogic {
       privNewKinds: [['erasure', 'Erase everything'], ['export', 'Send them a copy']].map(([k, label]) => ({ label, pick: () => this.setState({ privNewKind: k }), br: st.privNewKind === k ? '#E88024' : '#E7E0D5', bg: st.privNewKind === k ? '#FDF4EC' : '#FFFFFF', fg: st.privNewKind === k ? '#C96A14' : '#5D5348' })),
       privNewBg: privNewReady ? '#E88024' : '#EFEDE8', privNewFg: privNewReady ? '#FFFFFF' : '#93887A',
       privNewCls: privNewReady ? 'wc-cta' : 'wc-off', privNewCursor: privNewReady ? 'pointer' : 'not-allowed',
-      privNewLabel: privNewReady ? ('Log it — the 30-day clock starts now') : 'Whose request is it?',
-      privNewNote: 'Logging it starts the clock: 30 days to grant or decline, and the request cannot be quietly dropped — it sits in this queue until somebody answers it in writing.',
+      privNewLabel: privNewReady ? ('Log it — the ' + PRIV_DAYS + '-day clock starts now') : 'Whose request is it?',
+      privNewNote: 'Logging it starts the clock: ' + PRIV_DEADLINE + ' to grant or decline, and the request cannot be quietly dropped — it sits in this queue until somebody answers it in writing.',
       privNewApply: () => {
         if (!privNewReady) return;
         const nm = (st.privNewName || '').trim(), kind = st.privNewKind;
@@ -4124,8 +4739,8 @@ class Component extends DCLogic {
         if (privRaw.some(r => r.id === id && r.state === 'pending')) { this.say(nm + ' already has an open ' + kind + ' request'); return; }
         this.setState({ privReqs: [...(st.privReqs || []), { id, member: nm, kind, state: 'pending', reason: '', when: 'Just now' }], privNewOpen: false, privNewName: '' });
         this.saveConsole();
-        this.say(nm + ' logged — 30 days to answer, and it stays in the queue until somebody does');
-        this.slog('support', 'logged a ' + (kind === 'erasure' ? 'full-erasure' : 'data-export') + ' request from ' + nm + ' — 30-day clock started');
+        this.say(nm + ' logged — ' + PRIV_DEADLINE + ' to answer, and it stays in the queue until somebody does');
+        this.slog('support', 'logged a ' + (kind === 'erasure' ? 'full-erasure' : 'data-export') + ' request from ' + nm + ' — ' + PRIV_DAYS + '-day clock started');
       },
       // activity log
       logChips: logKinds.map(([k, label, dot]) => { const n = k === 'all' ? fullLog.length : fullLog.filter(l => l.kind === k).length; const on = st.logFilter === k; return { label: label + ' · ' + n, dot: on ? '#FFFFFF' : dot, pick: () => this.setState({ logFilter: k }), br: on ? '#E88024' : '#E7E0D5', bg: on ? '#E88024' : '#FFFFFF', fg: on ? '#FFFFFF' : '#5D5348' }; }),
@@ -4212,13 +4827,13 @@ class Component extends DCLogic {
       noticeCountLine: noticeLog.length ? (noticeLog.length + (noticeLog.length === 1 ? ' receipt' : ' receipts') + ' · kept on this machine') : 'none yet',
       // ── TEAM · the role matrix as a grid · data straight from WASLA_DB.console.matrix ──
       matrixHeads: ['Admin', 'Sales', 'Support'].map((r, i) => { const rt = roleTone(r); return { label: r, bg: rt[0], fg: rt[1], anim: AN('fadeUp', '.4s', (0.04 * i) + 's') }; }),
-      matrixNote: 'Two rows were wrong and are now right: Support has no accounts register at all — a member’s card names the account and stops there — and Sales’ “request only” plan power finally has a control behind it, on the account screen. The last five rows are the powers this console gained in this pass; an undocumented power is a lie of omission.',
+      matrixNote: 'Two rows were wrong and are now right: Support has no accounts register at all — a member’s card names the account and stops there — and Sales’ “request only” plan power finally has a control behind it, on the account screen. “Open a client’s dashboard, read-only” is here because the support desk used to have that door while this grid said it did not; the door was closed rather than the row rewritten, because a desk that answers “I lost my card” never needs a merchant’s revenue. The added rows are the powers this console holds; an undocumented power is a lie of omission.',
       matrixRows: matrixAll.map(([label, a, s2, p], i) => ({ label,
         anim: AN('fadeUp', '.4s', (0.12 + 0.04 * i) + 's'),
         cells: [['Admin', a], ['Sales', s2], ['Support', p]].map(([role, v]) => ({
           isYes: v === true, isNo: v === false, isCond: typeof v === 'string',
           text: typeof v === 'string' ? v : '',
-          tip: role + ' · ' + (v === true ? 'yes' : v === false ? 'no' : String(v) === 'named only' ? 'the member panel names the account and stops there — Support has no accounts register' : String(v) === 'request only' ? 'files it into Client asks; an admin grants or declines it' : String(v) === 'their own leads' ? 'a rep edits and removes the leads in their own book' : String(v) === 'raise only' ? 'can file an ask, cannot answer one' : String(v)) })) })),
+          tip: role + ' · ' + (v === true ? 'yes' : v === false ? 'no' : String(v) === 'named only' ? 'the member panel names the account and stops there — Support has no accounts register, and no read-only trip into the client’s dashboard either' : String(v) === 'request only' ? 'files it into Client asks; an admin grants or declines it' : String(v) === 'their own leads' ? 'a rep edits and removes the leads in their own book' : String(v) === 'raise only' ? 'can file an ask, cannot answer one' : String(v) === 'their book only' ? 'the accounts they answer for, and no others' : String(v) === 'cards that carry one' ? 'a standing in JOD is money and can be corrected; stamps and tiers are positions and cannot' : String(v)) })) })),
       // ── SETTINGS · the catalogue, as tiles. Read-only on purpose — a card type is not a
       //    console object, it is the product. ──
       catTiles: TY.map((ty, i) => ({ name: ty.name, ar: ty.ar, one: ty.one || '', glyph: TYPE_GLYPH[ty.id] || ty.hero || '•', anim: AN('fadeUp', '.42s', (0.035 * i) + 's') })),
@@ -4257,8 +4872,8 @@ class Component extends DCLogic {
         push((st.sessionLog || []).length, 'log line');
         return bits.length ? 'Held on this machine right now: ' + bits.join(' · ') + '.' : 'Nothing held yet — this console is exactly as it ships.';
       })(),
-      resetFoot: 'One card you approved also lives in the client dashboard. That hand-off survives a reset on purpose — it is the seam the whole demo is about.',
-      resetConsoleGo: () => this.ask('Reset the demo data?', 'Everything you changed in this console demo goes back to the start — approvals you decided, plan changes and pauses, pipeline moves, payments you marked, team edits, the privacy decision and the session log. Nothing else on this machine is touched.', 'Reset', '#E2563A', () => { this.resetConsole(); this.say('Demo data cleared — back to a fresh start'); }),
+      resetFoot: 'A reset clears the three things this console WROTE: this session, the card verdict it handed to the client dashboard, and any verdict it published on a staged edit. It used to keep the hand-off and clear the session, which left the two screens openly contradicting each other — this console with Sukkar Bakery back in the queue, the client dashboard still showing it live in wallets. Forgetting a decision means forgetting the half of it you published, too. What is never touched is the client’s own saved work: their staged edits and change requests are their record, not ours to delete.',
+      resetConsoleGo: () => this.ask('Reset the demo data?', 'Everything you changed in this console demo goes back to the start — approvals you decided, balance corrections, plan changes and pauses, pipeline moves, payments you marked, team edits, the privacy decision and the session log. The two verdicts this console publishes outward go with them: the card hand-off the client dashboard reads, and any staged-edit verdict you gave. That is deliberate — forgetting a decision has to include forgetting what you told the client about it, or the two screens end up arguing. The client’s own saved work is not touched, and nothing else on this machine is either.', 'Reset', '#E2563A', () => { this.resetConsole(); this.say('Demo data cleared — back to a fresh start, on both sides of the hand-off'); }),
       // ══ ACTIVATIONS · the invite register ═════════════════════════════════════════════════════
       actLede: invLiveN
         ? (invLiveN + ' invite' + (invLiveN === 1 ? '' : 's') + ' in flight — sent, and not yet an account. This is the gap the pipeline’s Invited column has always pointed at, and it lives here.')
@@ -4382,10 +4997,14 @@ class Component extends DCLogic {
       authInBg: authCodeOk ? '#2FAE66' : '#EFEDE8', authInFg: authCodeOk ? '#FFFFFF' : '#93887A',
       authInCls: authCodeOk ? 'wc-cta' : 'wc-off', authInCursor: authCodeOk ? 'pointer' : 'not-allowed',
       authInLabel: authCodeOk ? 'Sign in' : 'Six digits, then in',
-      authIn: () => { if (!authCodeOk) return; this.setState({ screen: 'home', authStage: 'creds', authCode: '', authPw: '' }); this.say('Signed in as ' + (st.authEmail || 'omar@wasla.app').trim() + ' — the session is on the My security list now'); this.slog('access', 'signed in as ' + ((st.authEmail || 'omar@wasla.app').trim()) + ' — password, then a second factor'); },
+      // ── signing in is what puts a session on the list · "Sign out everywhere" used to empty
+      //    that list and leave it empty forever, across reloads, while the console carried on
+      //    working — a security screen claiming nothing can open this console, on the very
+      //    device that had it open. Coming back through the door re-seeds this device. ──
+      authIn: () => { if (!authCodeOk) return; this.setState({ screen: 'home', authStage: 'creds', authCode: '', authPw: '', sessRevoked: (st.sessRevoked || []).filter(id => id !== 'sess-here') }); this.saveConsole(); this.say('Signed in as ' + (st.authEmail || 'omar@wasla.app').trim() + ' — the session is on the My security list now'); this.slog('access', 'signed in as ' + ((st.authEmail || 'omar@wasla.app').trim()) + ' — password, then a second factor'); },
       authBack: () => this.setState({ authStage: 'creds', authCode: '' }),
       authShortcuts: [['admin', 'Omar Haddad · Admin'], ['sales', 'Omar Haddad · Sales scope'], ['support', 'Huda Salem · Support']].map(([r, label], i) => ({ label, anim: AN('fadeUp', '.4s', (0.05 * i) + 's'),
-        go: () => { this.setState({ role: r, screen: 'home', accIdx: null, teamSel: null, authStage: 'creds', authCode: '' }); this.say('Straight in as ' + label + ' — a demo shortcut, and it says so'); } })),
+        go: () => { this.setState({ role: r, screen: 'home', accIdx: null, teamSel: null, authStage: 'creds', authCode: '', sessRevoked: (st.sessRevoked || []).filter(id => id !== 'sess-here') }); this.saveConsole(); this.say('Straight in as ' + label + ' — a demo shortcut, and it says so'); } })),
       authShortcutNote: 'This is a demo, so the door is not locked: pick a scope and you are in. In production these three buttons do not exist and the screen above is the only way through.',
       // accept an invite
       acceptWho: 'Rana Odeh', acceptRole: 'Support',
@@ -4448,6 +5067,8 @@ class Component extends DCLogic {
         chip: s.current ? 'THIS DEVICE' : '', showChip: s.current,
         canRevoke: !s.current, anim: AN('fadeUp', '.42s', (0.05 * i) + 's'),
         revoke: () => { if (s.current) return; this.setState({ sessRevoked: [...(st.sessRevoked || []), s.id] }); this.say(s.dev + ' signed out — it needs the password and a code to come back'); this.slog('access', 'signed out their ' + s.dev + ' session (' + s.where + ') from My security'); } })),
+      secSessionsEmpty: sessLive.length === 0,
+      secSessionsEmptyLine: 'No session can open this console as you right now — you signed every one of them out, including this device, and that decision survived the reload. Sign in again from the “Sign in” tab above and this device comes back onto the list; the other two do not, because they were never this device.',
       secSessionFoot: 'Signing a device out ends it now; it does not undo anything that device already did. That is the whole point of an append-only log — the actions keep the name that took them.',
       secSignOutAll: () => this.ask('Sign out everywhere?', 'Every session ends, including this one — you would be back at the sign-in screen with a password and a six-digit code to get in again. Nothing you have done in this console is touched: the log keeps it all, with your name on it.', 'Sign out everywhere', '#E2563A', () => { this.setState({ sessRevoked: SESSIONS.map(s => s.id), authView: 'signin', authStage: 'creds', authCode: '', authPw: '' }); this.say('Signed out everywhere — this is the door you would come back through'); this.slog('access', 'signed out of every session, on every device'); }),
       secSignOutLabel: 'Sign out everywhere',

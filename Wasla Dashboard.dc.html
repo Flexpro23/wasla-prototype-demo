@@ -167,13 +167,13 @@
       </nav>
       <div style="margin-top:auto;">
         <a href="Wasla Customer.dc.html" style="display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:12px;font-size:12.5px;font-weight:700;color:#5D5348;border:1.5px dashed #E7E0D5;margin-bottom:8px;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14">
-          <span style="width:7px;height:7px;border-radius:50%;background:#1E5C43;flex-shrink:0;"></span>Customer demo →
+          <span style="width:7px;height:7px;border-radius:50%;background:#1E5C43;flex-shrink:0;"></span>{{ t.navCustomerDemo }}
         </a>
         <a href="Wasla Scanner.dc.html" style="display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:12px;font-size:12.5px;font-weight:700;color:#5D5348;border:1.5px dashed #E7E0D5;margin-bottom:8px;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14">
-          <span style="width:7px;height:7px;border-radius:50%;background:#26262B;flex-shrink:0;"></span>Staff scanner →
+          <span style="width:7px;height:7px;border-radius:50%;background:#26262B;flex-shrink:0;"></span>{{ t.navStaffScanner }}
         </a>
         <a href="Wasla Console.dc.html" style="display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:12px;font-size:12.5px;font-weight:700;color:#5D5348;border:1.5px dashed #E7E0D5;margin-bottom:8px;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14">
-          <span style="width:7px;height:7px;border-radius:50%;background:#B14A32;flex-shrink:0;"></span>Wasla console →
+          <span style="width:7px;height:7px;border-radius:50%;background:#B14A32;flex-shrink:0;"></span>{{ t.navWaslaConsole }}
         </a>
         <a href="Wasla Demo.dc.html" style="display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:12px;font-size:12.5px;font-weight:700;color:#5D5348;border:1.5px dashed #E7E0D5;margin-bottom:14px;transition:all .2s;" style-hover="border-color:#E88024;color:#C96A14">
           <span style="width:7px;height:7px;border-radius:50%;background:#E88024;flex-shrink:0;"></span>{{ t.demoHub }} →
@@ -647,11 +647,11 @@
                 <div style="font-size:13px;color:#93887A;margin-top:5px;margin-bottom:22px;">{{ cfgSub }}</div>
                 <div style="display:flex;flex-direction:column;gap:16px;">
                   <sc-if value="{{ wizBrand }}" hint-placeholder-val="{{ true }}">
-                  <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Card name</div>
+                  <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.edCardName }}</div>
                     <input value="{{ wNameRaw }}" onChange="{{ setWName }}" placeholder="e.g. Daraj Coffee" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
-                  <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Arabic name <span style="color:#93887A;font-weight:500;">الاسم بالعربي</span></div>
+                  <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.edArNameLabel }}</div>
                     <input value="{{ wArRaw }}" onChange="{{ setWAr }}" placeholder="قهوة الدرج" dir="rtl" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;font-family:'IBM Plex Sans Arabic',sans-serif;"></div>
-                  <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Brand color</div>
+                  <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.wRowColor }}</div>
                     <div style="display:flex;gap:9px;flex-wrap:wrap;">
                       <sc-for list="{{ swatches }}" as="sw" hint-placeholder-count="8">
                         <div onClick="{{ sw.pick }}" style="cursor:pointer;width:34px;height:34px;border-radius:50%;background:{{ sw.hex }};border:3px solid {{ sw.ring }};transition:transform .15s;" style-hover="transform:scale(1.15)"></div>
@@ -660,19 +660,19 @@
                         <input type="color" value="{{ wColor }}" onChange="{{ setWColorPick }}" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;">
                       </label>
                     </div>
-                    <div style="font-size:11px;color:#93887A;margin-top:8px;">Current <span style="font-family:ui-monospace,monospace;font-weight:700;color:#5D5348;">{{ wColorHex }}</span> — tap the wheel for any custom color.</div></div>
-                  <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Banner — the art across the card</div>
+                    <div style="font-size:11px;color:#93887A;margin-top:8px;">{{ wColorLine }}</div></div>
+                  <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.wBannerLabel }}</div>
                     <sc-if value="{{ wBannerOff }}" hint-placeholder-val="{{ true }}">
                       <label style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;border:1.5px dashed #D8D0C2;border-radius:12px;padding:18px 12px;color:#93887A;font-size:12.5px;font-weight:700;transition:border-color .2s,color .2s;" style-hover="border-color:#E88024;color:#C96A14">
-                        ↑ Drop your banner — PNG or JPG
+                        {{ t.wBannerDrop }}
                         <input type="file" accept="image/*" onChange="{{ pickBanner }}" style="display:none;">
                       </label>
                     </sc-if>
                     <sc-if value="{{ wBannerOn }}" hint-placeholder-val="{{ false }}">
                       <div style="display:flex;align-items:center;gap:12px;background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:10px 12px;">
                         <img src="{{ wBanner }}" alt="" style="width:92px;aspect-ratio:1032/336;border-radius:7px;object-fit:cover;display:block;flex-shrink:0;">
-                        <span style="font-size:12px;font-weight:700;color:#1E7D47;flex:1;">On both passes — live</span>
-                        <span onClick="{{ removeBanner }}" style="cursor:pointer;font-size:11px;font-weight:800;color:#E2563A;" style-hover="color:#B23420">REMOVE</span>
+                        <span style="font-size:12px;font-weight:700;color:#1E7D47;flex:1;">{{ t.wBannerLive }}</span>
+                        <span onClick="{{ removeBanner }}" style="cursor:pointer;font-size:11px;font-weight:800;color:#E2563A;" style-hover="color:#B23420">{{ t.wRemoveCaps }}</span>
                       </div>
                     </sc-if>
                     <div style="font-size:10.5px;color:#93887A;margin-top:8px;line-height:1.5;">{{ bannerHint }}</div></div>
@@ -736,7 +736,7 @@
                   </sc-if>
                   <sc-if value="{{ wizRules }}" hint-placeholder-val="{{ false }}">
                   <sc-if value="{{ isStampsType }}" hint-placeholder-val="{{ false }}">
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Stamps to a reward</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlGoal }}</div>
                       <div style="display:flex;align-items:center;gap:14px;">
                         <div onClick="{{ goalDown }}" style="cursor:pointer;width:34px;height:34px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
                         <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;width:34px;text-align:center;font-variant-numeric:tabular-nums;">{{ wGoal }}</div>
@@ -758,108 +758,108 @@
                           <span style="font-size:10px;font-weight:600;color:#93887A;text-align:center;line-height:1.25;">{{ t.stStyleUpload }}</span>
                         </div>
                       </div></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">The reward at {{ wGoal }} stamps</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ wRewardAtLine }}</div>
                       <input value="{{ wRewardRaw }}" onChange="{{ setWReward }}" placeholder="{{ rewardPlaceholder }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Earning guard</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlEarnGuard }}</div>
                       <div style="display:flex;gap:8px;flex-wrap:wrap;">
                         <sc-for list="{{ stampCapChips }}" as="ch0" hint-placeholder-count="3"><div onClick="{{ ch0.pick }}" style="cursor:pointer;border:1.5px solid {{ ch0.br }};background:{{ ch0.bg }};color:{{ ch0.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ch0.label }}</div></sc-for>
                       </div>
-                      <div style="font-size:11px;color:#93887A;margin-top:8px;">Stops over-stamping — the scanner refuses politely past the limit.</div></div>
+                      <div style="font-size:11px;color:#93887A;margin-top:8px;">{{ t.rlEarnGuardNote }}</div></div>
                   </sc-if>
                   <sc-if value="{{ isCashbackType }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;gap:26px;flex-wrap:wrap;">
-                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Cashback rate</div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCbRate }}</div>
                         <div style="display:flex;align-items:center;gap:12px;">
                           <div onClick="{{ cbRateDown }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
                           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:52px;text-align:center;font-variant-numeric:tabular-nums;">{{ cbRate }}%</div>
                           <div onClick="{{ cbRateUp }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
                         </div></div>
-                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Redeem from</div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCbMin }}</div>
                         <div style="display:flex;align-items:center;gap:12px;">
                           <div onClick="{{ cbMinDown }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
                           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:74px;text-align:center;font-variant-numeric:tabular-nums;">JOD {{ cbMin }}</div>
                           <div onClick="{{ cbMinUp }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
                         </div></div>
                     </div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Balance expires</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCbExp }}</div>
                       <div style="display:flex;gap:8px;flex-wrap:wrap;">
                         <sc-for list="{{ cbExpChips }}" as="ch6" hint-placeholder-count="3"><div onClick="{{ ch6.pick }}" style="cursor:pointer;border:1.5px solid {{ ch6.br }};background:{{ ch6.bg }};color:{{ ch6.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ch6.label }}</div></sc-for>
                       </div></div>
-                    <div style="font-size:11px;color:#93887A;line-height:1.5;">Money-like: customers spend the balance in full or partially at the till.</div>
+                    <div style="font-size:11px;color:#93887A;line-height:1.5;">{{ t.rlCbNote }}</div>
                   </sc-if>
                   <sc-if value="{{ isPointsType }}" hint-placeholder-val="{{ false }}">
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Points per JOD spent</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlPtPer }}</div>
                       <div style="display:flex;align-items:center;gap:12px;">
                         <div onClick="{{ ptPerDown }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
                         <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:44px;text-align:center;font-variant-numeric:tabular-nums;">{{ ptPer }}</div>
                         <div onClick="{{ ptPerUp }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
                       </div></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">The reward ladder — cheapest first</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlPtLadder }}</div>
                       <div style="display:flex;flex-direction:column;gap:8px;">
                         <sc-for list="{{ ladderRows }}" as="lr" hint-placeholder-count="2">
                           <div>
                             <div style="display:flex;align-items:center;gap:8px;">
                               <input value="{{ lr.name }}" onChange="{{ lr.setName }}" style="flex:1;min-width:0;border:1px solid #D8D0C2;border-radius:10px;padding:10px 12px;font-size:13px;background:#FFFFFF;">
                               <input value="{{ lr.cost }}" onChange="{{ lr.setCost }}" style="width:70px;border:1px solid #D8D0C2;border-radius:10px;padding:10px 6px;font-size:13px;background:#FFFFFF;text-align:center;font-variant-numeric:tabular-nums;">
-                              <span style="font-size:10.5px;color:#93887A;">pts</span>
+                              <span style="font-size:10.5px;color:#93887A;">{{ t.unitPts }}</span>
                               <span onClick="{{ lr.remove }}" style="cursor:pointer;color:{{ lr.xColor }};font-size:14px;padding:2px 4px;" style-hover="color:#E2563A">✕</span>
                             </div>
                             <div style="font-size:10.5px;color:#93887A;margin:4px 0 0 2px;">{{ lr.jodHint }}</div>
                           </div>
                         </sc-for>
                       </div>
-                      <div onClick="{{ addLadder }}" style="cursor:pointer;border:1.5px dashed #D8D0C2;border-radius:10px;padding:9px;text-align:center;font-size:12px;font-weight:700;color:#93887A;margin-top:8px;" style-hover="border-color:#E88024;color:#C96A14">+ Add a reward</div>
-                      <div style="font-size:11px;color:#93887A;margin-top:8px;">Nothing is ever preselected at redeem — staff show the ladder, the customer picks.</div></div>
+                      <div onClick="{{ addLadder }}" style="cursor:pointer;border:1.5px dashed #D8D0C2;border-radius:10px;padding:9px;text-align:center;font-size:12px;font-weight:700;color:#93887A;margin-top:8px;" style-hover="border-color:#E88024;color:#C96A14">{{ t.rlPtAdd }}</div>
+                      <div style="font-size:11px;color:#93887A;margin-top:8px;">{{ t.rlPtNote }}</div></div>
                   </sc-if>
                   <sc-if value="{{ isDiscountType }}" hint-placeholder-val="{{ false }}">
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Standing discount</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlDcPct }}</div>
                       <div style="display:flex;align-items:center;gap:12px;">
                         <div onClick="{{ dcPctDown }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
                         <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:64px;text-align:center;font-variant-numeric:tabular-nums;">−{{ dcPct }}%</div>
                         <div onClick="{{ dcPctUp }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
                       </div></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Fine print <span style="color:#93887A;font-weight:500;">(optional — rides the pass)</span></div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.rlDcFine }} <span style="color:#93887A;font-weight:500;">{{ t.rlDcFineOpt }}</span></div>
                       <input value="{{ dcFine }}" onChange="{{ setDcFine }}" placeholder="Except sale items" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
-                    <div style="font-size:11px;color:#93887A;line-height:1.5;">No transaction at the till — staff scan and see a verdict: valid or expired.</div>
+                    <div style="font-size:11px;color:#93887A;line-height:1.5;">{{ t.rlDcNote }}</div>
                   </sc-if>
                   <sc-if value="{{ isCouponType }}" hint-placeholder-val="{{ false }}">
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">The offer</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.rlCpOffer }}</div>
                       <input value="{{ cpOffer }}" onChange="{{ setCpOffer }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Expires after</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCpExp }}</div>
                       <div style="display:flex;gap:8px;flex-wrap:wrap;">
                         <sc-for list="{{ cpChips }}" as="ch1" hint-placeholder-count="3"><div onClick="{{ ch1.pick }}" style="cursor:pointer;border:1.5px solid {{ ch1.br }};background:{{ ch1.bg }};color:{{ ch1.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ch1.label }}</div></sc-for>
                       </div></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">How many exist</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlCpQty }}</div>
                       <div style="display:flex;gap:8px;flex-wrap:wrap;">
                         <sc-for list="{{ cpQtyChips }}" as="ch4" hint-placeholder-count="4"><div onClick="{{ ch4.pick }}" style="cursor:pointer;border:1.5px solid {{ ch4.br }};background:{{ ch4.bg }};color:{{ ch4.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ch4.label }}</div></sc-for>
                       </div></div>
-                    <div style="font-size:11px;color:#93887A;line-height:1.5;">One per customer, one-shot and irreversible — the scanner always asks twice.</div>
+                    <div style="font-size:11px;color:#93887A;line-height:1.5;">{{ t.rlCpNote }}</div>
                   </sc-if>
                   <sc-if value="{{ isVipType }}" hint-placeholder-val="{{ false }}">
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">The ladder — name · unlocks at · its perk</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlVipLadder }}</div>
                       <div style="display:flex;flex-direction:column;gap:10px;">
                         <sc-for list="{{ tierRows }}" as="tr1" hint-placeholder-count="3">
                           <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
                             <div style="display:flex;align-items:center;gap:9px;">
                               <span style="width:20px;height:20px;border-radius:50%;background:{{ tr1.dot }};flex-shrink:0;border:1px solid rgba(0,0,0,.08);"></span>
                               <input value="{{ tr1.val }}" onChange="{{ tr1.set }}" style="flex:1;min-width:0;border:1px solid #D8D0C2;border-radius:9px;padding:8px 11px;font-size:13px;background:#FFFFFF;font-weight:700;">
-                              <sc-if value="{{ tr1.isFirst }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;color:#93887A;white-space:nowrap;">everyone starts here</span></sc-if>
-                              <sc-if value="{{ tr1.notFirst }}" hint-placeholder-val="{{ true }}"><span style="font-size:10.5px;color:#93887A;">at</span><input value="{{ tr1.at }}" onChange="{{ tr1.setAt }}" style="width:46px;border:1px solid #D8D0C2;border-radius:9px;padding:8px 4px;font-size:13px;background:#FFFFFF;text-align:center;font-variant-numeric:tabular-nums;"><span style="font-size:10.5px;color:#93887A;">visits</span></sc-if>
+                              <sc-if value="{{ tr1.isFirst }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;color:#93887A;white-space:nowrap;">{{ t.rlVipFirst }}</span></sc-if>
+                              <sc-if value="{{ tr1.notFirst }}" hint-placeholder-val="{{ true }}"><span style="font-size:10.5px;color:#93887A;">{{ t.rlVipAt }}</span><input value="{{ tr1.at }}" onChange="{{ tr1.setAt }}" style="width:46px;border:1px solid #D8D0C2;border-radius:9px;padding:8px 4px;font-size:13px;background:#FFFFFF;text-align:center;font-variant-numeric:tabular-nums;"><span style="font-size:10.5px;color:#93887A;">{{ t.wVisitsShort }}</span></sc-if>
                             </div>
                             <input value="{{ tr1.perk }}" onChange="{{ tr1.setPerk }}" placeholder="The perk at this tier" style="border:1px solid #D8D0C2;border-radius:9px;padding:8px 11px;font-size:12.5px;background:#FFFFFF;">
                           </div>
                         </sc-for>
                       </div>
-                      <div style="font-size:11px;color:#93887A;margin-top:8px;">Tier-ups celebrate on the pass — there is no redeem, the tier is the reward.</div></div>
+                      <div style="font-size:11px;color:#93887A;margin-top:8px;">{{ t.rlVipNote }}</div></div>
                   </sc-if>
                   <sc-if value="{{ isChallengeType }}" hint-placeholder-val="{{ false }}">
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">The mission</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlChMission }}</div>
                       <div style="display:flex;align-items:center;gap:12px;">
                         <div onClick="{{ chVisitsDown }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
-                        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:96px;text-align:center;font-variant-numeric:tabular-nums;">{{ chVisits }} visits</div>
+                        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;width:96px;text-align:center;font-variant-numeric:tabular-nums;">{{ chVisitsLine }}</div>
                         <div onClick="{{ chVisitsUp }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
                       </div></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Inside the window</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlChWindow }}</div>
                       <div style="display:flex;gap:8px;flex-wrap:wrap;">
                         <sc-for list="{{ chChips }}" as="ch2" hint-placeholder-count="3"><div onClick="{{ ch2.pick }}" style="cursor:pointer;border:1.5px solid {{ ch2.br }};background:{{ ch2.bg }};color:{{ ch2.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ch2.label }}</div></sc-for>
                       </div>
@@ -867,35 +867,35 @@
                         <span style="width:7px;height:7px;border-radius:50%;background:#E88024;flex-shrink:0;"></span>
                         <span style="font-size:11.5px;color:#5D5348;">{{ chEndLine }}</span>
                       </div></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">A visit counts from</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlChMin }}</div>
                       <div style="display:flex;align-items:center;gap:12px;">
                         <div onClick="{{ chMinDown }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
                         <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;min-width:120px;text-align:center;">{{ chMinLabel }}</div>
                         <div onClick="{{ chMinUp }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
                       </div></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">The prize</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.rlChPrize }}</div>
                       <input value="{{ chPrize }}" onChange="{{ setChPrize }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
                   </sc-if>
                   <sc-if value="{{ isMembershipType }}" hint-placeholder-val="{{ false }}">
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Valid for</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlMbValidity }}</div>
                       <div style="display:flex;gap:8px;flex-wrap:wrap;">
                         <sc-for list="{{ mbChips }}" as="ch3" hint-placeholder-count="3"><div onClick="{{ ch3.pick }}" style="cursor:pointer;border:1.5px solid {{ ch3.br }};background:{{ ch3.bg }};color:{{ ch3.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ch3.label }}</div></sc-for>
                       </div></div>
                     <div style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-end;">
-                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Membership fee</div>
+                      <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlMbFee }}</div>
                         <div style="display:flex;align-items:center;gap:12px;">
                           <div onClick="{{ mbFeeDown }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
                           <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;min-width:104px;text-align:center;">{{ mbFeeLabel }}</div>
                           <div onClick="{{ mbFeeUp }}" style="cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
                         </div></div>
                     </div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Renewal reminder</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlMbRem }}</div>
                       <div style="display:flex;gap:8px;flex-wrap:wrap;">
                         <sc-for list="{{ mbRemChips }}" as="ch5" hint-placeholder-count="3"><div onClick="{{ ch5.pick }}" style="cursor:pointer;border:1.5px solid {{ ch5.br }};background:{{ ch5.bg }};color:{{ ch5.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ch5.label }}</div></sc-for>
                       </div></div>
-                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">What membership includes</div>
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.rlMbBenefit }}</div>
                       <input value="{{ mbBenefit }}" onChange="{{ setMbBenefit }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
-                    <div style="font-size:11px;color:#93887A;line-height:1.5;">Staff scan for a verdict: active, expiring soon, or lapsed.</div>
+                    <div style="font-size:11px;color:#93887A;line-height:1.5;">{{ t.rlMbNote }}</div>
                   </sc-if>
                   <div style="background:linear-gradient(150deg,#FDF4EC,#FBEEDF);border:1.5px solid #F0D6B4;border-radius:16px;padding:16px 18px;">
                     <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;flex-wrap:wrap;">
@@ -1126,9 +1126,9 @@
               <sc-if value="{{ isSubmitted }}" hint-placeholder-val="{{ false }}">
                 <div style="text-align:center;padding:30px 0;">
                   <div style="width:74px;height:74px;border-radius:50%;background:#F0E7DB;color:#7A5A2E;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:30px;animation:{{ popAnim }};">⏳</div>
-                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:28px;">{{ wName }} is in review.</div>
-                  <div style="font-size:14px;color:#5D5348;margin-top:8px;">Omar from Wasla has it. You'll get a WhatsApp the moment it's live.</div>
-                  <div onClick="{{ wizApprove }}" style="cursor:pointer;display:inline-block;border:1.5px dashed #C96A14;color:#C96A14;font-weight:700;font-size:13px;border-radius:999px;padding:11px 22px;margin-top:26px;" style-hover="background:rgba(232,128,36,.08)">▶ Demo: simulate Wasla approval</div>
+                  <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:28px;">{{ wizSubmittedTitle }}</div>
+                  <div style="font-size:14px;color:#5D5348;margin-top:8px;">{{ t.wSubmittedSub }}</div>
+                  <div onClick="{{ wizApprove }}" style="cursor:pointer;display:inline-block;border:1.5px dashed #C96A14;color:#C96A14;font-weight:700;font-size:13px;border-radius:999px;padding:11px 22px;margin-top:26px;" style-hover="background:rgba(232,128,36,.08)">{{ t.wSimulateApprove }}</div>
                 </div>
               </sc-if>
             </div>
@@ -1143,10 +1143,10 @@
             <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#FBE6E1;border:1.5px solid #E8A08D;border-radius:16px;padding:15px 20px;margin-bottom:18px;animation:{{ enterAnim }};">
               <span style="width:10px;height:10px;border-radius:50%;background:#E2563A;animation:pulse 1.8s infinite;flex-shrink:0;"></span>
               <div style="flex:1;min-width:220px;">
-                <div style="font-size:13.5px;font-weight:800;color:#B23420;">Sent back by Wasla — nothing reached wallets.</div>
-                <div style="font-size:12px;color:#7A4438;margin-top:3px;">“Reward text unclear — say exactly what a full ladder buys.” Fix it and resubmit; review usually takes under a day.</div>
+                <div style="font-size:13.5px;font-weight:800;color:#B23420;">{{ acReturnedTitle }}</div>
+                <div style="font-size:12px;color:#7A4438;margin-top:3px;">{{ acReturnedLine }}</div>
               </div>
-              <div onClick="{{ acResubmit }}" style="cursor:pointer;opacity:{{ roDim }};background:#E2563A;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 20px;transition:transform .2s;" style-hover="transform:translateY(-1px)">Fix &amp; resubmit →</div>
+              <div onClick="{{ acResubmit }}" style="cursor:pointer;opacity:{{ roDim }};background:#E2563A;color:#FFFFFF;font-weight:800;font-size:12.5px;border-radius:999px;padding:11px 20px;transition:transform .2s;" style-hover="transform:translateY(-1px)">{{ acReturnedBtn }}</div>
             </div>
           </sc-if>
           <sc-if value="{{ acIsRetired }}" hint-placeholder-val="{{ false }}">
@@ -1221,6 +1221,9 @@
                     </div>
                   </div>
                 </sc-for>
+                <sc-if value="{{ acMembersEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:26px 22px;text-align:center;font-size:12.5px;color:#93887A;line-height:1.6;">{{ t.acMembersEmpty }}</div>
+                </sc-if>
               </div>
               <div style="display:flex;flex-direction:column;gap:16px;min-width:0;">
                 <sc-if value="{{ wbActive }}" hint-placeholder-val="{{ false }}">
@@ -1493,7 +1496,7 @@
                   <div style="font-size:12px;color:#93887A;margin-bottom:14px;">{{ t.suPageSub }}</div>
                   <div style="display:flex;align-items:center;gap:10px;background:#FAF6EF;border:1px solid #EDE6DA;border-radius:10px;padding:10px 14px;margin-bottom:16px;">
                     <a href="Wasla Customer.dc.html" target="_blank" style="font-family:ui-monospace,monospace;font-size:12px;color:#5D5348;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:underline;text-decoration-color:#D8D0C2;text-underline-offset:3px;transition:color .2s;" style-hover="color:#C96A14">wasla.app/j/{{ acSlug }}</a>
-                    <span onClick="{{ copyLink }}" style="cursor:pointer;font-size:11px;font-weight:800;color:#C96A14;flex-shrink:0;" style-hover="color:#E88024">COPY</span>
+                    <span onClick="{{ copyLink }}" style="cursor:pointer;font-size:11px;font-weight:800;color:#C96A14;flex-shrink:0;" style-hover="color:#E88024">{{ t.suCopyCaps }}</span>
                   </div>
                   <sc-for list="{{ signupFields }}" as="f" hint-placeholder-count="3">
                     <div style="display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid #F5F0E8;animation:{{ f.anim }};">
@@ -1556,13 +1559,13 @@
                     <div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;opacity:.85;margin-top:2px;">{{ ac.ar }}</div>
                   </div>
                   <div style="padding:16px 16px 20px;display:flex;flex-direction:column;gap:9px;">
-                    <div style="font-size:12px;font-weight:700;text-align:center;">Join in ten seconds <span style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#93887A;">· انضم بثوانٍ</span></div>
-                    <div style="border:1px solid #E7E0D5;border-radius:9px;padding:9px 12px;font-size:11.5px;color:#93887A;">Full name · الاسم</div>
-                    <div style="border:1px solid #E7E0D5;border-radius:9px;padding:9px 12px;font-size:11.5px;color:#93887A;">Phone · الهاتف</div>
+                    <div style="font-size:12px;font-weight:700;text-align:center;">{{ t.wJoinIn10 }}</div>
+                    <div style="border:1px solid #E7E0D5;border-radius:9px;padding:9px 12px;font-size:11.5px;color:#93887A;">{{ t.wFieldName }}</div>
+                    <div style="border:1px solid #E7E0D5;border-radius:9px;padding:9px 12px;font-size:11.5px;color:#93887A;">{{ t.wFieldPhone }}</div>
                     <sc-if value="{{ hasCustomField }}" hint-placeholder-val="{{ false }}">
                       <div style="border:1px solid #E7E0D5;border-radius:9px;padding:9px 12px;font-size:11.5px;color:#93887A;">{{ customFieldLabel }}</div>
                     </sc-if>
-                    <div style="background:{{ ac.color }};color:#FFFFFF;border-radius:999px;padding:11px 0;text-align:center;font-size:12.5px;font-weight:800;transition:background .4s;">Get my card</div>
+                    <div style="background:{{ ac.color }};color:#FFFFFF;border-radius:999px;padding:11px 0;text-align:center;font-size:12.5px;font-weight:800;transition:background .4s;">{{ t.wGetMyCard }}</div>
                     <div style="display:flex;gap:7px;justify-content:center;margin-top:4px;">
                       <span style="background:#000000;color:#FFFFFF;font-size:9px;font-weight:700;border-radius:999px;padding:6px 11px;white-space:nowrap;"> Apple Wallet</span>
                       <span style="border:1px solid #D8D0C2;color:#241C16;font-size:9px;font-weight:700;border-radius:999px;padding:6px 11px;white-space:nowrap;">Google Wallet</span>
@@ -1922,7 +1925,7 @@
                               <div style="display:flex;align-items:center;gap:8px;">
                                 <input class="wl-in" value="{{ elr.name }}" onChange="{{ elr.setName }}" style="flex:1;min-width:0;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:10px 12px;font-size:13px;background:#FFFFFF;">
                                 <input class="wl-in" value="{{ elr.cost }}" onChange="{{ elr.setCost }}" style="width:70px;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:10px 6px;font-size:13px;background:#FFFFFF;text-align:center;font-variant-numeric:tabular-nums;">
-                                <span style="font-size:10.5px;color:#93887A;">pts</span>
+                                <span style="font-size:10.5px;color:#93887A;">{{ t.unitPts }}</span>
                                 <span onClick="{{ elr.remove }}" style="cursor:pointer;opacity:{{ roDim }};color:{{ elr.xColor }};font-size:14px;padding:2px 4px;" style-hover="color:#E2563A">✕</span>
                               </div>
                               <div style="font-size:10.5px;color:#93887A;margin:4px 0 0 2px;">{{ elr.jodHint }}</div>
@@ -2222,8 +2225,8 @@
 
       <sc-if value="{{ isActivity }}" hint-placeholder-val="{{ false }}">
         <div style="padding:{{ padScreen }};max-width:{{ screenMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
-          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">Everything that happened.</div>
-          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Every stamp, reward and joiner — across all your cards.</div>
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">{{ t.actTitle }}</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">{{ t.actSub }}</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;">
             <sc-for list="{{ actChips }}" as="fc" hint-placeholder-count="4">
               <div onClick="{{ fc.pick }}" style="cursor:pointer;border:1.5px solid {{ fc.br }};background:{{ fc.bg }};color:{{ fc.fg }};font-size:12.5px;font-weight:700;border-radius:999px;padding:8px 16px;transition:all .2s;">{{ fc.label }}</div>
@@ -2345,11 +2348,11 @@
 
       <sc-if value="{{ isBroadcasts }}" hint-placeholder-val="{{ false }}">
         <div style="padding:{{ padScreen }};max-width:{{ screenMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
-          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">Reach every wallet — gently.</div>
-          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Write it once, watch it land on their lock screen before you send.</div>
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">{{ t.bcTitle }}</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;">{{ t.bcSub }}</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:30px;margin-top:24px;align-items:start;max-width:{{ readMax }};">
             <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:22px;min-width:0;">
-              <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">Send from</div>
+              <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.bcSendFrom }}</div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
                 <sc-for list="{{ bcChips }}" as="bc" hint-placeholder-count="3">
                   <div onClick="{{ bc.pick }}" style="cursor:pointer;border:1.5px solid {{ bc.br }};background:{{ bc.bg }};color:{{ bc.fg }};font-size:12.5px;font-weight:700;border-radius:999px;padding:8px 16px;transition:all .2s;">{{ bc.name }}</div>
@@ -2366,7 +2369,7 @@
                   </div>
                 </sc-for>
               </div>
-              <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">Message</div>
+              <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.bcMessageLabel }}</div>
               <textarea value="{{ bcTextRaw }}" onChange="{{ setBcText }}" placeholder="Double stamps all Friday — see you on the stairs." rows="3" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;resize:none;background:#FFFFFF;"></textarea>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px;">
                 <span style="font-size:11px;color:#93887A;font-variant-numeric:tabular-nums;">{{ bcCharLabel }}</span>
@@ -2414,13 +2417,13 @@
                   <span style="font-size:11.5px;color:#B23420;line-height:1.5;min-width:0;">{{ bcBlockedReason }}</span>
                 </div>
               </sc-if>
-              <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.5;">Google Wallet caps pushes at ~3/day per pass — Wasla schedules around it automatically.</div>
+              <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.5;">{{ t.bcGoogleCap }}</div>
             </div>
             <div style="min-width:0;">
               <div style="max-width:340px;margin:0 auto;background:linear-gradient(170deg,#1F1F24,#0F0F12);border-radius:34px;padding:14px 12px 22px;box-shadow:0 24px 50px rgba(20,14,8,.4);">
                 <div style="width:96px;height:22px;background:#000;border-radius:99px;margin:0 auto 22px;"></div>
                 <div style="text-align:center;color:#F4F2EE;">
-                  <div style="font-size:13px;opacity:.7;">Tuesday, July 29</div>
+                  <div style="font-size:13px;opacity:.7;">{{ t.bcMockDate }}</div>
                   <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:52px;line-height:1;margin-top:2px;">9:41</div>
                 </div>
                 <div style="background:rgba(244,242,238,.14);backdrop-filter:blur(6px);border-radius:16px;padding:12px 14px;margin:26px 8px 8px;color:#FFF;opacity:{{ bcNotifOpacity }};transition:opacity .3s;animation:{{ bcNotifAnim }};">
@@ -2483,10 +2486,10 @@
         <div style="padding:{{ padScreen }};max-width:{{ screenMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
           <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;">
             <div>
-              <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">Every branch scans its own card.</div>
-              <div style="font-size:13.5px;color:#93887A;margin-top:6px;">Staff only see the cards you assign them — the scanner refuses the rest, politely.</div>
+              <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">{{ t.stfTitle }}</div>
+              <div style="font-size:13.5px;color:#93887A;margin-top:6px;">{{ t.stfSub }}</div>
             </div>
-            <div class="wl-press" onClick="{{ openInvite }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-weight:800;font-size:13px;border-radius:999px;padding:11px 22px;" style-hover="background:rgba(232,128,36,.08)">+ Invite staff</div>
+            <div class="wl-press" onClick="{{ openInvite }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-weight:800;font-size:13px;border-radius:999px;padding:11px 22px;" style-hover="background:rgba(232,128,36,.08)">{{ t.stfInvite }}</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px;">
             <sc-for list="{{ staffViewChips }}" as="svc" hint-placeholder-count="2">
@@ -2822,7 +2825,7 @@
                     <span style="font-size:10.5px;font-weight:800;color:#93887A;letter-spacing:.06em;flex-shrink:0;">{{ lr.dirTag }}</span>
                   </div>
                 </sc-for>
-                <div style="font-size:11.5px;color:#93887A;padding:12px 0;">Customer-facing pages are always bilingual — this only changes your dashboard.</div>
+                <div style="font-size:11.5px;color:#93887A;padding:12px 0;">{{ t.langBilingualNote }}</div>
               </div>
               <div style="background:#FAF6EF;border:1px solid #EDE6DA;border-radius:18px;padding:16px 18px 18px;min-width:0;">
                 <div style="font-size:10.5px;font-weight:800;letter-spacing:.1em;color:#93887A;text-transform:uppercase;">{{ t.langPreviewTitle }}</div>
@@ -2875,9 +2878,9 @@
       <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:14px;">
         <div style="{{ celebCard }}">
           <div style="display:inline-flex;align-items:center;gap:8px;background:#E7F6EE;color:#1E7D47;font-size:12px;font-weight:800;border-radius:999px;padding:6px 16px;"><span style="width:7px;height:7px;border-radius:50%;background:#2FAE66;animation:pulse 1.4s infinite;"></span>LIVE · فعّالة</div>
-          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;margin-top:14px;">{{ celebName }} is live.</div>
-          <div style="font-size:13.5px;color:#9B99A3;margin-top:7px;">The signup QR is ready — the next customer at the counter can join.</div>
-          <div onClick="{{ dismissCelebration }}" style="cursor:pointer;background:#E88024;color:#FFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 28px;margin-top:22px;display:inline-block;" style-hover="background:#C96A14">Back to the dashboard</div>
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;margin-top:14px;">{{ celebTitleLine }}</div>
+          <div style="font-size:13.5px;color:#9B99A3;margin-top:7px;">{{ t.celebSub }}</div>
+          <div onClick="{{ dismissCelebration }}" style="cursor:pointer;background:#E88024;color:#FFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 28px;margin-top:22px;display:inline-block;" style-hover="background:#C96A14">{{ t.celebBack }}</div>
         </div>
       </div>
     </div>
@@ -3152,6 +3155,10 @@ class Component extends DCLogic {
     /* per-card art. The bytes live in their own localStorage keys — never in
        the demo blob, which has to stay small enough to write. */
     cardArt: {},
+    /* member name → gift stamps handed out from the member panel. progCell
+       folds it into the member's own progress, so a gift stamp that was
+       "sent" is a stamp that actually landed on the pass. */
+    memberGifts: {},
     addons: { daraj: { b: true, r: true, s: false }, layl: { b: false, r: true, s: false }, zaytoun: { b: true, r: false, s: false }, sukkar: { b: false, r: false, s: false }, ghaim: { b: false, r: false, s: false } },
     wiz: { step: 1, typeId: null, name: '', ar: '', color: '#1E5C43', goal: 8, reward: '', cfg: {}, submitted: false },
     wizFocus: 'apple', wizNote: '', wizNoteKind: '', demoT: 0, wizBiz: '', wizGoalQ: '', extrasOpen: false, wizSuggest: null,
@@ -3186,6 +3193,11 @@ class Component extends DCLogic {
   /* same reason, same place: if the scanner was already busy when this tab
      opened, the first paint should already show it. */
   __live = this.hydrateLive();
+  /* and if Wasla answered a staged edit while this tab was closed, the very
+     first paint should show the resolved card rather than a ghost chip that
+     was settled hours ago. Must run AFTER bootRestore — it resolves the
+     `edits` the blob just restored. */
+  __verdicts = this.hydrateVerdicts();
   componentDidMount() {
     if (this.__restored && !this._welcomed) {
       this._welcomed = true;
@@ -3235,43 +3247,73 @@ class Component extends DCLogic {
     window.addEventListener('keydown', this._skey);
     this.poke();
   }
-  componentWillUnmount() { try { clearInterval(this._demo); } catch (e) {} try { clearTimeout(this._sv); } catch (e) {} this.dropConsoleSync(); this.dropOverrideSync(); }
+  componentWillUnmount() { try { clearInterval(this._demo); } catch (e) {} try { clearTimeout(this._sv); } catch (e) {} this.dropConsoleSync(); this.dropOverrideSync(); this.dropVerdictSync(); }
   focusSearch() { setTimeout(() => { try { const el = document.querySelector('[data-wsearch]'); if (el) el.focus(); } catch (e) {} }, 60); }
   scrollSearchRow(i) { setTimeout(() => { try { const el = document.querySelector('[data-srow="' + i + '"]'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 20); }
   // ── view-as: one guard, one dim flag ──────────────────────────────────
   isRO() { if (this._ro === undefined) { try { this._ro = ((window.location || {}).search || '').indexOf('viewas=1') >= 0; } catch (e) { this._ro = false; } } return this._ro; }
   roSay() { this.say(this.state.lang === 'ar' ? 'للاطلاع فقط · Wasla staff can look, not touch' : 'Wasla staff can look, not touch · للاطلاع فقط'); }
   // ── broadcast quota: one gate every sending path goes through ──────────
-  /** Broadcasts already spent this month. A cancelled schedule gives its slot back. */
-  bcUsedCount() {
-    const A = this.db().account || {}, s = this.state, gone = s.cancelled || [];
-    return (A.broadcastsUsed || 0) + (s.sentExtra || []).filter(b => b && gone.indexOf(b.title) < 0).length;
+  /** Broadcasts already spent this month. A cancelled schedule gives its slot
+      back — and that has to be true of BOTH kinds of pending row, or the same
+      Cancel button means two different things.
+
+        rows this session sent   live in `sentExtra`, so dropping the cancelled
+                                 ones out of the count is the whole refund.
+        rows the account arrived with (`WASLA_DB.broadcasts`) are already baked
+                                 into `broadcastsUsed`, so a cancelled one has
+                                 to be SUBTRACTED — nothing else will.
+
+      Only a row that has not gone out yet can be refunded: `scheduled` and
+      `held` are still in the future, a `sent` row has already reached a lock
+      screen and cancelling it (which the log does not offer) would refund a
+      broadcast the members already received. */
+  bcUsedCount(sOver) {
+    const D = this.db(), A = D.account || {}, s = sOver || this.state, gone = s.cancelled || [];
+    const spent = (s.sentExtra || []).filter(b => b && gone.indexOf(b.title) < 0).length;
+    const refund = (D.broadcasts || []).filter(b => b && (b.state === 'scheduled' || b.state === 'held')
+      && gone.indexOf(b.title) >= 0).length;
+    return Math.max(0, (A.broadcastsUsed || 0) + spent - refund);
   }
   bcRemaining() { const A = this.db().account || {}; return Math.max(0, (A.broadcastQuota || 10) - this.bcUsedCount()); }
   /** The single answer to "may this account push to a lock screen right now?" */
   canBroadcast() { return this.bcRemaining() > 0; }
   // ── session persistence: one blob, one helper ─────────────────────────
   demoKey() { return 'wasla_demo_dashboard_state'; }
-  saveDemo() {
+  /** The blob, from state — or from state with `over` folded on top. The
+      override exists because setState is asynchronous here: a handler that
+      wants its write on disk NOW (see flushDemo) has the new array in hand
+      before `this.state` does. */
+  _demoBlob(over) {
+    const s = over ? { ...this.state, ...over } : this.state;
+    return JSON.stringify({ v: 1, lang: s.lang,
+      addedCards: s.addedCards, cardMods: s.cardMods, addons: s.addons,
+      staffMods: s.staffMods, staffRemoved: s.staffRemoved, addedStaff: s.addedStaff,
+      addedFields: s.addedFields, sentExtra: s.sentExtra, cancelled: s.cancelled,
+      /* the editor's own three: staged review edits, birthday copy, and the
+         two link overlays. cardArt is deliberately absent — data URIs would
+         blow the blob past the quota and take the whole save with them. */
+      edits: s.edits, bday: s.bday, links: s.links, accLinks: s.accLinks, cardLinks: s.cardLinks,
+      /* gift stamps handed out from the member panel: member name → how many
+         extra stamps ride their pass. Small, bounded, and the only reason the
+         panel's "send a gift stamp" is not theatre. */
+      memberGifts: s.memberGifts,
+      /* raised-by-Yara change requests — the console's client asks inbox
+         reads this same key straight out of localStorage, so it has to
+         round-trip here or a real request silently dies on reload. */
+      changeReqs: s.changeReqs });
+  }
+  saveDemo(over) {
     clearTimeout(this._sv);
-    this._sv = setTimeout(() => {
-      const s = this.state;
-      try {
-        this._lsSet(this.demoKey(), JSON.stringify({ v: 1, lang: s.lang,
-          addedCards: s.addedCards, cardMods: s.cardMods, addons: s.addons,
-          staffMods: s.staffMods, staffRemoved: s.staffRemoved, addedStaff: s.addedStaff,
-          addedFields: s.addedFields, sentExtra: s.sentExtra, cancelled: s.cancelled,
-          /* the editor's own three: staged review edits, birthday copy, and the
-             two link overlays. cardArt is deliberately absent — data URIs would
-             blow the blob past the quota and take the whole save with them. */
-          edits: s.edits, bday: s.bday, links: s.links, accLinks: s.accLinks, cardLinks: s.cardLinks,
-          /* raised-by-Yara change requests — the console's client asks inbox
-             reads this same key straight out of localStorage, so it has to
-             round-trip here or a real request silently dies on reload. */
-          changeReqs: s.changeReqs,
-          bcUsed: this.bcUsedCount() }));
-      } catch (e) {}
-    }, 80);
+    this._sv = setTimeout(() => { try { this._lsSet(this.demoKey(), this._demoBlob(over)); } catch (e) {} }, 80);
+  }
+  /** The same write, RIGHT NOW. Used when the very next thing the demo does is
+      leave this tab — a change request is only real once the console can read
+      it, and 80ms of debounce is long enough to lose the race with a click on
+      "open the console". */
+  flushDemo(over) {
+    clearTimeout(this._sv);
+    try { this._lsSet(this.demoKey(), this._demoBlob(over)); } catch (e) {}
   }
   /** Pure: reads the blob and returns a sanitised patch, or null. */
   readDemo() {
@@ -3289,7 +3331,18 @@ class Component extends DCLogic {
     if (ac) p.addedCards = ac.filter(c => c && typeof c === 'object' && c.id && c.name).map(c => ({
       ...c, weekActivity: (arr(c.weekActivity) || [0, 0, 0, 0, 0, 0, 0]).map(v => Number(v) || 0).slice(0, 7),
       stat1: obj(c.stat1) || { label: '', v: '' }, stat2: obj(c.stat2) || { label: '', v: '' },
-      members: Number(c.members) || 0, passes: Number(c.passes) || 0, color: str(c.color) || '#26262B' }));
+      members: Number(c.members) || 0, passes: Number(c.passes) || 0, color: str(c.color) || '#26262B',
+      /* everything the wizard's Review step promised, narrowed on the way back
+         in: the stamp style the strip draws with, the branches the scanners
+         follow, the signup fields the join page renders, the custom fields the
+         owner wrote, and the type config the editor reads. A hostile blob gets
+         the safe shape rather than the benefit of the doubt. */
+      stampStyle: str(c.stampStyle),
+      branches: (arr(c.branches) || []).filter(x => typeof x === 'string'),
+      fields: obj(c.fields) || {},
+      customFields: (arr(c.customFields) || []).filter(f => f && typeof f === 'object' && typeof f.label === 'string' && f.label)
+        .map(f => ({ label: str(f.label), type: str(f.type) || 'Text', req: !!f.req })),
+      cfg: obj(c.cfg) || {}, rules: obj(c.rules) || {} }));
     if (obj(b.cardMods)) p.cardMods = b.cardMods;
     if (obj(b.addons)) p.addons = { ...(base.addons || {}), ...b.addons };
     if (obj(b.staffMods)) p.staffMods = b.staffMods;
@@ -3315,6 +3368,11 @@ class Component extends DCLogic {
        than the benefit of the doubt. */
     if (obj(b.edits)) { const e = {}; Object.keys(b.edits).forEach(k => { const v = obj(b.edits[k]); if (v) e[k] = { ...v, pending: !!v.pending, cfg: obj(v.cfg) || {}, rules: obj(v.rules) || {} }; }); p.edits = e; }
     if (obj(b.bday)) { const d = {}; Object.keys(b.bday).forEach(k => { const v = obj(b.bday[k]); if (v) d[k] = { msg: str(v.msg), gift: str(v.gift) }; }); p.bday = d; }
+    /* gift stamps: a whole, small, non-negative count per member. A card can
+       never owe a member more stamps than its own ladder holds, and progCell
+       clamps to the goal anyway, so 12 is a generous ceiling. */
+    if (obj(b.memberGifts)) { const gsx = {}; Object.keys(b.memberGifts).forEach(k => {
+      const n = Math.round(Number(b.memberGifts[k]) || 0); if (n > 0) gsx[k] = Math.min(12, n); }); p.memberGifts = gsx; }
     if (obj(b.links)) { const l = { ...(base.links || {}) }; Object.keys(l).forEach(k => { if (typeof b.links[k] === 'boolean') l[k] = b.links[k]; }); p.links = l; }
     if (obj(b.accLinks)) { const a2 = {}; Object.keys(b.accLinks).forEach(k => { if (typeof b.accLinks[k] === 'string') a2[k] = b.accLinks[k]; }); p.accLinks = a2; }
     if (obj(b.cardLinks)) { const cl = {}; Object.keys(b.cardLinks).forEach(cid => { const v = obj(b.cardLinks[cid]); if (!v) return; const row = {};
@@ -3340,19 +3398,40 @@ class Component extends DCLogic {
     this.setState(p);
     return true;
   }
+  /* ══ RESET — ONLY WHAT THIS SURFACE OWNS ═══════════════════════════════
+     The confirm says "nothing else on this machine is touched", and that
+     sentence is the specification. This dashboard owns:
+
+       its own blob            demoKey()
+       its own art keys        wasla_card_logo_* / wasla_card_banner_*
+       the wizard's art keys   wasla_wiz_logo / wasla_wiz_banner — outside the
+                               blob AND outside every other sweep, which is
+                               how client B's demo used to open on client A's
+                               uploaded logo
+       the merchant's view of  sukkarKey() — Sukkar Bakery's own review verdict.
+       their own card          Nothing else on the platform ever cleared it, so
+                               once approved the card was permanently live and
+                               no reset could bring the demo back.
+       its own live entries    the rows pushLive() wrote (src:'dash')
+
+     It does NOT own the till's bus wholesale, and it does NOT own the
+     override queue: both belong to the Scanner, and both hold rows a real
+     staff member is standing in front of. Wiping them stranded that person
+     mid-request. They are left exactly as found. ═══════════════════════ */
   resetDemo() {
     try { localStorage.removeItem(this.demoKey()); } catch (e) {}
-    /* the till's bus is demo data too — a reset that left it behind would
-       replay yesterday's stamps into a "fresh start" */
-    try { localStorage.removeItem(this.liveKey()); } catch (e) {}
-    /* same for the override queue: a fresh start with three customers still
-       standing at a till is not a fresh start */
-    try { localStorage.removeItem(this.ovKey()); } catch (e) {}
-    this._ovRaw = null; this._ovList = null;
-    /* the per-card art lives outside the blob, so a reset has to sweep it too */
+    try { localStorage.removeItem(this.sukkarKey()); } catch (e) {}
+    /* the bus: take back OUR rows, byte-for-byte leave everyone else's */
+    this.dropOwnLive();
+    /* the per-card art and the wizard's own art live outside the blob, so a
+       reset has to sweep them too */
     try { Object.keys(localStorage).forEach(k => { if (k.indexOf('wasla_card_logo_') === 0 || k.indexOf('wasla_card_banner_') === 0) localStorage.removeItem(k); }); } catch (e) {}
+    try { localStorage.removeItem('wasla_wiz_logo'); } catch (e) {}
+    try { localStorage.removeItem('wasla_wiz_banner'); } catch (e) {}
     clearTimeout(this._sv);
-    this.setState({ liveEvents: [], bcSeg: 'all', addedCards: [], cardMods: {}, edits: {}, bday: {},
+    this.setState({ liveEvents: this.readLive().filter(e => (Date.now() - e.at) < 300000), bcSeg: 'all', addedCards: [], cardMods: {}, edits: {}, bday: {},
+      memberGifts: {},
+      wiz: { step: 1, typeId: null, name: '', ar: '', color: '#1E5C43', goal: 8, reward: '', cfg: {}, submitted: false, logo: '', banner: '' },
       accLinks: {}, cardLinks: {}, cardArt: {}, links: { ig: true, wa: true, loc: true, web: false },
       addons: { daraj: { b: true, r: true, s: false }, layl: { b: false, r: true, s: false }, zaytoun: { b: true, r: false, s: false }, sukkar: { b: false, r: false, s: false }, ghaim: { b: false, r: false, s: false } },
       staffMods: {}, staffRemoved: [], addedStaff: [], addedFields: {},
@@ -3393,14 +3472,168 @@ class Component extends DCLogic {
   _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   _lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   sukkarKey() { const D = window.WASLA_DB; return (D && D.demoFlags && D.demoFlags.sukkarKey) || 'wasla_demo_sukkar_state'; }
+  /* ══ WASLA'S VERDICT ON A CARD ══════════════════════════════════════════
+     The console decides; this key carries the decision back. It has TWO
+     shapes and both are live at once, because a console tab from before this
+     build may still be open on the same machine:
+
+       LEGACY  a bare string — 'approved' | 'rejected' | 'resubmitted'
+       NOW     { state, reason?, by?, at? } as JSON
+
+     The reason is the whole point of the second shape. The console offers
+     three canned reasons plus free text and logs "reason sent verbatim" — but
+     it used to hand over only the bare word, so this dashboard printed a
+     hardcoded sentence about reward text no matter what Omar actually wrote.
+     A merchant told "your reward text is unclear" when the real problem was
+     an unreadable logo will fix the wrong thing and get sent back twice.
+
+     Parsing is defensive in both directions: JSON that is not an object, an
+     object with a state this build has never met, a truncated write, a bare
+     string that is not one of the three — all of it is "no verdict", which
+     every caller already knows how to render. Nothing here WRITES. */
+  parseVerdict(raw) {
+    if (raw === null || raw === undefined) return null;
+    const OK = { approved: 1, rejected: 1, resubmitted: 1 };
+    const s = String(raw);
+    const bare = (v) => { const k = String(v || '').trim(); return OK[k] ? { state: k, reason: '', by: '', at: 0 } : null; };
+    let o = null;
+    try { o = JSON.parse(s); } catch (e) { return bare(s); }
+    if (typeof o === 'string') return bare(o);
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return bare(s);
+    const st = String(o.state || '').trim();
+    if (!OK[st]) return null;
+    const at = Number(o.at);
+    return { state: st,
+      reason: (typeof o.reason === 'string' ? o.reason : '').trim().slice(0, 240),
+      by: (typeof o.by === 'string' ? o.by : '').trim().slice(0, 80),
+      at: (isFinite(at) && at > 0) ? at : 0 };
+  }
+  /** The verdict on Sukkar Bakery, in whichever shape it was written. */
+  sukkarVerdict() { try { return this.parseVerdict(this._lsGet(this.sukkarKey())); } catch (e) { return null; } }
+  /* ══ VERDICTS ON STAGED EDITS ══════════════════════════════════════════
+     Everything the editor sends "for review" lands in this file's own blob
+     under `edits[cardId].pending`, and the console reads it there. This is
+     the return leg — the key the console writes its answer into:
+
+       key    'wasla_demo_edit_verdicts'
+       value  { [cardId]: { state:'approved'|'rejected', reason?, by?, at? } }
+
+     WE ONLY READ IT. An approved edit becomes the live value (it lands in
+     cardMods, which is exactly where the till already looks); a rejected one
+     is dropped and the card keeps running what it was running, with Omar's
+     own words on screen. Either way the pending chip finally has a way to
+     end — before this it was permanent, and every "Omar has it" in the
+     interface was a promise nothing could keep. */
+  editVerdictsKey() { return 'wasla_demo_edit_verdicts'; }
+  /** Pure: the key → { cardId: {state, reason, by, at} }. Always an object. */
+  readEditVerdicts() {
+    let raw = null;
+    try { raw = this._lsGet(this.editVerdictsKey()); } catch (e) { return {}; }
+    if (!raw || typeof raw !== 'string') return {};
+    let b = null;
+    try { b = JSON.parse(raw); } catch (e) { return {}; }
+    if (!b || typeof b !== 'object' || Array.isArray(b)) return {};
+    const out = {};
+    Object.keys(b).forEach(cid => {
+      if (!cid || typeof cid !== 'string') return;
+      const v = b[cid];
+      if (!v || typeof v !== 'object' || Array.isArray(v)) return;
+      const st = String(v.state || '').trim();
+      if (st !== 'approved' && st !== 'rejected') return;
+      const at = Number(v.at);
+      out[cid] = { state: st,
+        reason: (typeof v.reason === 'string' ? v.reason : '').trim().slice(0, 240),
+        by: (typeof v.by === 'string' ? v.by : '').trim().slice(0, 80),
+        at: (isFinite(at) && at > 0) ? at : 0 };
+    });
+    return out;
+  }
+  /** Turn every arrived verdict into a resolved edit. Pure in the sense that
+      matters: it returns the patch and the lines to say, and touches nothing
+      when there is nothing to resolve — so it is safe to run at construction
+      (silently, from the blob) and again on every storage event.
+
+      It is idempotent because resolving an edit DELETES it: a verdict that
+      has already been applied finds no pending edit and does nothing, which
+      is also why no "seen verdicts" bookkeeping has to survive a reload. */
+  editVerdictPatch(s0) {
+    const s = s0 || this.state || {};
+    const V = this.readEditVerdicts();
+    const edits = s.edits || {}, mods = s.cardMods || {}, fields = s.addedFields || {};
+    const ids = Object.keys(V).filter(cid => {
+      const e = edits[cid];
+      const hasField = Array.isArray(fields[cid]) && fields[cid].length > 0;
+      return (e && e.pending) || hasField;
+    });
+    if (!ids.length) return null;
+    const nextEdits = { ...edits }, nextMods = { ...mods }, nextFields = { ...fields }, notes = [];
+    const plain = (o) => (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+    ids.forEach(cid => {
+      const v = V[cid], e = plain(edits[cid]);
+      if (v.state === 'approved' && edits[cid] && edits[cid].pending) {
+        /* the staged value becomes the LIVE value, in the one place the
+           scanner reads: cardMods[cid]. `cfg` and `rules` merge rather than
+           replace, so approving a rule change cannot delete a guard the till
+           is still enforcing. */
+        const m = { ...plain(mods[cid]) };
+        if (typeof e.name === 'string') m.name = e.name;
+        if (typeof e.ar === 'string') m.ar = e.ar;
+        if (typeof e.reward === 'string') m.reward = e.reward;
+        if (e.goal !== undefined && Number(e.goal) > 0) m.goal = Number(e.goal);
+        if (Object.keys(plain(e.cfg)).length) m.cfg = { ...plain(m.cfg), ...plain(e.cfg) };
+        if (Object.keys(plain(e.rules)).length) m.rules = { ...plain(m.rules), ...plain(e.rules) };
+        nextMods[cid] = m;
+      }
+      /* approved or rejected, the staging slot is done: an approved edit is
+         now the live value and a rejected one reverts by simply not existing. */
+      delete nextEdits[cid];
+      /* the signup fields that went up with it. Approved, they stay and stop
+         wearing the review chip; rejected, they never reached the join page. */
+      if (Array.isArray(fields[cid]) && fields[cid].length) {
+        if (v.state === 'approved') nextFields[cid] = fields[cid].map(f => ({ ...f, approved: true }));
+        else delete nextFields[cid];
+      }
+      notes.push({ cid, state: v.state, reason: v.reason, by: v.by });
+    });
+    return { patch: { edits: nextEdits, cardMods: nextMods, addedFields: nextFields }, notes };
+  }
+  /** Boot: fold arrived verdicts straight into `state`, before the first
+      paint and without a toast — the same discipline armConsoleSync uses for
+      its baseline. What was already decided when this tab opened is history,
+      not news. Runs at CONSTRUCTION, so nothing renders a resolved ghost. */
+  hydrateVerdicts() {
+    let r = null;
+    try { r = this.editVerdictPatch(this.state); } catch (e) { return false; }
+    if (!r) return false;
+    this.state = { ...this.state, ...r.patch };
+    return true;
+  }
   /* ══ LIVE FROM THE TILL ═════════════════════════════════════════════════
      One localStorage key is the whole cross-tab bus. The Scanner and the
-     Customer tabs WRITE it; this dashboard only ever READS it, so nothing
-     here can corrupt what another tab is holding.
+     Customer tabs write it as customers are served; this dashboard is a
+     READER of all of that, and an APPEND-ONLY writer of exactly one thing —
+     the pushes it sends itself (a gift stamp, a win-back nudge), which land
+     on a member's lock screen and belong in the same feed as everything else
+     that reached that member. pushLive() is the only write path, it never
+     rewrites an entry it did not author, and dropOwnLive() is the only
+     removal path — so nothing here can corrupt what another tab is holding.
 
        key    'wasla_demo_live_events'
        value  JSON array, NEWEST FIRST, capped 20
-       entry  { at: Date.now(), kind, who, what, card }
+       entry  { at: Date.now(), kind, who, what, card, acct?, src? }
+
+     `acct` NAMES THE ACCOUNT THE ROW BELONGS TO, and it is the one field that
+     stops this feed lying. The bus is shared by every Wasla surface on the
+     machine — including the sales rep's phone, which writes a `join` the
+     moment a LEAD signs up. Without `acct` that lead ("Louma Chocolate")
+     appeared, badged LIVE, on Tala Hospitality's own merchant feed. So: an
+     entry whose `acct` is present and is not this account is DROPPED here.
+     An entry with no `acct` is legacy — every surface wrote them that way
+     until now — and counts as ours, because silently blanking the feed for
+     an older Scanner build would be the worse failure.
+
+     `src` names the surface that wrote the row, so a reset can take back its
+     own contributions without touching anybody else's (see resetDemo).
        kind   earn | reward | join | redeem | renew | referral | leave
 
      `leave` is the one kind that is BAD NEWS — a member walked away from a
@@ -3427,17 +3660,50 @@ class Component extends DCLogic {
     if (!Array.isArray(a)) return [];
     const OK = this.liveKinds(), seen = {}, out = [];
     const str = (v) => (typeof v === 'string' ? v : '').slice(0, 90);
+    const mine = this.consoleAcct();
     for (let i = 0; i < a.length && out.length < 20; i++) {
       const e = a[i];
       if (!e || typeof e !== 'object' || Array.isArray(e)) continue;
       const at = Number(e.at);
       if (!isFinite(at) || at <= 0 || seen[at]) continue;
+      /* the tenant gate. Present-and-foreign is dropped; absent is legacy and
+         counts as ours. Compared on the same name the console joins by, so a
+         row written against "Tala Hospitality Group" matches this dashboard
+         however the account is spelled elsewhere. */
+      const acct = str(e.acct);
+      if (acct && acct !== mine) continue;
       const who = str(e.who), what = str(e.what);
       if (!who && !what) continue;
       seen[at] = 1;
-      out.push({ at, kind: OK[e.kind] ? e.kind : 'earn', who, what, card: str(e.card) });
+      out.push({ at, kind: OK[e.kind] ? e.kind : 'earn', who, what, card: str(e.card), acct, src: str(e.src) });
     }
     return out.sort((x, y) => y.at - x.at).slice(0, 20);
+  }
+  /** The ONE place this dashboard writes to the shared bus, and it only ever
+      APPENDS its own row: the raw array is read, our entry is put on the
+      front, and everything already there rides through untouched — a row from
+      a Scanner build this file has never met survives byte-for-byte. Capped
+      at 20 like every other writer. Never throws; a full or hostile store just
+      means the row is local-only, which the caller has already rendered. */
+  pushLive(e) {
+    const rec = { at: Date.now(), kind: (e && e.kind) || 'reward', who: (e && e.who) || '',
+      what: (e && e.what) || '', card: (e && e.card) || '', acct: this.consoleAcct(), src: 'dash' };
+    let arr = [];
+    try { const raw = this._lsGet(this.liveKey()); const a = raw ? JSON.parse(raw) : null; arr = Array.isArray(a) ? a : []; } catch (err) { arr = []; }
+    try { this._lsSet(this.liveKey(), JSON.stringify([rec, ...arr].slice(0, 20))); } catch (err) {}
+    /* `storage` never fires in the tab that wrote it, so the feed is updated
+       here by hand — the same merge pullLive() would have done. */
+    this.setState(s => ({ liveEvents: [rec, ...((s || {}).liveEvents || [])].slice(0, 20) }));
+    return rec;
+  }
+  /** Reset's half of the same contract: drop the rows THIS surface wrote and
+      leave every other row exactly where it was. */
+  dropOwnLive() {
+    let arr = [];
+    try { const raw = this._lsGet(this.liveKey()); const a = raw ? JSON.parse(raw) : null; arr = Array.isArray(a) ? a : []; } catch (e) { return; }
+    const keep = arr.filter(e => !(e && typeof e === 'object' && e.src === 'dash'));
+    if (keep.length === arr.length) return;
+    try { this._lsSet(this.liveKey(), JSON.stringify(keep)); } catch (e) {}
   }
   /** Whatever is on the bus that this session has not shown yet. */
   newLive(have) {
@@ -3702,6 +3968,68 @@ class Component extends DCLogic {
     try { if (typeof window !== 'undefined' && window.removeEventListener) window.removeEventListener('storage', h.__wcOvSync); } catch (e) {}
     h.__wcOvSync = null;
   }
+  /* ══ WASLA ANSWERING, LIVE ═════════════════════════════════════════════
+     Both verdict channels — the card-level one under sukkarKey() and the
+     staged-edit one under editVerdictsKey() — reach Yara while she is
+     looking, because in both cases Wasla is acting ON her. Same discipline
+     as armConsoleSync: armed from renderVals (componentDidMount can be
+     skipped on the deferred mount path), latched on the HOST so a logic swap
+     cannot double-subscribe, torn down in componentWillUnmount, and the
+     baseline is taken BEFORE the listener exists so what was already decided
+     when this tab opened never toasts. */
+  armVerdictSync() {
+    const h = this.__host || this;
+    if (h.__wcVerdictSync) return;
+    if (typeof window === 'undefined' || typeof window.addEventListener !== 'function') return;
+    const v0 = this.sukkarVerdict();
+    h.__wcCardVerdict = v0 ? v0.state : '';
+    const fn = (e) => {
+      const k = e && e.key;
+      if (k && k !== this.sukkarKey() && k !== this.editVerdictsKey()) return;
+      const L = (this.__host && this.__host.logic) || this;
+      if (!L || !L.state) return;
+      const T = L._t || {};
+      // ── the card-level verdict (Sukkar Bakery) ─────────────────────────
+      if (!k || k === L.sukkarKey()) {
+        const v = L.sukkarVerdict();
+        const now = v ? v.state : '';
+        if (now && now !== h.__wcCardVerdict) {
+          h.__wcCardVerdict = now;
+          if (now === 'approved') L.say(T.evCardApproved || 'Approved by Wasla — the card is live in wallets');
+          else if (now === 'rejected') L.say((T.evCardRejected || 'Sent back by Wasla') + (v.reason ? ' · ' + v.reason : ''));
+        } else if (!now) h.__wcCardVerdict = '';
+      }
+      // ── verdicts on staged edits ───────────────────────────────────────
+      if (!k || k === L.editVerdictsKey()) {
+        let r = null;
+        try { r = L.editVerdictPatch(L.state); } catch (err) { r = null; }
+        if (r) {
+          L.setState(r.patch);
+          L.saveDemo(r.patch);
+          /* one toast per newly-arrived verdict, and it carries Omar's own
+             words — a rejection with no reason on screen is a rejection the
+             merchant has to guess at. */
+          const n = r.notes[0];
+          if (n) {
+            const card = (L.db().cards || []).concat((L.state || {}).addedCards || []).find(c => c && c.id === n.cid) || {};
+            const nm = card.name || n.cid;
+            L.say(n.state === 'approved'
+              ? nm + ' — ' + (T.evEditApproved || 'your changes are approved and live')
+              : nm + ' — ' + (T.evEditRejected || 'sent back by Wasla') + (n.reason ? ' · ' + n.reason : ''));
+          }
+        }
+      }
+      L.forceUpdate();
+    };
+    h.__wcVerdictSync = fn;
+    try { window.addEventListener('storage', fn); } catch (err) { h.__wcVerdictSync = null; }
+  }
+  dropVerdictSync() {
+    const h = this.__host || this;
+    if (!h.__wcVerdictSync) return;
+    try { if (typeof window !== 'undefined' && window.removeEventListener) window.removeEventListener('storage', h.__wcVerdictSync); } catch (e) {}
+    h.__wcVerdictSync = null;
+  }
   /** Same trick as liveToastFor: the live `t` is parked on the instance by
       renderVals, because a toast fired from a DOM listener has no render
       scope to borrow. */
@@ -3823,13 +4151,32 @@ class Component extends DCLogic {
   shade(hex) { const n = parseInt(hex.slice(1), 16); const f = (v) => Math.max(0, Math.round(v * 0.72)); return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => f(v).toString(16).padStart(2, '0')).join(''); }
   say(msg) { clearTimeout(this._tt); this.setState({ toast: msg }); this._tt = setTimeout(() => this.setState({ toast: '' }), 3000); }
   ask(title, body, ok, color, fn) { this._onConfirm = fn; this.setState({ confirm: { title, body, ok, color } }); }
-  openWiz = () => this.setState({ screen: 'wizard', wizNote: '', wizNoteKind: '', wizSuggest: null, wizFocus: 'apple', extrasOpen: false, demoT: 0, wiz: { step: 1, typeId: null, name: '', ar: '', color: '#1E5C43', goal: 8, reward: '', cfg: {}, submitted: false, banner: this.state.wiz.banner || '', logo: this.state.wiz.logo || '' } });
+  /* ══ THE WIZARD'S OWN ART ═══════════════════════════════════════════════
+     wasla_wiz_logo / wasla_wiz_banner are a SCRATCHPAD for the card being
+     built right now — they exist so a reload mid-wizard does not throw away
+     an upload. They are not a card's art, and they must never behave like
+     one: carrying them forward is how a brand-new card opened on the last
+     card's logo, and how client B's demo opened on client A's. So a new
+     card starts empty, a resumed draft loads THAT card's own art, and the
+     scratchpad is wiped the moment the card is created (see wizApprove) or
+     the demo is reset. */
+  wizArtKey(kind) { return 'wasla_wiz_' + kind; }
+  clearWizArt() { try { localStorage.removeItem(this.wizArtKey('logo')); localStorage.removeItem(this.wizArtKey('banner')); } catch (e) {} }
+  cardArtKey(kind, cid) { return 'wasla_card_' + kind + '_' + cid; }
+  cardArtOf(kind, cid) { const s0 = ((this.state || {}).cardArt || {})[cid] || {};
+    if (s0[kind] !== undefined) return s0[kind] || '';
+    return this._lsGet(this.cardArtKey(kind, cid)) || ''; }
+  openWiz = () => { this.clearWizArt(); this.setState({ screen: 'wizard', wizNote: '', wizNoteKind: '', wizSuggest: null, wizFocus: 'apple', extrasOpen: false, demoT: 0, wiz: { step: 1, typeId: null, name: '', ar: '', color: '#1E5C43', goal: 8, reward: '', cfg: {}, submitted: false, banner: '', logo: '' } }); };
   resumeDraft = (c) => {
-    const d = c || {}, ty = d.type || 'stamps', cfg = this.cfgDefaults(ty);
+    const d = c || {}, ty = d.type || 'stamps', cfg = { ...this.cfgDefaults(ty), ...((d.cfg && typeof d.cfg === 'object' && !Array.isArray(d.cfg)) ? d.cfg : {}) };
     if (ty === 'membership' && d.reward) cfg.benefit = d.reward;
     if (ty === 'coupon' && d.reward) cfg.offer = d.reward;
     if (ty === 'challenge' && d.reward) cfg.prize = d.reward;
-    this.setState({ screen: 'wizard', activeCardId: d.id || null, wizNote: '', wizNoteKind: '', wizSuggest: null, wizFocus: 'apple', extrasOpen: false, demoT: 0, wiz: { step: 3, typeId: ty, name: d.name || '', ar: d.ar || '', color: d.color || '#1E5C43', goal: d.goal > 0 ? d.goal : 8, reward: d.reward || '', cfg, submitted: false, banner: this.state.wiz.banner || '', logo: this.state.wiz.logo || '' } });
+    /* the draft's OWN art, never whatever the wizard last happened to hold */
+    const dLogo = d.id ? this.cardArtOf('logo', d.id) : '', dBanner = d.id ? this.cardArtOf('banner', d.id) : '';
+    this.clearWizArt();
+    try { if (dLogo) localStorage.setItem(this.wizArtKey('logo'), dLogo); if (dBanner) localStorage.setItem(this.wizArtKey('banner'), dBanner); } catch (e) {}
+    this.setState({ screen: 'wizard', activeCardId: d.id || null, wizNote: '', wizNoteKind: '', wizSuggest: null, wizFocus: 'apple', extrasOpen: false, demoT: 0, wiz: { step: 3, typeId: ty, name: d.name || '', ar: d.ar || '', color: d.color || '#1E5C43', goal: d.goal > 0 ? d.goal : 8, reward: d.reward || '', cfg, submitted: false, banner: dBanner, logo: dLogo, branches: Array.isArray(d.branches) ? d.branches.slice() : undefined, fields: (d.fields && typeof d.fields === 'object') ? { ...d.fields } : undefined, custom: Array.isArray(d.customFields) ? d.customFields.slice() : undefined } });
     this.say(this.state.lang === 'en' ? 'Picking up “' + (d.name || 'your draft') + '” where you left it' : 'نكمل من حيث توقفت');
   };
   cfgDefaults(id) {
@@ -4029,6 +4376,7 @@ class Component extends DCLogic {
   renderVals() {
     this.armConsoleSync();
     this.armOverrideSync();
+    this.armVerdictSync();
     const { account: Acc, cards, types, members, activity, staff, broadcasts } = this.db();
     const st = this.state, wiz = st.wiz, tick = st.tick;
     const EN = st.lang === 'en';
@@ -4467,6 +4815,85 @@ class Component extends DCLogic {
         wNext3: 'In your customers’ wallets', wNext3Sub: 'The signup QR turns on and the counter starts scanning.',
         wTwoFaces: 'One design · two faithful faces.',
         wNoteIdle: 'Everything you change lands here first.',
+        /* ── a card the wizard just built ────────────────────────────────── */
+        acNewMembersStat: 'Members', acNewNoneYet: 'None yet',
+        acNewApprovedStat: 'Approved', acNewToday: 'today',
+        acMembersEmpty: 'Nobody has joined yet — the signup QR is live at the counter.',
+        memCountShown: ' shown', memCountQuiet: ' of {n} — quiet for {d}+ days',
+        quotaOf: ' of ',
+        /* ── Wasla's verdict, coming back ────────────────────────────────── */
+        sukApprovedLbl: 'Approved by Wasla', sukFirstPassesLbl: 'First passes',
+        sukLiveNote: 'Live — Yara got the WhatsApp.',
+        sukSentBackLbl: 'Sent back', sukInWalletsLbl: 'In wallets', sukNothing: 'Nothing',
+        sukResubmittedLbl: 'Resubmitted', sukReviewerLbl: 'Reviewer',
+        acReturnedTitle: 'Sent back by Wasla — nothing reached wallets.',
+        acReturnedFix: 'Fix it and resubmit; review usually takes under a day.',
+        acReturnedNoReason: 'No reason came back with it. Your account manager has the details — fix it and resubmit.',
+        acReturnedBtn: 'Fix & resubmit →',
+        acInReviewLabel: 'In review — Omar has it', acInReviewToast: 'Omar is on it — usually within a day',
+        evCardApproved: 'Approved by Wasla — live in wallets now',
+        evCardRejected: 'Sent back by Wasla',
+        evEditApproved: 'your changes are approved and live',
+        evEditRejected: 'sent back by Wasla',
+        /* ── the member panel's two sends ────────────────────────────────── */
+        mdGiftLog: 'Gift stamp · {name}', mdGiftBody: 'A stamp on the house — see you at {card}.',
+        mdGiftLive: 'got a gift stamp',
+        mdGiftDone: 'A gift stamp landed on {name}\u2019s pass — {n} broadcasts left this month',
+        mdGiftDoneNoStamp: 'Sent to {name} — their card had no room for another stamp · {n} broadcasts left',
+        mdNudgeLog: 'Win-back · {name}', mdNudgeBody: 'We miss you at {card} — your next visit earns a little extra.',
+        mdNudgeLive: 'got a win-back nudge',
+        mdNudgeDone: 'Win-back sent to {name} — {n} broadcasts left this month',
+        /* ── the signup link ─────────────────────────────────────────────── */
+        suCopyCaps: 'COPY', suCopied: 'Link copied',
+        suCopyFailed: 'The browser blocked the copy — the link is {url}',
+        /* ── the sidebar's other surfaces ────────────────────────────────── */
+        navCustomerDemo: 'Customer demo →', navStaffScanner: 'Staff scanner →', navWaslaConsole: 'Wasla console →',
+        crumbDashboard: 'Dashboard',
+        /* ── the wizard ──────────────────────────────────────────────────── */
+        wBannerLabel: 'Banner — the art across the card',
+        wBannerDrop: '↑ Drop your banner — PNG or JPG',
+        wBannerLive: 'On both passes — live',
+        wBannerSpec: 'Locked to spec: Apple strip {a} px · Google hero 1032×336 px. We crop to fit both.',
+        wBannerSpecGeneric: 'Apple generic passes carry no strip — your banner shows on Google only (hero 1032×336 px).',
+        wCfgBrandTitle: 'Make it yours.', wCfgBrandSub: 'Name it, color it — watch both passes take shape live. →',
+        wCfgRulesTitle: 'Set the rules.', wCfgRulesSub: 'How your {type} behaves at the counter — all of it on the card, live. →',
+        wBack: 'Back', wChVisitsLine: '{n} visits',
+        wStampUploadToast: 'Custom stamp art: drop a PNG here in production — it rides every stamp',
+        wSubmittedTitle: '{name} is in review.',
+        wSubmittedSub: "Omar from Wasla has it. You'll get a WhatsApp the moment it's live.",
+        wSimulateApprove: '▶ Demo: simulate Wasla approval',
+        /* ── screens ─────────────────────────────────────────────────────── */
+        actTitle: 'Everything that happened.', actSub: 'Every stamp, reward and joiner — across all your cards.',
+        bcTitle: 'Reach every wallet — gently.', bcSub: 'Write it once, watch it land on their lock screen before you send.',
+        bcSendFrom: 'Send from', bcMessageLabel: 'Message',
+        bcGoogleCap: 'Google Wallet caps pushes at ~3/day per pass — Wasla schedules around it automatically.',
+        bcChipSent: 'Sent', bcChipScheduled: 'Scheduled', bcChipHeld: 'Held · quiet hours',
+        bcCancelAsk: 'Cancel “{title}”?',
+        bcCancelBody: 'It never sends, and the broadcast returns to your monthly allowance.',
+        bcCancelOk: 'Cancel broadcast', bcCancelDone: 'Cancelled — returned to your allowance',
+        stfTitle: 'Every branch scans its own card.',
+        stfSub: 'Staff only see the cards you assign them — the scanner refuses the rest, politely.',
+        stfInvite: '+ Invite staff',
+        langBilingualNote: 'Customer-facing pages are always bilingual — this only changes your dashboard.',
+        celebTitle: '{name} is live.',
+        celebSub: 'The signup QR is ready — the next customer at the counter can join.',
+        celebBack: 'Back to the dashboard',
+        /* ── the win-back box ────────────────────────────────────────────── */
+        wbPlaceholder: 'We miss you at {card} — your next visit earns a little extra.',
+        wbLine: '{n} members have not visited in {d}+ days. One tap reaches their lock screens.',
+        wbSendBtn: 'Send to {n}', wbSentBtn: 'Sent ✓',
+        wbLogTitle: 'Win-back · {d}d+ quiet', wbSentToast: 'Sent to {n} — {left} broadcasts left this month',
+        /* ── card state changes ──────────────────────────────────────────── */
+        edPauseAsk: 'Pause {name}?',
+        edPauseAskBody: 'New signups and earning stop, and the card greys in wallets. Balances stay redeemable. You can resume anytime.',
+        edPauseOk: 'Pause card', edPauseDone: 'Paused — balances stay redeemable',
+        edResumeDone: '{name} is live again',
+        edResubmitDone: 'Resubmitted — Omar sees it at the top of the queue',
+        adOnToast: '{name} is on — instant, live in wallets now', adOffToast: '{name} turned off',
+        adBirthdayOnToast: 'Birthday add-on is on — instant',
+        secResetLinkToast: 'A reset link goes to yara@talagroup.jo',
+        planWhatsToast: 'Omar will WhatsApp you today',
+        unitPts: 'pts', rlVipAt: 'at', bcMockDate: 'Tuesday, July 29',
         wNotes: {
           type: 'Type chosen — the whole pass is rebuilt around it.',
           color: 'Brand color updated — both passes recolor.',
@@ -4920,6 +5347,85 @@ class Component extends DCLogic {
         wNext3: 'في محافظ عملائك', wNext3Sub: 'رمز الانضمام يُفعّل ويبدأ الكاونتر بالمسح.',
         wTwoFaces: 'تصميم واحد · وجهان أمينان.',
         wNoteIdle: 'كل ما تغيّرينه يظهر هنا أولاً.',
+        /* ── a card the wizard just built ────────────────────────────────── */
+        acNewMembersStat: 'الأعضاء', acNewNoneYet: 'لا أحد بعد',
+        acNewApprovedStat: 'اعتُمدت', acNewToday: 'اليوم',
+        acMembersEmpty: 'لم ينضم أحد بعد — رمز التسجيل فعّال عند الكاونتر.',
+        memCountShown: ' معروض', memCountQuiet: ' من {n} — صامتون منذ {d}+ يوم',
+        quotaOf: ' من ',
+        /* ── Wasla's verdict, coming back ────────────────────────────────── */
+        sukApprovedLbl: 'اعتمدتها وصلة', sukFirstPassesLbl: 'أول البطاقات',
+        sukLiveNote: 'فعّالة — وصلت يارا رسالة واتساب.',
+        sukSentBackLbl: 'أُعيدت', sukInWalletsLbl: 'في المحافظ', sukNothing: 'لا شيء',
+        sukResubmittedLbl: 'أُعيد الإرسال', sukReviewerLbl: 'المراجع',
+        acReturnedTitle: 'أعادتها وصلة — لم يصل شيء إلى المحافظ.',
+        acReturnedFix: 'صحّحيها وأعيدي الإرسال؛ المراجعة تستغرق أقل من يوم عادةً.',
+        acReturnedNoReason: 'لم يصل سبب مع الإعادة. مدير حسابك يملك التفاصيل — صحّحيها وأعيدي الإرسال.',
+        acReturnedBtn: 'صحّح وأعد الإرسال ←',
+        acInReviewLabel: 'قيد المراجعة — عمر يراجعها', acInReviewToast: 'عمر يعمل عليها — خلال يوم عادةً',
+        evCardApproved: 'اعتمدتها وصلة — فعّالة في المحافظ الآن',
+        evCardRejected: 'أعادتها وصلة',
+        evEditApproved: 'تغييراتك اعتُمدت وأصبحت فعّالة',
+        evEditRejected: 'أعادتها وصلة',
+        /* ── the member panel's two sends ────────────────────────────────── */
+        mdGiftLog: 'ختم هدية · {name}', mdGiftBody: 'ختم على حسابنا — نراك في {card}.',
+        mdGiftLive: 'حصل على ختم هدية',
+        mdGiftDone: 'نزل ختم هدية على بطاقة {name} — بقي {n} إشعاراً هذا الشهر',
+        mdGiftDoneNoStamp: 'أُرسلت إلى {name} — لا مكان لختم آخر على بطاقتهم · بقي {n} إشعاراً',
+        mdNudgeLog: 'استرجاع · {name}', mdNudgeBody: 'نفتقدك في {card} — زيارتك القادمة تكسب شيئاً إضافياً.',
+        mdNudgeLive: 'وصله تنبيه استرجاع',
+        mdNudgeDone: 'أُرسل تنبيه الاسترجاع إلى {name} — بقي {n} إشعاراً هذا الشهر',
+        /* ── the signup link ─────────────────────────────────────────────── */
+        suCopyCaps: 'نسخ', suCopied: 'نُسخ الرابط',
+        suCopyFailed: 'المتصفح منع النسخ — الرابط هو {url}',
+        /* ── the sidebar's other surfaces ────────────────────────────────── */
+        navCustomerDemo: 'عرض العميل ←', navStaffScanner: 'ماسح الموظفين ←', navWaslaConsole: 'لوحة وصلة ←',
+        crumbDashboard: 'لوحة التحكم',
+        /* ── the wizard ──────────────────────────────────────────────────── */
+        wBannerLabel: 'البانر — الصورة العابرة للبطاقة',
+        wBannerDrop: '↑ أفلت البانر — PNG أو JPG',
+        wBannerLive: 'على كلتا البطاقتين — مباشر',
+        wBannerSpec: 'مقيّد بالمواصفة: شريط آبل {a} بكسل · صورة جوجل ١٠٣٢×٣٣٦ بكسل. نقصّها لتناسب الاثنتين.',
+        wBannerSpecGeneric: 'بطاقات آبل العامة بلا شريط — البانر يظهر على جوجل فقط (١٠٣٢×٣٣٦ بكسل).',
+        wCfgBrandTitle: 'اجعليها لك.', wCfgBrandSub: 'سمّيها ولوّنيها — وشاهدي البطاقتين تتشكلان مباشرة. ←',
+        wCfgRulesTitle: 'ضعي القواعد.', wCfgRulesSub: 'كيف تتصرف {type} عند الكاونتر — كل ذلك على البطاقة ومباشر. ←',
+        wBack: 'رجوع', wChVisitsLine: '{n} زيارات',
+        wStampUploadToast: 'ختم مخصص: أفلتي صورة PNG هنا في الإنتاج — تركب كل ختم',
+        wSubmittedTitle: '{name} قيد المراجعة.',
+        wSubmittedSub: 'عمر من وصلة يراجعها. ستصلك رسالة واتساب لحظة تفعيلها.',
+        wSimulateApprove: '▶ عرض: محاكاة اعتماد وصلة',
+        /* ── screens ─────────────────────────────────────────────────────── */
+        actTitle: 'كل ما حدث.', actSub: 'كل ختم ومكافأة ومنضم — عبر بطاقاتك كلها.',
+        bcTitle: 'صلي كل محفظة — بلطف.', bcSub: 'اكتبيها مرة، وشاهديها تصل شاشة القفل قبل أن ترسلي.',
+        bcSendFrom: 'الإرسال من', bcMessageLabel: 'الرسالة',
+        bcGoogleCap: 'جوجل واليت يحدّ الإشعارات بنحو ٣ يومياً لكل بطاقة — وصلة تجدول حول ذلك تلقائياً.',
+        bcChipSent: 'أُرسلت', bcChipScheduled: 'مجدولة', bcChipHeld: 'محجوزة · ساعات الهدوء',
+        bcCancelAsk: 'إلغاء «{title}»؟',
+        bcCancelBody: 'لن تُرسل أبداً، وتعود الرسالة إلى رصيدك الشهري.',
+        bcCancelOk: 'إلغاء الإشعار', bcCancelDone: 'أُلغيت — عادت إلى رصيدك',
+        stfTitle: 'كل فرع يمسح بطاقته.',
+        stfSub: 'الموظفون يرون البطاقات التي تسندينها لهم فقط — والماسح يرفض البقية بأدب.',
+        stfInvite: '+ دعوة موظف',
+        langBilingualNote: 'صفحات العملاء ثنائية اللغة دائماً — هذا يغيّر لوحتك فقط.',
+        celebTitle: '{name} فعّالة.',
+        celebSub: 'رمز التسجيل جاهز — أول زبون عند الكاونتر يستطيع الانضمام.',
+        celebBack: 'العودة إلى لوحة التحكم',
+        /* ── the win-back box ────────────────────────────────────────────── */
+        wbPlaceholder: 'نفتقدك في {card} — زيارتك القادمة تكسب شيئاً إضافياً.',
+        wbLine: '{n} عضواً لم يزوروا منذ {d}+ يوم. ضغطة واحدة تصل شاشات قفلهم.',
+        wbSendBtn: 'أرسل إلى {n}', wbSentBtn: 'أُرسلت ✓',
+        wbLogTitle: 'استرجاع · صمت {d}+ يوم', wbSentToast: 'أُرسلت إلى {n} — بقي {left} إشعاراً هذا الشهر',
+        /* ── card state changes ──────────────────────────────────────────── */
+        edPauseAsk: 'إيقاف {name} مؤقتاً؟',
+        edPauseAskBody: 'يتوقف التسجيل والكسب، وتبهت البطاقة في المحافظ. الأرصدة تبقى قابلة للاستبدال. يمكنك الاستئناف متى شئت.',
+        edPauseOk: 'إيقاف البطاقة', edPauseDone: 'أُوقفت — الأرصدة تبقى قابلة للاستبدال',
+        edResumeDone: '{name} فعّالة من جديد',
+        edResubmitDone: 'أُعيد الإرسال — عمر يراها على رأس القائمة',
+        adOnToast: '{name} مفعّلة — فوراً وفي المحافظ الآن', adOffToast: 'أُوقفت {name}',
+        adBirthdayOnToast: 'إضافة عيد الميلاد مفعّلة — فوراً',
+        secResetLinkToast: 'رابط إعادة التعيين يذهب إلى yara@talagroup.jo',
+        planWhatsToast: 'عمر سيراسلك على واتساب اليوم',
+        unitPts: 'نقطة', rlVipAt: 'عند', bcMockDate: 'الثلاثاء ٢٩ تموز',
         wNotes: {
           type: 'اختير النوع — البطاقة كلها أُعيد بناؤها حوله.',
           color: 'تحدّث لون الهوية — البطاقتان تتلوّنان.',
@@ -4969,11 +5475,25 @@ class Component extends DCLogic {
          `card.rules` is the LIVE rule set everywhere in this file — the same
          thing the scanner reads out of cardMods. */
       merged.rules = this.liveRules(c, mod);
-      if (c.id === 'sukkar') { const ls = this._lsGet(this.sukkarKey()); if (ls === 'approved') { merged.state = 'live'; merged.passes = 41; merged.stat1 = { label: 'Approved by Wasla', v: 'Just now' }; merged.stat2 = { label: 'First passes', v: '41' }; merged.note = 'Live — Yara got the WhatsApp.'; } else if (ls === 'rejected') { merged.state = 'returned'; merged.stat1 = { label: 'Sent back', v: 'Just now' }; merged.stat2 = { label: 'In wallets', v: 'Nothing' }; } else if (ls === 'resubmitted') { merged.stat1 = { label: 'Resubmitted', v: 'Just now' }; merged.stat2 = { label: 'Reviewer', v: 'Wasla · Omar' }; } }
+      /* the console's verdict on THIS account's card under review. Both
+         shapes are understood (see parseVerdict); when the new one carries a
+         reason it is kept on the card so the returned banner can print Omar's
+         own words instead of inventing a sentence. */
+      if (c.id === 'sukkar') { const sv = this.sukkarVerdict(); const ls = sv ? sv.state : '';
+        if (ls === 'approved') { merged.state = 'live'; merged.passes = 41; merged.stat1 = { label: t.sukApprovedLbl, v: t.liveJustNow }; merged.stat2 = { label: t.sukFirstPassesLbl, v: '41' }; merged.note = t.sukLiveNote; }
+        else if (ls === 'rejected') { merged.state = 'returned'; merged.stat1 = { label: t.sukSentBackLbl, v: t.liveJustNow }; merged.stat2 = { label: t.sukInWalletsLbl, v: t.sukNothing }; merged.returnedReason = sv.reason || ''; merged.returnedBy = sv.by || ''; }
+        else if (ls === 'resubmitted') { merged.stat1 = { label: t.sukResubmittedLbl, v: t.liveJustNow }; merged.stat2 = { label: t.sukReviewerLbl, v: 'Wasla · Omar' }; } }
       return merged; }),
       /* a card born in this session gets the same treatment: whatever the
          wizard wrote into its `rules`, plus any instant edit made since. */
       ...st.addedCards.map(c => ({ ...c, rules: this.liveRules(c, st.cardMods[c.id]) }))];
+    /* ── the card quota, measured ONCE from the cards that actually exist ──
+       It used to read `Acc.cardsUsed`, a static 5 in the data file, while the
+       grid rendered `cards + addedCards`: create a card and the sidebar still
+       said "5 of 10" beside six tiles. A retired card gives its slot back —
+       that is the whole difference between retiring and pausing — so retired
+       is the one state that does not count. */
+    const cardsLiveN = allCards.filter(c => c && c.state !== 'retired').length;
     const typeOf = (id) => types.find(x => x.id === id) || {};
     const cardTiles = allCards.map((c, i) => { const b = this.badge(c.state); const wa = c.weekActivity || []; const max = Math.max(...wa, 1); return { ...c, open: () => this.setState({ screen: 'card', activeCardId: c.id, memberIdx: null, cardTab: 'members', memFilter: 'all', wbSent: false }), anim: AN('fadeUp', '.55s', (0.06 * i + 0.15) + 's'), typeName: typeOf(c.type).name || c.type, badge: b.label, badgeBg: b.bg, badgeFg: b.fg, dotAnim: b.anim,
       /* the hover shortcut into this card's settings tab — the tile is the
@@ -5395,10 +5915,16 @@ class Component extends DCLogic {
        views, FULL (with the card's glyph) in the member panel. `opt.dark`
        flips the ring/inner-shadow for the charcoal panel. */
     const cardByName = (nm) => allCards.find(c => c.name === nm) || {};
+    /* a gift stamp sent from the member panel is a stamp that LANDED. It is
+       folded in here, at the one place every progress row in the file is
+       drawn — directory, card members tab and member panel — so the three
+       can never disagree about how far along somebody is. Clamped to the
+       ladder: a gift cannot push a member past their own goal. */
+    const giftsFor = (m) => ((st.memberGifts || {})[(m || {}).name] || 0);
     const progCell = (m, o) => {
       const q = o || {};
       const p = String(m.progress || ''), f = p.match(/(\d+)\s*\/\s*(\d+)/);
-      if (f) { const got = +f[1], goal = +f[2], shown = Math.min(goal, 12), full = got >= goal;
+      if (f) { const goal = +f[2], got = Math.min(goal, +f[1] + giftsFor(m)), shown = Math.min(goal, 12), full = got >= goal;
         const cd = cardByName(m.card);
         const disc = full ? '#2FAE66' : (cd.color || '#E88024');
         return { hasDots: true, hasBar: false, showText: false, progressText: p, barW: '0%', barLabel: '',
@@ -5433,7 +5959,7 @@ class Component extends DCLogic {
         br: on ? '#E88024' : '#E7E0D5', bg: on ? '#E88024' : '#FFFFFF', fg: on ? '#FFFFFF' : (n ? '#5D5348' : '#B5AB9C'),
         cntBg: on ? 'rgba(255,255,255,.24)' : '#F3EDE3', cntFg: on ? '#FFFFFF' : '#93887A' }; });
     const wbActive = fDays > 0 && acMemberRows.length > 0 && ac.state === 'live';
-    const wbPlaceholder = 'We miss you at ' + (ac.name || '') + ' — your next visit earns a little extra.';
+    const wbPlaceholder = fill(t.wbPlaceholder, { card: ac.name || '' });
     const md = st.memberIdx == null ? null : members[st.memberIdx];
     const mdSeed = ((st.memberIdx == null ? 0 : st.memberIdx) * 13 + 4) % 17;
     const mdChips = md ? [
@@ -5443,6 +5969,12 @@ class Component extends DCLogic {
       ...(md.birthday ? [{ v: '🎂 ' + md.birthday, k: t.birthday }] : [])
     ].map((c, i) => ({ ...c, anim: stag('popIn', '.4s', i, mdSeed, 55) })) : [];
     const mdProg = md ? progCell(md, { size: 18, glyph: true, dark: true }) : progCell({}, { size: 18, glyph: true, dark: true });
+    /* a gift STAMP only means something on a ladder that counts stamps, and
+       only while there is a rung left. On a cashback balance, or on a card
+       already full, the push still goes — it just does not claim a stamp it
+       cannot land. */
+    const mdStampF = md ? String(md.progress || '').match(/(\d+)\s*\/\s*(\d+)/) : null;
+    const mdCanStamp = !!mdStampF && Math.min(+mdStampF[2], +mdStampF[1] + giftsFor(md)) < +mdStampF[2];
     const EX = (this.db().cardExtras || {})[ac.id];
     const fn = (EX || {}).funnel || {};
     // (a) funnel — staggered grow-in bars, count-ups, conversion captions between stages
@@ -5554,7 +6086,7 @@ class Component extends DCLogic {
       artOpacity: on ? '1' : '.5', artSheen: on ? 'sheen 3.4s ease-in-out infinite' : 'none',
       stateColor: on ? '#1E7D47' : '#93887A',
       stateLine: on ? fill(t.adOnLine, { n: this.fmt(ac.passes || 0) }) : t.adOffLine,
-      toggle: g(() => { this.setState({ addons: { ...st.addons, [ac.id]: { ...adState, [d.k]: !on } } }); this.saveDemo(); this.say(!on ? d.name + ' is on — instant, live in wallets now' : d.name + ' turned off'); }) }; });
+      toggle: g(() => { this.setState({ addons: { ...st.addons, [ac.id]: { ...adState, [d.k]: !on } } }); this.saveDemo(); this.say(fill(!on ? t.adOnToast : t.adOffToast, { name: d.name })); }) }; });
     const custom = { daraj: 'Favourite drink · مشروبك المفضل', layl: 'Birthday · عيد الميلاد', zaytoun: 'Neighbourhood · الحي' }[ac.id];
     const newFields = st.addedFields[ac.id] || [];
     // (6) field rows — a type icon each, review chip on the three-tier amber
@@ -5564,11 +6096,27 @@ class Component extends DCLogic {
     const mkFieldRow = (label, type, tag, tagBg, tagFg, dot, pulse) => { const ic = fldIcon(type); return { label,
       tag, tagBg, tagFg, dot, tagPulse: !!pulse, icon: ic[0], iconSize: ic[1], iconTitle: fldTypeName(type),
       iconBg: pulse ? '#F0E7DB' : '#F3EDE3', iconFg: pulse ? '#7A5A2E' : '#93887A' }; };
+    /* the card's own signup fields — the exact list the wizard's Review step
+       printed and the join page renders. A field the owner switched on there
+       is a real field here, and a custom one they wrote is already approved
+       (it went up with the card), so it wears the custom chip rather than the
+       review chip that only belongs on something still sitting with Omar. */
+    const acOwnSignup = (ac.fields && typeof ac.fields === 'object' && !Array.isArray(ac.fields)) ? ac.fields : {};
+    const acSignupOn = { ...acOwnSignup, ...((st.cardMods[ac.id] || {}).fields || {}) };
+    const acOwnCustom = Array.isArray(ac.customFields) ? ac.customFields : [];
+    const SIGN_DEFS = [['birthday', t.wFieldBirthday, 'Date'], ['email', t.wFieldEmail, 'Text'], ['drink', t.wFieldDrink, 'Text']];
     const signupFields = [
-      mkFieldRow('Full name · الاسم', 'Text', t.suAlwaysOn, '#EFEDE8', '#6B6760', '#93887A', false),
-      mkFieldRow('Phone · الهاتف', 'Text', t.suAlwaysOn, '#EFEDE8', '#6B6760', '#93887A', false),
+      mkFieldRow(t.wFieldName, 'Text', t.suAlwaysOn, '#EFEDE8', '#6B6760', '#93887A', false),
+      mkFieldRow(t.wFieldPhone, 'Text', t.suAlwaysOn, '#EFEDE8', '#6B6760', '#93887A', false),
+      ...SIGN_DEFS.filter(d => !!acSignupOn[d[0]]).map(d => mkFieldRow(d[1], d[2], t.suCustomField, '#FDF4EC', '#C96A14', '#E88024', false)),
       ...(custom ? [mkFieldRow(custom, custom.indexOf('Birthday') === 0 ? 'Date' : 'Text', t.suCustomField, '#FDF4EC', '#C96A14', '#E88024', false)] : []),
-      ...newFields.map(f => mkFieldRow(f.label, f.type, t.goesForReview, '#F0E7DB', '#7A5A2E', '#7A5A2E', true))
+      ...acOwnCustom.map(f => mkFieldRow(f.label, f.type, t.suCustomField, '#FDF4EC', '#C96A14', '#E88024', false)),
+      /* a field added AFTER the card went live is the one thing here that is
+         genuinely still with Wasla — until a verdict arrives (see
+         editVerdictPatch), at which point `approved` flips the chip. */
+      ...newFields.map(f => f && f.approved
+        ? mkFieldRow(f.label, f.type, t.suCustomField, '#FDF4EC', '#C96A14', '#E88024', false)
+        : mkFieldRow(f.label, f.type, t.goesForReview, '#F0E7DB', '#7A5A2E', '#7A5A2E', true))
     ].map((f, i) => ({ ...f, anim: AN('fadeUp', '.4s', (0.05 * i + 0.06) + 's') }));
     const fldTypeDefs = [['Text', t.typeText], ['Date', t.typeDate], ['Choice', t.typeChoice]];
     const fldTypeChips = fldTypeDefs.map(([id, label]) => ({ label, pick: () => this.setState({ fldType: id }), br: st.fldType === id ? '#E88024' : '#E7E0D5', bg: st.fldType === id ? '#FDF4EC' : '#FFFFFF', fg: st.fldType === id ? '#C96A14' : '#5D5348' }));
@@ -5583,10 +6131,10 @@ class Component extends DCLogic {
     const setBd = (patch) => this.setState({ bday: { ...st.bday, [ac.id]: { ...bd, ...patch } } });
     // one pause/resume path — used by the card header and by the command palette
     const setCardState = (c, next, msg, extra) => { this.setState({ cardMods: { ...this.state.cardMods, [c.id]: { ...(this.state.cardMods[c.id] || {}), state: next, ...(extra || {}) } } }); this.saveDemo(); this.say(msg); };
-    const pauseCard = (c) => g(() => this.ask('Pause ' + c.name + '?', 'New signups and earning stop, and the card greys in wallets. Balances stay redeemable. You can resume anytime.', 'Pause card', '#E2563A', () => setCardState(c, 'paused', 'Paused — balances stay redeemable')));
-    const resumeCard = (c) => g(() => setCardState(c, 'live', c.name + ' is live again'));
+    const pauseCard = (c) => g(() => this.ask(fill(t.edPauseAsk, { name: c.name || '' }), t.edPauseAskBody, t.edPauseOk, '#E2563A', () => setCardState(c, 'paused', t.edPauseDone)));
+    const resumeCard = (c) => g(() => setCardState(c, 'live', fill(t.edResumeDone, { name: c.name || '' })));
     const cardActionFn = (c) => c.state === 'live' ? pauseCard(c) : resumeCard(c);
-    const resubmitCard = g(() => { this._lsSet(this.sukkarKey(), 'resubmitted'); this.say('Resubmitted — Omar sees it at the top of the queue'); this.forceUpdate(); });
+    const resubmitCard = g(() => { this._lsSet(this.sukkarKey(), 'resubmitted'); this.say(t.edResubmitDone); this.forceUpdate(); });
     /* retiredBy tags who ended the card's life: this is the ONLY path in this
        file that puts a card into 'retired', so tagging it 'merchant' here is
        how the profile banner and tile note later tell "you retired this"
@@ -5599,7 +6147,7 @@ class Component extends DCLogic {
       : ac.state === 'returned' ? { label: EN ? 'Fix & resubmit' : 'صحّح وأعد الإرسال', fn: resubmitCard }
       : ac.state === 'draft' ? { label: EN ? 'Continue setup' : 'أكمل الإعداد', fn: () => this.resumeDraft(ac) }
       : ac.state === 'retired' ? { label: EN ? 'Retired' : 'متقاعدة', fn: () => this.say(EN ? 'Retired — earning stopped, redemption still honoured' : 'متقاعدة — توقف الكسب والاستبدال محفوظ') }
-      : { label: EN ? 'In review — Omar has it' : 'قيد المراجعة', fn: () => this.say('Omar is on it — usually within a day') };
+      : { label: t.acInReviewLabel, fn: () => this.say(t.acInReviewToast) };
 
     /* ══ THE CARD EDITOR ════════════════════════════════════════════════════
        Everything the wizard configured, editable afterwards, sorted into the
@@ -5633,7 +6181,13 @@ class Component extends DCLogic {
     if (ac.type === 'membership' && ac.reward) acCfgBase.benefit = ac.reward;
     if (ac.type === 'coupon' && ac.reward) acCfgBase.offer = ac.reward;
     if (ac.type === 'challenge' && ac.reward) acCfgBase.prize = ac.reward;
-    const acCfgLive = { ...acCfgBase, ...(acMod.cfg || {}) };
+    /* a card born in the wizard carries the config it was configured with, so
+       the editor opens on the 8% cashback the founder just chose rather than
+       the type's 5% default. Order matters: the reward-derived fallbacks above
+       are for cards that have no `cfg` at all, so the card's own copy wins
+       over them, and an instant edit wins over everything. */
+    const acCfgOwn = (ac.cfg && typeof ac.cfg === 'object' && !Array.isArray(ac.cfg)) ? ac.cfg : {};
+    const acCfgLive = { ...acCfgBase, ...acCfgOwn, ...(acMod.cfg || {}) };
     const acCfg = { ...acCfgLive, ...(ed.cfg || {}) };
     const setEdCfg = (patch) => { setEd({ cfg: { ...(ed.cfg || {}), ...patch } }); edNote(t.capRulesEd, 'rules'); };
     /* the INSTANT escape hatch inside the review band. The per-day redemption
@@ -5763,29 +6317,46 @@ class Component extends DCLogic {
     });
     /* the live back-of-card preview — the same label/value rows the Customer
        surface flips to, iOS link-blue on the tappable ones. */
-    const edBackRows = edLinkRows.filter(r => !r.isHidden).map(r => ({ k: r.label, v: r.isOver ? r.val : accLinkVal(r.k),
-      color: '#007AFF' })).filter(r => !!r.v);
+    /* `links` finally means what its own comment always said it meant:
+       "include this link on cards by DEFAULT". A card that OVERRIDES the link
+       is stating its own intent and is unaffected by the account switch; a
+       card that merely INHERITS shows the link only while the account is
+       including it. Until now the switch was written, persisted, restored —
+       and read by nothing but its own toggle. */
+    const edBackRows = edLinkRows.filter(r => !r.isHidden && (r.isOver || !!(st.links || {})[r.k]))
+      .map(r => ({ k: r.label, v: r.isOver ? r.val : accLinkVal(r.k), color: '#007AFF' })).filter(r => !!r.v);
     const edBackEmpty = edBackRows.length === 0;
 
     // ── branches: which of the account's branches this card runs at (INSTANT)
     const ALLBR = Acc.branches || [];
+    /* the list the scanners follow: an instant edit first, then the card's own
+       `branches` (what the wizard's Review step printed), then the single
+       `branch` string the seeded cards carry, then everywhere. */
     const acBranches = Array.isArray(acMod.branches) ? acMod.branches
+      : Array.isArray(ac.branches) ? ac.branches
       : (ac.branch ? ALLBR.filter(b => String(ac.branch).indexOf(b) >= 0) : ALLBR.slice());
     const edBranchChips = ALLBR.map(b => { const on = acBranches.indexOf(b) >= 0; return { label: b, mark: on ? '✓' : '',
       br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348',
       boxBr: on ? '#E88024' : '#D8D0C2', boxBg: on ? '#E88024' : '#FFFFFF',
       toggle: g(() => { putMod({ branches: on ? acBranches.filter(x => x !== b) : [...acBranches, b] }); edNote(t.capBranchEd, 'instant'); this.say(t.capBranchEd); }) }; });
     const edBranchNote = acBranches.length === 0 ? t.edWhereNoneNote : acBranches.length === ALLBR.length ? t.edWhereAllNote : t.edWhereSomeNote;
-    // ── signup fields on this card: the two locked ones, two switchables, customs
-    const acFields = acMod.fields || {};
+    // ── signup fields on this card: the two locked ones, three switchables, customs
+    /* the card's OWN toggles are the base — that is what the wizard's Review
+       step printed under "Signup fields" — and an instant edit sits on top.
+       The three switchables are the same three the wizard offers, so a field
+       chosen there is a field that can be turned off here. */
+    const acOwnFields = (ac.fields && typeof ac.fields === 'object' && !Array.isArray(ac.fields)) ? ac.fields : {};
+    const acFields = { ...acOwnFields, ...(acMod.fields || {}) };
+    const acCustomFields = Array.isArray(ac.customFields) ? ac.customFields : [];
     const edFieldRows = [
       { label: t.wFieldName, locked: true, switchable: false, isCustom: false, cursor: 'default', dot: '#93887A', swBg: '#D8D0C2', knob: '3px', toggle: () => {} },
       { label: t.wFieldPhone, locked: true, switchable: false, isCustom: false, cursor: 'default', dot: '#93887A', swBg: '#D8D0C2', knob: '3px', toggle: () => {} },
-      ...[['birthday', t.wFieldBirthday], ['email', t.wFieldEmail]].map(([k, label]) => { const on = !!acFields[k]; return {
+      ...[['birthday', t.wFieldBirthday], ['email', t.wFieldEmail], ['drink', t.wFieldDrink]].map(([k, label]) => { const on = !!acFields[k]; return {
         label, locked: false, switchable: true, isCustom: false, cursor: 'pointer',
         dot: on ? '#E88024' : '#D8D0C2', swBg: on ? '#2FAE66' : '#D8D0C2', knob: on ? '18px' : '3px',
         toggle: g(() => { putMod({ fields: { ...acFields, [k]: !on } }); edNote(t.capFieldEd, 'instant'); this.say(t.capFieldEd); }) }; }),
       ...(custom ? [{ label: custom, locked: false, switchable: false, isCustom: true, cursor: 'default', dot: '#7A5A2E', swBg: '#D8D0C2', knob: '3px', toggle: () => {} }] : []),
+      ...acCustomFields.map(f => ({ label: f.label, locked: false, switchable: false, isCustom: true, cursor: 'default', dot: '#7A5A2E', swBg: '#D8D0C2', knob: '3px', toggle: () => {} })),
       ...newFields.map(f => ({ label: f.label, locked: false, switchable: false, isCustom: true, cursor: 'default', dot: '#7A5A2E', swBg: '#D8D0C2', knob: '3px', toggle: () => {} }))
     ].map((f, i) => ({ ...f, anim: AN('fadeUp', '.36s', (0.04 * i + 0.05) + 's') }));
     // ── the stamp-style picker, the wizard's component pointed at THIS card
@@ -5882,7 +6453,7 @@ class Component extends DCLogic {
     const renewShort = rnOk ? (rnDay + ' ' + (EN ? MON3B[rnMon] : MONAR[rnMon])) : String(Acc.renewal || '');
     const rnToday = new Date(); const rnT0 = new Date(rnToday.getFullYear(), rnToday.getMonth(), rnToday.getDate());
     const renewDays = rnOk ? Math.max(0, Math.round((new Date(rnYear, rnMon, rnDay) - rnT0) / 86400000)) : 0;
-    const chipFor = { sent: { chip: 'Sent', bg: '#E7F6EE', fg: '#1E7D47' }, scheduled: { chip: 'Scheduled', bg: '#F4EFE6', fg: '#8A5A18' }, held: { chip: 'Held · quiet hours', bg: '#FDF1DC', fg: '#9A6B12' } };
+    const chipFor = { sent: { chip: t.bcChipSent, bg: '#E7F6EE', fg: '#1E7D47' }, scheduled: { chip: t.bcChipScheduled, bg: '#F4EFE6', fg: '#8A5A18' }, held: { chip: t.bcChipHeld, bg: '#FDF1DC', fg: '#9A6B12' } };
     const bcUnit = EN ? ' wallets' : ' محفظة';
     /* delivery numbers: ONE deterministic function — the log bars and the report sheet
        both read it, so a row and its sheet can never disagree. */
@@ -5923,7 +6494,7 @@ class Component extends DCLogic {
       barTitle: this.fmt(dl.delN) + bcUnit + ' · ' + dl.delPct.toFixed(1) + '%',
       barAnim: stag('barGrow', '.62s', i, bcLogSeed + 4, 40),
       open: () => this.setState({ bcDetail: b.title }),
-      cancel: g((e) => { if (e && e.stopPropagation) e.stopPropagation(); this.ask('Cancel “' + b.title + '”?', 'It never sends, and the broadcast returns to your monthly allowance.', 'Cancel broadcast', '#E2563A', () => { this.setState({ cancelled: [...st.cancelled, b.title], bcDetail: null }); this.saveDemo(); this.say('Cancelled — returned to your allowance'); }); }) };
+      cancel: g((e) => { if (e && e.stopPropagation) e.stopPropagation(); const nx = [...st.cancelled, b.title]; this.ask(fill(t.bcCancelAsk, { title: b.title }), t.bcCancelBody, t.bcCancelOk, '#E2563A', () => { this.setState({ cancelled: nx, bcDetail: null }); this.saveDemo({ cancelled: nx }); this.say(t.bcCancelDone); }); }) };
     };
     const bcLog = bcAll.filter(b => bcLogCard === 'all' || b.card === bcLogCard).map(bcDeco);
     // ── composer: schedule chips, quiet-hours honesty, the quota gate ──────
@@ -6014,7 +6585,7 @@ class Component extends DCLogic {
       anim: AN('fadeUp', '.42s', (0.06 * i + 0.08) + 's'),
       revoke: g((e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ secRevoked: [...secGone, d.id] }); this.say(d.name + ' — ' + t.secSignedOutToast); }) }; });
     // (b) plan — animated meters, a compare strip, a renewal countdown
-    const cardsUsedN = Acc.cardsUsed || 0, cardQuotaN = Acc.cardQuota || 10;
+    const cardsUsedN = cardsLiveN, cardQuotaN = Acc.cardQuota || 10;
     const planName = Acc.plan || 'Growth';
     const planMeters = [{ label: t.planCardsLabel, useN: cardsUsedN, quota: cardQuotaN },
       { label: t.planBcLabel, useN: used, quota: bcQuota }]
@@ -6127,7 +6698,9 @@ class Component extends DCLogic {
     Object.keys(st.edits || {}).forEach(cid => { const e0 = st.edits[cid]; if (!e0 || !e0.pending) return;
       const c = allCards.find(x => x.id === cid) || {};
       pdRaw.push({ label: (c.name || cid) + ' · ' + t.pdEdits, when: t.pdSubmitted + ' ' + t.pdJustNow, dot: '#E88024', go: goCardTab(cid, 'edit') }); });
-    Object.keys(st.addedFields || {}).forEach(cid => { const fs = st.addedFields[cid] || []; if (!fs.length) return;
+    /* only fields still WAITING count as "with Wasla" — an approved one is on
+       the join page and has no business sitting in the pending list */
+    Object.keys(st.addedFields || {}).forEach(cid => { const fs = (st.addedFields[cid] || []).filter(f => f && !f.approved); if (!fs.length) return;
       const c = allCards.find(x => x.id === cid) || {};
       pdRaw.push({ label: (c.name || cid) + ' · ' + fs.length + ' ' + t.pdFields, when: t.pdSubmitted + ' ' + t.pdJustNow, dot: '#4E6E8E', go: goCardTab(cid, 'signup') }); });
     (st.changeReqs || []).forEach(r => pdRaw.push({ label: t.pdChange + ' · ' + (r.label || ''), when: t.pdSubmitted + ' ' + t.pdJustNow, dot: '#7A5A2E',
@@ -6393,7 +6966,7 @@ class Component extends DCLogic {
       openCompanySettings: () => this.setState({ screen: 'settings', settingsTab: 'company', memberIdx: null, avatarOpen: false }),
       companyShort: EN ? (Acc.company || '') : (Acc.companyAr || ''), companyName: Acc.company, companyAr: Acc.companyAr,
       ownerName: EN ? (Acc.owner || '') : (Acc.ownerAr || ''), ownerInitials: Acc.initials || '',
-      quotaLabel: (Acc.cardsUsed || 0) + ' of ' + (Acc.cardQuota || 10), quotaPct: Math.round((Acc.cardsUsed || 0) / (Acc.cardQuota || 10) * 100 * tick) + '%',
+      quotaLabel: cardsUsedN + t.quotaOf + cardQuotaN, quotaPct: Math.min(100, Math.round(cardsUsedN / Math.max(cardQuotaN, 1) * 100 * tick)) + '%',
       isHome: st.screen === 'home', isWizard: st.screen === 'wizard', isCard: st.screen === 'card', isMembers: st.screen === 'members', isActivity: st.screen === 'activity', isBroadcasts: st.screen === 'broadcasts', isStaff: st.screen === 'staff', isSettings: st.screen === 'settings',
       // ── the manager override queue ──────────────────────────────────────
       isOverrides: st.screen === 'overrides',
@@ -6434,8 +7007,13 @@ class Component extends DCLogic {
       enterAnim: AN('fadeUp', '.5s'), enterAnimFast: AN('fadeUp', '.4s'), popAnim: AN('popIn', '.5s'), popAnimFast: AN('popIn', '.45s'), slideAnim: AN('slideRight', '.55s'), slideAnimFast: AN('slideRight', '.4s'),
       stepAnim: reAnim('stepIn', '.42s', wiz.step * 7 + 1),
       wizStep1: wiz.step === 1, wizStep2: wiz.step === 2, wizConfig: wiz.step === 3 || wiz.step === 4, wizBrand: wiz.step === 3, wizRules: wiz.step === 4, wizStep5: wiz.step === 5,
-      cfgTitle: wiz.step === 3 ? 'Make it yours.' : 'Set the rules.', cfgSub: wiz.step === 3 ? 'Name it, color it — watch both passes take shape live. →' : 'How your ' + (selType.name || 'card').toLowerCase() + ' behaves at the counter — all of it on the card, live. →',
-      wizBackLabel: wiz.step === 1 ? (EN ? 'Dashboard' : 'لوحة التحكم') : 'Back',
+      cfgTitle: wiz.step === 3 ? t.wCfgBrandTitle : t.wCfgRulesTitle,
+      cfgSub: wiz.step === 3 ? t.wCfgBrandSub : fill(t.wCfgRulesSub, { type: (EN ? (selType.name || 'card').toLowerCase() : (selType.ar || selType.name || '')) }),
+      wRewardAtLine: fill(t.rlRewardAt, { n: wiz.goal }),
+      chVisitsLine: fill(t.wChVisitsLine, { n: cfg.visits }),
+      wColorLine: fill(t.edCustomColor, { hex: (wiz.color || '').toUpperCase() }),
+      wizSubmittedTitle: fill(t.wSubmittedTitle, { name: wName }),
+      wizBackLabel: wiz.step === 1 ? t.crumbDashboard : t.wBack,
       wizBack: () => { if (wiz.step === 1) this.setState({ screen: 'home' }); else this.setState({ wiz: { ...wiz, step: wiz.step - 1, submitted: false } }); },
       wizSteps, typeTiles, selType,
       bizChips, goalChips, hasRec: !!recId, noRec: !recId, recName: recType.name || '',
@@ -6483,7 +7061,7 @@ class Component extends DCLogic {
       heroShadow: appleBannerOn ? '0 1px 6px rgba(0,0,0,.5)' : 'none',
       appleSpecLine: wtype === 'coupon' ? 'coupon · strip 375×144 pt · 1125×432 px @3x' : wtype === 'membership' ? 'generic · no strip · thumbnail 90×90 pt' : 'storeCard · strip 375×123 pt · 1125×369 px @3x',
       googleSpecLine: (wtype === 'coupon' ? 'Offer' : 'Loyalty') + ' · hero 1032×336 px · logo 660×660',
-      bannerHint: wtype === 'membership' ? 'Apple generic passes carry no strip — your banner shows on Google only (hero 1032×336 px).' : 'Locked to spec: Apple strip ' + (wtype === 'coupon' ? '1125×432' : '1125×369') + ' px · Google hero 1032×336 px. We crop to fit both.',
+      bannerHint: wtype === 'membership' ? t.wBannerSpecGeneric : fill(t.wBannerSpec, { a: (wtype === 'coupon' ? '1125×432' : '1125×369') }),
       pickBanner: (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { localStorage.setItem('wasla_wiz_banner', r.result); } catch (err) {} this.setState(s => ({ wiz: { ...s.wiz, banner: r.result } })); this.wnote((t.wNotes || {}).banner, 'banner'); this.say('Banner on both passes — cropped to each spec'); }; r.readAsDataURL(f); },
       removeBanner: () => { try { localStorage.removeItem('wasla_wiz_banner'); } catch (err) {} this.setState(s => ({ wiz: { ...s.wiz, banner: '' } })); this.wnote((t.wNotes || {}).bannerOff, 'banner'); },
       wNameRaw: wiz.name, setWName: (e) => { this.setState({ wiz: { ...wiz, name: e.target.value } }); this.wnote((t.wNotes || {}).name, 'edit'); },
@@ -6517,7 +7095,7 @@ class Component extends DCLogic {
           isReal: real, notReal: !real, realSrc: real ? sArt.filled : '',
           realStyle: 'width:64%;height:64%;object-fit:contain;display:block;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35));',
           pick: () => { setCfg({ icon: id }); this.wnote((t.wNotes || {}).stamp, 'stamp'); } }; }),
-      uploadStampToast: () => this.say('Custom stamp art: drop a PNG here in production — it rides every stamp'),
+      uploadStampToast: () => this.say(t.wStampUploadToast),
       stampCapChips: mkCfgChips(['1 / visit', '2 / day', 'No limit'], 'cap'),
       cbRate: cfg.rate, cbRateUp: () => setCfg({ rate: Math.min(15, (cfg.rate || 5) + 1) }), cbRateDown: () => setCfg({ rate: Math.max(1, (cfg.rate || 5) - 1) }),
       cbMin: cfg.min, cbMinUp: () => setCfg({ min: Math.min(10, (cfg.min || 2) + 1) }), cbMinDown: () => setCfg({ min: Math.max(0, (cfg.min || 2) - 1) }),
@@ -6527,7 +7105,7 @@ class Component extends DCLogic {
         setName: (e) => { const nl = ladder.map((x, j) => j === i ? { ...x, name: e.target.value } : x); setCfg({ ladder: nl }); },
         setCost: (e) => { const v = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; const nl = ladder.map((x, j) => j === i ? { ...x, cost: v } : x); setCfg({ ladder: nl }); },
         remove: () => { if (ladder.length > 1) setCfg({ ladder: ladder.filter((_, j) => j !== i) }); } })),
-      addLadder: () => { if (ladder.length >= 4) { this.say('Four rewards keeps the ladder scannable'); return; } setCfg({ ladder: [...ladder, { name: 'New reward', cost: (ladder[ladder.length - 1] || { cost: 250 }).cost + 250 }] }); },
+      addLadder: () => { if (ladder.length >= 4) { this.say(t.rlPtCap); return; } setCfg({ ladder: [...ladder, { name: EN ? 'New reward' : 'مكافأة جديدة', cost: (ladder[ladder.length - 1] || { cost: 250 }).cost + 250 }] }); },
       dcPct: cfg.pct, dcPctUp: () => setCfg({ pct: Math.min(50, (cfg.pct || 15) + 5) }), dcPctDown: () => setCfg({ pct: Math.max(5, (cfg.pct || 15) - 5) }),
       dcFine: cfg.fine || '', setDcFine: (e) => setCfg({ fine: e.target.value }),
       cpOffer: cfg.offer || '', setCpOffer: (e) => setCfg({ offer: e.target.value }), cpChips: mkCfgChips(['2 weeks', '1 month', '3 months'], 'expiry'),
@@ -6551,10 +7129,51 @@ class Component extends DCLogic {
       anHasFunnelRead: !!anFunnelRead, anHasRetRead: !!anRetRead, anHasBrLead: !!anBrLead,
       anEmptyAnim: AN('popIn', '.5s', '.08s'),
       mdTimeline, mdChips, mdProg, mdQuiet: md ? (md.last || 0) >= 15 : false,
-      mdGift: g(() => this.say('A gift stamp is riding ' + (md ? md.name.split(' ')[0] : '') + '\u2019s pass — she\u2019ll see it on her lock screen')),
-      mdNudge: g(() => this.say('Win-back sent to ' + (md ? md.name.split(' ')[0] : '') + ' — “we miss you” with a little extra')),
+      /* ── the member panel's two sends ─────────────────────────────────
+         Both used to toast and do nothing: no log row, no quota, no trace.
+         They push to a lock screen exactly like the composer does, so they
+         go through exactly the same paths — the quota gate first, then a
+         real row in Sent & scheduled, then the blob, then the live bus.
+         And a gift stamp now genuinely lands a stamp: `memberGifts` is
+         folded into that member's own progress everywhere it is drawn. */
+      mdGift: g(() => {
+        if (!md) return;
+        if (!this.canBroadcast()) { this.say(t.noBroadcastsLeft); return; }
+        const first = String(md.name || '').split(' ')[0];
+        const lands = mdCanStamp;
+        const row = { title: fill(t.mdGiftLog, { name: md.name || '' }), body: fill(t.mdGiftBody, { card: md.card || '' }),
+          card: md.card || ac.name || '', sent: t.liveJustNow, reach: '1 ' + t.msgWallets, state: 'sent' };
+        const nextSent = [row, ...st.sentExtra];
+        const nextGifts = lands
+          ? { ...(st.memberGifts || {}), [md.name]: Math.min(12, ((st.memberGifts || {})[md.name] || 0) + 1) }
+          : (st.memberGifts || {});
+        this.setState({ sentExtra: nextSent, memberGifts: nextGifts });
+        this.saveDemo({ sentExtra: nextSent, memberGifts: nextGifts });
+        this.pushLive({ kind: 'reward', who: md.name || '', what: t.mdGiftLive, card: md.card || '' });
+        this.say(fill(lands ? t.mdGiftDone : t.mdGiftDoneNoStamp, { name: first, n: Math.max(0, bcLeftN - 1) }));
+      }),
+      mdNudge: g(() => {
+        if (!md) return;
+        if (!this.canBroadcast()) { this.say(t.noBroadcastsLeft); return; }
+        const first = String(md.name || '').split(' ')[0];
+        const row = { title: fill(t.mdNudgeLog, { name: md.name || '' }), body: fill(t.mdNudgeBody, { card: md.card || '' }),
+          card: md.card || ac.name || '', sent: t.liveJustNow, reach: '1 ' + t.msgWallets, state: 'sent' };
+        const nextSent = [row, ...st.sentExtra];
+        this.setState({ sentExtra: nextSent });
+        this.saveDemo({ sentExtra: nextSent });
+        this.pushLive({ kind: 'broadcast', who: md.name || '', what: t.mdNudgeLive, card: md.card || '' });
+        this.say(fill(t.mdNudgeDone, { name: first, n: Math.max(0, bcLeftN - 1) }));
+      }),
       posterLine, posterLineAr, joinRows, joinRead,
       acReturned: ac.state === 'returned',
+      /* Omar's own words, or an honest admission that they did not arrive.
+         Never a guess: this banner used to assert "reward text unclear" for
+         every rejection, including the ones sent back for an unreadable logo. */
+      acReturnedTitle: t.acReturnedTitle,
+      acReturnedLine: (ac.returnedReason || '').trim()
+        ? '“' + String(ac.returnedReason).trim() + '” ' + t.acReturnedFix
+        : t.acReturnedNoReason,
+      acReturnedBtn: t.acReturnedBtn,
       acResubmit: resubmitCard,
       /* the merchant side of a takedown: same "who/why" read as the tile note
          (see cardTiles above), just spelled out with the "what it means" line
@@ -6564,16 +7183,64 @@ class Component extends DCLogic {
       notSubmitted: !wiz.submitted, isSubmitted: wiz.submitted,
       wizSubmit: g(() => this.setState({ wiz: { ...wiz, submitted: true } })),
       wizApprove: () => {
-        /* the card is born carrying the rules the wizard just configured, in
-           the same shape Edit Card writes and the till reads — this is the
-           join that stops the wizard and the editor describing two different
-           counters. */
-        const nc = { id: 'new' + Date.now(), name: wName, ar: wiz.ar || wName, type: wiz.typeId || 'stamps', state: 'live', color: wiz.color, color2: this.shade(wiz.color), initial: wName[0].toUpperCase(), tagline: wReward, members: 1, passes: 1, weekActivity: [0, 0, 0, 0, 0, 0, 1], stat1: { label: 'First member', v: 'just now' }, stat2: { label: 'Approved', v: 'today' }, goal: wiz.goal, reward: wReward, branch: (Acc.branches || [])[0] || '', rules: this.rulesFromCfg(wiz.typeId || 'stamps', wiz.cfg) };
-        this.setState({ addedCards: [...st.addedCards, nc], screen: 'home', celebrating: true, celebName: wName });
-        this.saveDemo();
+        /* ══ THE CARD THE REVIEW STEP ACTUALLY PROMISED ══════════════════
+           Step 5 prints this card's identity, rules, signup fields and
+           branches under "Staff scanners follow this list." Every one of
+           those rows has to be a real field on the card that is born here,
+           or the founder watches the wizard describe one card and the
+           dashboard open another: an empty logo, a Coffee stamp they never
+           chose, and "Where it runs: Rainbow St" for a card they set up to
+           run in three branches.
+
+           So the carry is exhaustive, row for row:
+             Identity  name/ar/colour + the uploaded logo and banner, copied
+                       into THIS card's own art keys so the editor reads them
+             Rules     `rules` for the till, and `cfg` for everything the
+                       type carries that is not a till rule (rate, ladder,
+                       tiers, offer, expiry, the extras)
+             Stamp     stampStyle — the strip and every progress cell in the
+                       file draw with it
+             Signup    the field toggles and any custom field the owner wrote
+             Branches  the list the scanners follow                        */
+        const cid = 'new' + Date.now();
+        const ty = wiz.typeId || 'stamps';
+        /* the wizard's scratchpad art becomes the card's own art. The bytes
+           move to the per-card keys the editor reads, and the scratchpad is
+           wiped so the NEXT card starts blank. */
+        const nLogo = wiz.logo || '', nBanner = wiz.banner || '';
+        try {
+          if (nLogo) localStorage.setItem(this.cardArtKey('logo', cid), nLogo);
+          if (nBanner) localStorage.setItem(this.cardArtKey('banner', cid), nBanner);
+        } catch (e) {}
+        this.clearWizArt();
+        const nc = { id: cid, name: wName, ar: wiz.ar || wName, type: ty, state: 'live',
+          color: wiz.color, color2: this.shade(wiz.color), initial: wName[0].toUpperCase(),
+          tagline: wReward,
+          /* a card born this second has nobody on it. It used to claim one
+             member while its Members tab rendered an empty list — the tile
+             and the tab contradicting each other on the founder's first
+             look at their own new card. */
+          members: 0, passes: 0, weekActivity: [0, 0, 0, 0, 0, 0, 0],
+          stat1: { label: t.acNewMembersStat, v: t.acNewNoneYet },
+          stat2: { label: t.acNewApprovedStat, v: t.acNewToday },
+          goal: wiz.goal, reward: wReward,
+          branch: (wBranches.length ? wBranches : (Acc.branches || [])).join(' · '),
+          branches: wBranches.slice(),
+          stampStyle: this.stampKey((wiz.cfg || {}).icon),
+          fields: { ...wFields },
+          customFields: wCustomFields.map(f => ({ label: f.label, type: f.type || 'Text', req: !!f.req })),
+          cfg: { ...(wiz.cfg || {}) },
+          rules: this.rulesFromCfg(ty, wiz.cfg) };
+        const nextCards = [...st.addedCards, nc];
+        this.setState({ addedCards: nextCards, screen: 'home', celebrating: true, celebName: wName,
+          activeCardId: cid,
+          cardArt: { ...(st.cardArt || {}), [cid]: { logo: nLogo, banner: nBanner } },
+          wiz: { ...wiz, logo: '', banner: '', submitted: false } });
+        this.saveDemo({ addedCards: nextCards });
         setTimeout(() => this.setState({ celebrating: false }), 30000);
       },
-      celebrating: st.celebrating, celebName: st.celebName, dismissCelebration: () => this.setState({ celebrating: false }),
+      celebrating: st.celebrating, celebName: st.celebName, celebTitleLine: fill(t.celebTitle, { name: st.celebName || '' }),
+      dismissCelebration: () => this.setState({ celebrating: false }),
       confetti: st.celebrating ? Array.from({ length: 46 }, (_, i) => { const s = Math.sin(i * 99.7) * 0.5 + 0.5, s2 = Math.sin(i * 41.3) * 0.5 + 0.5; return { x: Math.round(s * 100) + '%', w: (5 + Math.round(s2 * 6)) + 'px', h: (8 + Math.round(s * 8)) + 'px', bg: ['#E88024', '#F09A4D', '#2FAE66', '#1B2440', '#B14A32', '#FDF4EC'][i % 6], r: i % 3 === 0 ? '50%' : '2px', dur: (2.4 + s2 * 1.6) + 's', delay: (s * 0.9) + 's', kf: MOB ? 'confettiM' : 'confetti' }; }) : [],
       // card profile
       ac, acName: ed.pending ? ac.name : (st.edits[ac.id] ? ac.name : ac.name), acColor2: acC2, acBadge: acB.label, acBadgeBg: acB.bg, acBadgeFg: acB.fg,
@@ -6590,14 +7257,29 @@ class Component extends DCLogic {
       cardTabs, tabAnim, tabMembers: st.cardTab === 'members', tabAddons: st.cardTab === 'addons', tabSignup: st.cardTab === 'signup', tabEdit: st.cardTab === 'edit',
       hasMemberDetail: md != null, md: md || {}, closeMember: () => this.setState({ memberIdx: null }),
       mdTop: !!(md && md.top), mdPanelAnim: stag('slideRight', '.42s', 0, mdSeed),
-      memFilters, memCount: acMemberRows.length + (EN ? (fDays ? ' of ' + allCardMembers.length + ' — quiet for ' + fDays + '+ days' : ' shown') : ''),
+      memFilters, memCount: acMemberRows.length + (fDays ? fill(t.memCountQuiet, { n: allCardMembers.length, d: fDays }) : t.memCountShown),
+      acMembersEmpty: acMemberRows.length === 0,
       wbActive, wbText: st.wbText, setWbText: (e) => this.setState({ wbText: e.target.value, wbSent: false }), wbPlaceholder,
       wbAnim: stag('popIn', '.45s', 0, mfSeed), wbReach: fill(t.wbReach, { n: acMemberRows.length }),
-      wbLine: EN ? acMemberRows.length + ' member' + (acMemberRows.length === 1 ? '' : 's') + ' haven\'t visited in ' + fDays + '+ days. One tap reaches their lock screens.' : acMemberRows.length + ' عضو لم يزوروا منذ ' + fDays + '+ يوم.',
-      wbBtnBg: st.wbSent ? '#2FAE66' : '#E88024', wbBtnLabel: st.wbSent ? 'Sent ✓' : (EN ? 'Send to ' + acMemberRows.length + ' member' + (acMemberRows.length === 1 ? '' : 's') : 'أرسل إلى ' + acMemberRows.length),
-      sendWinback: g(() => { if (st.wbSent) return; if (!this.canBroadcast()) { this.say(t.noBroadcastsLeft); return; } const body = st.wbText.trim() || wbPlaceholder; this.setState({ sentExtra: [{ title: 'Win-back · ' + fDays + 'd+ quiet', body, card: ac.name, sent: 'Just now', reach: acMemberRows.length + ' members', state: 'sent' }, ...st.sentExtra], wbSent: true, wbText: '' }); this.saveDemo(); this.say('Sent to ' + acMemberRows.length + ' — ' + Math.max(0, bcLeftN - 1) + ' broadcasts left this month'); }),
+      wbLine: fill(t.wbLine, { n: acMemberRows.length, d: fDays }),
+      wbBtnBg: st.wbSent ? '#2FAE66' : '#E88024', wbBtnLabel: st.wbSent ? t.wbSentBtn : fill(t.wbSendBtn, { n: acMemberRows.length }),
+      sendWinback: g(() => { if (st.wbSent) return; if (!this.canBroadcast()) { this.say(t.noBroadcastsLeft); return; } const body = st.wbText.trim() || wbPlaceholder; const nx = [{ title: fill(t.wbLogTitle, { d: fDays }), body, card: ac.name, sent: t.liveJustNow, reach: acMemberRows.length + ' ' + t.msgWallets, state: 'sent' }, ...st.sentExtra]; this.setState({ sentExtra: nx, wbSent: true, wbText: '' }); this.saveDemo({ sentExtra: nx }); this.say(fill(t.wbSentToast, { n: acMemberRows.length, left: Math.max(0, bcLeftN - 1) })); }),
       addonCards, signupFields, hasCustomField: !!custom, customFieldLabel: custom || '',
-      copyLink: () => this.say('Link copied — wasla.app/j/' + (ac.id || '')),
+      /* it said "Link copied" without going anywhere near the clipboard. Now
+         it actually copies, and only claims to have done so when it did —
+         clipboard access can be refused (no permission, no secure context,
+         an older browser), and a demo that lies about a copy is worse than
+         one that shows you the link to copy by hand. */
+      copyLink: () => {
+        const url = 'wasla.app/j/' + (ac.id || '');
+        const ok = () => this.say(t.suCopied + ' — ' + url);
+        const no = () => this.say(fill(t.suCopyFailed, { url }));
+        try {
+          const nav = (typeof navigator !== 'undefined') ? navigator : null;
+          if (nav && nav.clipboard && nav.clipboard.writeText) { nav.clipboard.writeText(url).then(ok, no); return; }
+        } catch (e) {}
+        no();
+      },
       // field builder
       fieldOpen: st.fieldOpen, openFieldSheet: () => this.setState({ fieldOpen: true, fldEn: '', fldAr: '', fldType: 'Text', fldReq: false }),
       closeFieldSheet: () => this.setState({ fieldOpen: false }),
@@ -6626,7 +7308,10 @@ class Component extends DCLogic {
       edGoalUp: g(() => { const n = Math.min(12, ed.goal + 1); setEd({ goal: n }); edNote(fill(t.capGoal, { n, old: ac.goal || ed.goal }), 'rules'); }),
       edGoalDown: g(() => { const n = Math.max(4, ed.goal - 1); setEd({ goal: n }); edNote(fill(t.capGoal, { n, old: ac.goal || ed.goal }), 'rules'); }),
       edPending: !!ed.pending, edSaveBg: ed.pending ? '#2FAE66' : (edDirty ? '#E88024' : '#DCD3C4'), edSaveLabel: ed.pending ? t.edSaveDone : t.edSaveGo,
-      edSave: g(() => { if (ed.pending) return; if (!edDirty) { this.say(t.edAfterNone); return; } this.ask(t.edAskTitle, t.edAskBody, t.edAskOk, '#E88024', () => { this.setState({ edits: { ...st.edits, [ac.id]: { ...ed, pending: true } }, edNote: '', edNoteKind: '' }); this.saveDemo(); this.say(t.edSentToast); }); }),
+      /* "Omar has it" has to be true the instant it is said: the console
+         reads staged edits out of this blob, so the write is flushed rather
+         than debounced — the next thing the demo does is open that console. */
+      edSave: g(() => { if (ed.pending) return; if (!edDirty) { this.say(t.edAfterNone); return; } this.ask(t.edAskTitle, t.edAskBody, t.edAskOk, '#E88024', () => { const nx = { ...st.edits, [ac.id]: { ...ed, pending: true } }; this.setState({ edits: nx, edNote: '', edNoteKind: '' }); this.flushDemo({ edits: nx }); this.say(t.edSentToast); }); }),
       edSwatches,
       /* ── the editor: identity & art (INSTANT) ─────────────────────────── */
       edCustomRing: SW.indexOf(ac.color) < 0 ? '#E88024' : '#EDE6DA',
@@ -6744,7 +7429,7 @@ class Component extends DCLogic {
       edNoteBday: !!st.edNote && st.edNoteKind === 'bday',
       edNoteLinks: !!st.edNote && st.edNoteKind === 'links',
       edNoteInstant: !!st.edNote && st.edNoteKind === 'instant',
-      birthdayOn: !!adState.b, birthdayOff: !adState.b, enableBirthday: g(() => { this.setState({ addons: { ...st.addons, [ac.id]: { ...adState, b: true } } }); this.saveDemo(); this.say('Birthday add-on is on — instant'); }),
+      birthdayOn: !!adState.b, birthdayOff: !adState.b, enableBirthday: g(() => { this.setState({ addons: { ...st.addons, [ac.id]: { ...adState, b: true } } }); this.saveDemo(); this.say(t.adBirthdayOnToast); }),
       /* the birthday copy is a live edit like any other, so it goes through the
          same view-as guard — it used to be the one writable field a Wasla
          viewer could still change. */
@@ -6757,7 +7442,7 @@ class Component extends DCLogic {
       bcChips, bcTextRaw: st.bcText, setBcText: (e) => this.setState({ bcText: e.target.value, justSent: false }),
       bcPreview: st.bcText.trim() || (EN ? 'Your message appears here as you type…' : 'رسالتك تظهر هنا أثناء الكتابة…'),
       bcSelName: bcSel.name || '', bcSelInitial: bcSel.initial || '', bcSelColor: bcSel.color || '#26262B',
-      bcQuotaLabel: bcLeftN + ' of ' + bcQuota,
+      bcQuotaLabel: bcLeftN + t.quotaOf + bcQuota,
       bcLeftCount: this.fmt(bcLeftN * statTick), bcLeftFg: !canBc ? '#B23420' : bcLeftN <= 2 ? '#9A6B12' : '#241C16',
       bcResetLine: fill(t.bcResets, { d: renewShort }),
       bcQuotaDots: Array.from({ length: bcQuota }, (_, i) => ({ bg: i < used ? '#E7E0D5' : '#E88024',
@@ -6834,12 +7519,21 @@ class Component extends DCLogic {
       langBarAnim: reAnim('barGrow', '.62s', langSeed + 4),
       langNoteAnim: reAnim('fadeUp', '.4s', langSeed + 7),
       langPreviewNote: EN ? t.langNoteLtr : t.langNoteRtl,
-      pwToast: () => this.say('A reset link goes to yara@talagroup.jo'), planToast: g(() => this.say('Omar will WhatsApp you today')),
+      pwToast: () => this.say(t.secResetLinkToast), planToast: g(() => this.say(t.planWhatsToast)),
       crOpen: st.crOpen, openChangeReq: () => this.setState({ crOpen: true, crField: 'company', crVal: '' }),
       closeChangeReq: () => this.setState({ crOpen: false }),
       crChips: crDefs.map(([id, label]) => ({ label, pick: () => this.setState({ crField: id, crVal: '' }), br: st.crField === id ? '#E88024' : '#E7E0D5', bg: st.crField === id ? '#FDF4EC' : '#FFFFFF', fg: st.crField === id ? '#C96A14' : '#5D5348' })),
       crCurrent: crCur[2] || '', crPlaceholder: crCur[2] || '', crVal: st.crVal, setCrVal: (e) => this.setState({ crVal: e.target.value }),
-      sendChangeReq: g(() => { if (!(st.crVal || '').trim()) { this.say(t.crNeedsValue); return; } this.setState({ crOpen: false, crVal: '', changeReqs: [...(st.changeReqs || []), { label: crCur[1] || '', value: (st.crVal || '').trim() }] }); this.say(t.crSent); }),
+      /* the one line that makes the round trip real. saveDemo()'s own comment
+         says changeReqs must survive "or a real request silently dies on
+         reload" — and the console's client-asks inbox reads this very key out
+         of localStorage. It went in through flushDemo rather than the 80ms
+         debounce because the demo's next move is switching tabs. */
+      sendChangeReq: g(() => { if (!(st.crVal || '').trim()) { this.say(t.crNeedsValue); return; }
+        const next = [...(st.changeReqs || []), { label: crCur[1] || '', value: (st.crVal || '').trim() }];
+        this.setState({ crOpen: false, crVal: '', changeReqs: next });
+        this.flushDemo({ changeReqs: next });
+        this.say(t.crSent); }),
       // overlays
       hasToast: !!st.toast, toast: st.toast,
       hasConfirm: !!st.confirm, confirmTitle: (st.confirm || {}).title || '', confirmBody: (st.confirm || {}).body || '', confirmOk: (st.confirm || {}).ok || '', confirmColor: (st.confirm || {}).color || '#E88024',

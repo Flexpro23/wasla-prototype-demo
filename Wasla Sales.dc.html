@@ -342,6 +342,9 @@
               <div onClick="{{ ldConvert }}" class="ws-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:15px;padding:14px 0;text-align:center;">Convert — send the invite →</div>
             </sc-if>
             <div onClick="{{ ldEscalate }}" class="ws-ghost" style="cursor:pointer;border:1.5px solid {{ ldEscBr }};color:{{ ldEscFg }};background:#FFFFFF;font-weight:800;font-size:13px;border-radius:15px;padding:13px 0;text-align:center;">{{ ldEscLabel }}</div>
+            <sc-if value="{{ ldEscAnswered }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#F0F7F3;border:1px solid #CDE7D9;border-radius:14px;padding:11px 12px;font-size:11px;font-weight:700;color:#1E7D47;line-height:1.55;">{{ ldEscVerdict }}</div>
+            </sc-if>
             <div style="font-size:10px;color:#A79C8D;line-height:1.55;padding:2px 2px 0;">{{ ldFootNote }}</div>
           </div>
         </div>
@@ -755,8 +758,36 @@
 const CLOCK = { day: '30 Jul 2026', weekday: 'Thursday', month: 'July', y: 2026, mo: 6, d: 30, hh: 10, mm: 45 };
 const NOW_MIN = CLOCK.hh * 60 + CLOCK.mm;
 const clockLabel = (m) => Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0');
-const INVITE_STAMP = clockLabel(NOW_MIN - 33);
+// ── the send receipt is stamped AT THE TAP, never at page load. There is no second anchor: it is
+//    the same 10:45 morning plus however long this session has actually been open, wrapped at
+//    midnight. An invite you send now cannot be receipted half an hour in the past. ──
+const BOOT_MS = Date.now();
+const stampNow = () => clockLabel((NOW_MIN + Math.floor((Date.now() - BOOT_MS) / 60000)) % 1440);
 const HOUSE = ' cubic-bezier(.22,.61,.36,1) ';
+
+// ── THE DUE ANCHOR ──────────────────────────────────────────────────────────────────────────
+//  "Due today" is a DATE question, and this demo's date is Thursday 30 July 2026. A follow-up is
+//  written however the rep wrote it — 'Today', 'Thursday', 'Thursday 11:00', '30 Jul' — and every
+//  one of those spellings means the same morning. A literal === 'Today' saw exactly one of them.
+const DUE_WORDS = ['today', CLOCK.weekday.toLowerCase()];
+const DUE_DATES = [
+  CLOCK.d + ' ' + CLOCK.month.toLowerCase(),                                                   // 30 july
+  CLOCK.d + ' ' + CLOCK.month.toLowerCase().slice(0, 3),                                       // 30 jul
+  CLOCK.y + '-' + String(CLOCK.mo + 1).padStart(2, '0') + '-' + String(CLOCK.d).padStart(2, '0'), // 2026-07-30
+  CLOCK.d + '/' + (CLOCK.mo + 1),                                                              // 30/7
+  CLOCK.d + '/' + String(CLOCK.mo + 1).padStart(2, '0')                                        // 30/07
+];
+/** Does this follow-up string fall on the anchor day? Anchored at the START of the string for the
+    word forms, so 'Tomorrow' and 'Next week' can never be dragged in by a substring, and matched
+    anywhere for the date forms. */
+const dueToday = (f) => {
+  const s = String(f == null ? '' : f).trim().toLowerCase();
+  if (!s) return false;
+  if (DUE_WORDS.some(w => s === w || s.indexOf(w + ' ') === 0 || s.indexOf(w + ',') === 0 || s.indexOf(w + ' ·') === 0)) return true;
+  return DUE_DATES.some(d => s.indexOf(d) >= 0);
+};
+/** The clock on a timed follow-up — 'Thursday 11:00' → '11:00'; null when the rep gave no time. */
+const dueAt = (f) => { const m = /\b([01]?\d|2[0-3]):([0-5]\d)\b/.exec(String(f == null ? '' : f)); return m ? m[0] : null; };
 
 // ── the persona · WASLA_DB.console.team[1] ──
 const ME = { name: 'Lina Kassab', ar: 'لينا قسام', initials: 'LK', first: 'Lina', role: 'Sales' };
@@ -794,14 +825,21 @@ class Component extends DCLogic {
   state = {
     screen: 'today', navSeq: 0, slideFrom: '26px', settled: false, tick: 1, toast: '',
     leadSel: null, pipeStage: 'All', leadMoved: null,
-    // ── the three keys this phone shares with the console ──
-    leadMods: {}, leadsAdded: [], leadTrail: {},
+    // ── the keys this phone SHARES with the console. Six are written (read-modify-write, union,
+    //    every foreign key handed back); two are read-only registers the console owns. ──
+    leadMods: {}, leadsAdded: [], leadTrail: {}, converted: {}, escal: [], invites: [],
+    leadDeleted: [],   // READ-ONLY · Omar's tombstones. We filter on them and never write them.
+    escalDone: {},     // READ-ONLY · Omar's verdicts, keyed by escalation id.
     // ── this phone's own session ──
-    escal: [], converted: {}, sentInvites: [],
+    sentInvites: [], livePw: [],
     addStep: 0, afBiz: '', afAr: '', afOwner: '', afPhone: '', afEmail: '',
     afVertical: 'Café', afCity: 'Amman', afAreas: [], afLocs: [''], afTypes: [],
     afPlan: 'Growth', afValue: '79', afSource: 'Referral', afFollow: 'Tomorrow', afNotes: '',
-    invBiz: '', invOwner: '', invPhone: '', invPlan: 'Growth', invSent: false, invOpened: false, invPulse: 0,
+    invBiz: '', invOwner: '', invPhone: '', invPlan: 'Growth', invSent: false, invOpened: false,
+    invPw: false, invStamp: '', invPulse: 0,
+    // ── the authorship register · what THIS phone put into the shared blob, so "Reset demo" can
+    //    take exactly that back out and leave everything Omar wrote standing. ──
+    mine: { leads: [], mods: {}, trail: [], escal: [], invites: [], conv: [] },
     resetArm: false
   };
 
@@ -809,18 +847,36 @@ class Component extends DCLogic {
   typeNames() { const T = (window.WASLA_DB || {}).types || []; return T.length ? T.map(t => t.name) : ['Stamp Card', 'Cashback Card', 'Points Card', 'Discount Card', 'Coupon', 'VIP Tiers', 'Challenge Card', 'Membership Card']; }
 
   // ────────────────────────────────────────────────────────────────────────────
-  //  storage · three keys, three different contracts
-  //    1. salesKey()   — ours alone. Reset wipes this and only this.
-  //    2. consoleKey() — SHARED with the admin console. We own exactly three fields inside it
-  //                      and must hand every other field back untouched.
-  //    3. liveKey()    — the append-only live-events wire every Wasla surface writes to.
+  //  storage · two keys, two different contracts
+  //    1. salesKey()   — ours alone. Reset wipes this outright.
+  //    2. consoleKey() — SHARED with the admin console. We WRITE six pipeline keys inside it,
+  //                      READ two more that the console alone owns (leadDeleted, escalDone),
+  //                      and hand every other key back byte-for-byte.
+  //
+  //  There is deliberately NO liveKey() here. `wasla_demo_live_events` is a per-account till
+  //  wire — its only reader is a merchant's own dashboard — and a prospect this rep just
+  //  WhatsApped is not an account and has no tenant to file under. See sendInvite().
   // ────────────────────────────────────────────────────────────────────────────
   salesKey() { return 'wasla_demo_sales_state'; }
   consoleKey() { return 'wasla_demo_console_state'; }
-  // same lookup the dashboard uses, same fallback every other surface hard-codes — one wire
-  liveKey() { const D = window.WASLA_DB; return (D && D.demoFlags && D.demoFlags.liveKey) || 'wasla_demo_live_events'; }
   _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   _lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  /** One slug rule, the same one the console uses for every URL and invite id it hands out. */
+  slugOf(n) { return String(n == null ? '' : n).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+  /** The authorship register, shape-checked. Never throws, never returns a hole. */
+  mineOf(m) {
+    const o = (m && typeof m === 'object' && !Array.isArray(m)) ? m : {};
+    const A = (x) => Array.isArray(x) ? x.filter(v => typeof v === 'string' && v) : [];
+    const O = (x) => (x && typeof x === 'object' && !Array.isArray(x)) ? x : {};
+    return { leads: A(o.leads), mods: O(o.mods), trail: A(o.trail), escal: A(o.escal), invites: A(o.invites), conv: A(o.conv) };
+  }
+  /** Records one id/name in one list-shaped bucket of the register. Idempotent. */
+  mineAdd(m, bucket, val) {
+    const r = this.mineOf(m);
+    if (!val || bucket === 'mods') return r;
+    const a = r[bucket] || [];
+    return { ...r, [bucket]: a.indexOf(val) >= 0 ? a : [...a, val] };
+  }
 
   /** Debounced — every mutating action calls persist(); a burst of taps costs one write. */
   persist() {
@@ -837,12 +893,18 @@ class Component extends DCLogic {
       this._lsSet(this.salesKey(), JSON.stringify({ v: 1,
         screen: s.screen, pipeStage: s.pipeStage, leadSel: s.leadSel,
         leadMods: s.leadMods, leadsAdded: s.leadsAdded, leadTrail: s.leadTrail,
-        escal: s.escal, converted: s.converted, sentInvites: (s.sentInvites || []).slice(0, 20),
+        escal: s.escal, converted: s.converted, invites: (s.invites || []).slice(0, 40),
+        sentInvites: (s.sentInvites || []).slice(0, 20), livePw: (s.livePw || []).slice(0, 20),
+        // leadDeleted and escalDone are NOT written here on purpose: they are the console's
+        // registers, they live in the console's blob, and a stale local copy of a tombstone
+        // would go on hiding a lead Omar has since restored.
+        mine: s.mine,
         addStep: s.addStep, afBiz: s.afBiz, afAr: s.afAr, afOwner: s.afOwner, afPhone: s.afPhone,
         afEmail: s.afEmail, afVertical: s.afVertical, afCity: s.afCity, afAreas: s.afAreas,
         afLocs: s.afLocs, afTypes: s.afTypes, afPlan: s.afPlan, afValue: s.afValue,
         afSource: s.afSource, afFollow: s.afFollow, afNotes: s.afNotes,
-        invBiz: s.invBiz, invOwner: s.invOwner, invPhone: s.invPhone, invPlan: s.invPlan, invSent: s.invSent }));
+        invBiz: s.invBiz, invOwner: s.invOwner, invPhone: s.invPhone, invPlan: s.invPlan,
+        invSent: s.invSent, invPw: s.invPw, invStamp: s.invStamp }));
     } catch (e) {}
   }
   /** Pure: reads our own blob and returns a sanitised patch, or null. A bad blob is ignored, never thrown. */
@@ -858,7 +920,10 @@ class Component extends DCLogic {
     ['leadMods', 'leadTrail', 'converted'].forEach(k => { const o = obj(b[k]); if (o) p[k] = o; });
     if (Array.isArray(b.leadsAdded)) p.leadsAdded = b.leadsAdded.filter(l => l && typeof l === 'object' && typeof l.name === 'string' && l.name);
     if (Array.isArray(b.escal)) p.escal = b.escal.filter(e => e && typeof e === 'object' && typeof e.id === 'string' && typeof e.lead === 'string');
+    if (Array.isArray(b.invites)) p.invites = b.invites.filter(i => i && typeof i === 'object' && typeof i.id === 'string' && typeof i.biz === 'string' && i.biz).slice(0, 40);
     if (Array.isArray(b.sentInvites)) p.sentInvites = b.sentInvites.filter(x => typeof x === 'string' && x).slice(0, 20);
+    if (Array.isArray(b.livePw)) p.livePw = b.livePw.filter(x => typeof x === 'string' && x).slice(0, 20);
+    if (b.mine !== undefined) p.mine = this.mineOf(b.mine);
     if (Array.isArray(b.afAreas)) p.afAreas = b.afAreas.filter(x => AREAS.indexOf(x) >= 0);
     if (Array.isArray(b.afTypes)) p.afTypes = b.afTypes.filter(x => typeof x === 'string' && x).slice(0, 12);
     if (Array.isArray(b.afLocs)) { const l = b.afLocs.filter(x => typeof x === 'string').slice(0, 8); if (l.length) p.afLocs = l; }
@@ -873,11 +938,22 @@ class Component extends DCLogic {
     if (PLAN_PRICE[b.afPlan] != null) p.afPlan = b.afPlan;
     if (PLAN_PRICE[b.invPlan] != null) p.invPlan = b.invPlan;
     if (typeof b.invSent === 'boolean') p.invSent = b.invSent;
+    if (typeof b.invPw === 'boolean') p.invPw = b.invPw;
+    if (typeof b.invStamp === 'string' && /^\d{1,2}:\d{2}$/.test(b.invStamp)) p.invStamp = b.invStamp;
     return Object.keys(p).length ? p : null;
   }
 
   /** Pure: the pipeline as the CONSOLE currently holds it. The console blob is the shared board —
-      whatever Omar did there is the truth this phone should open on. */
+      whatever Omar did there is the truth this phone should open on.
+
+      The read half must name EVERY key the write half touches, plus the two the console owns
+      outright, or the phone renders a board the console has already moved past:
+        leadMods / leadTrail / leadsAdded  · the pipeline itself
+        converted                          · which Won leads are already accounts-in-waiting
+        invites                            · the register the console's Activations screen reads
+        escal                              · the "Needs an eye" rail
+        leadDeleted                        · READ-ONLY tombstones. Deleting is Omar's to do.
+        escalDone                          · READ-ONLY verdicts, keyed by escalation id. */
   readConsolePipe() {
     const raw = this._lsGet(this.consoleKey());
     if (!raw) return null;
@@ -889,12 +965,19 @@ class Component extends DCLogic {
     if (obj(b.leadMods)) p.leadMods = b.leadMods;
     if (obj(b.leadTrail)) p.leadTrail = b.leadTrail;
     if (Array.isArray(b.leadsAdded)) p.leadsAdded = b.leadsAdded.filter(l => l && typeof l === 'object' && typeof l.name === 'string' && l.name);
+    if (obj(b.converted)) p.converted = b.converted;
+    if (obj(b.escalDone)) p.escalDone = b.escalDone;
+    if (Array.isArray(b.leadDeleted)) p.leadDeleted = b.leadDeleted.filter(x => typeof x === 'string' && x);
+    if (Array.isArray(b.escal)) p.escal = b.escal.filter(e => e && typeof e === 'object' && typeof e.id === 'string' && typeof e.lead === 'string');
+    if (Array.isArray(b.invites)) p.invites = b.invites.filter(i => i && typeof i === 'object' && typeof i.id === 'string' && typeof i.biz === 'string' && i.biz);
     return Object.keys(p).length ? p : null;
   }
 
   /** ── THE CROSS-APP WRITE ──
-      Read-modify-write into the console's blob, touching ONLY leadMods / leadsAdded / leadTrail
-      and handing every other key back byte-for-byte. Four refusals keep it safe:
+      Read-modify-write into the console's blob, touching ONLY the six pipeline keys this phone
+      authors — leadMods / leadsAdded / leadTrail / converted / escal / invites — and handing
+      every other key back byte-for-byte, tombstones and verdicts included. Four refusals keep
+      it safe:
         · the whole body is in a try/catch and returns a flag — it can never throw into a click;
         · unparseable JSON is treated as "no blob" and replaced with a valid v:1 one (which is
           exactly what the console itself would have done with it);
@@ -917,14 +1000,20 @@ class Component extends DCLogic {
       // rather than overwritten. We won this session's edits; they keep everything else.
       const objOf = (x) => (x && typeof x === 'object' && !Array.isArray(x)) ? x : {};
       const arrOf = (x) => Array.isArray(x) ? x : [];
+      // ── the tombstones, read off the BLOB rather than our state, so a lead Omar removed after
+      //    we booted is still dead to this write. A removal on his board is a decision; our
+      //    union must not smuggle the lead back in on any of the six keys. ──
+      const gone = {};
+      arrOf(blob && blob.leadDeleted).forEach(n => { if (typeof n === 'string' && n) gone[n] = 1; });
       const theirMods = objOf(blob && blob.leadMods), myMods = objOf(s.leadMods);
       const mods = {};
-      Object.keys(theirMods).concat(Object.keys(myMods)).forEach(n => { mods[n] = { ...objOf(theirMods[n]), ...objOf(myMods[n]) }; });
+      Object.keys(theirMods).concat(Object.keys(myMods)).forEach(n => { if (!gone[n]) mods[n] = { ...objOf(theirMods[n]), ...objOf(myMods[n]) }; });
       next.leadMods = mods;
       const theirAdded = arrOf(blob && blob.leadsAdded), myAdded = arrOf(s.leadsAdded);
       const seen = {};
       next.leadsAdded = [...theirAdded, ...myAdded].filter(l => {
         if (!l || typeof l !== 'object' || typeof l.name !== 'string' || !l.name) return false;
+        if (gone[l.name]) return false;
         const k = l.name.toLowerCase();
         if (seen[k]) return false;
         seen[k] = 1; return true;
@@ -934,23 +1023,78 @@ class Component extends DCLogic {
       // per lead, the longer history wins — ours is theirs plus whatever we just appended, so this
       // keeps our new entries AND keeps a lead the console wrote to that we never touched
       Object.keys(theirTrail).concat(Object.keys(myTrail)).forEach(n => {
+        if (gone[n]) return;
         const a = arrOf(myTrail[n]), b = arrOf(theirTrail[n]);
         trail[n] = a.length >= b.length ? a : b;
       });
       next.leadTrail = trail;
+      // ── converted · the console's lead card reads this to decide whether it still offers
+      //    "Convert". Without it the console contradicts its own trail on one screen. ──
+      const conv = { ...objOf(blob && blob.converted), ...objOf(s.converted) };
+      Object.keys(conv).forEach(n => { if (gone[n]) delete conv[n]; });
+      next.converted = conv;
+      // ── escal · the console's "Needs an eye" rail reads its own key, not the trail. The lead
+      //    screen promises an escalation lands on Omar's board; this is what makes that true. ──
+      const byId = (list) => { const seenId = {}, out = []; list.forEach(x => { if (x && typeof x === 'object' && typeof x.id === 'string' && x.id && !seenId[x.id]) { seenId[x.id] = 1; out.push(x); } }); return out; };
+      next.escal = byId([...arrOf(blob && blob.escal), ...arrOf(s.escal)]).filter(e => !(typeof e.lead === 'string' && gone[e.lead]));
+      // ── invites · the register the console's Activations screen renders. Ours carry
+      //    origin:'field' and a status that only moves when a password actually lands. ──
+      next.invites = byId([...arrOf(blob && blob.invites), ...arrOf(s.invites)])
+        .filter(v => typeof v.biz === 'string' && v.biz)
+        .map(v => (v.origin === 'field' && (s.livePw || []).indexOf(v.biz) >= 0) ? { ...v, seedStatus: 'password' } : v)
+        .slice(0, 60);
+      // leadDeleted, escalDone, sessionLog, accMods and every other key rode in on {...blob}
       return this._lsSet(this.consoleKey(), JSON.stringify(next));
     } catch (e) { return false; }
   }
 
-  /** The shared live wire — newest-first, capped at 20, read-modify-write, never throws. */
-  pushLive(kind, who, what, card) {
+  /** ── THE RETRACTION ──
+      "Reset demo" clears this phone. If it stopped there the phone would rebuild itself out of
+      the shared blob on the next boot and every wiped lead, stage and trail line would walk
+      back in — which is exactly what it used to do. So the reset ALSO takes this phone's own
+      contributions back out of the console's blob, and only those:
+
+        · leads we added                → removed from leadsAdded by name
+        · fields we set                 → retracted only where the value on disk is STILL ours;
+                                          a field the console has since overwritten is his now
+        · trail lines we wrote          → identified by the src:'phone' tag we stamp at write time
+        · escalations we raised         → removed from escal by id
+        · invites we sent               → removed from invites by id
+        · conversions we recorded       → removed from converted by name
+
+      leadDeleted, escalDone, sessionLog, accMods, decided — every key we did not author is
+      handed back byte-for-byte, and a blob we do not understand is left completely alone. */
+  unmergeConsole() {
     try {
-      let arr = [];
-      const raw = this._lsGet(this.liveKey());
-      if (raw) { try { const p = JSON.parse(raw); if (Array.isArray(p)) arr = p.filter(e => e && typeof e === 'object'); } catch (e) { arr = []; } }
-      arr.unshift({ at: Date.now(), kind, who, what, card });
-      this._lsSet(this.liveKey(), JSON.stringify(arr.slice(0, 20)));
-    } catch (e) {}
+      const raw = this._lsGet(this.consoleKey());
+      if (!raw) return false;
+      let blob = null;
+      try { const p = JSON.parse(raw); if (p && typeof p === 'object' && !Array.isArray(p)) blob = p; } catch (e) { blob = null; }
+      if (!blob || blob.v !== 1) return false;
+      const M = this.mineOf((this.state || {}).mine);
+      const objOf = (x) => (x && typeof x === 'object' && !Array.isArray(x)) ? x : {};
+      const arrOf = (x) => Array.isArray(x) ? x : [];
+      const next = { ...blob };
+      if (M.leads.length) next.leadsAdded = arrOf(blob.leadsAdded).filter(l => !(l && M.leads.indexOf(l.name) >= 0));
+      if (Object.keys(M.mods).length) {
+        const mods = { ...objOf(blob.leadMods) };
+        Object.keys(M.mods).forEach(n => {
+          const ours = objOf(M.mods[n]), cur = objOf(mods[n]), keep = {};
+          Object.keys(cur).forEach(f => { if (!(f in ours) || String(cur[f]) !== String(ours[f])) keep[f] = cur[f]; });
+          if (Object.keys(keep).length) mods[n] = keep; else delete mods[n];
+        });
+        next.leadMods = mods;
+      }
+      if (M.trail.length) {
+        const tr = { ...objOf(blob.leadTrail) };
+        M.trail.forEach(n => { const rest = arrOf(tr[n]).filter(e => !(e && e.src === 'phone')); if (rest.length) tr[n] = rest; else delete tr[n]; });
+        next.leadTrail = tr;
+      }
+      if (M.escal.length) next.escal = arrOf(blob.escal).filter(e => !(e && M.escal.indexOf(e.id) >= 0));
+      if (M.invites.length) next.invites = arrOf(blob.invites).filter(v => !(v && M.invites.indexOf(v.id) >= 0));
+      if (M.conv.length) { const c = { ...objOf(blob.converted) }; M.conv.forEach(n => { delete c[n]; }); next.converted = c; }
+      return this._lsSet(this.consoleKey(), JSON.stringify(next));
+    } catch (e) { return false; }
   }
 
   /** Folds both blobs straight into `state` at CONSTRUCTION: the host installs `__host` only after
@@ -962,29 +1106,54 @@ class Component extends DCLogic {
     try { p = this.readSales(); } catch (e) { p = null; }
     if (p) this.state = { ...this.state, ...p };
     try { q = this.readConsolePipe(); } catch (e) { q = null; }
-    if (q) this.state = { ...this.state, ...q };
+    if (q) {
+      const s = this.state;
+      // The three original keys keep the old rule — the console's copy IS the board, and since
+      // every persist() unions ours into it before it lands, that copy is already a superset.
+      // The registers added here are UNIONED instead: the console ships them as `{}` / `[]` from
+      // its very first save, and an empty object arriving as "the board" would silently wipe a
+      // conversion or an invite this phone recorded but has not merged out yet.
+      const byId = (list) => { const seen = {}, out = []; list.forEach(x => { if (x && typeof x === 'object' && typeof x.id === 'string' && x.id && !seen[x.id]) { seen[x.id] = 1; out.push(x); } }); return out; };
+      this.state = { ...s, ...q,
+        converted: { ...(s.converted || {}), ...(q.converted || {}) },
+        escalDone: { ...(s.escalDone || {}), ...(q.escalDone || {}) },
+        escal: byId([...(q.escal || []), ...(s.escal || [])]),
+        invites: byId([...(q.invites || []), ...(s.invites || [])]) };
+    }
     return !!(p || q);
   }
   __restored = this.bootRestore();
 
-  /** Clears ONLY this phone's blob. The console's pipeline and the live wire are other people's
-      records — a rep resetting her demo does not get to wipe Omar's board. */
+  /** Clears this phone's blob, and retracts from the SHARED blob exactly what this phone put
+      there — nothing else. Omar's own edits, his tombstones, his verdicts and every key we do
+      not understand survive untouched; see unmergeConsole(). Without the retraction this reset
+      was theatre: the phone rebuilt itself out of the shared board on the next boot. */
   resetSales() {
     clearTimeout(this._sv); clearTimeout(this._rt); clearTimeout(this._tt);
     this.disarmInvite();
+    // retract BEFORE the state goes, because the authorship register lives in it — and after the
+    // clearTimeout above, so no debounced persist can re-merge what we are about to take out
+    try { this.unmergeConsole(); } catch (e) {}
     try { localStorage.removeItem(this.salesKey()); } catch (e) {}
     this.__restored = false;
     const h = this.__host || this;
     h.__wsTicked = false;
+    // …and then re-read what is LEFT on the shared board. A reset forgets this phone's work; it
+    // does not un-delete Omar's deletions, un-answer his escalations or erase his leads.
+    let left = null;
+    try { left = this.readConsolePipe(); } catch (e) { left = null; }
     this.setState({ screen: 'today', navSeq: 0, slideFrom: '26px', toast: '', tick: 1,
       leadSel: null, pipeStage: 'All', leadMoved: null,
-      leadMods: {}, leadsAdded: [], leadTrail: {},
-      escal: [], converted: {}, sentInvites: [],
+      leadMods: {}, leadsAdded: [], leadTrail: {}, converted: {}, escal: [], invites: [],
+      leadDeleted: [], escalDone: {},
+      sentInvites: [], livePw: [],
+      mine: { leads: [], mods: {}, trail: [], escal: [], invites: [], conv: [] },
       addStep: 0, afBiz: '', afAr: '', afOwner: '', afPhone: '', afEmail: '',
       afVertical: 'Café', afCity: 'Amman', afAreas: [], afLocs: [''], afTypes: [],
       afPlan: 'Growth', afValue: '79', afSource: 'Referral', afFollow: 'Tomorrow', afNotes: '',
-      invBiz: '', invOwner: '', invPhone: '', invPlan: 'Growth', invSent: false, invOpened: false, invPulse: 0,
-      resetArm: false });
+      invBiz: '', invOwner: '', invPhone: '', invPlan: 'Growth', invSent: false, invOpened: false,
+      invPw: false, invStamp: '', invPulse: 0,
+      resetArm: false, ...(left || {}) });
   }
 
   // ────────────────────────────────────────────────────────────────────────────
@@ -1005,13 +1174,54 @@ class Component extends DCLogic {
       if (A && A.state && A.state.invSent && !A.state.invOpened) A.setState({ invOpened: true });
     }, 4000);
   }
-  /** Cancels the "Opened" timer AND clears its host latch, so a fresh invite can arm a fresh one.
-      Called wherever the invite stops being the one that was sent. */
+  /** The PASSWORD beat — the one that actually makes an account, and the only thing on this phone
+      that moves the activation ring. Armed the same way as the Opened beat and behind its own host
+      latch, and it will not fire until the link has been opened: sent → opened → password, in that
+      order, or not at all. */
+  armInvitePw() {
+    const s = this.state;
+    if (!s || !s.invSent || !s.invOpened || s.invPw) return;
+    const h = this.__host || this;
+    if (h.__wsPwArmed) return;
+    h.__wsPwArmed = true;
+    clearTimeout(this._pw);
+    this._pw = setTimeout(() => {
+      const A = (h.logic) || this;
+      if (A && A.state && A.state.invSent && A.state.invOpened && !A.state.invPw) A.markPasswordSet();
+    }, 5200);
+  }
+  /** The activation itself. An invite becomes an activation here and nowhere else — the console's
+      own definition is "invite accepted + first card live", and a WhatsApp leaving this phone is
+      neither. Records the business in `livePw`, flips its row in the invite register, and puts one
+      line on the trail Omar reads. */
+  markPasswordSet() {
+    const s = this.state || {};
+    const biz = String(s.invBiz || '').trim();
+    if (!biz || s.invPw) return;
+    const live = (s.livePw || []).indexOf(biz) >= 0 ? (s.livePw || []) : [...(s.livePw || []), biz];
+    const D = (window.WASLA_DB || {}).console || {};
+    const known = [...(D.leads || []), ...(s.leadsAdded || [])].some(l => l && l.name === biz);
+    const patch = { invPw: true, livePw: live,
+      invites: (s.invites || []).map(v => (v && v.biz === biz) ? { ...v, seedStatus: 'password' } : v) };
+    if (known) {
+      const t = s.leadTrail || {};
+      patch.leadTrail = { ...t, [biz]: [{ t: 'Just now', line: 'password set — the account is live', kind: 'won', src: 'phone' }, ...(t[biz] || [])] };
+      patch.mine = this.mineAdd(s.mine, 'trail', biz);
+    }
+    this.setState(patch);
+    this.say(biz + ' set a password — that is the activation, and the ring just moved');
+    this.persist();
+  }
+  /** Cancels BOTH invite timers and clears their host latches, so a fresh invite can arm fresh
+      ones. Called wherever the invite stops being the one that was sent. */
   disarmInvite() {
     clearTimeout(this._it);
+    clearTimeout(this._pw);
     this._it = null;
+    this._pw = null;
     const h = this.__host || this;
     h.__wsInvArmed = false;
+    h.__wsPwArmed = false;
   }
   /** The one-shot count-up. Seeds `tick` to 0 in place for the CURRENT render (renderVals reads
       `this.state` by reference and setState during render is not available to us), then eases it
@@ -1043,15 +1253,17 @@ class Component extends DCLogic {
   componentDidMount() { this.armSettle(); }
   componentWillUnmount() {
     clearTimeout(this._sv); clearTimeout(this._tt); clearTimeout(this._it);
-    clearTimeout(this._pt); clearTimeout(this._rt);
+    clearTimeout(this._pt); clearTimeout(this._rt); clearTimeout(this._pw);
     const h = this.__host || this;
     if (h.__wsRaf) { try { cancelAnimationFrame(h.__wsRaf); } catch (e) {} h.__wsRaf = null; }
   }
   componentDidUpdate() {
     const s = this.state;
-    const cur = [s.screen, s.leadSel, s.pipeStage, s.addStep, s.invSent, s.invOpened, s.invPulse,
+    const cur = [s.screen, s.leadSel, s.pipeStage, s.addStep, s.invSent, s.invOpened, s.invPw, s.invPulse,
       (s.leadsAdded || []).length, JSON.stringify(s.leadMods).length, JSON.stringify(s.leadTrail).length,
-      (s.escal || []).length, (s.sentInvites || []).length, s.toast, s.resetArm, s.leadMoved,
+      (s.escal || []).length, (s.sentInvites || []).length, (s.livePw || []).length, (s.invites || []).length,
+      (s.leadDeleted || []).length, JSON.stringify(s.escalDone || {}).length, JSON.stringify(s.converted || {}).length,
+      s.toast, s.resetArm, s.leadMoved,
       s.afBiz, s.afOwner, s.afPhone, (s.afAreas || []).length, (s.afTypes || []).length, (s.afLocs || []).length,
       s.afPlan, s.afValue, s.afFollow, s.afSource, s.afVertical, s.invBiz, s.invOwner, s.invPhone, s.invPlan].join('|');
     if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
@@ -1074,32 +1286,84 @@ class Component extends DCLogic {
     this.armTick();
     this.armSettle();
     this.armInviteOpen();
+    this.armInvitePw();
     const st = this.state, C = this.db(), tick = st.tick;
     const AN = (n, du, dl) => st.settled ? 'none' : n + ' ' + du + HOUSE + (dl || '0s') + ' both';
     const SEED = (seq, a, b, du, dl) => (seq % 2 ? b : a) + ' ' + du + HOUSE + (dl || '0s') + ' both';
     const seq = Number(st.navSeq) || 0;
 
-    // ── the board · seeded leads + anything added on either surface, then per-lead overrides ──
-    const allLeads = [...(C.leads || []), ...(st.leadsAdded || [])].map(l => ({ ...LEAD_BASE, ...(LEADX[l.name] || {}), ...l, ...((st.leadMods || {})[l.name] || {}) }));
+    // ── the board · seeded leads + anything added on either surface, MINUS anything the console
+    //    tombstoned, then per-lead overrides. The filter is the console's own, applied at exactly
+    //    the same point in the pipeline: a lead Omar removed is gone from the cards, the stage
+    //    counts, the forecast, "Needs you today" and the escalation rail alike. ──
+    const leadGone = new Set((st.leadDeleted || []).filter(Boolean));
+    const allLeads = [...(C.leads || []), ...(st.leadsAdded || [])]
+      .filter(l => l && !leadGone.has(l.name))
+      .map(l => ({ ...LEAD_BASE, ...(LEADX[l.name] || {}), ...l, ...((st.leadMods || {})[l.name] || {}) }));
     const valOf = (l) => Number(l.value) || 0;
     const wOf = (l) => STAGE_W[l.stage] == null ? 0 : STAGE_W[l.stage];
     const touchOf = (l) => Number(l.touch) || 0;
     const isStale = (l) => touchOf(l) >= STALE_DAYS;
     const isConv = (n) => !!(st.converted || {})[n];
+    const isLivePw = (n) => (st.livePw || []).indexOf(n) >= 0;
     const trailOf = (n) => [...(((st.leadTrail) || {})[n] || [])];
-    const addTrail = (n, line, kind) => ({ ...(st.leadTrail || {}), [n]: [{ t: 'Just now', line, kind: kind || 'note' }, ...trailOf(n)] });
-    const touchNow = (n, extra) => ({ ...(st.leadMods || {}), [n]: { ...((st.leadMods || {})[n] || {}), touch: 0, ...(extra || {}) } });
-    const escalAll = [...ESCAL_SEED, ...(st.escal || [])].filter((e, i, a) => a.findIndex(x => x.id === e.id) === i);
-    const isEsc = (n) => escalAll.some(e => e.lead === n);
+    const addTrail = (n, line, kind) => ({ ...(st.leadTrail || {}), [n]: [{ t: 'Just now', line, kind: kind || 'note', src: 'phone' }, ...trailOf(n)] });
+
+    // ── ONE writer for every shared-key mutation. It builds the state patch AND stamps the
+    //    authorship register in the same breath, so "what did this phone put on Omar's board"
+    //    is never a guess: the reset retracts exactly this, and the side panel counts exactly
+    //    this. Fields are recorded WITH the value written, so a field the console has since
+    //    overwritten is left alone on the way back out. ──
+    const wr = (spec) => {
+      const out = {}, m = this.mineOf(st.mine);
+      const mine = { leads: [...m.leads], mods: { ...m.mods }, trail: [...m.trail], escal: [...m.escal], invites: [...m.invites], conv: [...m.conv] };
+      if (spec.trail) {
+        const [n, line, kind] = spec.trail;
+        out.leadTrail = addTrail(n, line, kind);
+        if (mine.trail.indexOf(n) < 0) mine.trail = [...mine.trail, n];
+      }
+      if (spec.mods) {
+        const [n, f] = spec.mods;
+        out.leadMods = { ...(st.leadMods || {}), [n]: { ...((st.leadMods || {})[n] || {}), ...f } };
+        mine.mods = { ...mine.mods, [n]: { ...(mine.mods[n] || {}), ...f } };
+      }
+      if (spec.addLead) {
+        out.leadsAdded = [...(st.leadsAdded || []), spec.addLead];
+        if (mine.leads.indexOf(spec.addLead.name) < 0) mine.leads = [...mine.leads, spec.addLead.name];
+      }
+      if (spec.escal) {
+        out.escal = [...(st.escal || []), spec.escal];
+        if (mine.escal.indexOf(spec.escal.id) < 0) mine.escal = [...mine.escal, spec.escal.id];
+      }
+      if (spec.invite) {
+        out.invites = [...(st.invites || []).filter(v => v && v.id !== spec.invite.id), spec.invite];
+        if (mine.invites.indexOf(spec.invite.id) < 0) mine.invites = [...mine.invites, spec.invite.id];
+      }
+      if (spec.conv) {
+        out.converted = { ...(st.converted || {}), [spec.conv]: true };
+        if (mine.conv.indexOf(spec.conv) < 0) mine.conv = [...mine.conv, spec.conv];
+      }
+      out.mine = mine;
+      return out;
+    };
+
+    // ── escalations · raised here, ANSWERED on the console. `escalDone` is Omar's verdict
+    //    register, keyed by escalation id, and an escalation he has answered is not still
+    //    "waiting on admin" — it is answered, and the verdict is quotable. ──
+    const escalDone = st.escalDone || {};
+    const escalAll = [...ESCAL_SEED, ...(st.escal || [])]
+      .filter((e, i, a) => a.findIndex(x => x.id === e.id) === i)
+      .filter(e => !leadGone.has(e.lead));
+    const escOpenFor = (n) => escalAll.find(e => e.lead === n && !escalDone[e.id]) || null;
+    const escDoneFor = (n) => escalAll.find(e => e.lead === n && !!escalDone[e.id]) || null;
+    const isEsc = (n) => !!escOpenFor(n);
+    const verdictFor = (n) => { const e = escDoneFor(n); if (!e) return ''; const v = escalDone[e.id]; return typeof v === 'string' ? v : ''; };
     const leadSel = allLeads.find(l => l.name === st.leadSel) || null;
 
     // ── forward-only, on both the row chip and the detail chips ──
     const leadStage = (l, to) => {
-      this.setState({
-        leadMods: { ...(st.leadMods || {}), [l.name]: { ...((st.leadMods || {})[l.name] || {}), stage: to, touch: 0 } },
-        leadTrail: addTrail(l.name, 'moved ' + l.stage + ' → ' + to, 'move'),
-        leadMoved: l.name, leadSel: l.name
-      });
+      this.setState({ ...wr({ mods: [l.name, { stage: to, touch: 0 }], trail: [l.name, 'moved ' + l.stage + ' → ' + to, 'move'] }),
+        leadMoved: l.name, leadSel: l.name });
       this.say(l.name + ' → ' + to + ' · it is on Omar’s console board already');
       this.persist();
     };
@@ -1109,16 +1373,17 @@ class Component extends DCLogic {
     // ── the invite, wherever it is opened from ──
     const toInvite = (biz, owner, phone, plan) => {
       this.disarmInvite();
-      this.setState({ invBiz: biz || '', invOwner: owner || '', invPhone: (phone && phone !== '—') ? phone : '', invPlan: PLAN_PRICE[plan] != null ? plan : 'Growth', invSent: false, invOpened: false, invPulse: (Number(st.invPulse) || 0) + 1 });
+      this.setState({ invBiz: biz || '', invOwner: owner || '', invPhone: (phone && phone !== '—') ? phone : '', invPlan: PLAN_PRICE[plan] != null ? plan : 'Growth', invSent: false, invOpened: false, invPw: false, invStamp: '', invPulse: (Number(st.invPulse) || 0) + 1 });
       this.go('invite', 'fwd');
     };
     /** The one seam from Won lead to account, shared by the row chip and the detail button so the
-        two can never write a different record of the same act. */
+        two can never write a different record of the same act — and `converted` is now half of a
+        shared contract, so the console's own lead card stops offering "Convert" the moment this
+        runs, instead of contradicting the trail line sitting under it. */
     const convertLead = (l) => {
       if (!l || l.stage !== 'Won' || isConv(l.name)) return;
-      this.setState({ converted: { ...(st.converted || {}), [l.name]: true },
-        leadTrail: addTrail(l.name, 'converted — invite prefilled on ' + (l.plan || 'Starter'), 'won'),
-        leadMods: touchNow(l.name), leadSel: l.name });
+      this.setState({ ...wr({ conv: l.name, mods: [l.name, { touch: 0 }],
+        trail: [l.name, 'converted — invite prefilled on ' + (l.plan || 'Starter'), 'won'] }), leadSel: l.name });
       toInvite(l.name, l.owner, l.phone, l.plan);
       this.say(l.name + ' is converting — the invite is prefilled, send the WhatsApp');
     };
@@ -1129,23 +1394,35 @@ class Component extends DCLogic {
     const wonN = allLeads.filter(l => l.stage === 'Won').length;
     const inPlay = allLeads.length - wonN;
     const winPct = allLeads.length ? Math.round(wonN / allLeads.length * 100) : 0;
-    const sent = (st.sentInvites || []).length;
-    const activations = 4 + sent;                    // WASLA_DB.console.leaderboard: ['Lina', 4]
+    // ── the activation count · an activation is "invite accepted + first card live", which is the
+    //    console's own definition and the one this screen argues for three inches further down.
+    //    A WhatsApp leaving the phone is NOT that. Only a password landing moves this number, so
+    //    the ring, the leaderboard and the sparkline all agree with the tracking rail above them. ──
+    const sentNames = (st.sentInvites || []);
+    const sent = sentNames.length;
+    const live = (st.livePw || []).length;
+    const pending = sentNames.filter(n => (st.livePw || []).indexOf(n) < 0).length;
+    const activations = 4 + live;                    // WASLA_DB.console.leaderboard: ['Lina', 4]
     const ringOf = (r, frac) => { const circ = Math.round(2 * Math.PI * r * 10) / 10; return { full: circ, to: Math.round(circ * (1 - Math.max(0, Math.min(1, frac))) * 10) / 10 }; };
     const qFrac = Math.min(1, activations / QUOTA);
     const qColor = qFrac >= 0.75 ? '#2FAE66' : qFrac >= 0.40 ? '#E88024' : '#8C877F';
     const q1 = ringOf(39, qFrac * tick), q2 = ringOf(64, qFrac * tick);
 
-    // ── needs you today · stale first, then a follow-up that is due, then anything escalated ──
+    // ── needs you today · a follow-up with a CLOCK on it outranks everything, because 11:00 is a
+    //    place she has to be; then anything drifting, then anything waiting on Omar, then the
+    //    untimed things due today. "Due" is the anchored date test, not a string compare against
+    //    the word 'Today' — 'Thursday 11:00' is today, by this demo's own clock. ──
     const needs = [];
     allLeads.forEach(l => {
-      const t = touchOf(l), stale = isStale(l), due = String(l.follow || '') === 'Today', esc = isEsc(l.name);
+      const t = touchOf(l), stale = isStale(l), esc = isEsc(l.name);
+      const due = dueToday(l.follow), at = due ? dueAt(l.follow) : null;
       if (!stale && !due && !esc) return;
-      const rank = stale ? 0 : esc ? 1 : 2;
-      const why = stale ? ('Untouched ' + t + ' days — it is drifting')
-        : esc ? ('Escalated — waiting on an admin answer')
-          : ('Follow-up due today');
-      needs.push({ l, rank, t, why, tone: stale ? 'warn' : esc ? 'risk' : 'go' });
+      const rank = at ? 0 : stale ? 1 : esc ? 2 : 3;
+      const why = at ? ('Due today at ' + at + ' — it is in the diary')
+        : stale ? ('Untouched ' + t + ' days — it is drifting')
+          : esc ? ('Escalated — waiting on an admin answer')
+            : ('Follow-up due today');
+      needs.push({ l, rank, t, why, tone: at ? 'go' : stale ? 'warn' : esc ? 'risk' : 'go' });
     });
     needs.sort((a, b) => (a.rank - b.rank) || (b.t - a.t) || a.l.name.localeCompare(b.l.name));
     const TONE = { warn: ['#FDF1DC', '#F6DDB0', '#F0A92B', '#9A6B12'], risk: ['#FBE9E5', '#F3CDC4', '#E2563A', '#B23420'], go: ['#F0F7F3', '#CDE7D9', '#2FAE66', '#1E7D47'] };
@@ -1164,28 +1441,33 @@ class Component extends DCLogic {
     const afOwnerOk = afOwnerV.length >= 2;
     const afPhoneOk = afPhoneDigits >= 9 && afPhoneDigits <= 13;
     const afDupe = afBizOk && allLeads.some(l => String(l.name).toLowerCase() === afBizV.toLowerCase());
+    // a name the console tombstoned is not free again: the console filters its board on an EXACT
+    // name match, so re-adding it would land a lead that is invisible on both surfaces
+    const afTomb = afBizOk && leadGone.has(afBizV);
     const setAf = (k, v) => { this.setState({ [k]: v }); this.persist(); };
     const pickMulti = (k, list, v) => setAf(k, (list || []).includes(v) ? list.filter(x => x !== v) : [...(list || []), v]);
     const addStep = Math.max(0, Math.min(2, Number(st.addStep) || 0));
     // the third gate is the WHOLE form's gate: a restored draft can land on step 3 with step 1
     // emptied, and the button must not pretend that is submittable
-    const stepOk = [afBizOk && !afDupe, afOwnerOk && afPhoneOk, afBizOk && !afDupe && afOwnerOk && afPhoneOk];
+    const stepOk = [afBizOk && !afDupe && !afTomb, afOwnerOk && afPhoneOk, afBizOk && !afDupe && !afTomb && afOwnerOk && afPhoneOk];
     const addGate = addStep === 0
       ? (afDupe ? (afBizV + ' is already on the board — open it instead of adding it twice.')
-        : afBizOk ? 'Good. The Arabic name, vertical and areas are optional — they just make the first meeting shorter.'
-          : 'Name the business. It becomes the account name on every pass it ever issues.')
+        : afTomb ? (afBizV + ' was removed from the board on the console. Re-adding that exact name lands it on a tombstone and nobody sees it — use a different name, or ask Omar to restore it.')
+          : afBizOk ? 'Good. The Arabic name, vertical and areas are optional — they just make the first meeting shorter.'
+            : 'Name the business. It becomes the account name on every pass it ever issues.')
       : addStep === 1
         ? (!afOwnerOk ? 'Add the owner’s name — the invite opens with it, and one owner is the whole model.'
           : !afPhoneOk ? ('Jordanian mobile — +962 7x xxx xxxx. ' + afPhoneDigits + ' of 9 digits so far.')
             : !afPhoneStarts ? 'Long enough, but that is not a Jordanian country code — check it before the invite goes out.'
               : 'Good — that is the number the WhatsApp invite goes to.')
         : (!stepOk[2]
-          ? 'Go back — business, owner and a full phone number are the three we will not guess.'
+          ? (afTomb ? (afBizV + ' was removed on the console — that name cannot come back from here.')
+            : 'Go back — business, owner and a full phone number are the three we will not guess.')
           : (afBizV + ' lands in Cold at JOD ' + (Number(st.afValue) || PLAN_PRICE[st.afPlan] || 25) + ' a month. Advance it from the card when it moves.'));
     const addReady = stepOk[0] && stepOk[1];
 
     const addApply = () => {
-      if (!addReady || afDupe) { this.say(afDupe ? (afBizV + ' is already in the pipeline') : 'Business, owner and a full phone number are the three we will not guess'); return; }
+      if (!addReady || afDupe || afTomb) { this.say(afTomb ? (afBizV + ' was removed on the console — pick another name') : afDupe ? (afBizV + ' is already in the pipeline') : 'Business, owner and a full phone number are the three we will not guess'); return; }
       const locs = afLocs.map(x => String(x || '').trim()).filter(Boolean);
       const lead = { name: afBizV, ar: (st.afAr || '').trim(), stage: 'Cold', owner: afOwnerV, by: 'Lina',
         phone: (st.afPhone || '').trim(), email: (st.afEmail || '').trim() || '—',
@@ -1195,8 +1477,7 @@ class Component extends DCLogic {
         source: st.afSource, follow: st.afFollow, touch: 0,
         note: (st.afNotes || '').trim() || 'Captured just now — no touch yet', seedTrail: [] };
       this.setState({
-        leadsAdded: [...(st.leadsAdded || []), lead],
-        leadTrail: addTrail(lead.name, 'captured from ' + String(st.afSource).toLowerCase() + ' — follow up ' + String(st.afFollow).toLowerCase(), 'note'),
+        ...wr({ addLead: lead, trail: [lead.name, 'captured from ' + String(st.afSource).toLowerCase() + ' — follow up ' + String(st.afFollow).toLowerCase(), 'note'] }),
         leadSel: lead.name, leadMoved: lead.name, addStep: 0,
         afBiz: '', afAr: '', afOwner: '', afPhone: '', afEmail: '', afAreas: [], afLocs: [''], afTypes: [], afNotes: '',
         afVertical: 'Café', afPlan: 'Growth', afValue: '79', afSource: 'Referral', afFollow: 'Tomorrow'
@@ -1219,7 +1500,24 @@ class Component extends DCLogic {
             : ('Ready — ' + (ivFirst || 'the owner') + ' gets one WhatsApp, and that link IS the reset flow.');
     /** Any edit to what the message says un-sends the draft, disarms the tracking timer and bumps
         the pulse seed so the bubble replays exactly one beat. A sent invite is a fact, not a form. */
-    const ivEdit = (k, v) => { this.disarmInvite(); this.setState({ [k]: v, invSent: false, invOpened: false, invPulse: (Number(st.invPulse) || 0) + 1 }); this.persist(); };
+    const ivEdit = (k, v) => { this.disarmInvite(); this.setState({ [k]: v, invSent: false, invOpened: false, invPw: false, invStamp: '', invPulse: (Number(st.invPulse) || 0) + 1 }); this.persist(); };
+    /** ── WHERE A SENT INVITE IS RECORDED ──
+        Into the console's `invites` register, which is what its Activations screen renders, and
+        onto the lead's trail. NOT onto `wasla_demo_live_events`.
+
+        That wire is a per-account till feed and its only reader is a merchant's own dashboard, so
+        a `join` written there surfaced as "Louma Chocolate joined" inside Tala Hospitality's
+        session — a company with no relationship to her. The shared fix gives entries an optional
+        `acct` so readers can ignore what is not theirs, and this app could tag its invites with
+        the prospect's own business name. It does not, for two reasons:
+
+          · a prospect who has not set a password is not an account, so there is no tenant to
+            name. Inventing one to satisfy a filter is a label, not an owner; and
+          · the wire is capped at 20 newest-first. An entry no reader will ever claim is not
+            harmless there — it evicts a real till event from a real merchant's feed.
+
+        The invite already has a home on the surface that is actually about invites. It does not
+        need a second, cross-tenant one. */
     const sendInvite = () => {
       if (st.invSent) return;
       if (!ivReady) { this.say(ivGate); return; }
@@ -1227,10 +1525,14 @@ class Component extends DCLogic {
       const already = (st.sentInvites || []).indexOf(ivBizV) >= 0;
       const nextSent = already ? (st.sentInvites || []) : [...(st.sentInvites || []), ivBizV];
       const known = allLeads.some(l => l.name === ivBizV);
-      this.setState({ invSent: true, invOpened: false, sentInvites: nextSent,
-        leadTrail: known ? addTrail(ivBizV, 'invite sent on WhatsApp to ' + (ivOwnerV || 'the owner') + ' · ' + st.invPlan, 'invite') : (st.leadTrail || {}),
-        leadMods: known ? touchNow(ivBizV) : (st.leadMods || {}) });
-      this.pushLive('join', ivBizV, 'Lina invited ' + ivBizV + ' — WhatsApp sent', 'New account');
+      const stamp = stampNow();                       // stamped at the TAP, not at page load
+      const invite = { id: 'iv-field-' + this.slugOf(ivBizV), biz: ivBizV, owner: ivOwnerV,
+        phone: ivPhoneV || '—', plan: st.invPlan, by: 'Lina', when: CLOCK.weekday + ' ' + stamp,
+        origin: 'field', seedStatus: 'sent' };
+      const w = known
+        ? wr({ invite, mods: [ivBizV, { touch: 0 }], trail: [ivBizV, 'invite sent on WhatsApp to ' + (ivOwnerV || 'the owner') + ' · ' + st.invPlan, 'invite'] })
+        : wr({ invite });
+      this.setState({ ...w, invSent: true, invOpened: false, invPw: false, invStamp: stamp, sentInvites: nextSent });
       this.say('Invite sent to ' + (ivFirst || 'the owner') + ' — the account exists the moment they set a password');
       this.persist();
     };
@@ -1241,7 +1543,7 @@ class Component extends DCLogic {
     const boardMax = Math.max(1, ...board.map(b => b.n));
     const myRank = Math.max(0, board.findIndex(b => b.name === 'Lina')) + 1;
     const delta = activations - LINA_PERF.last;
-    const spark = LINA_PERF.spark.map((v, i) => i === LINA_PERF.spark.length - 1 ? v + sent : v);
+    const spark = LINA_PERF.spark.map((v, i) => i === LINA_PERF.spark.length - 1 ? v + live : v);
     const sparkMax = Math.max(1, ...spark);
     const meTrailRaw = [];
     allLeads.filter(l => l.by === 'Lina').forEach(l => {
@@ -1265,7 +1567,17 @@ class Component extends DCLogic {
     ];
     const tint = (hex, a) => { const n = parseInt(String(hex).slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; };
 
-    const changesN = (st.leadsAdded || []).length + Object.keys(st.leadMods || {}).length;
+    // ── the sync counter · THIS SESSION'S delta and nothing else. It used to count every key in
+    //    the merged state, so a lead Omar added and a stage Omar moved were both restored into
+    //    `leadsAdded` / `leadMods` on boot and then credited to the phone. The authorship
+    //    register is the only honest source: it holds what this phone actually wrote. ──
+    const MINE = this.mineOf(st.mine);
+    const touchedSet = {};
+    MINE.leads.forEach(n => { if (!leadGone.has(n)) touchedSet[n] = 1; });
+    Object.keys(MINE.mods).forEach(n => { if (!leadGone.has(n)) touchedSet[n] = 1; });
+    MINE.trail.forEach(n => { if (!leadGone.has(n)) touchedSet[n] = 1; });
+    const changesN = Object.keys(touchedSet).length;
+    const myInvN = MINE.invites.length;
     const tabIdx = st.screen === 'today' ? 0 : (st.screen === 'pipeline' || st.screen === 'lead') ? 1 : st.screen === 'add' ? 2 : st.screen === 'me' ? 3 : -1;
     const tabFg = (i) => tabIdx === i ? '#C96A14' : '#A79C8D';
     const tabFw = (i) => tabIdx === i ? 800 : 600;
@@ -1318,8 +1630,11 @@ class Component extends DCLogic {
       qLabel: Math.round(activations * tick) + '/' + QUOTA,
       qHead: activations >= QUOTA ? 'Quota cleared — ' + activations + ' this month'
         : (QUOTA - activations) + ' more to clear the month',
-      qNote: activations >= QUOTA ? 'Everything past eight is upside. Keep the board moving anyway.'
-        : 'Eight activations is the month. ' + activations + ' are live, and there are ' + (QUOTA - activations) + ' to go — one Won lead, one invite, one password.',
+      // an activation is a password, not a WhatsApp — so an invite in flight is named as what it
+      // is, counted nowhere, and the ring stays a count of accounts that actually exist
+      qNote: (activations >= QUOTA ? 'Everything past eight is upside. Keep the board moving anyway.'
+        : 'An activation is an invite accepted and a first card live — a password, not a send. ' + activations + ' are live, ' + (QUOTA - activations) + ' to go.')
+        + (pending ? (' ' + pending + ' invite' + (pending === 1 ? ' is' : 's are') + ' out and unopened; ' + (pending === 1 ? 'it counts' : 'they count') + ' for nothing until the password lands.') : ''),
       todayTiles: [
         ['Pipeline', 'JOD ' + Math.round(weighted * tick), 'JOD ' + raw + ' raw', '#2C2C2C'],
         ['In play', String(Math.round(inPlay * tick)), wonN + ' won · ' + allLeads.length + ' total', '#C96A14'],
@@ -1342,7 +1657,7 @@ class Component extends DCLogic {
           go: () => openLead(nd.l.name),
           anim: AN('fadeUp', '.4s', (0.2 + 0.05 * i) + 's') };
       }),
-      needsFoot: 'Stale is ' + STALE_DAYS + ' days without a touch — the same clock the console runs. A ping, a note or a stage move resets it.',
+      needsFoot: 'Due today means the follow-up falls on ' + CLOCK.weekday + ' ' + CLOCK.d + ' ' + CLOCK.month + ' — whichever way it was written down, and a time on it puts it top. Stale is ' + STALE_DAYS + ' days without a touch, the same clock the console runs. A ping, a note or a stage move resets it.',
       qa1Anim: AN('fadeUp', '.45s', '.3s'), qa2Anim: AN('fadeUp', '.45s', '.35s'),
       goAdd: () => this.go('add', 'fwd'),
       goInviteBlank: () => toInvite('', '', '', 'Growth'),
@@ -1381,7 +1696,7 @@ class Component extends DCLogic {
           age: t === 0 ? 'touched today' : t + 'd since last touch',
           ageFg: stale ? '#9A6B12' : '#A79C8D', ageFw: stale ? 800 : 600,
           br: conv ? '#9AD3B4' : (st.leadSel === l.name ? '#E88024' : '#EDE6DA'), op: conv ? '.88' : '1',
-          converted: conv, convLabel: (st.sentInvites || []).indexOf(l.name) >= 0 ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT',
+          converted: conv, convLabel: isLivePw(l.name) ? 'PASSWORD SET — ACCOUNT LIVE' : (st.sentInvites || []).indexOf(l.name) >= 0 ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT',
           anim: moved ? SEED(seq, 'rowInA', 'rowInB', '.5s') : AN('fadeUp', '.42s', (0.03 * i) + 's'),
           hasAct: !!next || canConv,
           actLabel: canConv ? 'Convert →' : '▸ advance', actFs: canConv ? '9.5px' : '9.5px',
@@ -1399,7 +1714,7 @@ class Component extends DCLogic {
       ldStFg: (STAGE_STYLE[(leadSel || {}).stage] || ['', '#6B6760'])[1],
       ldSubLine: leadSel ? [leadSel.owner, leadSel.phone, leadSel.vertical, 'owned by ' + (leadSel.by === 'Lina' ? 'you' : (leadSel.by || '—')), 'follow-up ' + (leadSel.follow || '—')].filter(Boolean).join(' · ') : '',
       ldIsConverted: !!leadSel && isConv(leadSel.name),
-      ldConvChip: leadSel && (st.sentInvites || []).indexOf(leadSel.name) >= 0 ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT',
+      ldConvChip: leadSel && isLivePw(leadSel.name) ? 'PASSWORD SET — ACCOUNT LIVE' : (leadSel && (st.sentInvites || []).indexOf(leadSel.name) >= 0) ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT',
       ldHeadAnim: AN('fadeUp', '.42s'),
       ldStagesAnim: AN('fadeUp', '.42s', '.05s'),
       ldStages: STAGES.map(s => {
@@ -1415,7 +1730,8 @@ class Component extends DCLogic {
       }),
       ldStageNote: leadSel
         ? (leadSel.stage === 'Won'
-          ? (isConv(leadSel.name) ? 'Won and converted — the invite is out; the account is born the second they set a password.' : 'Won — convert it and the account is born on their phone.')
+          ? (isLivePw(leadSel.name) ? 'Won, converted, password set — that one is a live account and it is the activation your ring counted.'
+            : isConv(leadSel.name) ? 'Won and converted — the invite is out; the account is born the second they set a password.' : 'Won — convert it and the account is born on their phone.')
           : ('Now ' + leadSel.stage + ' · next is ' + (STAGES[STAGES.indexOf(leadSel.stage) + 1] || '—') + '. Earlier stages are closed.'))
         : '',
       ldGroups: (leadSel ? [
@@ -1429,7 +1745,7 @@ class Component extends DCLogic {
       ldTrailEmpty: !!leadSel && (trailOf(leadSel.name).length + ((leadSel.seedTrail || []).length)) === 0,
       ldNoteAnim: AN('fadeUp', '.42s', '.3s'),
       ldNote: (leadSel || {}).note || '',
-      setLdNote: (e) => { if (!leadSel) return; this.setState({ leadMods: { ...(st.leadMods || {}), [leadSel.name]: { ...((st.leadMods || {})[leadSel.name] || {}), note: e.target.value } } }); this.persist(); },
+      setLdNote: (e) => { if (!leadSel) return; this.setState(wr({ mods: [leadSel.name, { note: e.target.value }] })); this.persist(); },
       ldNoteBg: (leadSel && String(leadSel.note || '').trim().length >= 6) ? '#E88024' : '#EFEDE8',
       ldNoteFg: (leadSel && String(leadSel.note || '').trim().length >= 6) ? '#FFFFFF' : '#93887A',
       ldNoteCls: (leadSel && String(leadSel.note || '').trim().length >= 6) ? 'ws-cta' : 'ws-off',
@@ -1439,7 +1755,7 @@ class Component extends DCLogic {
         if (!leadSel) return;
         const n = String(leadSel.note || '').trim();
         if (n.length < 6) return;
-        this.setState({ leadTrail: addTrail(leadSel.name, 'note: ' + n, 'note'), leadMods: touchNow(leadSel.name) });
+        this.setState(wr({ trail: [leadSel.name, 'note: ' + n, 'note'], mods: [leadSel.name, { touch: 0 }] }));
         this.say('Noted on ' + leadSel.name + ' — it is on Omar’s console trail too');
         this.persist();
       },
@@ -1449,35 +1765,43 @@ class Component extends DCLogic {
         return { label: f, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348',
           pick: () => {
             if (!leadSel) return;
-            this.setState({ leadMods: touchNow(leadSel.name, { follow: f }), leadTrail: addTrail(leadSel.name, 'follow-up scheduled — ' + f.toLowerCase(), 'move') });
+            this.setState(wr({ mods: [leadSel.name, { touch: 0, follow: f }], trail: [leadSel.name, 'follow-up scheduled — ' + f.toLowerCase(), 'move'] }));
             this.say('Follow-up on ' + leadSel.name + ' set for ' + f.toLowerCase());
             this.persist();
           } };
       }),
-      ldFollowNote: leadSel ? ('Currently ' + (leadSel.follow || '—') + '. A follow-up you never set is a lead you already lost.') : '',
+      ldFollowNote: leadSel ? ('Currently ' + (leadSel.follow || '—') + (dueToday(leadSel.follow) ? (' — that is ' + CLOCK.weekday.toLowerCase() + ', today, so it is already on your Today screen' + (dueAt(leadSel.follow) ? (' at ' + dueAt(leadSel.follow)) : '') + '.') : '.') + ' A follow-up you never set is a lead you already lost.') : '',
       ldActionsAnim: AN('fadeUp', '.42s', '.38s'),
       ldPing: () => {
         if (!leadSel) return;
-        this.setState({ leadTrail: addTrail(leadSel.name, 'pinged ' + (leadSel.owner || 'the owner') + ' on WhatsApp', 'ping'), leadMods: touchNow(leadSel.name) });
+        this.setState(wr({ trail: [leadSel.name, 'pinged ' + (leadSel.owner || 'the owner') + ' on WhatsApp', 'ping'], mods: [leadSel.name, { touch: 0 }] }));
         this.say('WhatsApp sent to ' + (leadSel.owner || 'the lead') + ' — in Arabic, from your number');
         this.persist();
       },
       ldCanConvert: !!leadSel && leadSel.stage === 'Won' && !isConv(leadSel.name),
       ldConvert: () => convertLead(leadSel),
-      ldEscLabel: (leadSel && isEsc(leadSel.name)) ? 'Escalated — waiting on admin' : 'Escalate to admin',
-      ldEscBr: (leadSel && isEsc(leadSel.name)) ? '#F0A92B' : '#E7E0D5',
-      ldEscFg: (leadSel && isEsc(leadSel.name)) ? '#9A6B12' : '#5D5348',
+      // an escalation Omar has ANSWERED is not still waiting on him — `escalDone` says so, and
+      // the verdict he typed is quotable, sitting right above the trail line carrying it
+      ldEscAnswered: !!leadSel && !!escDoneFor(leadSel.name) && !isEsc(leadSel.name),
+      ldEscVerdict: leadSel ? ('Omar answered: “' + (verdictFor(leadSel.name) || 'decided — see the trail') + '”') : '',
+      ldEscLabel: !leadSel ? 'Escalate to admin'
+        : isEsc(leadSel.name) ? 'Escalated — waiting on admin'
+          : escDoneFor(leadSel.name) ? 'Answered by admin ✓ — tap to re-read it'
+            : 'Escalate to admin',
+      ldEscBr: (leadSel && isEsc(leadSel.name)) ? '#F0A92B' : (leadSel && escDoneFor(leadSel.name)) ? '#9AD3B4' : '#E7E0D5',
+      ldEscFg: (leadSel && isEsc(leadSel.name)) ? '#9A6B12' : (leadSel && escDoneFor(leadSel.name)) ? '#1E7D47' : '#5D5348',
       ldEscalate: () => {
         if (!leadSel) return;
         const id = 'e-' + leadSel.name;
         if (isEsc(leadSel.name)) { this.say(leadSel.name + ' is already with the admin — one escalation at a time'); return; }
+        if (escDoneFor(leadSel.name)) { this.say('Omar on ' + leadSel.name + ': ' + (verdictFor(leadSel.name) || 'answered — it is on the trail')); return; }
         const ask = String(leadSel.note || 'needs a decision').replace(/\s*—\s*escalate\s*$/i, '').trim();
-        this.setState({ escal: [...(st.escal || []), { id, lead: leadSel.name, rep: 'Lina', ask }],
-          leadTrail: addTrail(leadSel.name, 'escalated to admin — ' + ask, 'escalate'), leadMods: touchNow(leadSel.name) });
-        this.say(leadSel.name + ' escalated — the ask is on the trail Omar reads');
+        this.setState(wr({ escal: { id, lead: leadSel.name, rep: 'Lina', ask },
+          trail: [leadSel.name, 'escalated to admin — ' + ask, 'escalate'], mods: [leadSel.name, { touch: 0 }] }));
+        this.say(leadSel.name + ' escalated — it is on Omar’s “Needs an eye” rail now');
         this.persist();
       },
-      ldFootNote: 'Everything here — the stage, the ping, the note, the escalation — lands on Omar’s console board the moment you tap it. Nothing waits for a sync button.',
+      ldFootNote: 'The stage, the ping and the note go straight onto this lead in the console’s own session; an escalation goes onto Omar’s “Needs an eye” rail as well as the trail. Nothing waits for a sync button, and his answer comes back to this same button.',
 
       // ── ADD A LEAD ──
       addS0: addStep === 0, addS1: addStep === 1, addS2: addStep === 2,
@@ -1540,9 +1864,11 @@ class Component extends DCLogic {
       },
 
       // ── INVITE ──
-      ivLede: st.invSent
-        ? ('Sent. Nothing exists on Wasla’s side yet — the account is born the second ' + (ivFirst || 'the owner') + ' sets a password.')
-        : 'Accounts are born on a phone. You send one WhatsApp; they own the account a minute later.',
+      ivLede: st.invPw
+        ? ((ivFirst || 'The owner') + ' set a password — that is the account, and it is the one thing this month’s quota counts.')
+        : st.invSent
+          ? ('Sent. Nothing exists on Wasla’s side yet — the account is born the second ' + (ivFirst || 'the owner') + ' sets a password, and not before.')
+          : 'Accounts are born on a phone. You send one WhatsApp; they own the account a minute later.',
       ivFormAnim: AN('fadeUp', '.42s', '.03s'),
       ivBiz: st.invBiz, setIvBiz: (e) => ivEdit('invBiz', e.target.value), ivBizBr: ivBizOk ? '#9AD3B4' : (ivBizV.length ? '#F0A92B' : '#D8D0C2'),
       ivOwner: st.invOwner, setIvOwner: (e) => ivEdit('invOwner', e.target.value), ivOwnerBr: ivOwnerOk ? '#9AD3B4' : (ivOwnerV.length ? '#F0A92B' : '#D8D0C2'),
@@ -1553,13 +1879,13 @@ class Component extends DCLogic {
       ivBubbleAnim: ((Number(st.invPulse) || 0) % 2) ? 'msgPulseB .45s' + HOUSE + 'both' : 'msgPulseA .45s' + HOUSE + 'both',
       ivFirst: ivFirst || 'there', ivBizShown: ivBizV || 'your business',
       ivPhoneShown: ivPhoneV || 'no number yet', ivSlug,
-      ivStamp: st.invSent ? (INVITE_STAMP + ' ✓✓') : 'draft · not sent',
+      ivStamp: st.invSent ? ((st.invStamp || stampNow()) + ' ✓✓') : 'draft · not sent',
       ivPreviewNote: st.invSent ? 'Delivered. Arabic first in production — this is the English gloss of what landed.' : 'The draft, exactly as it will land. Arabic first in production; nothing is softened on the way out.',
       ivGateLine: ivGate,
       ivGateDot: (st.invSent || ivReady) ? '#2FAE66' : '#F0A92B',
       ivGateFg: (st.invSent || ivReady) ? '#1E7D47' : '#9A6B12',
       ivSendAnim: AN('fadeUp', '.45s', '.2s'),
-      ivBtnLabel: st.invSent ? 'Sent ✓ — tracking below' : ivReady ? 'Send the WhatsApp invite' : 'Three fields, then it sends',
+      ivBtnLabel: st.invPw ? 'Account live ✓ — activation counted' : st.invSent ? 'Sent ✓ — tracking below' : ivReady ? 'Send the WhatsApp invite' : 'Three fields, then it sends',
       ivBtnBg: st.invSent ? '#2FAE66' : ivReady ? '#E88024' : '#EFEDE8',
       ivBtnFg: (st.invSent || ivReady) ? '#FFFFFF' : '#93887A',
       ivBtnCls: (ivReady && !st.invSent) ? 'ws-cta' : 'ws-off',
@@ -1567,31 +1893,34 @@ class Component extends DCLogic {
       sendInvite,
       ivTracking: st.invSent,
       ivTrackAnim: AN('popIn', '.45s'),
-      ivTrackChip: st.invOpened ? 'opened · waiting on the password' : 'sent · waiting to be opened',
+      ivTrackChip: st.invPw ? 'password set · the account is live' : st.invOpened ? 'opened · waiting on the password' : 'sent · waiting to be opened',
       ivSteps: (() => {
-        const opened = !!st.invOpened;
+        const opened = !!st.invOpened, pw = !!st.invPw;
         const rows = [
-          { label: 'Sent', done: true, note: 'WhatsApp delivered to ' + (ivPhoneV || 'the owner') + ' at ' + INVITE_STAMP + '.' },
+          { label: 'Sent', done: true, note: 'WhatsApp delivered to ' + (ivPhoneV || 'the owner') + ' at ' + (st.invStamp || stampNow()) + '.' },
           { label: 'Opened', done: opened, note: opened ? ((ivFirst || 'The owner') + ' opened the link — no password on it yet.') : 'Waiting. The read receipt lands here the moment it happens, not before.' },
-          { label: 'Password set — account live', done: false, note: 'Still pending, and it will stay honest about that. Nobody at Wasla ever sees the password.' }
+          { label: 'Password set — account live', done: pw, note: pw ? ((ivFirst || 'The owner') + ' set it, on their own phone, and nobody here saw it. THIS is the beat your activation ring counted — not the send.') : 'Still pending, and it will stay honest about that. Nobody at Wasla ever sees the password.' }
         ];
         return rows.map((r, i) => ({ label: r.label, note: r.note, mark: r.done ? '✓' : '·',
           bg: r.done ? '#2FAE66' : '#FFFFFF', br: r.done ? '#2FAE66' : '#E0D8CB',
           markFg: r.done ? '#FFFFFF' : '#B0A594', fg: r.done ? '#2C2C2C' : '#93887A',
           hasLine: i < rows.length - 1,
           lineFrom: r.done ? '#2FAE66' : '#E7E0D5', lineTo: (rows[i + 1] && rows[i + 1].done) ? '#2FAE66' : '#EFE8DC',
-          dotAnim: (r.label === 'Opened' && opened) ? 'nodeGlow 1.4s ease-out both' : (!r.done && i === 2 ? 'waitPulse 1.9s ease-in-out infinite' : 'none'),
+          dotAnim: (i === 1 && opened && !pw) || (i === 2 && pw) ? 'nodeGlow 1.4s ease-out both' : (!r.done && i === 2 ? 'waitPulse 1.9s ease-in-out infinite' : 'none'),
           lineAnim: AN('lineGrow', '.5s', (0.1 + 0.08 * i) + 's'),
           anim: AN('fadeUp', '.4s', (0.05 * i) + 's') }));
       })(),
-      ivTrackFoot: 'There is no half-made account on our side: until that third node lights, nothing exists but a link. No credential anybody here could leak, and no login to hand over.',
+      ivTrackFoot: st.invPw
+        ? 'The account exists now, and it was born on their phone — Wasla never held that password and cannot hand it over. One activation, counted at this node and no earlier one.'
+        : 'There is no half-made account on our side: until that third node lights, nothing exists but a link — and nothing has been counted. No credential anybody here could leak, and no login to hand over.',
 
       // ── ME ──
       meCardAnim: AN('fadeUp', '.45s'),
       mqColor: qColor, mqFull: q2.full, mqTo: q2.to,
       mqRingAnim: st.settled ? 'none' : 'ringDraw 1.15s' + HOUSE + '.18s both',
       mqNum: String(Math.round(activations * tick)), mqGoal: String(QUOTA),
-      mqNote: activations >= QUOTA ? 'The month is cleared. Everything after this is upside.' : ((QUOTA - activations) + ' activations left in the month — and ' + inPlay + ' leads still in play to find them in.'),
+      mqNote: (activations >= QUOTA ? 'The month is cleared. Everything after this is upside.' : ((QUOTA - activations) + ' activations left in the month — and ' + inPlay + ' leads still in play to find them in.'))
+        + ' An activation is an invite accepted and a first card live' + (pending ? ('; ' + pending + ' invite' + (pending === 1 ? '' : 's') + ' still out there ' + (pending === 1 ? 'counts' : 'count') + ' for nothing yet.') : '.'),
       mDelta: (delta > 0 ? '+' : delta < 0 ? '−' : '±') + Math.abs(delta) + ' vs last month',
       mDeltaBg: delta > 0 ? '#E7F6EE' : delta < 0 ? '#FDF1DC' : '#EFEDE8',
       mDeltaFg: delta > 0 ? '#1E7D47' : delta < 0 ? '#9A6B12' : '#6B6760',
@@ -1608,7 +1937,7 @@ class Component extends DCLogic {
           barAnim: AN('growW', '.7s', (0.2 + 0.07 * i) + 's'),
           anim: AN('fadeUp', '.4s', (0.12 + 0.05 * i) + 's') };
       }),
-      lbNote: 'You are #' + myRank + ' of ' + board.length + ' this month. The board is the same one the console shows — send an invite and it moves here first.',
+      lbNote: 'You are #' + myRank + ' of ' + board.length + ' this month. The board is the same one the console shows — it moves the moment a password lands, not the moment a WhatsApp leaves.',
       spCardAnim: AN('fadeUp', '.45s', '.14s'),
       sparkBars: spark.map((v, i) => ({
         h: Math.max(4, Math.round(v / sparkMax * 68)) + 'px',
@@ -1617,7 +1946,7 @@ class Component extends DCLogic {
         tip: v + ' activation' + (v === 1 ? '' : 's'),
         anim: AN('barRise', '.5s', (0.2 + 0.045 * i) + 's')
       })),
-      sparkNote: 'Eight weeks of activations. The last bar is this week — it moves the moment an invite goes out.',
+      sparkNote: 'Eight weeks of activations. The last bar is this week — it moves when an invite is accepted and the first card goes live, not when the invite is sent.',
       mtCardAnim: AN('fadeUp', '.45s', '.2s'),
       meTrail: meTrailRaw.slice(0, 7).map((e, i) => ({
         line: e.line, t: e.t, dot: TRAIL_DOT[e.kind] || '#C9BFAF',
@@ -1633,18 +1962,23 @@ class Component extends DCLogic {
         br: '#E7E0D5', bg: '#FFFFFF',
         anim: AN('fadeUp', '.34s', (0.04 + 0.03 * i) + 's')
       })),
-      syncDot: changesN ? '#2FAE66' : '#C9BFAF',
-      syncDotAnim: changesN ? 'pulseDot 2.4s infinite' : 'none',
-      syncLine: changesN
-        ? (changesN + (changesN === 1 ? ' pipeline change from this phone is' : ' pipeline changes from this phone are') + ' already written into the console’s own session blob — leads added, stages moved, trails written. Open the console and they are on Omar’s board.')
-        : 'Add a lead, move a stage or write a note, and it is written straight into the console’s session — three keys inside its blob, every other key handed back untouched.',
-      resetLabel: st.resetArm ? 'Tap again to wipe this demo session' : 'Reset demo · مسح جلسة العرض',
+      syncDot: (changesN || myInvN) ? '#2FAE66' : '#C9BFAF',
+      syncDotAnim: (changesN || myInvN) ? 'pulseDot 2.4s infinite' : 'none',
+      syncLine: (changesN || myInvN)
+        ? (changesN
+          ? (changesN + (changesN === 1 ? ' lead on the console’s board carries' : ' leads on the console’s board carry') + ' an edit written from this phone')
+          : 'Nothing on the board has been edited from this phone')
+          + (myInvN ? (', and ' + myInvN + ' invite' + (myInvN === 1 ? ' is' : 's are') + ' in its register') : '')
+          + '. Only this — anything Omar did in his own session is his, and is not counted here.'
+        : 'Add a lead, move a stage or write a note, and it is written straight into the console’s session — six pipeline keys inside its blob, every other key handed back untouched.',
+      resetLabel: st.resetArm ? 'Tap again — wipes this phone AND retracts its edits from Omar’s board' : 'Reset demo · مسح جلسة العرض',
       resetBr: st.resetArm ? '#E2563A' : '#DCD3C4',
       resetFg: st.resetArm ? '#E2563A' : '#93887A',
       resetDemo: () => {
         if (!st.resetArm) { this.setState({ resetArm: true }); clearTimeout(this._rt); this._rt = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.setState({ resetArm: false }); }, 4000); return; }
         clearTimeout(this._rt);
         this.resetSales();
+        this.say('Demo reset — this phone is clear, and the edits it made were taken back off Omar’s board. Everything he did there is exactly where he left it.');
       }
     };
   }

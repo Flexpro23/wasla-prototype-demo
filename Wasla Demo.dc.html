@@ -134,17 +134,17 @@
                 <div style="width:7px;height:7px;border-radius:50%;background:#E88024;flex-shrink:0;"></div>
                 <div style="height:3px;width:30px;border-radius:99px;background:rgba(255,255,255,.4);"></div>
               </div>
-              <sc-if value="{{ hasStamps }}">
+              <sc-if value="{{ hasStamps }}" hint-placeholder-val="{{ true }}">
                 <div style="display:flex;gap:2px;align-items:center;margin-top:7px;">
                   <sc-for list="{{ stamps }}" as="s" hint-placeholder-count="4">
                     <span style="{{ s.box }}">
                       <img src="{{ s.src }}" alt="" style="{{ s.img }}">
-                      <sc-if value="{{ s.punch }}"><img src="{{ s.punch }}" alt="" style="{{ s.punchStyle }}"></sc-if>
+                      <sc-if value="{{ s.punch }}" hint-placeholder-val="{{ true }}"><img src="{{ s.punch }}" alt="" style="{{ s.punchStyle }}"></sc-if>
                     </span>
                   </sc-for>
                 </div>
               </sc-if>
-              <sc-if value="{{ noStamps }}">
+              <sc-if value="{{ noStamps }}" hint-placeholder-val="{{ false }}">
                 <div style="display:flex;gap:2.5px;align-items:center;margin-top:7px;">
                   <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.92);"></div><div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.92);"></div><div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.92);"></div><div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.92);animation:stampPop 5.4s cubic-bezier(.22,.61,.36,1) infinite;"></div>
                 </div>
