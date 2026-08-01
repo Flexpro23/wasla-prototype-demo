@@ -251,6 +251,16 @@
             </div>
           </sc-if>
 
+          <sc-if value="{{ capGranted }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;background:rgba(47,174,102,.09);border:1px solid rgba(47,174,102,.4);border-radius:14px;padding:12px 13px;display:flex;align-items:center;gap:11px;animation:{{ tabsAnim }};">
+              <span style="width:30px;height:30px;border-radius:50%;background:rgba(47,174,102,.16);border:1.5px solid #2FAE66;color:#7BD8A5;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔓</span>
+              <div style="min-width:0;flex:1;">
+                <div style="font-size:12px;font-weight:800;color:#7BD8A5;">{{ capGrantTitle }}</div>
+                <div style="font-size:10.5px;color:#9B99A3;line-height:1.45;margin-top:2px;">{{ capGrantLine }}</div>
+              </div>
+            </div>
+          </sc-if>
+
           <div style="flex:1;display:flex;flex-direction:column;padding-top:14px;animation:{{ heroAnim }};">
             <sc-if value="{{ bStamps }}" hint-placeholder-val="{{ true }}">
               <sc-if value="{{ modeCollect }}" hint-placeholder-val="{{ true }}">
@@ -453,15 +463,45 @@
             </sc-if>
 
             <sc-if value="{{ bRefusal }}" hint-placeholder-val="{{ false }}">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;animation:{{ refusalShake }};">
-                <div style="width:84px;height:84px;border-radius:50%;background:{{ rfTint }};border:3px solid {{ rfTone }};display:flex;align-items:center;justify-content:center;font-size:32px;color:{{ rfTone }};flex-shrink:0;animation:{{ popAnim }};">{{ rfMark }}</div>
-                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:21px;line-height:1.3;">{{ rfTitle }}</div>
-                <div style="font-size:12.5px;color:#9B99A3;line-height:1.6;max-width:274px;">{{ rfWhy }}</div>
-                <sc-if value="{{ rfHasRule }}" hint-placeholder-val="{{ false }}">
-                  <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(244,242,238,.05);border:1px dashed rgba(244,242,238,.2);color:#9B99A3;border-radius:999px;padding:6px 13px;font-size:10.5px;font-weight:800;letter-spacing:.02em;max-width:280px;line-height:1.4;">{{ rfRule }}</div>
-                </sc-if>
-                <div style="background:rgba(232,128,36,.1);border:1px solid rgba(232,128,36,.35);color:#F09A4D;border-radius:12px;padding:11px 16px;font-size:12.5px;font-weight:700;max-width:284px;line-height:1.5;animation:{{ rfDoAnim }};">{{ rfDo }}</div>
-              </div>
+              <sc-if value="{{ rfBody }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;animation:{{ refusalShake }};">
+                  <div style="width:84px;height:84px;border-radius:50%;background:{{ rfTint }};border:3px solid {{ rfTone }};display:flex;align-items:center;justify-content:center;font-size:32px;color:{{ rfTone }};flex-shrink:0;animation:{{ popAnim }};">{{ rfMark }}</div>
+                  <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:21px;line-height:1.3;">{{ rfTitle }}</div>
+                  <div style="font-size:12.5px;color:#9B99A3;line-height:1.6;max-width:274px;">{{ rfWhy }}</div>
+                  <sc-if value="{{ rfHasRule }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(244,242,238,.05);border:1px dashed rgba(244,242,238,.2);color:#9B99A3;border-radius:999px;padding:6px 13px;font-size:10.5px;font-weight:800;letter-spacing:.02em;max-width:280px;line-height:1.4;">{{ rfRule }}</div>
+                  </sc-if>
+                  <sc-if value="{{ rfDeclined }}" hint-placeholder-val="{{ false }}">
+                    <div style="width:100%;max-width:284px;background:rgba(226,86,58,.09);border:1px solid rgba(226,86,58,.4);border-radius:14px;padding:11px 14px;text-align:start;animation:fadeUp .34s cubic-bezier(.22,.61,.36,1) both;">
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                        <div style="font-size:11.5px;font-weight:800;color:#E2563A;">{{ rfDecTitle }}</div>
+                        <div onClick="{{ dismissDecline }}" class="ws-x" style="cursor:pointer;color:#8E8C96;font-size:14px;padding:0 2px;line-height:1;flex-shrink:0;">✕</div>
+                      </div>
+                      <div style="font-size:9.5px;color:#8E8C96;margin-top:2px;">{{ rfDecBy }}</div>
+                      <div style="font-size:9.5px;font-weight:800;letter-spacing:.05em;color:#6E6C77;text-transform:uppercase;margin-top:8px;">{{ rfDecLabel }}</div>
+                      <div style="font-size:12px;color:#F4F2EE;line-height:1.55;margin-top:3px;font-style:italic;">“{{ rfDecNote }}”</div>
+                    </div>
+                  </sc-if>
+                  <div style="background:rgba(232,128,36,.1);border:1px solid rgba(232,128,36,.35);color:#F09A4D;border-radius:12px;padding:11px 16px;font-size:12.5px;font-weight:700;max-width:284px;line-height:1.5;animation:{{ rfDoAnim }};">{{ rfDo }}</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ rfWaiting }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center;">
+                  <div style="position:relative;width:88px;height:88px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <div style="position:absolute;inset:0;border-radius:50%;border:2.5px solid rgba(240,169,43,.5);animation:nextGlow 1.6s ease-in-out infinite;"></div>
+                    <div style="width:60px;height:60px;border-radius:50%;background:rgba(240,169,43,.14);border:2px solid #F0A92B;display:flex;align-items:center;justify-content:center;font-size:25px;color:#F0A92B;">⇢</div>
+                  </div>
+                  <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:20px;line-height:1.3;">{{ rfWaitTitle }}</div>
+                  <div style="font-size:12.5px;color:#9B99A3;line-height:1.6;max-width:272px;">{{ rfWaitSub }}</div>
+                  <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(244,242,238,.05);border:1px dashed rgba(244,242,238,.2);color:#9B99A3;border-radius:999px;padding:6px 13px;font-size:10.5px;font-weight:800;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#F0A92B;animation:pulse 1.4s infinite;"></span>{{ rfWaitLine }}
+                  </div>
+                </div>
+                <div onClick="{{ cancelAsk }}" class="ws-cta" style="cursor:pointer;background:transparent;border:1.5px solid rgba(244,242,238,.24);color:#F4F2EE;font-weight:800;font-size:13px;border-radius:14px;padding:13px 0;text-align:center;margin-bottom:8px;animation:{{ ctaAnim }};">{{ rfWaitCancel }}</div>
+              </sc-if>
+              <sc-if value="{{ rfHasAsk }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ rfAsk }}" class="ws-cta" style="cursor:pointer;background:rgba(232,128,36,.12);border:1.5px solid rgba(232,128,36,.55);color:#F09A4D;font-weight:800;font-size:13.5px;border-radius:14px;padding:13px 0;text-align:center;margin-bottom:8px;animation:{{ ctaAnim }};">{{ rfAskLabel }}</div>
+              </sc-if>
               <sc-if value="{{ rfHasAlt }}" hint-placeholder-val="{{ false }}">
                 <div onClick="{{ rfAltGo }}" class="ws-cta" style="cursor:pointer;background:transparent;border:1.5px solid {{ rfAltBr }};color:{{ rfAltFg }};font-weight:800;font-size:13px;border-radius:14px;padding:13px 0;text-align:center;margin-bottom:8px;animation:{{ ctaAnim }};">{{ rfAltLabel }}</div>
               </sc-if>
@@ -641,9 +681,15 @@
           <div onClick="{{ closeHistory }}" class="ws-x" style="cursor:pointer;color:#8E8C96;font-size:18px;padding:4px 6px;">✕</div>
         </div>
         <div style="font-size:11px;color:#9B99A3;line-height:1.5;flex-shrink:0;">{{ histSubLine }}</div>
+        <input value="{{ histQ }}" onChange="{{ onHistInput }}" placeholder="{{ histPh }}" class="ws-field" style="flex-shrink:0;width:100%;background:#1B1B1F;border:1.5px solid rgba(244,242,238,.16);border-radius:13px;padding:11px 14px;color:#F4F2EE;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans','IBM Plex Sans Arabic',system-ui,sans-serif;">
+        <div style="display:flex;gap:6px;overflow-x:auto;flex-shrink:0;padding-bottom:2px;">
+          <sc-for list="{{ histDays }}" as="hd" hint-placeholder-count="8">
+            <div onClick="{{ hd.pick }}" class="ws-press" style="cursor:pointer;flex-shrink:0;border:1px solid {{ hd.br }};background:{{ hd.bg }};color:{{ hd.fg }};border-radius:999px;padding:6px 12px;font-size:10.5px;font-weight:800;white-space:nowrap;">{{ hd.label }}</div>
+          </sc-for>
+        </div>
         <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:7px;min-height:0;">
           <sc-if value="{{ histEmpty }}" hint-placeholder-val="{{ true }}">
-            <div style="text-align:center;color:#8E8C96;font-size:12px;padding:34px 10px;line-height:1.6;">{{ t.noActionsYet }}</div>
+            <div style="text-align:center;color:#8E8C96;font-size:12px;padding:34px 10px;line-height:1.6;">{{ histEmptyLine }}</div>
           </sc-if>
           <sc-for list="{{ histRows }}" as="hr" hint-placeholder-count="5">
             <div onClick="{{ hr.go }}" class="{{ hr.cls }}" style="cursor:{{ hr.cur }};display:flex;align-items:center;gap:10px;background:#1B1B1F;border:1px solid {{ hr.br }};border-radius:12px;padding:9px 12px;opacity:{{ hr.op }};animation:{{ hr.anim }};">
@@ -655,6 +701,9 @@
               </div>
               <sc-if value="{{ hr.corrected }}" hint-placeholder-val="{{ false }}">
                 <span style="font-size:9px;font-weight:800;color:#F0A92B;border:1px solid rgba(240,169,43,.4);border-radius:999px;padding:3px 7px;white-space:nowrap;flex-shrink:0;">{{ t.correctedBadge }}</span>
+              </sc-if>
+              <sc-if value="{{ hr.tooOld }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:9px;font-weight:800;color:#6E6C77;border:1px dashed rgba(244,242,238,.2);border-radius:999px;padding:3px 7px;white-space:nowrap;flex-shrink:0;">{{ t.tooOldBadge }}</span>
               </sc-if>
               <sc-if value="{{ hr.canFix }}" hint-placeholder-val="{{ true }}">
                 <span style="color:#8E8C96;font-size:15px;flex-shrink:0;">{{ chev }}</span>
@@ -676,6 +725,9 @@
           <div style="font-size:10px;color:#6E6C77;margin-top:2px;">{{ corrMeta }}</div>
         </div>
         <div style="background:rgba(226,86,58,.1);border:1px solid rgba(226,86,58,.35);color:#F09A4D;border-radius:12px;padding:11px 15px;font-size:12px;font-weight:700;max-width:290px;line-height:1.55;">{{ corrEffect }}</div>
+        <sc-if value="{{ corrPrior }}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(244,242,238,.05);border:1px dashed rgba(244,242,238,.2);color:#9B99A3;border-radius:12px;padding:10px 14px;font-size:11px;font-weight:700;max-width:290px;line-height:1.55;">{{ corrPriorLine }}</div>
+        </sc-if>
         <div onClick="{{ confirmCorrection }}" class="ws-cta" style="cursor:pointer;width:100%;max-width:290px;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14.5px;border-radius:14px;padding:15px 0;text-align:center;animation:{{ ctaAnim }};">{{ corrBtnLabel }}</div>
         <div onClick="{{ cancelCorrection }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;padding:4px 10px;">{{ t.cancel }}</div>
       </div>
@@ -848,14 +900,20 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;offlineStart&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
 class Component extends DCLogic {
-  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, flash: null, flashOut: false, syncing: false, syncDone: 0, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ', ramp: 1, scanSeq: 0, stampSeq: 0, amtSeq: 0, chSeq: 0, chFrom: 0, staffSeq: 0, vipSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false,
+  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, flash: null, flashOut: false, syncing: false, syncDone: 0, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ', ramp: 1, scanSeq: 0, stampSeq: 0, amtSeq: 0, chSeq: 0, chFrom: 0, staffSeq: 0, vipSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false,
     // ── the beginning of the app · a till with no sign-in is a till anyone can use ──
     locked: true, shiftLive: false, lockMode: 'start', lockStaff: null, lockDigits: '', lockTries: 0, lockErr: false, lockWarn: false, lockSeq: 0, lockAuto: false,
     // ── history · corrections · lookup · enrolment ──
     historyOpen: false, corrId: null, lookupOpen: false, lookupQ: '', foundBy: null,
     joinOpen: false, joinStage: 'qr', joinCard: 'daraj',
+    // ── seven days of history · the search box and the day filter above it ──
+    histQ: '', histDay: 'all', priorFixed: [],
+    // ── ask the manager · one pending request, one one-shot grant, one verbatim refusal ──
+    ovReq: null, ovGrant: null, ovDecline: null, ovSeen: [],
+    // ── the merchant's rules, counted live · earnsToday feeds the guard, redeemsToday the cap ──
+    earnsToday: 0, redeemsToday: {},
     // ── the true redeem lockout, the paused card, the second verdict ──
-    redeemLocks: {}, renewedExpiring: false, guardHit: false, pausedBal: 3.40, logSeq: 0 };
+    redeemLocks: {}, renewedExpiring: false, pausedBal: 3.40, logSeq: 0 };
 
   // ────────────────────────────────────────────────────────────────────────────
   //  language · the map is real {en, ar} pairs, never a reordered concatenation
@@ -890,11 +948,31 @@ class Component extends DCLogic {
       lockTakeOver: { en: 'Someone else is taking over', ar: 'شخص آخر سيتسلّم المناوبة' },
       lockWarnStay: { en: 'Locking soon · tap to stay', ar: 'سيُقفل قريباً · اضغط للبقاء' },
       // ── history + corrections ──
-      histTitle: { en: 'Today’s actions', ar: 'عمليات اليوم' },
-      histNote: { en: 'Tap any action to correct it — corrections are PIN’d and logged.', ar: 'اضغط أي عملية لتصحيحها — التصحيح يطلب رمزاً ويُسجَّل.' },
+      histTitle: { en: 'The last 7 days', ar: 'آخر ٧ أيام' },
+      histNote: { en: 'Tap any action to correct it — PIN’d, logged, once. Anything older goes to the dashboard.', ar: 'اضغط أي عملية لتصحيحها — برمز، ومسجَّلة، ومرة واحدة. وما هو أقدم فشأن لوحة التحكم.' },
+      histPh: { en: 'Name · phone · last 4', ar: 'الاسم · الهاتف · آخر ٤ أرقام' },
+      histAllDays: { en: 'All 7 days', ar: 'كل الأيام' },
+      histToday: { en: 'Today', ar: 'اليوم' },
+      histYesterday: { en: 'Yesterday', ar: 'أمس' },
+      histNoMatch: { en: 'Nothing matches that in the last 7 days. Try a surname, or the last 4 digits of her phone.', ar: 'لا شيء يطابق ذلك في آخر ٧ أيام. جرّب اسم العائلة أو آخر أربعة أرقام من هاتفها.' },
       correctedBadge: { en: 'Corrected', ar: 'مصحَّحة' },
+      tooOldBadge: { en: 'Dashboard', ar: 'لوحة التحكم' },
       corrTitle: { en: 'Correct this action?', ar: 'تصحيح هذه العملية؟' },
       corrBtn: { en: 'Correct it (PIN)', ar: 'صحّحها (رمز)' },
+      // ── ask the manager · the refusal that can be lifted ──
+      askMgrBtn: { en: 'Ask the manager', ar: 'اسأل المدير' },
+      askMgrWaitTitle: { en: 'Waiting for the manager', ar: 'بانتظار المدير' },
+      askMgrWaitSub: { en: 'It is on Yara’s dashboard right now. The customer is standing in front of you — don’t leave her waiting on this.', ar: 'الطلب على لوحة يارا الآن. الزبونة واقفة أمامك — لا تتركها تنتظر طويلاً.' },
+      askMgrCancel: { en: 'Don’t wait — go back to the refusal', ar: 'لا تنتظر — عُد إلى الرفض' },
+      askMgrSent: { en: 'Asked', ar: 'أُرسل الطلب' },
+      askMgrSentSub: { en: 'Yara decides from the dashboard. The till watches for the answer.', ar: 'يارا تقرر من لوحة التحكم. والصندوق ينتظر الجواب.' },
+      askMgrOffTitle: { en: 'No connection — you cannot ask', ar: 'لا اتصال — لا يمكنك السؤال' },
+      askMgrOffSub: { en: 'The request needs the dashboard, and the till is offline. Nothing was sent.', ar: 'الطلب يحتاج لوحة التحكم، والصندوق دون إنترنت. لم يُرسل شيء.' },
+      mgrHereBtn: { en: 'The manager is here — their code', ar: 'المدير موجود — أدخل رمزه' },
+      mgrOvrPinSub: { en: 'Offline, the manager lifts this in person. Their code signs the override.', ar: 'دون إنترنت، يرفع المدير هذا بنفسه. ورمزه يوقّع الاستثناء.' },
+      declinedTitle: { en: 'The manager said no', ar: 'رفض المدير' },
+      declinedReason: { en: 'Their reason, word for word:', ar: 'سببه، بنصّه:' },
+      grantedBadge: { en: 'Manager override', ar: 'استثناء المدير' },
       // ── lookup ──
       lookupTitle: { en: 'I forgot my phone', ar: 'نسيت هاتفي' },
       lookupSub: { en: 'Search by name, phone, or the last 4 digits of either.', ar: 'ابحث بالاسم أو رقم الهاتف أو آخر أربعة أرقام.' },
@@ -979,9 +1057,13 @@ class Component extends DCLogic {
   /** Builds the event for an action but does NOT write it. Online actions push immediately; an
       offline action rides in the queue and is pushed when the sync actually reaches the server —
       a till with no connection cannot put anything on a live feed. */
-  liveFor(scen, kind, phrase) {
+  liveFor(scen, kind, phrase) { return this.liveForWho(scen, kind, phrase, null); }
+  /** Same wire event, for a row that names its own member — a prior-day correction belongs to the
+      person it happened to, not to whoever happens to own that scenario's card today. */
+  liveForWho(scen, kind, phrase, who) {
     const S = this.scenInfo(scen);
-    return { kind, who: S.m[0], what: S.m[0] + ' ' + phrase + this.liveBy(), card: S.card };
+    const n = (typeof who === 'string' && who) ? who : S.m[0];
+    return { kind, who: n, what: n + ' ' + phrase + this.liveBy(), card: S.card };
   }
   emitLive(e) { if (e) this.pushLive(e.kind, e.who, e.what, e.card); }
   _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -999,11 +1081,15 @@ class Component extends DCLogic {
           couponDone: s.couponDone, renewedMembership: s.renewedMembership,
           chVisits: s.chVisits, chDone: s.chDone,
           stamps: s.stamps, cbBal: s.cbBal, pts: s.pts,
-          rVisits: s.rVisits, rTier: s.rTier,
+          rVisits: s.rVisits,
           // the shift itself is state: a locked till must still be locked after a refresh
           locked: s.locked, shiftLive: s.shiftLive, logSeq: s.logSeq,
           redeemLocks: s.redeemLocks, renewedExpiring: s.renewedExpiring,
-          guardHit: s.guardHit, pausedBal: s.pausedBal,
+          pausedBal: s.pausedBal,
+          // the merchant's rules counted live, and the corrections already made on prior days
+          earnsToday: s.earnsToday, redeemsToday: s.redeemsToday, priorFixed: (s.priorFixed || []).slice(0, 40),
+          // a pending ask must survive a refresh — the manager may answer while the phone sleeps
+          ovReq: s.ovReq, ovGrant: s.ovGrant, ovDecline: s.ovDecline, ovSeen: (s.ovSeen || []).slice(0, 20),
           offline: s.offline, queued: s.queued, queueLog: (s.queueLog || []).slice(0, 20) }));
       } catch (e) {}
     }, 120);
@@ -1025,18 +1111,30 @@ class Component extends DCLogic {
       ? { kind: e.kind.slice(0, 16), who: str(e.who, 60) || '', what: str(e.what, 160) || '', card: str(e.card, 60) || '' } : undefined;
     const log = (v) => Array.isArray(v) ? v.filter(l => l && typeof l === 'object' && typeof l.scen === 'string' && typeof l.k === 'string').slice(0, 20).map(l => ({ scen: l.scen, k: l.k, v: l.v, ts: 0, old: true, id: str(l.id, 24), by: str(l.by, 40), who: str(l.who, 60), corrected: l.corrected === true, live: ev(l.live) })) : null;
     if (b.lang === 'en' || b.lang === 'ar') p.lang = b.lang;
-    [['scansToday', 0, 9999], ['sStamps', 0, 9999], ['sRewards', 0, 9999], ['queued', 0, 999], ['pts', 0, 999999], ['rVisits', 0, 999], ['chVisits', 0, 99], ['logSeq', 0, 999999]].forEach(([k, lo, hi]) => { const n = int(b[k], lo, hi); if (n !== null) p[k] = n; });
+    [['scansToday', 0, 9999], ['sStamps', 0, 9999], ['sRewards', 0, 9999], ['queued', 0, 999], ['pts', 0, 999999], ['rVisits', 0, 999], ['chVisits', 0, 99], ['logSeq', 0, 999999], ['earnsToday', 0, 99]].forEach(([k, lo, hi]) => { const n = int(b[k], lo, hi); if (n !== null) p[k] = n; });
     { const n = int(b.stamps, 0, 8); if (n !== null) p.stamps = n; }
     { const n = num(b.cbBal, 0, 99999); if (n !== null) p.cbBal = +n.toFixed(2); }
     { const n = num(b.pausedBal, 0, 99999); if (n !== null) p.pausedBal = +n.toFixed(2); }
     ['staffName', 'staffAr', 'staffInitials'].forEach(k => { if (typeof b[k] === 'string' && b[k]) p[k] = b[k].slice(0, 40); });
-    ['couponDone', 'renewedMembership', 'renewedExpiring', 'chDone', 'offline', 'locked', 'shiftLive', 'guardHit'].forEach(k => { if (typeof b[k] === 'boolean') p[k] = b[k]; });
-    if (b.rTier === 'Silver' || b.rTier === 'Gold') p.rTier = b.rTier;
+    ['couponDone', 'renewedMembership', 'renewedExpiring', 'chDone', 'offline', 'locked', 'shiftLive'].forEach(k => { if (typeof b[k] === 'boolean') p[k] = b[k]; });
+    // a blob written before the guard became a counter carries a boolean — one earn is what it meant
+    if (p.earnsToday === undefined && b.guardHit === true) p.earnsToday = 1;
     // the redeem lockout is a real lock, so it persists — sanitised to a flat map of true flags
     if (b.redeemLocks && typeof b.redeemLocks === 'object' && !Array.isArray(b.redeemLocks)) {
       const rl = {}; Object.keys(b.redeemLocks).slice(0, 20).forEach(k => { if (typeof k === 'string' && k.length < 90 && b.redeemLocks[k] === true) rl[k] = true; });
       p.redeemLocks = rl;
     }
+    // redemptions already taken today, per card — the cap counts these, so they have to survive
+    if (b.redeemsToday && typeof b.redeemsToday === 'object' && !Array.isArray(b.redeemsToday)) {
+      const rt = {}; Object.keys(b.redeemsToday).slice(0, 20).forEach(k => { const n = int(b.redeemsToday[k], 0, 99); if (typeof k === 'string' && k.length < 24 && n !== null && n > 0) rt[k] = n; });
+      p.redeemsToday = rt;
+    }
+    // prior-day rows already corrected · plain id strings, nothing else
+    if (Array.isArray(b.priorFixed)) p.priorFixed = b.priorFixed.filter(x => typeof x === 'string' && x && x.length < 24).slice(0, 40);
+    if (Array.isArray(b.ovSeen)) p.ovSeen = b.ovSeen.filter(x => typeof x === 'string' && x && x.length < 40).slice(0, 20);
+    { const r = this.ovReqShape(b.ovReq); if (r) p.ovReq = r; else if (b.ovReq === null) p.ovReq = null; }
+    { const g2 = this.ovGrantShape(b.ovGrant); if (g2) p.ovGrant = g2; }
+    { const d = this.ovDeclineShape(b.ovDecline); if (d) p.ovDecline = d; }
     { const l = log(b.sessionLog); if (l) p.sessionLog = l; }
     { const l = log(b.queueLog); if (l) p.queueLog = l; }
     // an offline queue with nothing left offline is a contradiction — drop it rather than lie
@@ -1063,24 +1161,31 @@ class Component extends DCLogic {
   resetScanner() {
     clearTimeout(this._sv); clearTimeout(this._rt); clearTimeout(this._wt);
     clearTimeout(this._al); clearTimeout(this._aw); clearTimeout(this._jt);
+    clearTimeout(this._ov);
     try { localStorage.removeItem(this.scanKey()); } catch (e) {}
     try { localStorage.removeItem(this.liveKey()); } catch (e) {}
+    // this till's own requests go too — foreign entries and other tills' rows are left alone
+    this.dropMyOverrides();
     this.__restored = false;
+    this._prior = null;
     const h = this.__host || this;
     h.__wsWelcomed = true;   // a reset is not a return — no welcome-back on the way out
     h.__wsRampKey = null;
     h.__wsLockKey = null;
+    this.armOvWatch('');
     this.setState({ lang: 'en', screen: 'idle', scenario: null, resolving: false, mode: 'collect',
       stamps: 6, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, syncing: false, syncDone: 0,
       flash: null, flashOut: false, offline: false, queued: 0, queueLog: [], queueSheetOpen: false,
-      cbBal: 3.2, pts: 460, rVisits: 11, rTier: 'Silver', scansToday: 61, sStamps: 44, sRewards: 9,
+      cbBal: 3.2, pts: 460, rVisits: 11, scansToday: 61, sStamps: 44, sRewards: 9,
       manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null,
       chVisits: 3, chDone: false, chFrom: 0, sessionLog: [], shiftOpen: false, handoverPick: false,
       staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ',
       locked: true, shiftLive: false, lockMode: 'start', lockStaff: null, lockDigits: '', lockTries: 0, lockErr: false, lockWarn: false, lockAuto: false,
       historyOpen: false, corrId: null, lookupOpen: false, lookupQ: '', foundBy: null,
+      histQ: '', histDay: 'all', priorFixed: [],
+      ovReq: null, ovGrant: null, ovDecline: null, ovSeen: [], earnsToday: 0, redeemsToday: {},
       joinOpen: false, joinStage: 'qr', joinCard: 'daraj',
-      redeemLocks: {}, renewedExpiring: false, guardHit: false, pausedBal: 3.40, logSeq: 0,
+      redeemLocks: {}, renewedExpiring: false, pausedBal: 3.40, logSeq: 0,
       ramp: 1, stampSeq: 0, amtSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false });
   }
   /** The welcome-back beat, armed from the ONE path this runtime guarantees: render. Latched on the
@@ -1131,16 +1236,24 @@ class Component extends DCLogic {
     clearTimeout(this._s2); clearTimeout(this._ut); clearTimeout(this._mt); clearTimeout(this._sv);
     clearTimeout(this._wt); clearTimeout(this._rt); clearTimeout(this._pk); clearTimeout(this._sy);
     clearTimeout(this._al); clearTimeout(this._aw); clearTimeout(this._jt); clearTimeout(this._lk);
+    clearTimeout(this._ov);
     const h = this.__host || this;
     if (h.__wsRaf) { try { cancelAnimationFrame(h.__wsRaf); } catch (e) {} h.__wsRaf = null; }
     h.__wsRampKey = null;
     h.__wsLockKey = null;
+    // the override watcher owns a window listener as well as a timer — both go here, together
+    if (h.__wsOvFn && typeof window !== 'undefined' && window.removeEventListener) {
+      try { window.removeEventListener('storage', h.__wsOvFn); } catch (e) {}
+    }
+    h.__wsOvFn = null;
+    h.__wsOvKey = null;
   }
   poke() { clearTimeout(this._pt); if (this.state.settled) this.setState({ settled: false }); this._pt = setTimeout(() => this.setState({ settled: true }), 2600); }
   componentDidUpdate() {
     const s = this.state;
-    const cur = [s.screen, s.scenario, s.mode, s.stamps, s.amount, s.selRw, s.cbSel, s.couponDone, !!s.pin, s.pinDigits, s.pinErr, !!s.flash, s.offline, s.syncing, s.syncDone, s.shiftOpen, s.lang, s.resolving, s.pts, s.cbBal, s.rTier, s.chVisits, s.chDone, s.handoverPick, s.queueSheetOpen, s.manualOpen, s.staffName,
-      s.locked, s.lockMode, s.lockStaff, s.lockDigits, s.lockErr, s.historyOpen, s.corrId, s.lookupOpen, s.lookupQ, s.joinOpen, s.joinStage, s.joinCard, s.pausedBal].join('|');
+    const cur = [s.screen, s.scenario, s.mode, s.stamps, s.amount, s.selRw, s.cbSel, s.couponDone, !!s.pin, s.pinDigits, s.pinErr, !!s.flash, s.offline, s.syncing, s.syncDone, s.shiftOpen, s.lang, s.resolving, s.pts, s.cbBal, s.rVisits, s.chVisits, s.chDone, s.handoverPick, s.queueSheetOpen, s.manualOpen, s.staffName,
+      s.locked, s.lockMode, s.lockStaff, s.lockDigits, s.lockErr, s.historyOpen, s.corrId, s.lookupOpen, s.lookupQ, s.histQ, s.histDay, s.joinOpen, s.joinStage, s.joinCard, s.pausedBal,
+      !!s.ovReq, !!s.ovGrant, !!s.ovDecline].join('|');
     if (this._lastSig !== undefined && cur !== this._lastSig) this.poke();
     this._lastSig = cur;
   }
@@ -1184,7 +1297,10 @@ class Component extends DCLogic {
     this.setState(s => ({ locked: true, lockMode: 'resume', lockStaff: idx, lockDigits: '', lockTries: 0, lockErr: false, lockWarn: false, lockSeq: s.lockSeq + 1,
       screen: 'idle', scenario: null, resolving: false, undo: null, pin: null, pinDigits: '', pinTries: 0, pinErr: false,
       manualOpen: false, manualCode: '', manualError: false, historyOpen: false, corrId: null,
-      lookupOpen: false, lookupQ: '', joinOpen: false, shiftOpen: false, handoverPick: false, queueSheetOpen: false, amount: '',
+      lookupOpen: false, lookupQ: '', histQ: '', histDay: 'all', joinOpen: false, shiftOpen: false, handoverPick: false, queueSheetOpen: false, amount: '',
+      // a refusal the manager already answered belongs to the customer who is now gone; a request
+      // still out there does NOT — it survives the lock, because the answer is still coming
+      ovDecline: null,
       // the lock screen says why it locked — a flash behind a full-screen lock would never be seen
       lockAuto: !!auto }));
     this.saveScan();
@@ -1258,7 +1374,10 @@ class Component extends DCLogic {
     if (fresh) {
       this.setState(st => ({ locked: false, shiftLive: true, lockDigits: '', lockTries: 0, lockErr: false, lockStaff: null, lockWarn: false, lockAuto: false,
         staffName: p.name, staffAr: p.ar, staffInitials: p.initials, staffSeq: st.staffSeq + 1,
-        scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', scenario: null, undo: null, guardHit: false, foundBy: null }));
+        scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', scenario: null, undo: null, foundBy: null,
+        // a new shift is a new day at this till: the guard and the cap count from zero, and a
+        // request nobody is standing at the counter for any more is dropped rather than left hanging
+        earnsToday: 0, redeemsToday: {}, ovReq: null, ovGrant: null, ovDecline: null }));
       h.__wsRampKey = null;   // a new shift counts its own totals up from zero
       this.logAction(null, 'shiftStart', p.name);
       this.flashNow('✓', '#2FAE66', this.L('Shift started', 'بدأت المناوبة'), this.L(p.name.split(' ')[0] + ' is on the till · Rainbow St · counters at zero.', p.ar.split(' ')[0] + ' على الصندوق · شارع الرينبو · العدّادات من الصفر.'));
@@ -1283,13 +1402,28 @@ class Component extends DCLogic {
       on the right is explicit "show me this state" intent and always goes where it says. */
   scanTo(scenario, organic) {
     let scen = scenario;
-    if (organic && scen === 'stamps' && this.state.guardHit) scen = 'guard';
+    // the guard is the MERCHANT's number now, not the till's — one earn or five, it comes from the rule
+    if (organic && scen === 'stamps' && this.guardTripped()) scen = 'guard';
+    // The demo rail jumps straight to a refusal, so make the counters agree with the story it tells:
+    // she is refused BECAUSE today's allowance is already spent. Without this the request the manager
+    // reads says "already earned 0 of today's 1", which is nobody's idea of a guard.
+    const forced = {};
+    if (!organic && scen === 'guard') {
+      const per = this.guardPerDay(this.rulesForScen('stamps'));
+      if (per !== Infinity) forced.earnsToday = per;
+    }
+    if (!organic && scen === 'overcap') {
+      const cap = this.redeemCapFor('overcap');
+      if (cap > 0) forced.redeemsToday = { ...(this.state.redeemsToday || {}), overcap: cap };
+    }
     clearTimeout(this._ut); clearTimeout(this._s1); clearTimeout(this._s2);
     this.setState(s => ({ screen: 'scan', resolving: false, scenario: scen, mode: scen === 'coupon' ? 'redeem' : 'collect',
       amount: '', selRw: null, cbSel: null, pin: null, pinDigits: '', pinTries: 0, pinErr: false, undo: null,
+      // a new customer is not the last customer's refusal — the manager's verbatim "no" clears here
+      ovDecline: null,
       lookupOpen: false, historyOpen: false, corrId: null, joinOpen: false,
       scanSeq: s.scanSeq + 1, stampSeq: 0, amtSeq: 0,
-      chFrom: 0, chSeq: s.chSeq + 1, vipClimb: false, vipSeq: s.vipSeq + 1 }));
+      chFrom: 0, chSeq: s.chSeq + 1, vipClimb: false, vipSeq: s.vipSeq + 1, ...forced }));
     this._s1 = setTimeout(() => this.setState({ resolving: true }), 450);
     const byLookup = this.state.foundBy === scenario;
     this._s2 = setTimeout(() => {
@@ -1316,6 +1450,10 @@ class Component extends DCLogic {
     const tries = st.pinTries + 1;
     if (tries >= 3) {
       this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false });
+      if (this.isOvrTag(tag)) {
+        this.flashNow('🔒', '#E2563A', this.L('Not lifted', 'لم يُرفع'), this.L('Three wrong manager codes — the rule still stands.', 'ثلاثة رموز مدير خاطئة — القاعدة ما زالت قائمة.'));
+        return;
+      }
       if (this.isMgrTag(tag)) {
         this.flashNow('🔒', '#E2563A', this.L('Still locked', 'ما زال مقفلاً'), this.L('Three wrong manager codes — the redeem stays locked.', 'ثلاثة رموز مدير خاطئة — يبقى الاستبدال مقفلاً.'));
         return;
@@ -1339,6 +1477,9 @@ class Component extends DCLogic {
   finishPin() {
     const st = this.state, tag = st.pin, scen = st.scenario, by = st.staffName;
     this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false });
+    // the offline fallback: the manager standing at the counter types their own code and the
+    // override lands exactly where a granted dashboard request would have landed
+    if (this.isOvrTag(tag)) { this.applyGranted(tag.slice(8), this.mgrOnSiteName(), scen, true); return; }
     if (this.isMgrTag(tag)) {
       const key = tag.slice(4);
       this.setState(s => { const m = { ...(s.redeemLocks || {}) }; delete m[key]; return { redeemLocks: m }; });
@@ -1347,16 +1488,24 @@ class Component extends DCLogic {
       this.saveScan(); return;
     }
     if (tag === 'correct') { this.applyCorrection(by); return; }
-    if (tag === 'stamps') { this.setState({ stamps: 0, sRewards: st.sRewards + 1, mode: 'collect', stampSeq: 0 }); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L('Free drink — a fresh card is already counting.', 'مشروب مجاني — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward', undefined, { by }); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free drink')); }
+    // a redemption is what the merchant's daily cap counts — and the ONE place a granted overcap
+    // override is spent. `sig` is the signature every redeem row now carries: who PIN'd it, and
+    // (only when one was really used) who lifted the cap for it.
+    const isRedeem = tag === 'stamps' || tag === 'cash' || tag === 'pts' || tag === 'coupon';
+    const ovr = isRedeem ? this.consumeOvGrant('overcap', scen) : null;
+    const sig = ovr ? { by, ovr } : { by };
+    const ovPhrase = ovr ? ' — manager override by ' + ovr : '';
+    if (tag === 'stamps') { this.setState({ stamps: 0, sRewards: st.sRewards + 1, mode: 'collect', stampSeq: 0 }); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L('Free drink — a fresh card is already counting.', 'مشروب مجاني — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward', undefined, sig); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free drink' + ovPhrase)); }
     if (tag === 'cash') {
       const paused = scen === 'paused', bal = paused ? st.pausedBal : st.cbBal;
       const v = st.cbSel, nb = +(bal - v).toFixed(2);
       this.setState(paused ? { pausedBal: nb, cbSel: null } : { cbBal: nb, cbSel: null });
       this.flashNow('✓', '#2FAE66', this.L('JOD ' + v.toFixed(2) + ' off the bill', 'خُصم ' + v.toFixed(2) + ' ديناراً من الفاتورة'), this.L('New balance JOD ' + nb.toFixed(2) + ' — it spends like money.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — يُصرف كالنقود.'));
-      this.logAction(scen, 'redCash', v, { by }); this.emitLive(this.liveFor(scen, 'reward', 'redeemed JOD ' + v.toFixed(2) + ' off the bill'));
+      this.logAction(scen, 'redCash', v, sig); this.emitLive(this.liveFor(scen, 'reward', 'redeemed JOD ' + v.toFixed(2) + ' off the bill' + ovPhrase));
     }
-    if (tag === 'pts') { const i = st.selRw; const r = this.rungs()[i]; const np = st.pts - r.cost; this.setState({ pts: np, selRw: null }); this.flashNow('✓', '#2FAE66', this.rungName(i), this.L(r.cost + ' pts spent · ' + np + ' left.', 'صُرفت ' + r.cost + ' نقطة · بقي ' + np + ' نقطة.')); this.logAction(scen, 'redPts', i, { by }); this.emitLive(this.liveFor(scen, 'reward', 'redeemed ' + this.rungs()[i].en)); }
-    if (tag === 'coupon') { this.setState({ couponDone: true }); this.flashNow('1×', '#2FAE66', this.L('The dessert is theirs', 'الحلوى من نصيبها'), this.L('The coupon is spent — it can never fire twice.', 'الكوبون استُهلك — ولا يمكن أن يُصرف مرتين.')); this.logAction(scen, 'redCoupon', undefined, { by }); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free dessert')); }
+    if (tag === 'pts') { const i = st.selRw; const r = this.rungs()[i]; const np = st.pts - r.cost; this.setState({ pts: np, selRw: null }); this.flashNow('✓', '#2FAE66', this.rungName(i), this.L(r.cost + ' pts spent · ' + np + ' left.', 'صُرفت ' + r.cost + ' نقطة · بقي ' + np + ' نقطة.')); this.logAction(scen, 'redPts', i, sig); this.emitLive(this.liveFor(scen, 'reward', 'redeemed ' + this.rungs()[i].en + ovPhrase)); }
+    if (tag === 'coupon') { this.setState({ couponDone: true }); this.flashNow('1×', '#2FAE66', this.L('The dessert is theirs', 'الحلوى من نصيبها'), this.L('The coupon is spent — it can never fire twice.', 'الكوبون استُهلك — ولا يمكن أن يُصرف مرتين.')); this.logAction(scen, 'redCoupon', undefined, sig); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free dessert' + ovPhrase)); }
+    if (isRedeem) this.setState(s => ({ redeemsToday: { ...(s.redeemsToday || {}), [scen]: (((s.redeemsToday || {})[scen]) || 0) + 1 } }));
     if (tag === 'renew') {
       this.setState(scen === 'expiring' ? { renewedExpiring: true } : { renewedMembership: true });
       this.flashNow('✓', '#2FAE66', this.L('Membership renewed', 'تم تجديد الاشتراك'), this.L('Active again — same pass, fresh year.', 'فعّال من جديد — نفس البطاقة وسنة جديدة.'));
@@ -1378,10 +1527,11 @@ class Component extends DCLogic {
     const ql = u.wasOffline ? st.queueLog.slice(1) : st.queueLog;
     const base = { queueLog: ql, queued: ql.length, undo: null };
     const title = this.L('Corrected', 'تم التصحيح');
-    if (u.type === 'stamp') { this.setState({ ...base, stamps: Math.max(0, st.stamps - 1), sStamps: Math.max(0, st.sStamps - 1), stampSeq: 0, guardHit: false }); this.flashNow('↺', '#F0A92B', title, this.L('−1 stamp — the card is back where it was.', 'ختم واحد أُزيل — والبطاقة عادت كما كانت.')); this.logAction(scen, 'undoStamp'); }
+    if (u.type === 'stamp') { this.setState(s => ({ ...base, stamps: Math.max(0, st.stamps - 1), sStamps: Math.max(0, st.sStamps - 1), stampSeq: 0, earnsToday: Math.max(0, s.earnsToday - 1) })); this.flashNow('↺', '#F0A92B', title, this.L('−1 stamp — the card is back where it was.', 'ختم واحد أُزيل — والبطاقة عادت كما كانت.')); this.logAction(scen, 'undoStamp'); }
     else if (u.type === 'cash') { this.setState({ ...base, cbBal: +(st.cbBal - u.amount).toFixed(2) }); this.flashNow('↺', '#F0A92B', title, this.L('− JOD ' + u.amount.toFixed(2) + ' off the wallet again.', 'خُصم ' + u.amount.toFixed(2) + ' ديناراً من الرصيد مجدداً.')); this.logAction(scen, 'undoCash'); }
     else if (u.type === 'pts') { this.setState({ ...base, pts: Math.max(0, st.pts - u.amount) }); this.flashNow('↺', '#F0A92B', title, this.L('− ' + u.amount + ' pts taken back.', 'أُزيلت ' + u.amount + ' نقطة.')); this.logAction(scen, 'undoPts'); }
-    else if (u.type === 'visit') { this.setState(s => ({ ...base, rVisits: Math.max(0, st.rVisits - 1), rTier: u.prevTier || s.rTier, vipClimb: false, vipFromPct: '0%', vipSeq: s.vipSeq + 1 })); this.flashNow('↺', '#F0A92B', title, this.L('The check-in is off her card again.', 'أُزيلت الزيارة من بطاقتها.')); this.logAction(scen, 'undoVisit'); }
+    // the tier is DERIVED from the visit count now, so taking the visit back takes the tier with it
+    else if (u.type === 'visit') { this.setState(s => ({ ...base, rVisits: Math.max(0, st.rVisits - 1), vipClimb: false, vipFromPct: '0%', vipSeq: s.vipSeq + 1 })); this.flashNow('↺', '#F0A92B', title, this.L('The check-in is off her card again.', 'أُزيلت الزيارة من بطاقتها.')); this.logAction(scen, 'undoVisit'); }
     else if (u.type === 'chVisit') { this.setState(s => ({ ...base, chVisits: Math.max(0, st.chVisits - 1), chDone: false, chFrom: st.chVisits, chSeq: s.chSeq + 1 })); this.flashNow('↺', '#F0A92B', title, this.L('The challenge visit is off the clock again.', 'أُزيلت زيارة التحدي من العدّاد.')); this.logAction(scen, 'undoChVisit'); }
     this.saveScan();
   }
@@ -1409,7 +1559,7 @@ class Component extends DCLogic {
     if (!l) return null;
     const n = (x) => Number(x) || 0;
     switch (l.k) {
-      case 'stamp': case 'qStamp': return { patch: s => ({ stamps: Math.max(0, s.stamps - 1), sStamps: Math.max(0, s.sStamps - 1), stampSeq: 0, guardHit: false }),
+      case 'stamp': case 'qStamp': return { patch: s => ({ stamps: Math.max(0, s.stamps - 1), sStamps: Math.max(0, s.sStamps - 1), stampSeq: 0, earnsToday: Math.max(0, s.earnsToday - 1) }),
         effect: this.L('Removes 1 stamp from the card.', 'يُزيل ختماً واحداً من البطاقة.'), phrase: 'had a stamp corrected off (−1)' };
       case 'colCash': case 'qCash': return { patch: s => ({ cbBal: Math.max(0, +(s.cbBal - n(l.v)).toFixed(2)) }),
         effect: this.L('Takes JOD ' + n(l.v).toFixed(2) + ' back out of the wallet.', 'يُعيد سحب ' + n(l.v).toFixed(2) + ' ديناراً من المحفظة.'), phrase: 'had JOD ' + n(l.v).toFixed(2) + ' cashback corrected off' };
@@ -1419,32 +1569,47 @@ class Component extends DCLogic {
         effect: this.L('Removes the check-in from her card.', 'يُزيل الزيارة من بطاقتها.'), phrase: 'had a check-in corrected off' };
       case 'chVisit': return { patch: s => ({ chVisits: Math.max(0, s.chVisits - 1), chDone: false, chFrom: s.chVisits, chSeq: s.chSeq + 1 }),
         effect: this.L('Takes the visit back off the challenge clock.', 'يُزيل الزيارة من عدّاد التحدي.'), phrase: 'had a challenge visit corrected off' };
-      case 'redReward': return { patch: s => ({ stamps: s.goal, sRewards: Math.max(0, s.sRewards - 1), stampSeq: 0 }),
+      case 'redReward': return { patch: s => ({ stamps: s.goal, sRewards: Math.max(0, s.sRewards - 1), stampSeq: 0, ...this.unCount(s, l) }),
         effect: this.L('Puts the full card back — the free drink is un-spent.', 'يُعيد البطاقة مكتملة — والمشروب المجاني لم يُصرف.'), phrase: 'had a redeemed reward credited back' };
-      case 'redCash': return { patch: s => ({ cbBal: +(s.cbBal + n(l.v)).toFixed(2) }),
+      case 'redCash': return { patch: s => ({ cbBal: +(s.cbBal + n(l.v)).toFixed(2), ...this.unCount(s, l) }),
         effect: this.L('Credits JOD ' + n(l.v).toFixed(2) + ' back to the wallet.', 'يُعيد ' + n(l.v).toFixed(2) + ' ديناراً إلى المحفظة.'), phrase: 'had JOD ' + n(l.v).toFixed(2) + ' credited back' };
-      case 'redPts': { const r = this.rungs()[l.v] || { cost: 0, en: '' }; return { patch: s => ({ pts: s.pts + r.cost }),
+      case 'redPts': { const r = this.rungs()[l.v] || { cost: 0, en: '' }; return { patch: s => ({ pts: s.pts + r.cost, ...this.unCount(s, l) }),
         effect: this.L('Credits ' + r.cost + ' points back.', 'يُعيد ' + r.cost + ' نقطة إلى الرصيد.'), phrase: 'had ' + r.en + ' credited back' }; }
-      case 'redCoupon': return { patch: () => ({ couponDone: false }),
+      case 'redCoupon': return { patch: s => ({ couponDone: false, ...this.unCount(s, l) }),
         effect: this.L('Puts the coupon back — unused, and usable once.', 'يُعيد الكوبون — غير مستخدم، وقابل للاستخدام مرة واحدة.'), phrase: 'had a coupon credited back' };
       default: return null;
     }
   }
-  /** The row the confirm sheet is pointed at, found by id so a growing log can never shift it. */
-  corrRow() { const id = this.state.corrId; if (!id) return null; return this.state.sessionLog.filter(l => l.id === id)[0] || null; }
+  /** The row the confirm sheet is pointed at, found by id across the whole seven days so a growing
+      log — or a prior day — can never shift it. */
+  corrRow() { const id = this.state.corrId; if (!id) return null; return this.allRows().filter(l => l.id === id)[0] || null; }
+  /** Already walked back once? Today's rows carry the flag on themselves; a prior-day row carries
+      it in `priorFixed`, because the seed is regenerated on every boot and cannot hold state. */
+  isFixed(l) { return !!(l && (l.corrected || (l.prior && (this.state.priorFixed || []).indexOf(l.id) >= 0))); }
+  /** How old a row is, in whole days. Today = 0. */
+  rowAgeDays(l) { return (l && typeof l.day === 'number') ? l.day : 0; }
+  /** The counter's own authority, in days. Beyond it a correction is a dashboard job — the till
+      says so rather than quietly moving value it can no longer be trusted to move. */
+  corrWindowDays() { return 2; }
+  /** Correctable HERE: it is a movement, it has not been walked back, and it is inside the window. */
+  canCorrect(l) { return !!(l && this.correctionFor(l) && !this.isFixed(l) && this.rowAgeDays(l) < this.corrWindowDays()); }
   /** PIN'd, once per action, logged, and announced on the shared bus — offline it queues like any
-      other write and the announcement waits for the sync, same as everything else the till does. */
+      other write and the announcement waits for the sync, same as everything else the till does.
+      A prior-day row goes through exactly this path: same PIN, same exact reversal, same guard. */
   applyCorrection(by) {
     const st = this.state, l = this.corrRow();
     if (!l) { this.setState({ corrId: null }); return; }
     const c = this.correctionFor(l);
-    if (!c || l.corrected) { this.setState({ corrId: null }); return; }
+    // the double-correction guard and the age limit are BOTH re-checked here, not only in the UI —
+    // a stale sheet must never be the thing that lets a balance move twice
+    if (!c || !this.canCorrect(l)) { this.setState({ corrId: null }); return; }
     this.setState(s => ({ ...c.patch(s), corrId: null, historyOpen: false,
-      sessionLog: s.sessionLog.map(r => r.id === l.id ? { ...r, corrected: true } : r) }));
-    this.logAction(l.scen, 'correction', l.k, { by, who: l.who, whoAr: l.whoAr });
+      sessionLog: s.sessionLog.map(r => r.id === l.id ? { ...r, corrected: true } : r),
+      priorFixed: l.prior ? [l.id, ...(s.priorFixed || []).filter(x => x !== l.id)].slice(0, 40) : (s.priorFixed || []) }));
+    this.logAction(l.scen, l.prior ? 'priorCorrection' : 'correction', l.k, { by, who: l.who, whoAr: l.whoAr, day: l.prior ? this.rowAgeDays(l) : undefined });
     this.flashNow('↺', '#F0A92B', this.L('Corrected', 'تم التصحيح'), c.effect + this.L(' Authorised by ' + String(by).split(' ')[0] + '.', ' بموافقة ' + String(this.state.staffAr).split(' ')[0] + '.'));
-    const ev = this.liveFor(l.scen, 'earn', c.phrase);
-    if (st.offline) this.pushQueue(l.scen, 'qCorrection', l.k, ev); else this.emitLive(ev);
+    const ev = this.liveForWho(l.scen, 'earn', c.phrase + (l.prior ? ' (' + this.dayWordEn(this.rowAgeDays(l)) + ')' : ''), l.who);
+    if (st.offline) this.pushQueue(l.scen, 'qCorrection', l.k, ev, { who: l.who, whoAr: l.whoAr }); else this.emitLive(ev);
     this.saveScan();
   }
 
@@ -1558,7 +1723,7 @@ class Component extends DCLogic {
       case 'redCoupon': return this.L('Redeemed · coupon', 'استبدال · كوبون');
       case 'renew': return this.L('Renewed · membership', 'تجديد · اشتراك');
       case 'visit': return this.L('Visit logged', 'سُجّلت زيارة');
-      case 'tierUp': return this.L('Tier up · Gold', 'ترقية · ذهبية');
+      case 'tierUp': return this.L('Tier up · ', 'ترقية · ') + this.tierWord(v || 'Gold');
       case 'chVisit': return this.L('Challenge visit', 'زيارة تحدٍّ');
       case 'chDone': return this.L('Challenge complete', 'اكتمل التحدي');
       case 'qStamp': return this.L('Stamp added', 'أُضيف ختم');
@@ -1572,9 +1737,15 @@ class Component extends DCLogic {
       case 'mgrUnlock': return this.L('Manager unlocked · ', 'فتح المدير · ') + this.actionNoun(v);
       case 'correction': return this.L('Correction · ', 'تصحيح · ') + this.actionNoun(v);
       case 'qCorrection': return this.L('Correction · ', 'تصحيح · ') + this.actionNoun(v);
+      case 'priorCorrection': return this.L('Correction · ', 'تصحيح · ') + this.actionNoun(v) + this.L(' · earlier day', ' · يوم سابق');
       case 'join': return this.L('Joined at the counter', 'انضم من الصندوق');
       case 'qJoin': return this.L('Joined at the counter', 'انضم من الصندوق');
-      case 'perk': return this.L('Gold perk applied · 15%', 'طُبّقت ميزة الذهبية · 15%');
+      case 'perk': return this.L('Perk applied · ', 'طُبّقت ميزة · ') + this.tierWord(v);
+      // ── asking the manager, and what came back ──
+      case 'ovAsk': return this.L('Asked the manager · ', 'طُلب من المدير · ') + this.ovNoun(v);
+      case 'ovGranted': return this.L('Manager lifted it · ', 'رفعها المدير · ') + this.ovNoun(v);
+      case 'ovDeclined': return this.L('Manager said no · ', 'رفض المدير · ') + this.ovNoun(v);
+      case 'ovWithdrew': return this.L('Request withdrawn · ', 'سُحب الطلب · ') + this.ovNoun(v);
       default: return '';
     }
   }
@@ -1663,7 +1834,8 @@ class Component extends DCLogic {
     if (!p) return;
     this.setState(s => ({ staffName: p.name, staffAr: p.ar, staffInitials: p.initials, shiftOpen: false, handoverPick: false,
       scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', scenario: null, undo: null, staffSeq: s.staffSeq + 1,
-      guardHit: false, foundBy: null, shiftLive: true }));
+      earnsToday: 0, redeemsToday: {}, ovReq: null, ovGrant: null, ovDecline: null,
+      foundBy: null, shiftLive: true }));
     const h = this.__host || this;
     h.__wsRampKey = null;   // the totals are a new person's now — let them count up again
     h.__wsLockKey = null;
@@ -1776,13 +1948,595 @@ class Component extends DCLogic {
   }
 
   // ────────────────────────────────────────────────────────────────────────────
+  //  THE RULES ARE THE MERCHANT'S, NOT THE TILL'S
+  //  Three layers, highest first:
+  //    1  the merchant dashboard's own overlay in `wasla_demo_dashboard_state`
+  //    2  the shared card data in wasla-data.js  (WASLA_DB.cards[id].rules)
+  //    3  this file's own constants — the floor, so a missing DB breaks nothing
+  //  Nothing below this line invents a number. Enforcement AND copy both read
+  //  the resolved rule, so moving Gold to 15 moves the refusal sentence too.
+  // ────────────────────────────────────────────────────────────────────────────
+  /** Which merchant card a scannable state belongs to. Refusals are STATES of a card, not cards. */
+  cardIdFor(scen) {
+    return { stamps: 'daraj', guard: 'daraj', overcap: 'daraj', coupon: 'daraj', challenge: 'daraj',
+      vip: 'layl', tierlock: 'layl',
+      cashback: 'zaytoun', paused: 'zaytoun', discount: 'zaytoun',
+      points: 'sukkar',
+      membership: 'ghaim', expiring: 'ghaim' }[scen] || 'daraj';
+  }
+  /** LAYER 3 — what this file enforced before the rules had a data home. Unchanged on purpose:
+      it is the fallback, so its job is to preserve today's behaviour exactly, not to be right. */
+  ruleDefaults(cardId) {
+    return {
+      daraj: { guard: '1 / visit', guardNote: 'One stamp per customer per day · resets at midnight', redeemCap: 2 },
+      layl: { redeemCap: 2, tiers: [{ name: 'Silver', at: 0 }, { name: 'Gold', at: 12 }, { name: 'Royal', at: 30 }] },
+      zaytoun: { minRedeem: 2, redeemCap: 2 },
+      sukkar: { redeemCap: 2 },
+      ghaim: { graceDays: 14 }
+    }[cardId] || {};
+  }
+  /** Narrow whatever we were handed down to rules this till understands. Everything else — unknown
+      keys, wrong types, hostile shapes — is dropped rather than trusted. `cap` and `min` are
+      tolerated as synonyms inside a rules object, because they are the words the dashboard uses
+      for the same two numbers elsewhere; a tier's `perk` string is read and discarded, since the
+      till writes its own bilingual perk copy and an English perk would leak on an Arabic screen. */
+  narrowRules(o) {
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return {};
+    const out = {};
+    const str = (x, n) => (typeof x === 'string' && x.trim()) ? x.trim().slice(0, n) : null;
+    const int = (x, lo, hi) => (typeof x === 'number' && isFinite(x)) ? Math.max(lo, Math.min(hi, Math.round(x))) : null;
+    const num = (x, lo, hi) => (typeof x === 'number' && isFinite(x)) ? Math.max(lo, Math.min(hi, x)) : null;
+    { const v = str(o.guard, 24) || str(o.cap, 24); if (v) out.guard = v; }
+    { const v = str(o.guardNote, 140); if (v) out.guardNote = v; }
+    // redeemCap is a NUMBER and 0 means "no cap at all". Nothing writes the old string spellings
+    // any more, but a blob written before the change can still carry 'none' | '1d' | '3d'.
+    { const v = this.capNumber(o.redeemCap); if (v !== null) out.redeemCap = v; }
+    { let v = num(o.minRedeem, 0, 999); if (v === null) v = num(o.min, 0, 999); if (v !== null) out.minRedeem = +v.toFixed(2); }
+    { const v = int(o.graceDays, 0, 365); if (v !== null) out.graceDays = v; }
+    if (Array.isArray(o.tiers)) {
+      const t = o.tiers
+        .filter(x => x && typeof x === 'object' && !Array.isArray(x) && typeof x.name === 'string' && x.name.trim())
+        .slice(0, 6)
+        .map(x => ({ name: x.name.trim().slice(0, 24), at: Math.max(0, Math.min(9999, Math.round(Number(x.at) || 0))) }))
+        .sort((a, b) => a.at - b.at);
+      if (t.length) out.tiers = t;
+    }
+    return out;
+  }
+  /** A redemption cap, from a number or from a legacy string. `null` = the key was not usable. */
+  capNumber(x) {
+    if (typeof x === 'number' && isFinite(x)) return Math.max(0, Math.min(20, Math.round(x)));
+    if (typeof x === 'string') {
+      const s = x.trim().toLowerCase();
+      if (!s) return null;
+      if (s === 'none' || s === 'no cap' || s === 'unlimited') return 0;     // 0 IS "no cap"
+      const m = s.match(/^(\d+)\s*d?$/);
+      if (m) return Math.max(0, Math.min(20, parseInt(m[1], 10)));
+    }
+    return null;
+  }
+  /** LAYER 1 source · the dashboard's blob, version-checked and briefly cached so a render that
+      resolves six cards costs one parse, not six. Never throws, never mutates. */
+  dashBlob() {
+    const now = Date.now();
+    if (this._dashAt && (now - this._dashAt) < 500) return this._dashB;
+    this._dashAt = now; this._dashB = null;
+    try {
+      const raw = this._lsGet('wasla_demo_dashboard_state');
+      if (!raw) return null;
+      const b = JSON.parse(raw);
+      if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return null;   // a schema we have never met
+      this._dashB = b;
+    } catch (e) { this._dashB = null; }
+    return this._dashB;
+  }
+  /** LAYER 1 — the merchant's LIVE overlay, and only that. `cardMods[id].rules` is what the
+      dashboard calls INSTANT: already true of the card, already on the member's pass. It is the
+      only place the till looks.
+
+      `edits[id]` is deliberately NOT read. That band is the dashboard's QUICK REVIEW: a proposal
+      waiting for Wasla, and its whole meaning is that the old rule stays live until approved. A
+      till that enforced a proposal — or quoted one in a refusal to a customer's face — would be
+      making a promise nobody has agreed to yet. When Wasla approves, the value lands in
+      `cardMods[id].rules` and arrives here on the next render. */
+  dashRules(cardId) {
+    const b = this.dashBlob();
+    if (!b) return {};
+    const obj = (o) => (o && typeof o === 'object' && !Array.isArray(o)) ? o : null;
+    const cm = obj(b.cardMods), mine = obj(cm && cm[cardId]);
+    return this.narrowRules(mine && mine.rules);
+  }
+  /** LAYER 2 — the shared card data every Wasla surface reads. */
+  dbRules(cardId) {
+    try {
+      const DB = (typeof window !== 'undefined' && window.WASLA_DB) || null;
+      const cards = (DB && Array.isArray(DB.cards)) ? DB.cards : [];
+      for (let i = 0; i < cards.length; i++) if (cards[i] && cards[i].id === cardId) return this.narrowRules(cards[i].rules);
+    } catch (e) {}
+    return {};
+  }
+  /** The one resolved answer. Cached for a render's worth of time, never longer — a merchant edit
+      in another tab has to show up here within a beat, not after a reload. */
+  rulesFor(cardId) {
+    const now = Date.now();
+    if (!this._rulesAt || (now - this._rulesAt) >= 400) { this._rulesAt = now; this._rulesC = {}; }
+    if (this._rulesC && this._rulesC[cardId]) return this._rulesC[cardId];
+    const r = {};
+    [this.ruleDefaults(cardId), this.dbRules(cardId), this.dashRules(cardId)].forEach(L => {
+      // `guardNote` is prose ABOUT `guard`. A layer that restates the number without restating the
+      // sentence has orphaned the inherited one — and a refusal that says "one stamp per day" while
+      // enforcing two is the exact lie this whole build exists to stop. So the stale note goes.
+      if (L.guard !== undefined && L.guardNote === undefined) delete r.guardNote;
+      Object.keys(L).forEach(k => { r[k] = L[k]; });
+    });
+    (this._rulesC = this._rulesC || {})[cardId] = r;
+    return r;
+  }
+  rulesForScen(scen) { return this.rulesFor(this.cardIdFor(scen)); }
+  /** Arabic counts, said properly — a generated rule line has to read like a sentence, not a form. */
+  arStamps(n) { return n === 1 ? 'ختم واحد' : n === 2 ? 'ختمان' : (n <= 10 ? n + ' أختام' : n + ' ختماً'); }
+  arRedeems(n) { return n === 1 ? 'استبدال واحد' : n === 2 ? 'استبدالان' : (n <= 10 ? n + ' استبدالات' : n + ' استبدالاً'); }
+  arVisits(n) { return n === 1 ? 'زيارة واحدة' : n === 2 ? 'زيارتان' : (n <= 10 ? n + ' زيارات' : n + ' زيارة'); }
+
+  // ── the earning guard ───────────────────────────────────────────────────────
+  /** How many earns the merchant allows per customer per day. `Infinity` means they turned it off. */
+  guardPerDay(rules) {
+    const g = String((rules || {}).guard || '');
+    if (!g) return 1;
+    if (/no\s*limit/i.test(g) || g.indexOf('بلا حد') >= 0) return Infinity;
+    const m = g.match(/\d+/);
+    const n = m ? parseInt(m[0], 10) : 1;
+    return (isFinite(n) && n > 0) ? n : 1;
+  }
+  guardTripped() {
+    const per = this.guardPerDay(this.rulesForScen('stamps'));
+    return per !== Infinity && (this.state.earnsToday || 0) >= per;
+  }
+  /** The rule chip on the guard refusal — the merchant's own wording in English when they typed
+      one, and Arabic GENERATED from the same number, because a note typed in English must never
+      surface on an Arabic-first till. */
+  guardRuleLine() {
+    const r = this.rulesForScen('stamps'), per = this.guardPerDay(r);
+    const note = typeof r.guardNote === 'string' ? r.guardNote : '';
+    const en = per === Infinity ? 'no limit'
+      : (per === 1 ? '1 stamp per customer per day' : per + ' stamps per customer per day') + ' · resets at midnight';
+    const ar = per === Infinity ? 'بلا حد'
+      : this.arStamps(per) + ' لكل زبون يومياً · يُصفَّر منتصف الليل';
+    return this.L('Earning guard · ' + (note || en), 'حارس الجمع · ' + ar);
+  }
+
+  // ── the daily redemption cap · a NUMBER, and 0 means the merchant turned it off ─────────────
+  redeemCapFor(scen) { const c = this.rulesForScen(scen).redeemCap; return (typeof c === 'number' && isFinite(c)) ? c : 2; }
+  capOff(scen) { return this.redeemCapFor(scen) <= 0; }
+  redeemsFor(scen) { return ((this.state.redeemsToday || {})[scen]) || 0; }
+  capLeftFor(scen) { return this.capOff(scen) ? Infinity : Math.max(0, this.redeemCapFor(scen) - this.redeemsFor(scen)); }
+  /** Correcting a redemption gives its slot on the cap back — otherwise a mistake would cost the
+      customer a redemption she never actually took. */
+  unCount(s, l) {
+    const k = l && l.scen;
+    if (!k) return {};
+    const m = { ...(s.redeemsToday || {}) };
+    if (m[k]) { m[k] = Math.max(0, m[k] - 1); if (!m[k]) delete m[k]; }
+    return { redeemsToday: m };
+  }
+  /** The two clock times a "you already redeemed today" refusal quotes, one per redemption taken. */
+  capTimes(n) { return ['10:12', '13:40', '16:05', '18:22', '19:47', '20:31'].slice(0, Math.max(1, Math.min(6, n))); }
+  capTimesLine(n) {
+    const T = this.capTimes(n);
+    if (T.length === 1) return this.L('at ' + T[0], 'الساعة ' + T[0]);
+    return this.L(T.slice(0, -1).join(', ') + ' and ' + T[T.length - 1], T.slice(0, -1).join('، ') + ' و' + T[T.length - 1]);
+  }
+
+  // ── the cashback minimum and the membership grace ───────────────────────────
+  minRedeemFor(scen) { const m = this.rulesForScen(scen).minRedeem; return (typeof m === 'number' && isFinite(m)) ? m : 0; }
+  graceDaysFor(scen) { const g = this.rulesForScen(scen).graceDays; return (typeof g === 'number' && isFinite(g)) ? g : 0; }
+
+  // ── the VIP ladder · names, thresholds and "how far" all come from the array ─
+  tiersFor(scen) {
+    const t = this.rulesForScen(scen).tiers;
+    return (Array.isArray(t) && t.length) ? t : [{ name: 'Silver', at: 0 }];
+  }
+  /** The tier a visit count actually earns. Derived, never stored — so undoing a visit undoes the
+      tier with it, and a merchant who moves Gold to 15 re-grades every member on the next render. */
+  tierIdxFor(visits, tiers) {
+    let idx = 0;
+    for (let i = 0; i < tiers.length; i++) if (visits >= tiers[i].at) idx = i;
+    return idx;
+  }
+  /** A tier name in the till's language. The three Wasla ships are translated; a name the merchant
+      invented is their own word and travels as typed — the same rule a member's name follows. */
+  tierWord(name) {
+    const m = { Silver: 'فضية', Gold: 'ذهبية', Royal: 'ملكية', Bronze: 'برونزية', Platinum: 'بلاتينية', Diamond: 'ماسية' };
+    const s = String(name || '');
+    return this.L(s, m[s] || s);
+  }
+  /** The look of a rung. First is always the quiet one, last always wears the crown, whatever the
+      merchant called them and however many there are. */
+  tierSkin(i, n) {
+    const P = [
+      { icon: '☆', color: '#AEB7C2', bg: 'rgba(174,183,194,.16)', glow: '0 0 0 5px rgba(174,183,194,.10), 0 0 20px rgba(174,183,194,.22)' },
+      { icon: '★', color: '#E8B824', bg: 'rgba(232,184,36,.18)', glow: '0 0 0 5px rgba(232,184,36,.12), 0 0 22px rgba(232,184,36,.30)' },
+      { icon: '♛', color: '#B98BE0', bg: 'rgba(185,139,224,.16)', glow: '0 0 0 5px rgba(185,139,224,.12), 0 0 22px rgba(185,139,224,.26)' },
+      { icon: '◆', color: '#7BD8A5', bg: 'rgba(123,216,165,.16)', glow: '0 0 0 5px rgba(123,216,165,.12), 0 0 22px rgba(123,216,165,.26)' }
+    ];
+    if (i === 0) return P[0];
+    if (n > 1 && i === n - 1) return P[2];
+    return P[1 + ((i - 1) % 2) * 2];
+  }
+  /** Everything the VIP screen and the tier refusal both need, resolved once. */
+  tierState(scen) {
+    const st = this.state, tiers = this.tiersFor(scen || 'vip');
+    const idx = this.tierIdxFor(st.rVisits, tiers);
+    const top = idx >= tiers.length - 1;
+    const nxt = tiers[Math.min(idx + 1, tiers.length - 1)];
+    // the perk a customer asks for by name belongs to the first rung above the base one
+    const perkIdx = Math.min(1, tiers.length - 1);
+    return { tiers, idx, top, cur: tiers[idx] || { name: '', at: 0 }, nxt: nxt || { name: '', at: 0 },
+      need: (nxt || { at: 0 }).at, left: Math.max(0, ((nxt || { at: 0 }).at) - st.rVisits),
+      perk: tiers[perkIdx] || { name: '', at: 0 }, perkIdx };
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  ASK THE MANAGER · the refusals promised the dashboard could lift this.
+  //  SHARED CONTRACT — localStorage 'wasla_demo_overrides', a JSON ARRAY,
+  //  newest-first, capped 20:
+  //    { id, at, kind:'guard'|'overcap'|'tierlock', card, cardId, member,
+  //      staff, branch, detail, state:'pending'|'granted'|'declined', by, note }
+  //  Read-modify-write in try/catch. Foreign entries and unknown keys are
+  //  carried through untouched — this till only ever edits its own rows.
+  // ────────────────────────────────────────────────────────────────────────────
+  ovKey() { return 'wasla_demo_overrides'; }
+  readOverrides() {
+    try {
+      const raw = this._lsGet(this.ovKey());
+      if (!raw) return [];
+      const p = JSON.parse(raw);
+      return Array.isArray(p) ? p.filter(e => e && typeof e === 'object' && !Array.isArray(e)) : [];
+    } catch (e) { return []; }
+  }
+  /** `mut` gets the live array and returns the next one. Whatever it hands back is capped and
+      written; anything it left alone travels through with every key it arrived with. Never throws. */
+  writeOverrides(mut) {
+    try {
+      const arr = this.readOverrides();
+      let next = arr;
+      try { const r = mut(arr); if (Array.isArray(r)) next = r; } catch (e) { next = arr; }
+      this._lsSet(this.ovKey(), JSON.stringify(next.slice(0, 20)));
+      return true;
+    } catch (e) { return false; }
+  }
+  ovNewId() { return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  ovNoun(k) {
+    return k === 'guard' ? this.L('earning guard', 'حارس الجمع')
+      : k === 'overcap' ? this.L('redemption cap', 'حد الاستبدال')
+        : k === 'tierlock' ? this.L('tier perk', 'ميزة المستوى')
+          : this.L('rule', 'قاعدة');
+  }
+  /** What the dashboard shows the manager. English on purpose: this is a wire field read by another
+      surface with its own language toggle, exactly like the live-events feed. */
+  ovDetailFor(kind, scen) {
+    const S = this.scenInfo(scen), who = S.m[0];
+    if (kind === 'guard') {
+      const per = this.guardPerDay(this.rulesForScen('stamps'));
+      return who + ' has already earned ' + (this.state.earnsToday || 0) + ' of today\'s ' + (per === Infinity ? '∞' : per) + ' — staff is asking to add one more stamp.';
+    }
+    if (kind === 'overcap') {
+      const cap = this.redeemCapFor(scen);
+      return who + ' has already taken ' + this.redeemsFor(scen) + ' of today\'s ' + (cap <= 0 ? 'uncapped' : cap) + ' redemptions — staff is asking to allow one more.';
+    }
+    const T = this.tierState('vip');
+    return who + ' is ' + T.cur.name + ' on ' + this.state.rVisits + ' visits — staff is asking to apply the ' + T.perk.name + ' perk ' + T.left + ' visits early.';
+  }
+  /** The manager's own name, for the on-site PIN path: the code 4680 IS theirs. */
+  mgrOnSiteName() {
+    try {
+      const A = ((typeof window !== 'undefined' && window.WASLA_DB) || {}).account || {};
+      if (typeof A.owner === 'string' && A.owner) return A.owner;
+    } catch (e) {}
+    return 'Manager';
+  }
+  /** A decider's name in the till's language, when the till knows the person. */
+  ovName(n) {
+    const s = String(n || '');
+    if (!s) return this.L('the manager', 'المدير');
+    if (this.state.lang !== 'ar') return s;
+    try {
+      const A = ((typeof window !== 'undefined' && window.WASLA_DB) || {}).account || {};
+      if (A.owner && s === A.owner && A.ownerAr) return A.ownerAr;
+    } catch (e) {}
+    const p = this.staffList().filter(x => x.name === s)[0];
+    if (p) return p.ar;
+    if (s === 'Manager') return 'المدير';
+    return s;
+  }
+  isOvrTag(tag) { return typeof tag === 'string' && tag.slice(0, 8) === 'mgr:ovr|'; }
+  /** RAISE the request. Offline this cannot happen at all, and the till says so instead of
+      pretending: nothing is written, nothing is queued, and the honest local path is offered where
+      one exists (see askOffline). */
+  askManager(kind, scen) {
+    const st = this.state;
+    if (!kind || st.ovReq) return;
+    if (st.offline) { this.askOffline(kind); return; }
+    const S = this.scenInfo(scen), t = this.labels();
+    const row = { id: this.ovNewId(), at: Date.now(), kind,
+      card: S.card, cardId: this.cardIdFor(scen), member: S.m[0],
+      staff: st.staffName, branch: this.tillBranch(),
+      detail: this.ovDetailFor(kind, scen), state: 'pending', by: '', note: '' };
+    const ok = this.writeOverrides(arr => [row, ...arr.filter(e => e.id !== row.id)]);
+    if (!ok) {
+      this.flashNow('✕', '#E2563A', this.L('It didn’t send', 'لم يُرسل'), this.L('This phone can’t write to the shared store right now. Nothing was asked.', 'هذا الجهاز لا يستطيع الكتابة في المخزن المشترك الآن. لم يُطلب شيء.'));
+      return;
+    }
+    this.setState({ ovReq: { id: row.id, kind, scen, at: row.at }, ovDecline: null });
+    this.logAction(scen, 'ovAsk', kind);
+    this.flashNow('⇢', '#F0A92B', t.askMgrSent, t.askMgrSentSub);
+    this.saveScan();
+    this.armOvWatch(row.id);
+  }
+  /** Offline: the dashboard is unreachable, full stop. For a guard or a tier perk the manager can
+      still stand at the counter and type their own code — that is a real, local authority. For the
+      redemption cap it would be theatre: redeems are locked offline anyway, so we say that instead. */
+  askOffline(kind) {
+    const t = this.labels();
+    if (kind === 'overcap') {
+      this.flashNow('⚑', '#F0A92B', t.askMgrOffTitle, this.L('And redeeming is locked offline anyway — this one waits for the connection.', 'والاستبدال مقفل دون إنترنت أصلاً — هذا الطلب ينتظر عودة الاتصال.'));
+      return;
+    }
+    this.flashNow('⚑', '#F0A92B', t.askMgrOffTitle, this.L('If the manager is in the shop, their code lifts it here instead.', 'إن كان المدير في المحل، فرمزه يرفعها من هنا بدلاً من ذلك.'));
+  }
+  askManagerHere(kind) { if (kind) this.askPin('mgr:ovr|' + kind); }
+  /** Standing down. The customer could not wait, so the row is RESOLVED rather than left hanging on
+      the manager's screen — declined, signed by the person who withdrew it, with the reason said
+      plainly. It uses only the three states the contract names. */
+  cancelOverrideReq() {
+    const st = this.state, req = st.ovReq;
+    if (!req) return;
+    const staff = st.staffName;
+    this.writeOverrides(arr => arr.map(e => (e && e.id === req.id && e.state === 'pending')
+      ? { ...e, state: 'declined', by: staff, note: 'Withdrawn at the till — the customer could not wait.' } : e));
+    this.setState(s => ({ ovReq: null, ovSeen: [req.id, ...(s.ovSeen || []).filter(x => x !== req.id)].slice(0, 20) }));
+    this.logAction(req.scen, 'ovWithdrew', req.kind);
+    this.saveScan();
+    this.armOvWatch('');
+  }
+  /** Poll + storage-event both land here. Cheap, idempotent, and safe to call on a storm. */
+  checkOverride() {
+    const st = this.state, req = st.ovReq;
+    if (!req || !req.id) return;
+    if ((st.ovSeen || []).indexOf(req.id) >= 0) { this.setState({ ovReq: null }); this.armOvWatch(''); return; }
+    const row = this.readOverrides().filter(e => e && e.id === req.id)[0];
+    if (!row) return;                                  // still pending, or pruned by the cap — keep waiting
+    if (row.state === 'granted') this.takeGrant(req, row);
+    else if (row.state === 'declined') this.takeDecline(req, row);
+  }
+  /** GRANTED. The id goes on the seen list BEFORE anything moves, so a second delivery of the same
+      decision — a storage storm, a poll racing the event, a reload — can never spend it twice. */
+  takeGrant(req, row) {
+    if ((this.state.ovSeen || []).indexOf(req.id) >= 0) return;
+    this.setState(s => ({ ovSeen: [req.id, ...(s.ovSeen || [])].slice(0, 20), ovReq: null, ovDecline: null }));
+    this.armOvWatch('');
+    const by = (typeof row.by === 'string' && row.by.trim()) ? row.by.trim().slice(0, 40) : '';
+    this.logAction(req.scen, 'ovGranted', req.kind, { by });
+    this.applyGranted(req.kind, by, req.scen, false);
+  }
+  /** DECLINED. The manager's reason is shown word for word — it is the sentence staff has to say. */
+  takeDecline(req, row) {
+    if ((this.state.ovSeen || []).indexOf(req.id) >= 0) return;
+    const by = (typeof row.by === 'string' && row.by.trim()) ? row.by.trim().slice(0, 40) : '';
+    const note = (typeof row.note === 'string' && row.note.trim()) ? row.note.trim().slice(0, 240) : '';
+    this.setState(s => ({ ovSeen: [req.id, ...(s.ovSeen || [])].slice(0, 20), ovReq: null,
+      ovDecline: { id: req.id, kind: req.kind, scen: req.scen, by, note, at: Date.now() } }));
+    this.armOvWatch('');
+    this.logAction(req.scen, 'ovDeclined', req.kind, { by });
+    this.saveScan();
+  }
+  /** The refusal becoming the action. ONCE — a guard or a tier perk is spent the instant it lands;
+      the redemption cap hands over a one-shot token instead, because a redeem still has to be PIN'd
+      and the PIN rules do not change for anybody. */
+  applyGranted(kind, by, scen, onSite) {
+    if (onSite) this.logAction(scen, 'ovGranted', kind, { by });
+    if (kind === 'guard') { this.setState({ scenario: 'stamps', mode: 'collect', ovDecline: null }); this.landStamp(by); return; }
+    if (kind === 'tierlock') { this.setState({ scenario: 'vip', mode: 'collect', ovDecline: null }); this.applyPerkNow(by); return; }
+    if (kind === 'overcap') {
+      this.setState({ ovGrant: { kind: 'overcap', scen, by, at: Date.now() }, ovDecline: null, mode: 'redeem' });
+      this.flashNow('🔓', '#2FAE66', this.L('Cap lifted — for this one', 'رُفع الحد — لهذه المرة'),
+        this.L(this.ovName(by).split(' ')[0] + ' allowed one more redemption. It still asks for a PIN.', this.ovName(by).split(' ')[0] + ' سمح باستبدال إضافي واحد. وما زال يطلب رمزاً.'));
+      this.saveScan();
+    }
+  }
+  /** Spends the one-shot cap token, if this member has one. Returns the granter's name or null. */
+  consumeOvGrant(kind, scen) {
+    const g = this.state.ovGrant;
+    if (!g || g.kind !== kind || g.scen !== scen) return null;
+    this.setState({ ovGrant: null });
+    return g.by || this.mgrOnSiteName();
+  }
+  hasOvGrant(kind, scen) { const g = this.state.ovGrant; return !!(g && g.kind === kind && g.scen === scen); }
+  /** The stamp the guard refused, landing on the manager's call — and saying so in the log. */
+  landStamp(by) {
+    const st = this.state, scen = 'stamps', n = Math.min(st.goal, st.stamps + 1);
+    this.setState(s => ({ stamps: n, sStamps: s.sStamps + 1, stampSeq: s.stampSeq + 1, earnsToday: (s.earnsToday || 0) + 1 }));
+    this.armUndo('stamp', 1, st.offline);
+    const who = this.ovName(by).split(' ')[0];
+    this.flashNow('stamp', '#2FAE66', this.L('Stamp ' + n + ' of ' + st.goal, 'الختم ' + n + ' من ' + st.goal),
+      this.L('Added on ' + who + '’s call — the override is in the log.', 'أُضيف بقرار ' + who + ' — والاستثناء مسجَّل في السجل.'));
+    this.logAction(scen, 'stamp', undefined, { ovr: by });
+    const ev = this.liveFor(scen, 'earn', 'earned a stamp — manager override by ' + (by || 'the manager'));
+    if (st.offline) this.pushQueue(scen, 'qStamp', undefined, ev, { ovr: by }); else this.emitLive(ev);
+    this.saveScan();
+  }
+  /** The perk the ladder refused, applied on the manager's call. */
+  applyPerkNow(by) {
+    const T = this.tierState('vip'), who = this.ovName(by).split(' ')[0];
+    this.flashNow('★', '#E8B824', this.L('15% off — applied', 'خصم 15% — طُبّق'),
+      this.L(T.perk.name + ' perk, ' + T.left + ' visits early, on ' + who + '’s call.', 'ميزة ' + this.tierWord(T.perk.name) + ' قبل ' + this.arVisits(T.left) + ' بقرار ' + who + '.'));
+    this.logAction('vip', 'perk', T.perk.name, { ovr: by });
+    const ev = this.liveFor('vip', 'reward', 'got the ' + T.perk.name + ' perk early — manager override by ' + (by || 'the manager'));
+    if (this.state.offline) this.pushQueue('vip', 'perk', T.perk.name, ev, { ovr: by }); else this.emitLive(ev);
+    this.saveScan();
+  }
+  /** The watcher. One window listener and one slow poll, both armed ONLY while a request is out and
+      both keyed on that request's id — so it arms once, ignores every other storage key, is torn
+      down the moment the answer lands, and leaves nothing behind on unmount. */
+  armOvWatch(key) {
+    const h = this.__host || this;
+    if (h.__wsOvKey === key) return;
+    h.__wsOvKey = key;
+    if (h.__wsOvFn && typeof window !== 'undefined' && window.removeEventListener) {
+      try { window.removeEventListener('storage', h.__wsOvFn); } catch (e) {}
+    }
+    h.__wsOvFn = null;
+    clearTimeout(this._ov);
+    if (!key) return;
+    const fn = (e) => {
+      // a storm on any other key costs exactly one comparison
+      if (e && e.key && e.key !== this.ovKey()) return;
+      const A = (this.__host && this.__host.logic) || this;
+      if ((A.__host || A).__wsOvKey !== key) return;
+      A.checkOverride();
+    };
+    h.__wsOvFn = fn;
+    if (typeof window !== 'undefined' && window.addEventListener) { try { window.addEventListener('storage', fn); } catch (e) {} }
+    // the belt to the listener's braces: a dashboard opened in THIS document never fires `storage`
+    const tick = () => {
+      const A = (this.__host && this.__host.logic) || this;
+      if ((A.__host || A).__wsOvKey !== key) return;
+      A.checkOverride();
+      if ((A.__host || A).__wsOvKey === key) A._ov = setTimeout(tick, 1200);
+    };
+    this._ov = setTimeout(tick, 1200);
+  }
+  /** A wiped demo takes its OWN requests with it and nothing else — foreign rows stay. */
+  dropMyOverrides() {
+    const st = this.state || {}, mine = {};
+    (st.ovSeen || []).forEach(id => { mine[id] = 1; });
+    if (st.ovReq && st.ovReq.id) mine[st.ovReq.id] = 1;
+    this.writeOverrides(arr => arr.filter(e => !(e && mine[e.id])));
+  }
+  // ── shapes, for the round-trip through localStorage ──
+  ovReqShape(o) {
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return null;
+    if (typeof o.id !== 'string' || !o.id || o.id.length > 40) return null;
+    if (o.kind !== 'guard' && o.kind !== 'overcap' && o.kind !== 'tierlock') return null;
+    return { id: o.id, kind: o.kind, scen: (typeof o.scen === 'string' ? o.scen.slice(0, 24) : ''), at: (typeof o.at === 'number' && isFinite(o.at)) ? o.at : Date.now() };
+  }
+  ovGrantShape(o) {
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return null;
+    if (o.kind !== 'overcap') return null;
+    return { kind: 'overcap', scen: (typeof o.scen === 'string' ? o.scen.slice(0, 24) : ''), by: (typeof o.by === 'string' ? o.by.slice(0, 40) : ''), at: (typeof o.at === 'number' && isFinite(o.at)) ? o.at : Date.now() };
+  }
+  ovDeclineShape(o) {
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return null;
+    if (o.kind !== 'guard' && o.kind !== 'overcap' && o.kind !== 'tierlock') return null;
+    return { id: (typeof o.id === 'string' ? o.id.slice(0, 40) : ''), kind: o.kind,
+      scen: (typeof o.scen === 'string' ? o.scen.slice(0, 24) : ''),
+      by: (typeof o.by === 'string' ? o.by.slice(0, 40) : ''),
+      note: (typeof o.note === 'string' ? o.note.slice(0, 240) : ''),
+      at: (typeof o.at === 'number' && isFinite(o.at)) ? o.at : Date.now() };
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  YESTERDAY'S MISTAKE · a dispute arrives the morning after, not during the
+  //  shift it happened in. Seven days, searchable, correctable inside the window.
+  // ────────────────────────────────────────────────────────────────────────────
+  /** Six prior days of this branch's real work — Ahmad's and Rasha's, on the two cards Rainbow St
+      actually serves. Two rows are planted disputes: Sara stamped TWICE ninety seconds apart (the
+      guard should have caught it), and Noor scanned with nothing after it — the stamp that never
+      landed. Built once per session and cached, so a row can never move under a confirm sheet. */
+  priorSeed() {
+    if (this._prior) return this._prior;
+    const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+    const DAY = 86400000;
+    const at = (d, hh, mm) => t0.getTime() - d * DAY + hh * 3600000 + mm * 60000;
+    const A = ['Ahmad Zoubi', 'أحمد الزعبي'], R = ['Rasha Kilani', 'رشا الكيلاني'];
+    const rows = [
+      ['p1', 1, 8, 37, 'stamps', 'stamp', undefined, A, 'Sara Al-Amin', 'سارة الأمين', ''],
+      ['p2', 1, 8, 39, 'stamps', 'stamp', undefined, A, 'Sara Al-Amin', 'سارة الأمين', 'double'],
+      ['p3', 1, 13, 11, 'overcap', 'scan', undefined, R, 'Noor Shami', 'نور الشامي', 'nostamp'],
+      ['p4', 1, 17, 26, 'vip', 'visit', undefined, A, 'Rania Qasem', 'رانيا قاسم', ''],
+      ['p5', 1, 19, 2, 'coupon', 'redCoupon', undefined, R, 'Nadia Farhat', 'نادية فرحات', ''],
+      ['p6', 2, 9, 15, 'stamps', 'stamp', undefined, R, 'Sara Al-Amin', 'سارة الأمين', ''],
+      ['p7', 2, 12, 48, 'challenge', 'chVisit', undefined, A, 'Huda Barakat', 'هدى بركات', ''],
+      ['p8', 2, 17, 5, 'overcap', 'redReward', undefined, A, 'Noor Shami', 'نور الشامي', ''],
+      ['p9', 3, 10, 28, 'stamps', 'stamp', undefined, R, 'Sara Al-Amin', 'سارة الأمين', ''],
+      ['p10', 3, 15, 40, 'vip', 'visit', undefined, A, 'Rania Qasem', 'رانيا قاسم', ''],
+      ['p11', 4, 11, 2, 'overcap', 'stamp', undefined, R, 'Noor Shami', 'نور الشامي', ''],
+      ['p12', 4, 16, 44, 'challenge', 'chVisit', undefined, A, 'Huda Barakat', 'هدى بركات', ''],
+      ['p13', 5, 9, 50, 'stamps', 'stamp', undefined, A, 'Sara Al-Amin', 'سارة الأمين', ''],
+      ['p14', 5, 19, 30, 'join', 'join', 'Hala Odeh', R, 'Hala Odeh', 'هلا عودة', ''],
+      ['p15', 6, 12, 35, 'overcap', 'stamp', undefined, R, 'Noor Shami', 'نور الشامي', ''],
+      ['p16', 6, 18, 8, 'vip', 'visit', undefined, A, 'Rania Qasem', 'رانيا قاسم', '']
+    ];
+    this._prior = rows.map(([id, d, hh, mm, scen, k, v, staff, who, whoAr, flag]) => ({
+      id, day: d, ts: at(d, hh, mm), scen, k, v, who, whoAr,
+      by: (k === 'redCoupon' || k === 'redReward') ? staff[0] : undefined,
+      staff: staff[0], staffAr: staff[1], flag, prior: true
+    })).sort((a, b) => b.ts - a.ts);
+    return this._prior;
+  }
+  /** Today's shift plus the six days behind it, newest first. */
+  allRows() {
+    const st = this.state;
+    const today = (st.sessionLog || []).map(l => ({ ...l, day: 0, prior: false, staff: l.by || st.staffName, staffAr: st.staffAr }));
+    return today.concat(this.priorSeed());
+  }
+  /** Day labels, generated so "Yesterday" is genuinely yesterday whenever the demo is opened. */
+  dayDefs() {
+    const EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const AR = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+    const out = [];
+    for (let d = 0; d < 7; d++) {
+      const w = new Date(t0.getTime() - d * 86400000).getDay();
+      out.push({ d, label: d === 0 ? this.L('Today', 'اليوم') : d === 1 ? this.L('Yesterday', 'أمس') : this.L(EN[w], AR[w]) });
+    }
+    return out;
+  }
+  dayWord(d) { const x = this.dayDefs()[d]; return x ? x.label : this.L('Earlier', 'سابقاً'); }
+  /** The English-only day word for the wire — the live feed is read by a surface with its own toggle. */
+  dayWordEn(d) {
+    if (d === 0) return 'today';
+    if (d === 1) return 'yesterday';
+    const EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+    return EN[new Date(t0.getTime() - d * 86400000).getDay()];
+  }
+  /** When a row happened: today's rows count in minutes, a prior day names itself and its clock. */
+  rowWhen(l) {
+    if (l && l.prior) {
+      const dt = new Date(l.ts);
+      const p2 = (n) => (n < 10 ? '0' : '') + n;
+      return this.dayWord(l.day) + ' · ' + p2(dt.getHours()) + ':' + p2(dt.getMinutes());
+    }
+    return this.timeAgo(l);
+  }
+  /** Name, phone, or the last four of either — the three things a customer can actually give you. */
+  histMatch(l, q) {
+    if (!q) return true;
+    const S = this.scenInfo(l && l.scen);
+    const en = String((l && l.who) || S.m[0] || '').toLowerCase();
+    const ar = String((l && l.whoAr) || S.m[1] || '');
+    if (en.indexOf(q) >= 0 || ar.indexOf(q) >= 0) return true;
+    const d = q.replace(/\D/g, '');
+    if (!d) return false;
+    const ph = String(S.phone || '').replace(/\D/g, ''), cd = String(S.code || '');
+    return ph.indexOf(d) >= 0 || cd.indexOf(d) >= 0 || ph.slice(-4) === d || cd.slice(-4) === d;
+  }
+  /** The filtered seven days the sheet actually renders. */
+  histHits() {
+    const st = this.state, q = String(st.histQ || '').trim().toLowerCase();
+    const day = st.histDay;
+    return this.allRows().filter(l => (day === 'all' || this.rowAgeDays(l) === day) && this.histMatch(l, q)).slice(0, 60);
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
   //  the refusals · six of them, and every one says WHY and WHAT TO DO
   // ────────────────────────────────────────────────────────────────────────────
   /** A refusal is not an error message. It is the moment a member of staff has to say something to
       a customer standing in front of them — so each one carries the reason, the rule it comes from
       (named, so it sounds like policy and not a glitch), and the sentence to say next. */
   refusalDef(scen) {
-    const st = this.state;
+    const st = this.state, SI = this.scenInfo(scen);
     if (scen === 'foreign') return {
       mark: '✕', tone: '#E2563A',
       title: this.L('Not your card to scan', 'ليست بطاقتك لتمسحها'),
@@ -1800,40 +2554,96 @@ class Component extends DCLogic {
       altBr: 'rgba(47,174,102,.45)', altFg: '#7BD8A5',
       altGo: () => this.setState({ mode: 'redeem', cbSel: null })
     };
-    if (scen === 'guard') return {
-      mark: '⏱', tone: '#F0A92B',
-      title: this.L('Sara already earned today', 'سارة جمعت ختمها اليوم'),
-      why: this.L('Her stamp landed at 08:41 this morning. A second scan of the same card on the same day adds nothing — the pass already shows ' + st.stamps + ' of ' + st.goal + '.', 'ختمها وصل الساعة 08:41 هذا الصباح. مسح البطاقة نفسها مرة ثانية في اليوم نفسه لا يضيف شيئاً — البطاقة تُظهر ' + st.stamps + ' من ' + st.goal + ' أصلاً.'),
-      rule: this.L('Earning guard · 1 stamp per customer per day · resets at midnight', 'حارس الجمع · ختم واحد لكل زبون يومياً · يُصفَّر منتصف الليل'),
-      doLine: this.L('What to do: tell her it is already on her pass. If she genuinely bought twice, the manager adds the second stamp from the dashboard.', 'ما العمل: أخبرها أن الختم على بطاقتها. وإن كانت اشترت مرتين فعلاً، يضيف المدير الختم الثاني من لوحة التحكم.'),
-      altLabel: this.L('Show her card anyway', 'اعرض بطاقتها على أي حال'),
-      altBr: 'rgba(244,242,238,.24)', altFg: '#F4F2EE',
-      altGo: () => this.scanTo('stamps')
-    };
-    if (scen === 'overcap') return {
-      mark: '✕', tone: '#E2563A',
-      title: this.L('Daily redeem cap reached', 'بلغت حد الاستبدال اليومي'),
-      why: this.L('Noor has already taken two rewards today — 10:12 and 13:40. Daraj allows two redemptions per customer per day.', 'نور استلمت مكافأتين اليوم — 10:12 و13:40. مقهى درج يسمح باستبدالين لكل زبون يومياً.'),
-      rule: this.L('Redemption cap · 2 per customer per day', 'حد الاستبدال · اثنان لكل زبون يومياً'),
-      doLine: this.L('What to do: the full card stays on her pass — nothing is lost. She can redeem it tomorrow, or the manager lifts today’s cap from the dashboard.', 'ما العمل: البطاقة المكتملة تبقى على بطاقتها — لم يضِع شيء. تستطيع استبدالها غداً، أو يرفع المدير حد اليوم من لوحة التحكم.')
-    };
+    if (scen === 'guard') {
+      const per = this.guardPerDay(this.rulesForScen('stamps'));
+      const one = per === 1;
+      const first = this.L(SI.m[0].split(' ')[0], SI.m[1].split(' ')[0]);
+      // the merchant turned the guard OFF. Nothing refuses, so nothing is refused — and there is
+      // nothing to ask a manager for either. (Unreachable by scanning; the demo rail can still
+      // point at it, and a screen that quoted a limit of "∞" would be nonsense.)
+      if (per === Infinity) return {
+        mark: '∞', tone: '#2FAE66',
+        title: this.L('No earning limit', 'لا حد للجمع'),
+        why: this.L(String(SI.card).split(' · ')[0] + ' has switched the earning guard off, so ' + first + ' can be stamped as often as she buys — this refusal cannot happen today.', String(SI.cardAr).split(' · ')[0] + ' أوقف حارس الجمع، فـ' + first + ' تُختم كلما اشترت — وهذا الرفض لا يحدث اليوم.'),
+        rule: this.L('Earning guard · off', 'حارس الجمع · موقوف'),
+        doLine: this.L('What to do: nothing. Stamp her card as normal.', 'ما العمل: لا شيء. اختم بطاقتها كالمعتاد.'),
+        altLabel: this.L('Show her card', 'اعرض بطاقتها'),
+        altBr: 'rgba(47,174,102,.45)', altFg: '#7BD8A5',
+        altGo: () => this.scanTo('stamps')
+      };
+      return {
+        mark: '⏱', tone: '#F0A92B',
+        title: this.L(SI.m[0].split(' ')[0] + ' already earned today', SI.m[1].split(' ')[0] + ' جمعت اليوم'),
+        why: this.L(one
+          ? 'Her stamp landed at 08:41 this morning. A second scan of the same card on the same day adds nothing — the pass already shows ' + st.stamps + ' of ' + st.goal + '.'
+          : 'She has taken all ' + per + ' of today’s stamps — the last at 08:41. Another scan of the same card today adds nothing; the pass already shows ' + st.stamps + ' of ' + st.goal + '.',
+          one
+            ? 'ختمها وصل الساعة 08:41 هذا الصباح. مسح البطاقة نفسها مرة ثانية في اليوم نفسه لا يضيف شيئاً — البطاقة تُظهر ' + st.stamps + ' من ' + st.goal + ' أصلاً.'
+            : 'أخذت ' + this.arStamps(per) + ' اليوم كاملة — آخرها الساعة 08:41. ومسح البطاقة نفسها اليوم لا يضيف شيئاً؛ فهي تُظهر ' + st.stamps + ' من ' + st.goal + ' أصلاً.'),
+        rule: this.guardRuleLine(),
+        doLine: this.L('What to do: tell her it is already on her pass. If she genuinely bought again, ask the manager — they can lift the guard for this one from the dashboard.',
+          'ما العمل: أخبرها أن الختم على بطاقتها. وإن كانت اشترت فعلاً مرة أخرى، اسأل المدير — يستطيع رفع الحارس لهذه المرة من لوحة التحكم.'),
+        ask: 'guard',
+        askDetail: this.L('One more stamp for ' + first + ' — over the ' + (one ? 'one' : per) + ' the guard allows today.',
+          'ختم إضافي لـ' + first + ' — فوق ما يسمح به الحارس اليوم (' + this.arStamps(per) + ').'),
+        altLabel: this.L('Show her card anyway', 'اعرض بطاقتها على أي حال'),
+        altBr: 'rgba(244,242,238,.24)', altFg: '#F4F2EE',
+        altGo: () => this.scanTo('stamps')
+      };
+    }
+    if (scen === 'overcap') return this.capRefusal('overcap', this.redeemCapFor('overcap'));
     if (scen === 'tierlock') {
-      const gold = st.rTier === 'Gold';
-      const need = gold ? 30 : 12, tierEn = gold ? 'Royal' : 'Gold', tierAr = gold ? 'الملكية' : 'الذهبية';
-      const perkEn = gold ? 'The Royal table' : '15% off and the queue skip', perkAr = gold ? 'طاولة الملكية' : 'خصم 15% وتجاوز الطابور';
-      const left = Math.max(0, need - st.rVisits);
+      const T = this.tierState('tierlock');
+      const first = this.L(SI.m[0].split(' ')[0], SI.m[1].split(' ')[0]);
+      const tgt = T.top ? T.cur : T.nxt;
+      const perkEn = T.perkIdx > 0 && tgt.name === T.perk.name ? '15% off and the queue skip' : 'The ' + tgt.name + ' table';
+      const perkAr = T.perkIdx > 0 && tgt.name === T.perk.name ? 'خصم 15% وتجاوز الطابور' : 'طاولة ' + this.tierWord(tgt.name);
       return {
         mark: '★', tone: '#E8B824',
-        title: this.L('That perk is ' + tierEn, 'هذه الميزة لفئة ' + tierAr),
-        why: this.L(perkEn + ' belongs to ' + tierEn + '. Rania is ' + (gold ? 'Gold' : 'Silver') + ' — ' + st.rVisits + ' visits, ' + left + ' short of the ' + need + ' that unlock it.', perkAr + ' من مزايا ' + tierAr + '. رانيا ' + (gold ? 'ذهبية' : 'فضية') + ' — ' + st.rVisits + ' زيارة، وتنقصها ' + left + ' من أصل ' + need + ' لفتحها.'),
-        rule: this.L('Tier rule · a perk unlocks at the tier that owns it', 'قاعدة المستويات · تُفتح الميزة عند مستواها'),
-        doLine: this.L('What to do: charge the full bill, and tell her how close she is. Check her in now — the tier lands on her pass the moment she gets there.', 'ما العمل: احسب الفاتورة كاملة، وأخبرها كم اقتربت. سجّل زيارتها الآن — والمستوى يصل بطاقتها لحظة بلوغه.'),
+        title: this.L('That perk is ' + tgt.name, 'هذه الميزة لفئة ' + this.tierWord(tgt.name)),
+        why: this.L(perkEn + ' belongs to ' + tgt.name + '. ' + first + ' is ' + T.cur.name + ' — ' + st.rVisits + ' visits, ' + T.left + ' short of the ' + T.need + ' that unlock it.',
+          perkAr + ' من مزايا ' + this.tierWord(tgt.name) + '. ' + first + ' ' + this.tierWord(T.cur.name) + ' — ' + this.arVisits(st.rVisits) + '، وتنقصها ' + T.left + ' من أصل ' + T.need + ' لفتحها.'),
+        rule: this.L('Tier rule · ' + tgt.name + ' unlocks at ' + T.need + ' visits', 'قاعدة المستويات · تُفتح ' + this.tierWord(tgt.name) + ' عند ' + this.arVisits(T.need)),
+        doLine: this.L('What to do: charge the full bill, and tell her how close she is. If she should have it early, ask the manager — that call is theirs.',
+          'ما العمل: احسب الفاتورة كاملة، وأخبرها كم اقتربت. وإن كانت تستحقها مبكراً، اسأل المدير — فالقرار قراره.'),
+        ask: 'tierlock',
+        askDetail: this.L('The ' + T.perk.name + ' perk for ' + first + ', ' + T.left + ' visits early.',
+          'ميزة ' + this.tierWord(T.perk.name) + ' لـ' + first + ' قبل ' + this.arVisits(T.left) + '.'),
         altLabel: this.L('Check her in →', 'سجّل زيارتها ←'),
         altBr: 'rgba(47,174,102,.45)', altFg: '#7BD8A5',
         altGo: () => this.scanTo('vip')
       };
     }
     return null;
+  }
+  /** The redemption cap, said out loud — for the demo state AND for a customer who trips it live at
+      the counter. Every number in it, including how many times she has already redeemed and at
+      what o'clock, comes from the resolved rule and the till's own count. */
+  capRefusal(scen, cap) {
+    const S = this.scenInfo(scen);
+    const taken = scen === 'overcap' && !this.redeemsFor(scen) ? cap : this.redeemsFor(scen);
+    const first = this.L(S.m[0].split(' ')[0], S.m[1].split(' ')[0]);
+    const shop = this.L(String(S.card).split(' · ')[0], String(S.cardAr).split(' · ')[0]);
+    // the merchant switched the cap OFF. Nothing is being refused — and a screen that pretends
+    // otherwise would be the till inventing a rule. It says so, and it offers nothing to ask for.
+    if (cap <= 0) return {
+      mark: '∞', tone: '#2FAE66',
+      title: this.L('No cap on this card', 'لا حد على هذه البطاقة'),
+      why: this.L(shop + ' has switched the daily redemption cap off, so this refusal cannot happen today — ' + first + ' can redeem as often as she has balance for.', shop + ' أوقف حد الاستبدال اليومي، فهذا الرفض لا يحدث اليوم — و' + first + ' تستبدل كلما سمح رصيدها.'),
+      rule: this.L('Redemption cap · off', 'حد الاستبدال · موقوف'),
+      doLine: this.L('What to do: nothing. Go ahead and redeem — there is no cap to lift.', 'ما العمل: لا شيء. تابع الاستبدال — لا حد ليُرفع.')
+    };
+    return {
+      mark: '✕', tone: '#E2563A',
+      title: this.L('Daily redeem cap reached', 'بلغت حد الاستبدال اليومي'),
+      why: this.L(first + ' has already taken ' + taken + (taken === 1 ? ' reward' : ' rewards') + ' today — ' + this.capTimesLine(taken) + '. ' + shop + ' allows ' + cap + (cap === 1 ? ' redemption' : ' redemptions') + ' per customer per day.',
+        first + ' استلمت ' + this.arRedeems(taken) + ' اليوم — ' + this.capTimesLine(taken) + '. و' + shop + ' يسمح بـ' + this.arRedeems(cap) + ' لكل زبون يومياً.'),
+      rule: this.L('Redemption cap · ' + cap + ' per customer per day', 'حد الاستبدال · ' + this.arRedeems(cap) + ' لكل زبون يومياً'),
+      doLine: this.L('What to do: the balance stays on her pass — nothing is lost. She can redeem tomorrow, or ask the manager to lift today’s cap for this one.',
+        'ما العمل: رصيدها يبقى على بطاقتها — لم يضِع شيء. تستطيع الاستبدال غداً، أو اسأل المدير أن يرفع حد اليوم لهذه المرة.'),
+      ask: 'overcap',
+      askDetail: this.L('One more redemption for ' + first + ' — over today’s cap of ' + cap + '.', 'استبدال إضافي لـ' + first + ' — فوق حد اليوم البالغ ' + this.arRedeems(cap) + '.')
+    };
   }
 
   // ────────────────────────────────────────────────────────────────────────────
@@ -1850,6 +2660,8 @@ class Component extends DCLogic {
     // the paused card borrows the whole cashback machine, on its own balance
     const isCash = scen === 'cashback' || pausedRedeem;
     const cbBal = isPaused ? st.pausedBal : st.cbBal;
+    // the wallet minimum is the merchant's, not the till's — zero is a legitimate answer
+    const cbMin = this.minRedeemFor(scen);
     const isVerdict = scen === 'discount' || scen === 'membership' || scen === 'expiring';
     const renewedNow = (scen === 'membership' && st.renewedMembership) || (scen === 'expiring' && st.renewedExpiring);
     const membershipRenewed = renewedNow;
@@ -1857,7 +2669,8 @@ class Component extends DCLogic {
     const full = st.stamps >= st.goal;
     const amt = parseFloat(st.amount) || 0;
     const rungs = this.rungs();
-    const tierIdx = st.rTier === 'Gold' ? 1 : 0;
+    // the tier is DERIVED from her visit count against the merchant's own thresholds — never stored
+    const tierIdx = this.tierIdxFor(st.rVisits, this.tiersFor(scen === 'tierlock' ? 'tierlock' : 'vip'));
     const brand = SCEN.color;   // the SVG fallback disc is the card's own brand colour
     const cardArt = this.cardArt(scen);
     const jod = (n) => this.L('JOD ' + n, n + ' ديناراً');
@@ -1878,49 +2691,77 @@ class Component extends DCLogic {
     const rampAmt = rampKey.slice(0, 4) === 'amt:' ? RP : 1;
     const rampShift = rampKey === 'shift' ? RP : 1;
 
-    // ── VIP ladder geometry · Silver 0% · Gold 50% · Royal 100% ──
-    const GOLD_AT = 12, ROYAL_AT = 30;
-    const vipPct = (visits, idx) => idx ? 50 + 50 * Math.min(1, Math.max(0, (visits - GOLD_AT) / (ROYAL_AT - GOLD_AT))) : 50 * Math.min(1, visits / GOLD_AT);
-    const vipTo = vipPct(st.rVisits, tierIdx).toFixed(1) + '%';
-    const tierDefs = [
-      { en: 'Silver', ar: 'فضية', icon: '☆', color: '#AEB7C2', bg: 'rgba(174,183,194,.16)', glow: '0 0 0 5px rgba(174,183,194,.10), 0 0 20px rgba(174,183,194,.22)' },
-      { en: 'Gold', ar: 'ذهبية', icon: '★', color: '#E8B824', bg: 'rgba(232,184,36,.18)', glow: '0 0 0 5px rgba(232,184,36,.12), 0 0 22px rgba(232,184,36,.30)' },
-      { en: 'Royal', ar: 'ملكية', icon: '♛', color: '#B98BE0', bg: 'rgba(185,139,224,.16)', glow: '0 0 0 5px rgba(185,139,224,.12), 0 0 22px rgba(185,139,224,.26)' }
-    ];
+    // ── VIP ladder geometry · every rung, name and threshold comes from the RESOLVED tiers array,
+    //    so a merchant moving Gold from 12 to 15 moves the bar, the copy and the ceremony together.
+    //    The bar is divided evenly between rungs; within a rung it fills toward the next threshold.
+    const TS = this.tierState(scen === 'tierlock' ? 'tierlock' : 'vip');
+    const TIERS = TS.tiers, NT = TIERS.length;
+    const tierDefs = TIERS.map((x, i) => ({ ...this.tierSkin(i, NT), en: x.name, ar: this.tierWord(x.name), at: x.at }));
+    const vipPct = (visits) => {
+      if (NT < 2) return 100;
+      const i = this.tierIdxFor(visits, TIERS), seg = 100 / (NT - 1);
+      if (i >= NT - 1) return 100;
+      const span = Math.max(1, TIERS[i + 1].at - TIERS[i].at);
+      return seg * i + seg * Math.min(1, Math.max(0, (visits - TIERS[i].at) / span));
+    };
+    const vipTo = vipPct(st.rVisits).toFixed(1) + '%';
 
     // ── the challenge countdown ring · r = 62 ──
     const RC = 389.6;
     const ringOff = (v) => (RC * (1 - Math.min(1, Math.max(0, v / st.chGoal)))).toFixed(1);
 
+    // the rail is the demo's own English index, not phone-side copy — but the numbers it quotes are
+    // still the merchant's, so a rule edit shows up here too rather than going quietly stale
+    const railTS = this.tierState('vip');
     const demoDefs = [
       ['stamps', 'Sara — a stamp is one tap', 'Stamp card · 6/8, two from a reward', '#1E5C43', '•••', '13px'],
-      ['cashback', 'Khaled — cashback is money', 'JOD 3.20 balance · partial redeem · min JOD 2', '#5C6B2F', '5%', '11.5px'],
+      ['cashback', 'Khaled — cashback is money', 'JOD 3.20 balance · partial redeem · min JOD ' + this.minRedeemFor('cashback').toFixed(2), '#5C6B2F', '5%', '11.5px'],
       ['points', 'Salma — the redeem ladder', 'points · nothing preselected, shortfalls shown', '#B14A32', '250', '10px'],
       ['coupon', 'Nadia — a one-shot coupon', 'asks twice · try scanning her twice', '#E88024', '1×', '12.5px'],
-      ['vip', 'Rania — VIP, collect only', '11 visits · one more to GOLD', '#1B2440', '★', '14px'],
+      ['vip', 'Rania — VIP, collect only', railTS.top ? st.rVisits + ' visits · top of the ladder' : st.rVisits + ' visits · ' + railTS.left + ' more to ' + railTS.nxt.name.toUpperCase(), '#1B2440', '★', '14px'],
       ['discount', 'Ruba — a verdict, not a transaction', 'discount card · valid', '#2FAE66', '−15%', '9px'],
       ['membership', 'Anas — lapsed membership', 'verdict · expired 12 days ago', '#F0A92B', 'ID', '11px'],
       ['challenge', 'Huda — a challenge has a clock', '3/5 visits this month · 9-day window', '#7A4FA3', '3/5', '10.5px'],
       ['foreign', 'A stranger’s card', 'another account · polite refusal', '#E2563A', '⚠', '13px']
     ];
     // the states where the answer is no — or not yet. Each one names the rule it comes from.
+    const railCap = this.redeemCapFor('overcap'), railGuard = this.guardPerDay(this.rulesForScen('stamps'));
     const edgeDefs = [
       ['paused', 'Dana — the shop paused the card', 'earning stops · redeeming still honoured', '#F0A92B', '❙❙', '10px'],
-      ['guard', 'Sara — already stamped today', 'the earning guard, said out loud', '#F0A92B', '⏱', '12px'],
-      ['overcap', 'Noor — the daily redeem cap', 'two rewards already taken today', '#E2563A', '2×', '11px'],
-      ['tierlock', 'Rania — a perk she hasn’t reached', 'Gold perk, Silver member', '#E8B824', '★', '13px'],
+      ['guard', 'Sara — already stamped today', 'the earning guard (' + (railGuard === Infinity ? 'off' : railGuard + '/day') + ') · ask the manager', '#F0A92B', '⏱', '12px'],
+      ['overcap', 'Noor — the daily redeem cap', railCap <= 0 ? 'the merchant switched the cap off' : railCap + ' already taken today · ask the manager', '#E2563A', railCap <= 0 ? '∞' : railCap + '×', '11px'],
+      ['tierlock', 'Rania — a perk she hasn’t reached', railTS.perk.name + ' perk, ' + railTS.cur.name + ' member · ask the manager', '#E8B824', '★', '13px'],
       ['expiring', 'Luay — expiring in 9 days', 'the third verdict · amber, with a way out', '#F0A92B', '9d', '11px']
     ];
     const tint = (hex, a) => 'rgba(' + parseInt(hex.slice(1, 3), 16) + ',' + parseInt(hex.slice(3, 5), 16) + ',' + parseInt(hex.slice(5, 7), 16) + ',' + a + ')';
     // ── the refusal in play, and the redeem lock that belongs to this screen ──
     const lockedLabel = this.L('Locked — a manager must unlock it', 'مقفل — على المدير فتحه');
-    const RF = this.refusalDef(scen);
     const rdTag = isStampsS ? 'stamps' : (scen === 'cashback' || isPaused) ? 'cash' : isPts ? 'pts' : scen === 'coupon' ? 'coupon' : (scen === 'membership' || scen === 'expiring') ? 'renew' : '';
     const rdLocked = !!rdTag && this.isRedeemLocked(scen, rdTag);
     const rdKey = rdTag ? this.lockKeyFor(scen, rdTag) : '';
+    // ── the merchant's daily redemption cap, counted live. A customer who trips it at the counter
+    //    meets the SAME refusal the demo state shows — under her own name, with her own numbers.
+    const isRedeemTag = rdTag && rdTag !== 'renew';
+    const dayCap = this.redeemCapFor(scen), capOff = this.capOff(scen), capLeft = this.capLeftFor(scen);
+    const capGranted = this.hasOvGrant('overcap', scen);
+    const capTrip = !!isRedeemTag && st.mode === 'redeem' && scen !== 'overcap' && !capOff && capLeft <= 0 && !capGranted;
+    const RF = (capTrip ? this.capRefusal(scen, dayCap) : null) || this.refusalDef(scen);
+    // ── the ask, and what came back ──
+    const cbCan = !!st.cbSel && !st.offline && !rdLocked && cbBal >= cbMin;
+    // Anas lapsed 12 days ago; whether that is still forgivable is the merchant's grace window
+    const graceD = this.graceDaysFor('membership'), inGrace = 12 <= graceD;
+    const askKind = RF ? (RF.ask || '') : '';
+    const ovReq = st.ovReq, ovWaiting = !!(ovReq && ovReq.scen === scen);
+    const ovDec = (st.ovDecline && st.ovDecline.scen === scen) ? st.ovDecline : null;
+    const askedAt = ovWaiting ? (d => ((d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes()))(new Date(ovReq.at || Date.now())) : '';
+    this.armOvWatch(ovReq && ovReq.id ? ovReq.id : '');
     const CARDS = this.cardDefs();
     const corrL = this.corrRow(), corrC = this.correctionFor(corrL);
     const lookHits = st.lookupOpen ? this.lookupHits() : [];
+    const histHits = st.historyOpen ? this.histHits() : [];
+    const cwd = this.corrWindowDays();
+    const corrWindowWord = cwd <= 1 ? 'today only' : cwd === 2 ? 'today and yesterday' : 'for ' + cwd + ' days';
+    const corrWindowWordAr = cwd <= 1 ? 'اليوم فقط' : cwd === 2 ? 'اليوم وأمس' : 'لمدة ' + cwd + ' أيام';
     const joinCard = CARDS[st.joinCard] || CARDS.daraj, joinWho = this.joinPerson(st.joinCard);
 
     return {
@@ -1942,7 +2783,7 @@ class Component extends DCLogic {
         { icon: '#', label: t.manual, go: () => this.setState({ manualOpen: true, manualCode: '', manualError: false }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' },
         { icon: '⌕', label: this.L('Find a customer', 'ابحث عن زبون'), go: () => this.setState({ lookupOpen: true, lookupQ: '' }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' },
         { icon: '＋', label: this.L('New customer', 'زبون جديد'), go: () => this.openJoin(), br: 'rgba(232,128,36,.5)', bg: 'rgba(232,128,36,.08)', fg: '#F09A4D' },
-        { icon: '☰', label: this.L('Today’s actions', 'عمليات اليوم'), go: () => this.setState({ historyOpen: true, corrId: null }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' }
+        { icon: '☰', label: this.L('History · 7 days', 'السجل · ٧ أيام'), go: () => this.setState({ historyOpen: true, corrId: null, histQ: '', histDay: 'all' }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' }
       ].map((a, i) => ({ ...a, anim: AN('fadeUp', '.34s', (0.1 + 0.04 * i) + 's') })),
       // the chips are the cards this person is cleared for — not a pair of literals
       myCards: this.myCardIds().map((id, i) => {
@@ -2031,8 +2872,16 @@ class Component extends DCLogic {
       rdLockTitle: t.rdLockTitle,
       rdLockWhy: this.L('Three wrong staff codes on this redeem. Only a manager PIN clears it.', 'ثلاثة رموز موظف خاطئة على هذا الاستبدال. رمز المدير وحده يفتحه.'),
       askManagerUnlock: () => { if (rdKey) this.askPin('mgr:' + rdKey); },
-      // ── stamps ──
-      bStamps: isStampsS, stampCount: st.stamps, goal: st.goal,
+      // ── a lifted cap, standing open for exactly one redemption ──
+      capGranted,
+      capGrantTitle: t.grantedBadge,
+      capGrantLine: capGranted ? this.L('One redemption over today’s cap of ' + dayCap + ', allowed by ' + (this.ovName((st.ovGrant || {}).by) || 'the manager') + '. It is spent the moment you redeem.',
+        'استبدال واحد فوق حد اليوم البالغ ' + this.arRedeems(dayCap) + '، سمح به ' + this.ovName((st.ovGrant || {}).by) + '. ويُستهلك لحظة الاستبدال.') : '',
+      // what is left of the merchant's cap for this customer today — or that there isn't one
+      capLeftLine: capOff ? this.L('No daily redemption cap on this card', 'لا حد يومي للاستبدال على هذه البطاقة')
+        : this.L(capLeft + ' of ' + dayCap + ' redemptions left today', 'بقي ' + capLeft + ' من ' + this.arRedeems(dayCap) + ' اليوم'),
+      // ── stamps · the type panel stands down when the cap refusal has taken the screen ──
+      bStamps: isStampsS && !capTrip, stampCount: st.stamps, goal: st.goal,
       stampCells: Array.from({ length: st.goal }, (_, i) => {
         const stamped = i < st.stamps;
         const landed = i === st.stamps - 1 && st.stampSeq > 0;
@@ -2077,8 +2926,8 @@ class Component extends DCLogic {
       addStamp: () => {
         if (full) { this.setState({ mode: 'redeem' }); return; }
         const n = st.stamps + 1;
-        // the earning guard is armed by the earn itself: this customer has had today's stamp
-        this.setState(s => ({ stamps: n, sStamps: s.sStamps + 1, stampSeq: s.stampSeq + 1, guardHit: true }));
+        // the earning guard counts the earns, and the MERCHANT decides how many is too many
+        this.setState(s => ({ stamps: n, sStamps: s.sStamps + 1, stampSeq: s.stampSeq + 1, earnsToday: (s.earnsToday || 0) + 1 }));
         this.armUndo('stamp', 1, st.offline);
         this.flashNow('stamp', '#2FAE66', this.L('Stamp ' + n + ' of ' + st.goal, 'الختم ' + n + ' من ' + st.goal),
           st.offline ? this.L('Queued — it lands the second the till is back online.', 'محفوظ — يصل لحظة عودة الاتصال.')
@@ -2100,7 +2949,7 @@ class Component extends DCLogic {
           : (full ? this.L('Redeem the free drink (PIN)', 'استبدال المشروب المجاني (رمز)') : this.L('Nothing to redeem yet', 'لا شيء للاستبدال بعد')),
       redeemStamps: () => { if (!full || st.offline || rdLocked) return; this.askPin('stamps'); },
       // ── amount types ──
-      bAmount: isCash || isPts, isCashback: isCash, isPoints: isPts,
+      bAmount: (isCash || isPts) && !capTrip, isCashback: isCash, isPoints: isPts,
       amtTopLabel: isCash ? this.L('Wallet balance', 'رصيد المحفظة') : this.L('Points balance', 'رصيد النقاط'),
       amtTopValue: isCash ? jod((cbBal * rampAmt).toFixed(2)) : ptsWord(Math.round(st.pts * rampAmt)),
       amtDisplay: jod(st.amount || '0'),
@@ -2137,7 +2986,7 @@ class Component extends DCLogic {
       },
       cbRedeemHint: this.L('Balance JOD ' + cbBal.toFixed(2) + ' — spend all of it or part of it.', 'الرصيد ' + cbBal.toFixed(2) + ' ديناراً — اصرفه كاملاً أو جزءاً منه.'),
       cbQuick: [1, 2, cbBal].map((v, i) => {
-        const val = i === 2 ? cbBal : v, ok = val <= cbBal, sel = st.cbSel === val;
+        const val = i === 2 ? cbBal : v, ok = val <= cbBal && val >= cbMin, sel = st.cbSel === val;
         return {
           label: i === 2 ? this.L('All · JOD ' + cbBal.toFixed(2), 'الكل · ' + cbBal.toFixed(2) + ' ديناراً') : this.L('JOD ' + val.toFixed(2), val.toFixed(2) + ' ديناراً'),
           pick: () => ok && this.setState({ cbSel: sel ? null : val }),
@@ -2149,15 +2998,18 @@ class Component extends DCLogic {
           enter: AN('popIn', '.34s', (0.14 + 0.05 * i) + 's')
         };
       }),
-      cbMinLine: cbBal < 2 ? this.L('Below the JOD 2 minimum — kindly refused, the balance keeps growing.', 'أقل من الحد الأدنى (ديناران) — رفض بلطف، والرصيد يستمر بالنمو.') : this.L('House rule: redeem from JOD 2 up.', 'قاعدة المحل: الاستبدال من ديناريْن فما فوق.'),
-      cbRedeemBg: st.cbSel && !st.offline && !rdLocked && cbBal >= 2 ? '#E88024' : '#26262B', cbRedeemFg: st.cbSel && !st.offline && !rdLocked && cbBal >= 2 ? '#FFFFFF' : '#8E8C96',
-      cbRedeemCls: st.cbSel && !st.offline && !rdLocked && cbBal >= 2 ? 'ws-cta' : 'ws-cta ws-off',
+      // the minimum is the MERCHANT's number — the refusal sentence carries whatever they set
+      cbMinLine: cbMin <= 0 ? this.L('No minimum — any amount can come off the bill.', 'بلا حد أدنى — أي مبلغ يمكن خصمه من الفاتورة.')
+        : cbBal < cbMin ? this.L('Below the JOD ' + cbMin.toFixed(2) + ' minimum — kindly refused, the balance keeps growing.', 'أقل من الحد الأدنى (' + cbMin.toFixed(2) + ' ديناراً) — رفض بلطف، والرصيد يستمر بالنمو.')
+          : this.L('House rule: redeem from JOD ' + cbMin.toFixed(2) + ' up.', 'قاعدة المحل: الاستبدال من ' + cbMin.toFixed(2) + ' ديناراً فما فوق.'),
+      cbRedeemBg: cbCan ? '#E88024' : '#26262B', cbRedeemFg: cbCan ? '#FFFFFF' : '#8E8C96',
+      cbRedeemCls: cbCan ? 'ws-cta' : 'ws-cta ws-off',
       cbRedeemLabel: rdLocked ? lockedLabel
         : st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت')
-          : cbBal < 2 ? this.L('Below minimum — keep collecting', 'أقل من الحد الأدنى — تابعوا الجمع')
+          : cbBal < cbMin ? this.L('Below minimum — keep collecting', 'أقل من الحد الأدنى — تابعوا الجمع')
             : st.cbSel ? this.L('Take JOD ' + st.cbSel.toFixed(2) + ' off the bill (PIN)', 'اخصم ' + st.cbSel.toFixed(2) + ' ديناراً من الفاتورة (رمز)')
               : this.L('Pick an amount — nothing preselected', 'اختر المبلغ — لا شيء محدد مسبقاً'),
-      redeemCash: () => { if (!st.cbSel || st.offline || rdLocked || cbBal < 2) return; this.askPin('cash'); },
+      redeemCash: () => { if (!cbCan) return; this.askPin('cash'); },
       // ── the redeem ladder · ready-glow above, shortfall bar below ──
       ptRungs: rungs.map((r, i) => {
         const ok = r.cost <= st.pts, sel = st.selRw === i;
@@ -2185,7 +3037,7 @@ class Component extends DCLogic {
             : this.L('The customer picks first', 'الزبون يختار أولاً'),
       redeemPts: () => { if (st.selRw == null || st.offline || rdLocked) return; this.askPin('pts'); },
       // ── coupon ──
-      bCoupon: scen === 'coupon', couponFresh: !st.couponDone, couponUsed: st.couponDone,
+      bCoupon: scen === 'coupon' && !capTrip, couponFresh: !st.couponDone, couponUsed: st.couponDone,
       cpRedeemBg: !st.couponDone && !st.offline && !rdLocked ? '#E88024' : '#26262B', cpRedeemFg: !st.couponDone && !st.offline && !rdLocked ? '#FFFFFF' : '#8E8C96',
       cpRedeemCls: !st.couponDone && !st.offline && !rdLocked ? 'ws-cta' : 'ws-cta ws-off',
       cpRedeemLabel: st.couponDone ? this.L('Nothing to redeem — it’s spent', 'لا شيء للاستبدال — استُهلك')
@@ -2206,46 +3058,52 @@ class Component extends DCLogic {
           anim: AN('popIn', '.4s', (0.12 + 0.07 * i) + 's')
         };
       }),
-      vipFillColor: tierDefs[tierIdx].color,
+      vipFillColor: (tierDefs[tierIdx] || tierDefs[0]).color,
       vipFrom: st.vipClimb ? st.vipFromPct : '0%', vipTo,
       vipClimbAnim: SEED(st.vipSeq, 'climbA', 'climbB', '.9s', '.14s'),
-      vipProgressLine: tierIdx ? this.L('Gold since today · ' + st.rVisits + ' visits', 'ذهبية منذ اليوم · ' + st.rVisits + ' زيارة')
-        : this.L(st.rVisits + ' visits · ' + (GOLD_AT - st.rVisits) + ' more to GOLD', st.rVisits + ' زيارة · ' + (GOLD_AT - st.rVisits) + ' للوصول إلى الذهبية'),
-      vipPerksLabel: this.L(tierDefs[tierIdx].en + ' perks · active now', 'مزايا ' + tierDefs[tierIdx].ar + ' · فعّالة الآن'),
+      // "N visits from Gold" is generated from the resolved ladder — the name and the number both
+      vipProgressLine: TS.top
+        ? this.L(TS.cur.name + ' · ' + st.rVisits + ' visits · the top of the ladder', this.tierWord(TS.cur.name) + ' · ' + this.arVisits(st.rVisits) + ' · قمة السلّم')
+        : this.L(st.rVisits + ' visits · ' + TS.left + ' more to ' + TS.nxt.name.toUpperCase(), this.arVisits(st.rVisits) + ' · ' + TS.left + ' للوصول إلى ' + this.tierWord(TS.nxt.name)),
+      vipPerksLabel: this.L((TS.cur.name || '') + ' perks · active now', 'مزايا ' + this.tierWord(TS.cur.name) + ' · فعّالة الآن'),
       vipPerks: (tierIdx
-        ? [this.L('Skip the line, always', 'أولوية دائمة بلا انتظار'), this.L('15% off the bill', 'خصم 15% على الفاتورة'), this.L('Gold nights — rooftop Thursdays', 'ليالي الذهبية — سطح كل خميس')]
+        ? [this.L('Skip the line, always', 'أولوية دائمة بلا انتظار'), this.L('15% off the bill', 'خصم 15% على الفاتورة'), this.L('Members’ nights — rooftop Thursdays', 'ليالي الأعضاء — سطح كل خميس')]
         : [this.L('Members-only offers', 'عروض للأعضاء فقط'), this.L('Birthday dessert on the house', 'حلوى عيد الميلاد على الحساب')]
       ).map((p, i) => ({ p, anim: AN('fadeUp', '.36s', (0.2 + 0.06 * i) + 's') })),
       vipBtnLabel: st.offline ? this.L('✓ Check in (queues offline)', '✓ تسجيل زيارة (يُحفظ للمزامنة)') : this.L('✓ Check in', '✓ تسجيل زيارة'),
       // a check-in is a collection like any other: offline it QUEUES and its announcement waits
       // for the sync, and for eight seconds it can be taken back like any other collection
       vipCheckin: () => {
-        const v = st.rVisits + 1, up = !tierIdx && v >= GOLD_AT;
-        if (tierIdx) {
+        // the tier is derived, so "did she climb?" is simply: does one more visit change the rung
+        const v = st.rVisits + 1, ni = this.tierIdxFor(v, TIERS), up = ni > tierIdx;
+        const nxtName = TIERS[Math.min(ni + 1, NT - 1)] || TS.nxt;
+        const leftAfter = Math.max(0, (nxtName.at || 0) - v);
+        if (up) {
+          this.setState(s => ({ rVisits: v, vipClimb: true, vipFromPct: vipTo, vipSeq: s.vipSeq + 1 }));
+          this.flashNow('★', '#E8B824', this.L(TS.cur.name.toUpperCase() + ' → ' + TIERS[ni].name.toUpperCase(), this.tierWord(TS.cur.name) + ' ← ' + this.tierWord(TIERS[ni].name)), st.offline ? this.L('Queued — the tier-up lands with the sync.', 'محفوظة — الترقية تصل مع المزامنة.') : this.L('The tier-up lands on her pass with a little ceremony.', 'الترقية تصل إلى بطاقتها باحتفال صغير.'));
+        } else if (ni >= NT - 1) {
           this.setState(s => ({ rVisits: v, vipSeq: s.vipSeq + 1, vipClimb: true, vipFromPct: vipTo }));
-          this.flashNow('★', '#E8B824', this.L('Visit logged', 'سُجّلت الزيارة'), st.offline ? this.L('Queued — it lands the second the till is back online.', 'محفوظة — تصل لحظة عودة الاتصال.') : this.L('Rania keeps every Gold perk.', 'رانيا تحتفظ بكل مزايا الذهبية.'));
-        } else if (up) {
-          this.setState(s => ({ rVisits: v, rTier: 'Gold', vipClimb: true, vipFromPct: vipTo, vipSeq: s.vipSeq + 1 }));
-          this.flashNow('★', '#E8B824', this.L('SILVER → GOLD', 'فضية ← ذهبية'), st.offline ? this.L('Queued — the tier-up lands with the sync.', 'محفوظة — الترقية تصل مع المزامنة.') : this.L('The tier-up lands on her pass with a little ceremony.', 'الترقية تصل إلى بطاقتها باحتفال صغير.'));
+          this.flashNow('★', '#E8B824', this.L('Visit logged', 'سُجّلت الزيارة'), st.offline ? this.L('Queued — it lands the second the till is back online.', 'محفوظة — تصل لحظة عودة الاتصال.') : this.L('She keeps every ' + TIERS[ni].name + ' perk.', 'تحتفظ بكل مزايا ' + this.tierWord(TIERS[ni].name) + '.'));
         } else {
           this.setState(s => ({ rVisits: v, vipSeq: s.vipSeq + 1, vipClimb: true, vipFromPct: vipTo }));
-          this.flashNow('✓', '#2FAE66', this.L('Visit ' + v, 'الزيارة ' + v), st.offline ? this.L('Queued for sync.', 'محفوظة للمزامنة.') : this.L((GOLD_AT - v) + ' more to Gold.', 'بقي ' + (GOLD_AT - v) + ' للوصول إلى الذهبية.'));
+          this.flashNow('✓', '#2FAE66', this.L('Visit ' + v, 'الزيارة ' + v), st.offline ? this.L('Queued for sync.', 'محفوظة للمزامنة.') : this.L(leftAfter + ' more to ' + nxtName.name + '.', 'بقي ' + leftAfter + ' للوصول إلى ' + this.tierWord(nxtName.name) + '.'));
         }
-        this.armUndo('visit', 1, st.offline, { prevTier: st.rTier });
-        this.logAction(scen, up ? 'tierUp' : 'visit');
-        const ev = this.liveFor(scen, 'earn', 'checked in — ' + (up || tierIdx ? 'Gold' : 'Silver'));
+        this.armUndo('visit', 1, st.offline);
+        this.logAction(scen, up ? 'tierUp' : 'visit', up ? TIERS[ni].name : undefined);
+        const ev = this.liveFor(scen, 'earn', 'checked in — ' + (TIERS[ni] || TS.cur).name);
         if (st.offline) this.pushQueue(scen, 'visit', undefined, ev); else this.emitLive(ev);
         this.saveScan();
       },
       // the perk the customer asks for by name. Reached, it applies; not reached, it refuses — and
-      // the refusal is the tier rule said out loud, not a dead button
-      perkBtnLabel: tierIdx ? this.L('Apply 15% off · Gold perk', 'طبّق خصم 15% · ميزة ذهبية') : this.L('Apply 15% off · Gold perk', 'طبّق خصم 15% · ميزة ذهبية'),
-      perkBr: tierIdx ? 'rgba(232,184,36,.5)' : 'rgba(244,242,238,.2)',
-      perkFg: tierIdx ? '#E8B824' : '#9B99A3',
+      // the refusal is the tier rule said out loud, not a dead button. Which tier owns it comes
+      // from the resolved ladder, so renaming Gold renames this button.
+      perkBtnLabel: this.L('Apply 15% off · ' + TS.perk.name + ' perk', 'طبّق خصم 15% · ميزة ' + this.tierWord(TS.perk.name)),
+      perkBr: tierIdx >= TS.perkIdx ? 'rgba(232,184,36,.5)' : 'rgba(244,242,238,.2)',
+      perkFg: tierIdx >= TS.perkIdx ? '#E8B824' : '#9B99A3',
       applyPerk: () => {
-        if (!tierIdx) { this.scanTo('tierlock'); return; }
-        this.flashNow('★', '#E8B824', this.L('15% off — applied', 'خصم 15% — طُبّق'), this.L('Gold perk. Take it off the bill at the till.', 'ميزة ذهبية. اخصمها من الفاتورة على الصندوق.'));
-        this.logAction(scen, 'perk');
+        if (tierIdx < TS.perkIdx) { this.scanTo('tierlock'); return; }
+        this.flashNow('★', '#E8B824', this.L('15% off — applied', 'خصم 15% — طُبّق'), this.L(TS.perk.name + ' perk. Take it off the bill at the till.', 'ميزة ' + this.tierWord(TS.perk.name) + '. اخصمها من الفاتورة على الصندوق.'));
+        this.logAction(scen, 'perk', TS.perk.name);
         this.saveScan();
       },
       // ── challenge · the countdown ring ──
@@ -2289,19 +3147,51 @@ class Component extends DCLogic {
       vdSub: scen === 'discount' ? this.L('Apply it at the till. No tabs, no typing — the card is a verdict.', 'طبّق الخصم على الصندوق. لا تبويبات ولا كتابة — البطاقة حكم لا معاملة.')
         : renewedNow ? this.L('Renewed just now — same pass, active again.', 'جُدّد للتو — نفس البطاقة، فعّالة من جديد.')
           : scen === 'expiring' ? this.L('Valid until 9 Aug 2026 — honour it today. Renewing now is JOD 25 and keeps the same pass, so he never lapses at all.', 'سارٍ حتى 9 آب 2026 — اعتمده اليوم. التجديد الآن 25 ديناراً ويبقيه على نفس البطاقة، فلا ينقطع اشتراكه أصلاً.')
-            : this.L('Lapsed Jul 18. Renewal is JOD 25 at the counter — one tap re-activates the same pass.', 'انتهى في 18 تموز. التجديد 25 ديناراً على الصندوق — لمسة واحدة تعيد تفعيل نفس البطاقة.'),
+            // the grace window is the merchant's number too — inside it a renewal keeps the streak
+            : inGrace
+              ? this.L('Lapsed Jul 18 — 12 days ago, still inside the ' + graceD + '-day grace window, so renewing keeps his streak. JOD 25 at the counter.', 'انتهى في 18 تموز — قبل 12 يوماً، وما زال ضمن مهلة الـ' + graceD + ' يوماً، فالتجديد يحفظ تسلسله. التجديد 25 ديناراً على الصندوق.')
+              : this.L('Lapsed Jul 18 — 12 days ago, past the ' + graceD + '-day grace window, so this renewal starts a fresh streak. JOD 25 at the counter.', 'انتهى في 18 تموز — قبل 12 يوماً، وتجاوز مهلة الـ' + graceD + ' يوماً، فالتجديد يبدأ تسلسلاً جديداً. التجديد 25 ديناراً على الصندوق.'),
       // ── refusals · six of them now, and every one carries the rule it comes from ──
-      bRefusal: !!RF && !pausedRedeem,
+      //    Three of them can be lifted, so three of them can ASK — and while the ask is out, the
+      //    refusal body is replaced by an honest waiting state with a way back out of it.
+      bRefusal: !!RF && (capTrip || !pausedRedeem),
       refusalShake: AN('nudge', '.5s', '.18s'),
       rfDoAnim: AN(EN ? 'typeInLtr' : 'typeInRtl', '.55s', '.42s'),
       rfMark: RF ? RF.mark : '✕', rfTone: RF ? RF.tone : '#E2563A', rfTint: tint(RF ? RF.tone : '#E2563A', .12),
       rfTitle: RF ? RF.title : '', rfWhy: RF ? RF.why : '',
       rfHasRule: !!(RF && RF.rule), rfRule: RF ? (RF.rule || '') : '',
       rfDo: RF ? RF.doLine : '',
-      rfHasAlt: !!(RF && RF.altLabel), rfAltLabel: RF ? (RF.altLabel || '') : '',
+      // the refusal itself hides while we wait — a customer cannot be told "no" and "hold on" at once
+      rfBody: !ovWaiting,
+      rfHasAlt: !!(RF && RF.altLabel) && !ovWaiting, rfAltLabel: RF ? (RF.altLabel || '') : '',
       rfAltBr: RF ? (RF.altBr || 'rgba(244,242,238,.24)') : 'rgba(244,242,238,.24)',
       rfAltFg: RF ? (RF.altFg || '#F4F2EE') : '#F4F2EE',
       rfAltGo: () => { if (RF && RF.altGo) RF.altGo(); },
+      // ── ask the manager ──
+      rfHasAsk: !!askKind && !ovWaiting,
+      rfAskLabel: st.offline && askKind !== 'overcap' ? t.mgrHereBtn : t.askMgrBtn,
+      rfAskDetail: RF ? (RF.askDetail || '') : '',
+      rfAsk: () => {
+        if (!askKind) return;
+        // offline the dashboard is unreachable; where a local authority genuinely exists we offer it
+        if (st.offline) { if (askKind === 'overcap') { this.askOffline(askKind); return; } this.askManagerHere(askKind); return; }
+        this.askManager(askKind, scen);
+      },
+      rfWaiting: ovWaiting,
+      rfWaitTitle: t.askMgrWaitTitle, rfWaitSub: t.askMgrWaitSub,
+      // the clock time it was asked at, not "N seconds ago" — nothing re-renders this line on a
+      // tick, so a counter here would freeze at whatever second it was born on and quietly lie
+      rfWaitLine: ovWaiting ? this.L('Asked at ' + askedAt + ' · ' + this.ovNoun(ovReq.kind),
+        'أُرسل الساعة ' + askedAt + ' · ' + this.ovNoun(ovReq.kind)) : '',
+      rfWaitCancel: t.askMgrCancel,
+      cancelAsk: () => this.cancelOverrideReq(),
+      // ── declined · the manager's reason, word for word, because that is the sentence to say ──
+      rfDeclined: !!ovDec,
+      rfDecTitle: t.declinedTitle,
+      rfDecBy: ovDec ? this.L('Decided by ' + (ovDec.by || 'the manager'), 'قرار ' + this.ovName(ovDec.by)) : '',
+      rfDecLabel: t.declinedReason,
+      rfDecNote: ovDec ? (ovDec.note || this.L('No reason given.', 'بلا سبب مذكور.')) : '',
+      dismissDecline: () => this.setState({ ovDecline: null }),
       // ── flash ──
       // 'stamp' is a token, not a character — the flash draws the real cup at flash size
       hasFlash: !!st.flash,
@@ -2319,9 +3209,10 @@ class Component extends DCLogic {
       // ── PIN · the staff code for a redeem, a different manager code for an unlock ──
       pinOpen: !!st.pin,
       pinTitleLine: this.isMgrTag(st.pin) ? t.mgrPinTitle : (st.pin === 'correct' ? t.corrTitle : t.pinTitle),
-      pinSubLine: this.isMgrTag(st.pin) ? t.mgrPinSub
-        : st.pin === 'correct' ? this.L('A correction moves real value — it needs a code and it signs itself.', 'التصحيح يحرّك قيمة حقيقية — يطلب رمزاً ويوقّع باسم صاحبه.')
-          : t.pinSub,
+      pinSubLine: this.isOvrTag(st.pin) ? t.mgrOvrPinSub
+        : this.isMgrTag(st.pin) ? t.mgrPinSub
+          : st.pin === 'correct' ? this.L('A correction moves real value — it needs a code and it signs itself.', 'التصحيح يحرّك قيمة حقيقية — يطلب رمزاً ويوقّع باسم صاحبه.')
+            : t.pinSub,
       pinHintLine: this.isMgrTag(st.pin) ? t.mgrPinHint : t.pinHint,
       pinDots: [0, 1, 2, 3].map(i => ({
         bg: st.pinErr ? '#E2563A' : (i < st.pinDigits.length ? '#E88024' : 'transparent'),
@@ -2418,23 +3309,38 @@ class Component extends DCLogic {
       lockWarnBar: 'drainW 12s linear both',
       stayUnlocked: () => this.stayUnlocked(),
 
-      // ── history · the shift's own memory, and the only way to walk an action back ──
+      // ── history · seven days of it, because a dispute arrives the morning after ──
       historyOpen: st.historyOpen,
       closeHistory: () => this.setState({ historyOpen: false, corrId: null }),
-      histSubLine: this.L(st.sessionLog.length + (st.sessionLog.length === 1 ? ' action this shift · ' : ' actions this shift · ') + String(st.staffName).split(' ')[0] + ' · Rainbow St',
-        st.sessionLog.length + ' عملية في هذه المناوبة · ' + String(st.staffAr).split(' ')[0] + ' · شارع الرينبو'),
-      histEmpty: st.sessionLog.length === 0,
-      histRows: st.sessionLog.map((l, i) => {
-        const c = this.correctionFor(l), canFix = !!c && !l.corrected;
+      // the window is said in words, generated from corrWindowDays() — one number, one sentence
+      histSubLine: this.L(histHits.length + (histHits.length === 1 ? ' action · ' : ' actions · ') + 'Rainbow St · correctable ' + corrWindowWord,
+        histHits.length + ' عملية · شارع الرينبو · قابلة للتصحيح ' + corrWindowWordAr),
+      histQ: st.histQ,
+      histPh: t.histPh,
+      onHistInput: (e) => this.setState({ histQ: String((e && e.target && e.target.value) || '').slice(0, 28) }),
+      histDays: [{ d: 'all', label: t.histAllDays }].concat(this.dayDefs()).map(x => {
+        const on = st.histDay === x.d;
+        return { label: x.label, on,
+          br: on ? '#E88024' : 'rgba(244,242,238,.14)', bg: on ? 'rgba(232,128,36,.16)' : 'transparent', fg: on ? '#F09A4D' : '#9B99A3',
+          pick: () => this.setState({ histDay: x.d, corrId: null }) };
+      }),
+      histEmpty: histHits.length === 0,
+      histEmptyLine: (st.histQ || st.histDay !== 'all') ? t.histNoMatch : t.noActionsYet,
+      histRows: histHits.map((l, i) => {
+        const c = this.correctionFor(l), fixed = this.isFixed(l);
+        const tooOld = !!c && !fixed && this.rowAgeDays(l) >= this.corrWindowDays();
+        const canFix = this.canCorrect(l);
+        const S = this.scenInfo(l.scen);
+        const staffFirst = l.prior ? this.L(String(l.staff || '').split(' ')[0], String(l.staffAr || l.staff || '').split(' ')[0]) : this.L(String(st.staffName).split(' ')[0], String(st.staffAr).split(' ')[0]);
         return {
           member: this.rowWho(l), action: this.actionText(l.k, l.v),
-          actionFg: l.corrected ? '#6E6C77' : '#9B99A3',
-          initials: (this.scenInfo(l.scen).m[2] || '·'), color: this.scenInfo(l.scen).color,
-          meta: this.timeAgo(l) + ' · ' + this.L('Rainbow St', 'شارع الرينبو') + (l.by ? (' · ' + this.L('by ' + String(l.by).split(' ')[0], 'بموافقة ' + String(this.state.staffAr).split(' ')[0])) : ''),
-          corrected: !!l.corrected, canFix,
+          actionFg: fixed ? '#6E6C77' : '#9B99A3',
+          initials: (S.m[2] || '·'), color: S.color,
+          meta: this.rowWhen(l) + ' · ' + staffFirst + (l.ovr ? (' · ' + t.grantedBadge + ' ' + this.ovName(l.ovr)) : ''),
+          corrected: fixed, canFix, tooOld,
           cls: canFix ? 'ws-row' : '', cur: canFix ? 'pointer' : 'default',
           br: canFix ? 'rgba(244,242,238,.11)' : 'rgba(244,242,238,.06)',
-          op: l.corrected ? '.6' : '1',
+          op: fixed ? '.6' : '1',
           anim: AN('fadeUp', '.32s', (0.05 + 0.035 * Math.min(i, 9)) + 's'),
           go: () => { if (canFix) this.setState({ corrId: l.id }); }
         };
@@ -2443,10 +3349,14 @@ class Component extends DCLogic {
       corrOpen: !!st.corrId,
       corrMember: corrL ? this.rowWho(corrL) : '',
       corrAction: corrL ? this.actionText(corrL.k, corrL.v) : '',
-      corrMeta: corrL ? (this.timeAgo(corrL) + ' · ' + this.L('Rainbow St', 'شارع الرينبو')) : '',
+      corrMeta: corrL ? (this.rowWhen(corrL) + ' · ' + this.L('Rainbow St', 'شارع الرينبو')) : '',
       corrEffect: corrC ? corrC.effect : '',
+      // a prior-day correction is the same discipline said out loud: same PIN, same exact reversal
+      corrPrior: !!(corrL && corrL.prior),
+      corrPriorLine: (corrL && corrL.prior) ? this.L('From ' + this.dayWord(this.rowAgeDays(corrL)).toLowerCase() + ' — the reversal lands on her card today, and today’s log carries your name.',
+        'من ' + this.dayWord(this.rowAgeDays(corrL)) + ' — الإلغاء يصل بطاقتها اليوم، وسجل اليوم يحمل اسمك.') : '',
       corrBtnLabel: t.corrBtn,
-      confirmCorrection: () => { if (this.corrRow() && this.correctionFor(this.corrRow())) this.askPin('correct'); },
+      confirmCorrection: () => { if (this.canCorrect(this.corrRow())) this.askPin('correct'); },
       cancelCorrection: () => this.setState({ corrId: null }),
 
       // ── lookup · "I forgot my phone" ──

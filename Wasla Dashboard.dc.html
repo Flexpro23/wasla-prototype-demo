@@ -156,9 +156,12 @@
         </div>
       </div>
       <nav style="display:flex;flex-direction:column;gap:4px;">
-        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="7">
           <div onClick="{{ n.go }}" style="cursor:pointer;padding:11px 14px;border-radius:12px;font-size:13.5px;font-weight:{{ n.fw }};color:{{ n.fg }};background:{{ n.bg }};display:flex;align-items:center;gap:10px;transition:background .2s,color .2s;" style-hover="background:rgba(232,128,36,.10);color:#C96A14">
             <span style="width:7px;height:7px;border-radius:50%;background:{{ n.dot }};flex-shrink:0;"></span>{{ n.label }}
+            <sc-if value="{{ n.hasBadge }}" hint-placeholder-val="{{ false }}">
+              <span style="margin-inline-start:auto;background:#E2563A;color:#FFFFFF;font-size:10.5px;font-weight:900;border-radius:999px;min-width:19px;height:19px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-variant-numeric:tabular-nums;animation:{{ n.badgeAnim }};">{{ n.badge }}</span>
+            </sc-if>
           </div>
         </sc-for>
       </nav>
@@ -278,6 +281,13 @@
               <span style="font-size:18px;line-height:1;">+</span>{{ t.addCard }}
             </div>
           </div>
+          <sc-if value="{{ ovHomeAlert }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ goOverrides }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#FBE9E5;border:1.5px solid #F0C4B8;border-radius:16px;padding:13px 17px;margin-bottom:16px;animation:{{ ovBannerAnim }};transition:border-color .2s,transform .2s;" style-hover="border-color:#E2563A;transform:translateY(-1px)">
+              <span style="width:26px;height:26px;border-radius:50%;background:#E2563A;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;animation:recPulse 2.2s ease-in-out infinite;">⚖</span>
+              <span style="font-size:13px;font-weight:800;color:#B23420;min-width:0;line-height:1.5;">{{ ovHomeLine }}</span>
+              <span style="margin-inline-start:auto;font-size:11.5px;font-weight:800;color:#B23420;white-space:nowrap;">{{ t.ovOpenQueue }} →</span>
+            </div>
+          </sc-if>
           <sc-if value="{{ hasPending }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#FAF6EF;border:1px solid #EDE6DA;border-radius:16px;padding:12px 16px;margin-bottom:20px;">
               <span style="font-size:10px;font-weight:800;letter-spacing:.1em;color:#93887A;text-transform:uppercase;white-space:nowrap;">{{ t.pendingTitle }}</span>
@@ -1861,7 +1871,14 @@
                         <div style="display:flex;gap:8px;flex-wrap:wrap;">
                           <sc-for list="{{ edCapChips }}" as="ec1" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ec1.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ec1.br }};background:{{ ec1.bg }};color:{{ ec1.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ec1.label }}</div></sc-for>
                         </div>
-                        <div style="font-size:11px;color:#93887A;margin-top:8px;">{{ t.rlEarnGuardNote }}</div></div>
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.55;">{{ t.rlEarnGuardNote }} {{ t.tillEnforces }}</div>
+                        <div style="font-size:11.5px;font-weight:700;color:#5D5348;margin:13px 0 6px;">{{ t.rlGuardNote }}</div>
+                        <input class="wl-in" value="{{ edGuardNote }}" onChange="{{ setEdGuardNote }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13px;background:#FFFFFF;">
+                        <div style="display:flex;gap:9px;align-items:flex-start;background:#26262B;border-radius:12px;padding:10px 13px;margin-top:9px;">
+                          <span style="font-size:9px;font-weight:900;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-top:2px;">{{ t.tillStaffSee }}</span>
+                          <span style="font-size:12px;color:#F4F2EE;line-height:1.5;min-width:0;">{{ edGuardStaffLine }}</span>
+                        </div>
+                        <div style="font-size:10.5px;color:#93887A;margin-top:7px;line-height:1.55;">{{ t.tillGuardFoot }}</div></div>
                     </sc-if>
 
                     <sc-if value="{{ edIsCashback }}" hint-placeholder-val="{{ false }}">
@@ -1883,7 +1900,12 @@
                         <div style="display:flex;gap:8px;flex-wrap:wrap;">
                           <sc-for list="{{ edBexpChips }}" as="ec2" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ec2.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ec2.br }};background:{{ ec2.bg }};color:{{ ec2.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ec2.label }}</div></sc-for>
                         </div>
-                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlCbNote }}</div></div>
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlCbNote }}</div>
+                        <div style="display:flex;gap:9px;align-items:flex-start;background:#26262B;border-radius:12px;padding:10px 13px;margin-top:11px;">
+                          <span style="font-size:9px;font-weight:900;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-top:2px;">{{ t.tillStaffSee }}</span>
+                          <span style="font-size:12px;color:#F4F2EE;line-height:1.5;min-width:0;">{{ edMinStaffLine }}</span>
+                        </div>
+                        <div style="font-size:10.5px;color:#93887A;margin-top:7px;line-height:1.55;">{{ t.tillMinFoot }}</div></div>
                     </sc-if>
 
                     <sc-if value="{{ edIsPoints }}" hint-placeholder-val="{{ false }}">
@@ -1952,7 +1974,12 @@
                             </div>
                           </sc-for>
                         </div>
-                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlVipNote }}</div></div>
+                        <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlVipNote }}</div>
+                        <div style="display:flex;gap:9px;align-items:flex-start;background:#26262B;border-radius:12px;padding:10px 13px;margin-top:11px;">
+                          <span style="font-size:9px;font-weight:900;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-top:2px;">{{ t.tillStaffSee }}</span>
+                          <span style="font-size:12px;color:#F4F2EE;line-height:1.5;min-width:0;">{{ edTierStaffLine }}</span>
+                        </div>
+                        <div style="font-size:10.5px;color:#93887A;margin-top:7px;line-height:1.55;">{{ t.tillTierFoot }}</div></div>
                     </sc-if>
 
                     <sc-if value="{{ edIsChallenge }}" hint-placeholder-val="{{ false }}">
@@ -1994,6 +2021,19 @@
                       <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ t.rlMbBenefit }}</div>
                         <input class="wl-in" value="{{ edBenefit }}" onChange="{{ setEdBenefit }}" style="width:100%;opacity:{{ roDim }};border:1px solid #D8D0C2;border-radius:10px;padding:11px 13px;font-size:13.5px;background:#FFFFFF;">
                         <div style="font-size:11px;color:#93887A;margin-top:8px;line-height:1.5;">{{ t.rlMbNote }}</div></div>
+                      <sc-if value="{{ edShowGrace }}" hint-placeholder-val="{{ true }}">
+                        <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlGrace }}</div>
+                          <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="wl-press" onClick="{{ edGraceDown }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">−</div>
+                            <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;min-width:120px;text-align:center;">{{ edGraceLabel }}</div>
+                            <div class="wl-press" onClick="{{ edGraceUp }}" style="cursor:pointer;opacity:{{ roDim }};width:32px;height:32px;border-radius:50%;border:1px solid #D8D0C2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" style-hover="border-color:#E88024;color:#C96A14">+</div>
+                          </div>
+                          <div style="display:flex;gap:9px;align-items:flex-start;background:#26262B;border-radius:12px;padding:10px 13px;margin-top:11px;">
+                            <span style="font-size:9px;font-weight:900;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-top:2px;">{{ t.tillStaffSee }}</span>
+                            <span style="font-size:12px;color:#F4F2EE;line-height:1.5;min-width:0;">{{ edGraceStaffLine }}</span>
+                          </div>
+                          <div style="font-size:10.5px;color:#93887A;margin-top:7px;line-height:1.55;">{{ t.tillGraceFoot }}</div></div>
+                      </sc-if>
                     </sc-if>
 
                     <div style="height:1px;background:#F5F0E8;margin:3px 0 1px;"></div>
@@ -2011,14 +2051,21 @@
                         </div>
                         <div style="font-size:10.5px;color:#93887A;margin-top:7px;">{{ t.wExpiryNote }}</div></div>
                     </sc-if>
-                    <div><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px;">
-                        <span style="font-size:11.5px;font-weight:700;color:#5D5348;">{{ t.rlCap }}</span>
-                        <span style="background:#CDEBDA;color:#1E7D47;font-size:9.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ edTierInstant }}</span>
-                      </div>
-                      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                        <sc-for list="{{ edXCapChips }}" as="ex2" hint-placeholder-count="3"><div class="wl-press" onClick="{{ ex2.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ex2.br }};background:{{ ex2.bg }};color:{{ ex2.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ex2.label }}</div></sc-for>
-                      </div>
-                      <div style="font-size:10.5px;color:#93887A;margin-top:7px;">{{ t.wRedeemCapNote }}</div></div>
+                    <sc-if value="{{ edShowRedeemCap }}" hint-placeholder-val="{{ true }}">
+                      <div><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px;">
+                          <span style="font-size:11.5px;font-weight:700;color:#5D5348;">{{ t.rlRedeemCap }}</span>
+                          <span style="background:#CDEBDA;color:#1E7D47;font-size:9.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ edTierInstant }}</span>
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <sc-for list="{{ edRedeemCapChips }}" as="ex2" hint-placeholder-count="4"><div class="wl-press" onClick="{{ ex2.pick }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid {{ ex2.br }};background:{{ ex2.bg }};color:{{ ex2.fg }};font-size:12px;font-weight:700;border-radius:999px;padding:7px 15px;transition:all .2s;">{{ ex2.label }}</div></sc-for>
+                        </div>
+                        <div style="font-size:10.5px;color:#93887A;margin-top:7px;line-height:1.55;">{{ t.wRedeemCapNote }} {{ t.tillEnforces }}</div>
+                        <div style="display:flex;gap:9px;align-items:flex-start;background:#26262B;border-radius:12px;padding:10px 13px;margin-top:9px;">
+                          <span style="font-size:9px;font-weight:900;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-top:2px;">{{ t.tillStaffSee }}</span>
+                          <span style="font-size:12px;color:#F4F2EE;line-height:1.5;min-width:0;">{{ edCapStaffLine }}</span>
+                        </div>
+                        <div style="font-size:10.5px;color:#93887A;margin-top:7px;line-height:1.55;">{{ t.tillCapFoot }}</div></div>
+                    </sc-if>
 
                     <sc-if value="{{ edNoteRules }}" hint-placeholder-val="{{ false }}">
                       <div style="display:flex;align-items:flex-start;gap:8px;background:#FDF7F0;border-radius:10px;padding:9px 12px;animation:{{ edNoteAnim }};">
@@ -2200,6 +2247,99 @@
               </div>
             </sc-for>
           </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOverrides }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:{{ padScreen }};max-width:{{ readMax }};width:100%;margin:0 auto;animation:{{ enterAnim }};">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ h1Size }};">{{ t.ovTitle }}</div>
+          <div style="font-size:13.5px;color:#93887A;margin-top:6px;line-height:1.6;max-width:760px;">{{ t.ovSub }}</div>
+
+          <sc-if value="{{ ovHasPending }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;background:#FBE9E5;border:1.5px solid #F0C4B8;border-radius:14px;padding:11px 16px;margin-top:18px;animation:{{ ovBannerAnim }};">
+              <span style="width:9px;height:9px;border-radius:50%;background:#E2563A;flex-shrink:0;animation:pulse 1.5s infinite;"></span>
+              <span style="font-size:12.5px;font-weight:800;color:#B23420;min-width:0;line-height:1.5;">{{ ovCountLine }}</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ ovEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:18px;padding:46px 26px;text-align:center;margin-top:20px;">
+              <div style="width:44px;height:44px;border-radius:50%;background:#F0EAF7;color:#6E37A0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;margin:0 auto 14px;">⚖</div>
+              <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;">{{ t.ovNone }}</div>
+              <div style="font-size:12.5px;color:#93887A;margin-top:6px;line-height:1.6;max-width:460px;margin-inline-start:auto;margin-inline-end:auto;">{{ t.ovNoneSub }}</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ ovHasPending }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin:24px 0 10px;">{{ t.ovPendingTitle }}</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <sc-for list="{{ ovPendingRows }}" as="op" hint-placeholder-count="2">
+                <div style="background:#FFFFFF;border:1.5px solid #F0C4B8;border-radius:18px;padding:17px 20px 18px;animation:{{ op.anim }};">
+                  <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;">
+                    <span style="width:28px;height:28px;border-radius:50%;background:{{ op.kindSoft }};color:{{ op.kindFg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;">{{ op.mark }}</span>
+                    <div style="min-width:0;">
+                      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15.5px;line-height:1.25;">{{ op.member }}</div>
+                      <div onClick="{{ op.openCard }}" style="cursor:pointer;font-size:11.5px;color:#93887A;margin-top:2px;transition:color .2s;" style-hover="color:#C96A14">{{ op.card }} →</div>
+                    </div>
+                    <span style="background:{{ op.kindSoft }};color:{{ op.kindFg }};font-size:10px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;border-radius:999px;padding:4px 11px;white-space:nowrap;flex-shrink:0;">{{ op.kindLabel }}</span>
+                    <span style="margin-inline-start:auto;font-size:11px;color:#93887A;white-space:nowrap;flex-shrink:0;">{{ op.when }}</span>
+                  </div>
+                  <div style="font-size:13px;color:#241C16;line-height:1.6;margin-top:12px;">{{ op.detail }}</div>
+                  <div style="font-size:11.5px;color:#93887A;margin-top:6px;">{{ op.askedLine }}</div>
+                  <div style="display:flex;gap:9px;align-items:flex-start;background:#26262B;border-radius:12px;padding:10px 13px;margin-top:12px;">
+                    <span style="font-size:9px;font-weight:900;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-top:2px;">{{ t.ovAtTheTill }}</span>
+                    <span style="font-size:12px;color:#F4F2EE;line-height:1.5;min-width:0;">{{ op.ruleLine }}</span>
+                  </div>
+                  <sc-if value="{{ op.notDeclining }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+                      <span class="wl-cta" onClick="{{ op.grant }}" style="cursor:pointer;opacity:{{ roDim }};background:#2FAE66;color:#FFFFFF;font-size:12.5px;font-weight:800;border-radius:999px;padding:10px 20px;white-space:nowrap;">{{ t.ovGrant }}</span>
+                      <span class="wl-press wl-danger" onClick="{{ op.startDecline }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid #E2563A;color:#B23420;font-size:12.5px;font-weight:800;border-radius:999px;padding:10px 20px;white-space:nowrap;">{{ t.ovDecline }}</span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ op.declining }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:#FBF3F1;border:1px solid #EFD4CC;border-radius:14px;padding:13px 15px;margin-top:14px;animation:{{ popAnimFast }};">
+                      <div style="font-size:11.5px;font-weight:800;color:#8A5346;margin-bottom:7px;">{{ t.ovDeclineWhy }}</div>
+                      <input class="wl-in" value="{{ ovNoteText }}" onChange="{{ setOvNote }}" placeholder="{{ t.ovDeclinePh }}" style="width:100%;opacity:{{ roDim }};border:1px solid #E0C7BF;border-radius:10px;padding:11px 13px;font-size:13px;background:#FFFFFF;">
+                      <div style="font-size:10.5px;color:#93887A;margin-top:7px;line-height:1.5;">{{ t.ovDeclineFoot }}</div>
+                      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:11px;">
+                        <span class="wl-press" onClick="{{ op.sendDecline }}" style="cursor:pointer;opacity:{{ roDim }};background:#E2563A;color:#FFFFFF;font-size:12px;font-weight:800;border-radius:999px;padding:9px 18px;white-space:nowrap;">{{ t.ovDeclineSend }}</span>
+                        <span class="wl-press" onClick="{{ op.cancelDecline }}" style="cursor:pointer;opacity:{{ roDim }};border:1.5px solid #D8D0C2;color:#5D5348;font-size:12px;font-weight:800;border-radius:999px;padding:9px 18px;white-space:nowrap;">{{ t.ovCancel }}</span>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ ovHasDecided }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin:26px 0 10px;">{{ t.ovDecidedTitle }}</div>
+            <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;overflow:hidden;">
+              <sc-for list="{{ ovDecidedRows }}" as="od" hint-placeholder-count="2">
+                <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 18px;border-bottom:1px solid #F5F0E8;animation:{{ od.anim }};">
+                  <span style="width:24px;height:24px;border-radius:50%;background:{{ od.kindSoft }};color:{{ od.kindFg }};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0;margin-top:1px;">{{ od.mark }}</span>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:13px;line-height:1.5;"><strong>{{ od.member }}</strong> · {{ od.detail }}</div>
+                    <div style="font-size:11px;color:#93887A;margin-top:3px;">{{ od.askedLine }}</div>
+                    <sc-if value="{{ od.hasNote }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;gap:8px;align-items:flex-start;margin-top:7px;">
+                        <span style="width:6px;height:6px;border-radius:50%;background:#E2563A;margin-top:5px;flex-shrink:0;"></span>
+                        <span style="font-size:11.5px;color:#8A5346;line-height:1.5;min-width:0;">{{ od.note }}</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+                    <span style="background:{{ od.stateBg }};color:{{ od.stateFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:4px 11px;white-space:nowrap;">{{ od.stateLabel }}</span>
+                    <sc-if value="{{ od.hasBy }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-size:10.5px;color:#93887A;white-space:nowrap;">{{ od.byLine }} · {{ od.when }}</span>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="font-size:11.5px;color:#93887A;line-height:1.65;margin-top:18px;max-width:760px;">{{ t.ovFoot }}</div>
         </div>
       </sc-if>
 
@@ -3029,6 +3169,11 @@ class Component extends DCLogic {
     avatarOpen: false, bcDetail: null, posterOpen: false,
     fieldOpen: false, fldEn: '', fldAr: '', fldType: 'Text', fldReq: false, addedFields: {},
     crOpen: false, crField: 'company', crVal: '',
+    /* the Overrides screen's two scratch keys — which request has its
+       decline box open, and what is typed in it. Deliberately absent from
+       saveDemo(): the shared key IS the store for overrides, and a half-
+       typed reason is not a decision worth surviving a reload. */
+    ovDeclining: null, ovNote: '',
     anHour: null, edNote: '', edNoteKind: ''
   };
   /* Restored at CONSTRUCTION, not in componentDidMount: the host installs
@@ -3090,7 +3235,7 @@ class Component extends DCLogic {
     window.addEventListener('keydown', this._skey);
     this.poke();
   }
-  componentWillUnmount() { try { clearInterval(this._demo); } catch (e) {} try { clearTimeout(this._sv); } catch (e) {} this.dropConsoleSync(); }
+  componentWillUnmount() { try { clearInterval(this._demo); } catch (e) {} try { clearTimeout(this._sv); } catch (e) {} this.dropConsoleSync(); this.dropOverrideSync(); }
   focusSearch() { setTimeout(() => { try { const el = document.querySelector('[data-wsearch]'); if (el) el.focus(); } catch (e) {} }, 60); }
   scrollSearchRow(i) { setTimeout(() => { try { const el = document.querySelector('[data-srow="' + i + '"]'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 20); }
   // ── view-as: one guard, one dim flag ──────────────────────────────────
@@ -3164,7 +3309,11 @@ class Component extends DCLogic {
        a hostile blob gets flattened to {} rather than trusted, and cardLinks
        values are narrowed to string | null so the three-state read below can
        never meet a number or an array. */
-    if (obj(b.edits)) { const e = {}; Object.keys(b.edits).forEach(k => { const v = obj(b.edits[k]); if (v) e[k] = { ...v, pending: !!v.pending, cfg: obj(v.cfg) || {} }; }); p.edits = e; }
+    /* `rules` rides beside `cfg` for the same reason and with the same
+       narrowing: a staged rule change is a proposal about what the till
+       does to real customers, so a hostile blob gets an empty object rather
+       than the benefit of the doubt. */
+    if (obj(b.edits)) { const e = {}; Object.keys(b.edits).forEach(k => { const v = obj(b.edits[k]); if (v) e[k] = { ...v, pending: !!v.pending, cfg: obj(v.cfg) || {}, rules: obj(v.rules) || {} }; }); p.edits = e; }
     if (obj(b.bday)) { const d = {}; Object.keys(b.bday).forEach(k => { const v = obj(b.bday[k]); if (v) d[k] = { msg: str(v.msg), gift: str(v.gift) }; }); p.bday = d; }
     if (obj(b.links)) { const l = { ...(base.links || {}) }; Object.keys(l).forEach(k => { if (typeof b.links[k] === 'boolean') l[k] = b.links[k]; }); p.links = l; }
     if (obj(b.accLinks)) { const a2 = {}; Object.keys(b.accLinks).forEach(k => { if (typeof b.accLinks[k] === 'string') a2[k] = b.accLinks[k]; }); p.accLinks = a2; }
@@ -3196,6 +3345,10 @@ class Component extends DCLogic {
     /* the till's bus is demo data too — a reset that left it behind would
        replay yesterday's stamps into a "fresh start" */
     try { localStorage.removeItem(this.liveKey()); } catch (e) {}
+    /* same for the override queue: a fresh start with three customers still
+       standing at a till is not a fresh start */
+    try { localStorage.removeItem(this.ovKey()); } catch (e) {}
+    this._ovRaw = null; this._ovList = null;
     /* the per-card art lives outside the blob, so a reset has to sweep it too */
     try { Object.keys(localStorage).forEach(k => { if (k.indexOf('wasla_card_logo_') === 0 || k.indexOf('wasla_card_banner_') === 0) localStorage.removeItem(k); }); } catch (e) {}
     clearTimeout(this._sv);
@@ -3205,6 +3358,7 @@ class Component extends DCLogic {
       staffMods: {}, staffRemoved: [], addedStaff: [], addedFields: {},
       sentExtra: [], cancelled: [], changeReqs: [], memSel: [], msgOpen: false, msgText: '',
       bcWhen: 'now', bcLogCard: 'all', staffView: 'staff', staffBranch: '', secRevoked: [],
+      ovDeclining: null, ovNote: '',
       activeCardId: null, memberIdx: null, staffSel: null, inviteOpen: false });
   }
   wnote(msg, kind) { this.setState({ wizNote: msg || '', wizNoteKind: kind || 'edit' }); }
@@ -3247,7 +3401,14 @@ class Component extends DCLogic {
        key    'wasla_demo_live_events'
        value  JSON array, NEWEST FIRST, capped 20
        entry  { at: Date.now(), kind, who, what, card }
-       kind   earn | reward | join | redeem | renew | referral
+       kind   earn | reward | join | redeem | renew | referral | leave
+
+     `leave` is the one kind that is BAD NEWS — a member walked away from a
+     programme on the customer surface. It is listed here explicitly, and it
+     has its own dot, glyph and toast below, because the unknown-kind
+     fallback maps anything it does not recognise to `earn`: a departure
+     silently rendering as a green tick would be the single most misleading
+     row this feed could draw.
 
      Every line below treats that value as hostile: a missing key, a half-
      written string, a non-array, entries that are numbers, entries with no
@@ -3255,7 +3416,7 @@ class Component extends DCLogic {
      that white-screens because another tab wrote junk is worse than a demo
      that shows nothing. ═══════════════════════════════════════════════ */
   liveKey() { const D = window.WASLA_DB; return (D && D.demoFlags && D.demoFlags.liveKey) || 'wasla_demo_live_events'; }
-  liveKinds() { return { earn: 1, reward: 1, join: 1, redeem: 1, renew: 1, referral: 1 }; }
+  liveKinds() { return { earn: 1, reward: 1, join: 1, redeem: 1, renew: 1, referral: 1, leave: 1 }; }
   /** Pure: the bus as a clean, de-duped, capped, newest-first array. */
   readLive() {
     let raw = null;
@@ -3398,6 +3559,231 @@ class Component extends DCLogic {
     try { if (typeof window !== 'undefined' && window.removeEventListener) window.removeEventListener('storage', h.__wcConsoleSync); } catch (e) {}
     h.__wcConsoleSync = null;
   }
+  /* ══ THE MANAGER OVERRIDE ═══════════════════════════════════════════════
+     Three times a shift the till refuses a customer and tells the staff, in
+     so many words, that the manager can lift it from the dashboard: the
+     earning guard, the daily redemption cap, and a VIP perk attempted below
+     the member's tier. This is that dashboard.
+
+       key    'wasla_demo_overrides'
+       value  JSON ARRAY, NEWEST FIRST, capped 20
+       entry  { id, at, kind: 'guard'|'overcap'|'tierlock',
+                card, cardId, member, staff, branch, detail,
+                state: 'pending'|'granted'|'declined', by?, note? }
+
+     The SCANNER writes the request; this dashboard writes the verdict. Both
+     sides read-modify-write the same array, which forces two disciplines:
+
+       READ    never throws. A missing key, a truncated string, a non-array,
+               a number where an object should be — all of it degrades to
+               "no requests". A till waiting on a white screen is worse than
+               a till waiting on an empty list.
+       WRITE   never destroys. decideOverride() maps over the RAW array and
+               touches exactly one entry, so a request this build has never
+               heard of — a fourth kind, a key added by the scanner
+               tomorrow, an entry for another account — survives the round
+               trip byte-for-byte. It also never re-decides an entry that is
+               already granted or declined: two managers on two tabs cannot
+               overwrite each other's verdict.
+
+     The cap belongs to the WRITER of new requests (the scanner). Nothing
+     here ever appends, so nothing here can push the array past 20 — and
+     truncating on our side would silently delete somebody else's request,
+     which is exactly the failure this contract exists to prevent. The
+     reader renders at most 20, newest first. ══════════════════════════ */
+  ovKey() { const D = window.WASLA_DB; return (D && D.demoFlags && D.demoFlags.overridesKey) || 'wasla_demo_overrides'; }
+  ovKinds() { return { guard: 1, overcap: 1, tierlock: 1 }; }
+  /** Pure: the stored array EXACTLY as written — nothing dropped, nothing
+      coerced. Only the writer uses this; the UI reads the narrowed list. */
+  ovRaw() {
+    let raw = null;
+    try { raw = this._lsGet(this.ovKey()); } catch (e) { return []; }
+    if (!raw || typeof raw !== 'string') return [];
+    let a = null;
+    try { a = JSON.parse(raw); } catch (e) { return []; }
+    return Array.isArray(a) ? a : [];
+  }
+  /** Pure: the array narrowed to what this screen can render. Newest first,
+      de-duped by id, capped 20. */
+  readOverrides() {
+    const OK = this.ovKinds(), seen = {}, out = [];
+    const str = (v, n) => (typeof v === 'string' ? v : '').slice(0, n || 90);
+    let arr = [];
+    try { arr = this.ovRaw(); } catch (e) { return []; }
+    for (let i = 0; i < arr.length && out.length < 20; i++) {
+      const e = arr[i];
+      if (!e || typeof e !== 'object' || Array.isArray(e)) continue;
+      const id = str(e.id, 60);
+      if (!id || seen[id]) continue;
+      const at = Number(e.at);
+      seen[id] = 1;
+      out.push({ id, at: (isFinite(at) && at > 0) ? at : 0,
+        kind: OK[e.kind] ? e.kind : 'guard',
+        card: str(e.card, 60), cardId: str(e.cardId, 40), member: str(e.member, 60),
+        staff: str(e.staff, 60), branch: str(e.branch, 60), detail: str(e.detail, 180),
+        state: (e.state === 'granted' || e.state === 'declined') ? e.state : 'pending',
+        by: str(e.by, 60), note: str(e.note, 180) });
+    }
+    return out.sort((x, y) => (y.at || 0) - (x.at || 0)).slice(0, 20);
+  }
+  /** Re-parses only when the stored STRING changes — same memo discipline as
+      consoleOverlay(), so a render that touches the list a dozen times pays
+      for one JSON.parse and a write from another tab is never served stale. */
+  ovList() {
+    let raw = null;
+    try { raw = this._lsGet(this.ovKey()); } catch (e) { raw = null; }
+    if (raw === this._ovRaw && this._ovList) return this._ovList;
+    this._ovRaw = raw;
+    this._ovList = this.readOverrides();
+    return this._ovList;
+  }
+  ovPendingCount() { try { return this.ovList().filter(o => o && o.state === 'pending').length; } catch (e) { return 0; } }
+  /** The verdict. Returns true only when something actually changed, so the
+      caller can stay silent on a double-tap or a race with another tab. */
+  decideOverride(id, state, by, note) {
+    if (!id || (state !== 'granted' && state !== 'declined')) return false;
+    if (state === 'declined' && !String(note || '').trim()) return false;
+    let arr = [];
+    try { arr = this.ovRaw(); } catch (e) { return false; }
+    let hit = false;
+    const next = arr.map(e => {
+      if (!e || typeof e !== 'object' || Array.isArray(e)) return e;
+      if (e.id !== id) return e;
+      if (e.state === 'granted' || e.state === 'declined') return e;
+      hit = true;
+      const rec = { ...e, state, by: String(by || '') };
+      const n = String(note || '').trim();
+      if (n) rec.note = n.slice(0, 180);
+      return rec;
+    });
+    if (!hit) return false;
+    try { this._lsSet(this.ovKey(), JSON.stringify(next)); } catch (e) { return false; }
+    this._ovRaw = null; this._ovList = null;
+    return true;
+  }
+  /** A request that lands while she is looking has to arrive by itself —
+      someone is standing at a till. Same host-latched discipline as
+      armConsoleSync: armed from renderVals (componentDidMount can be skipped
+      on the deferred mount path), latched on the HOST so a logic swap cannot
+      double-subscribe, torn down in componentWillUnmount. It only ever
+      READS; nothing on this path writes, so a storm of storage events costs
+      one parse and one repaint. */
+  armOverrideSync() {
+    const h = this.__host || this;
+    if (h.__wcOvSync) return;
+    if (typeof window === 'undefined' || typeof window.addEventListener !== 'function') return;
+    // the baseline is taken BEFORE the listener exists, so a request already
+    // waiting when this tab opened never toasts — the Overrides screen and
+    // the sidebar badge carry that one. Only what arrives AFTER is "new".
+    const base = {};
+    try { this.ovList().forEach(o => { if (o && o.id) base[o.id] = 1; }); } catch (e) {}
+    h.__wcOvKnown = base;
+    const fn = (e) => {
+      if (e && e.key && e.key !== this.ovKey()) return;
+      const L = (this.__host && this.__host.logic) || this;
+      if (!L || !L.state) return;
+      let now = [];
+      try { now = L.readOverrides(); } catch (err) { now = []; }
+      L._ovRaw = null; L._ovList = null;
+      const before = h.__wcOvKnown || {};
+      const seen = {};
+      now.forEach(o => { if (o && o.id) seen[o.id] = 1; });
+      h.__wcOvKnown = seen;
+      const fresh = now.filter(o => o.state === 'pending' && !before[o.id])[0];
+      if (fresh) { try { L.say(L.ovToastFor(fresh)); } catch (err) {} }
+      L.forceUpdate();
+    };
+    h.__wcOvSync = fn;
+    try { window.addEventListener('storage', fn); } catch (err) { h.__wcOvSync = null; }
+  }
+  dropOverrideSync() {
+    const h = this.__host || this;
+    if (!h.__wcOvSync) return;
+    try { if (typeof window !== 'undefined' && window.removeEventListener) window.removeEventListener('storage', h.__wcOvSync); } catch (e) {}
+    h.__wcOvSync = null;
+  }
+  /** Same trick as liveToastFor: the live `t` is parked on the instance by
+      renderVals, because a toast fired from a DOM listener has no render
+      scope to borrow. */
+  ovToastFor(o) {
+    const T = this._t || {};
+    const s = T.ovToastNew || (this.state.lang === 'ar'
+      ? '{staff} ينتظر عند الكاشير — {member} · {detail}'
+      : '{staff} is waiting at the till — {member} · {detail}');
+    return String(s).replace('{staff}', (o && o.staff) || '').replace('{member}', (o && o.member) || '')
+      .replace('{detail}', (o && o.detail) || '').replace('{card}', (o && o.card) || '')
+      .replace(/\s+/g, ' ').trim();
+  }
+  /* ══ WHAT THE TILL ENFORCES ════════════════════════════════════════════
+     The scanner used to hold these as constants while telling staff they
+     were the merchant's rules. They now live on the card — `rules` in
+     wasla-data.js — and this dashboard is where they are edited.
+
+       ONE LIVE HOME.  cardMods[<cardId>].rules is the overlay the till
+       reads first; WASLA_DB.cards[<id>].rules is the fallback; the
+       scanner's own constants are the last resort. edits[<cardId>].rules
+       is a STAGED proposal sitting with Wasla and must never be enforced —
+       that is the whole meaning of the QUICK REVIEW band ("the old rule
+       stays live until approved"). ═══════════════════════════════════ */
+  /** What the till enforces for one card RIGHT NOW: type defaults, then the
+      data file's own `rules`, then the instant overlay on top. Staged review
+      edits are deliberately not in this chain. */
+  liveRules(c, mod) {
+    const plain = (o) => (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+    const r = { ...this.rulesDefaults(c && c.type), ...plain(c && c.rules), ...plain(mod && mod.rules) };
+    /* one shape, whatever the overlay was carrying: caps and days are
+       numbers, the ladder is an array, and anything that cannot be either is
+       dropped rather than handed to the till as-is. */
+    const cap = this.redeemCapNum(r.redeemCap);
+    if (cap === null) delete r.redeemCap; else r.redeemCap = cap;
+    if (r.minRedeem !== undefined) r.minRedeem = Math.max(0, Number(r.minRedeem) || 0);
+    if (r.graceDays !== undefined) r.graceDays = Math.max(0, Number(r.graceDays) || 0);
+    if (r.tiers !== undefined && !Array.isArray(r.tiers)) delete r.tiers;
+    if (r.guardNote !== undefined && typeof r.guardNote !== 'string') delete r.guardNote;
+    return r;
+  }
+  rulesDefaults(type) {
+    return {
+      stamps: { guard: '1 / visit', guardNote: 'One stamp per customer per day · resets at midnight', redeemCap: 2 },
+      vip: { redeemCap: 2, tiers: [{ name: 'Silver', at: 0 }, { name: 'Gold', at: 12 }, { name: 'Royal', at: 20 }] },
+      cashback: { minRedeem: 2, redeemCap: 2 },
+      membership: { graceDays: 14 }
+    }[type] || { redeemCap: 2 };
+  }
+  /** The sentence staff read out when the guard refuses someone. Written in
+      ENGLISH on purpose: like the live-events bus, this is a wire value read
+      by another surface that carries its own language toggle. */
+  guardNoteFor(guard) {
+    return {
+      '1 / visit': 'One stamp per customer per day · resets at midnight',
+      '2 / day': 'Two stamps per customer per day · resets at midnight',
+      'No limit': 'No earning guard — every scan adds a stamp'
+    }[guard] || 'One stamp per customer per day · resets at midnight';
+  }
+  /** Redemption caps are a NUMBER everywhere — 0 means no cap. The wizard
+      used to store 'none'/'1d'/'3d' chips, so those are still understood on
+      the way in; nothing writes them any more. */
+  redeemCapNum(v) {
+    if (typeof v === 'number' && isFinite(v)) return Math.max(0, Math.min(9, Math.round(v)));
+    const s = String(v == null ? '' : v).trim().toLowerCase();
+    if (!s) return null;
+    if (s === 'none' || s === 'no cap') return 0;
+    const m = s.match(/^(\d+)/);
+    return m ? Math.max(0, Math.min(9, parseInt(m[1], 10))) : null;
+  }
+  /** The wizard configures a card in `cfg`; a live card carries `rules`.
+      One place turns the first into the second, so a card born in the wizard
+      and a card edited in Edit Card describe the same till. */
+  rulesFromCfg(type, cfg) {
+    const c = cfg || {}, r = { ...this.rulesDefaults(type) };
+    if (type === 'stamps' && c.cap) { r.guard = c.cap; r.guardNote = this.guardNoteFor(c.cap); }
+    const cap = this.redeemCapNum(c.xcap);
+    if (cap !== null) r.redeemCap = cap;
+    if (type === 'vip' && Array.isArray(c.tiers)) r.tiers = c.tiers.map(x => ({
+      name: String((x && x.name) || ''), at: Number((x && x.at) || 0) || 0, perk: String((x && x.perk) || '') }));
+    if (type === 'cashback' && c.min !== undefined) r.minRedeem = Number(c.min) || 0;
+    return r;
+  }
   /** The storage-event path: merge what is new, cap, toast the newest. */
   pullLive() {
     let add = [];
@@ -3415,11 +3801,19 @@ class Component extends DCLogic {
       somehow lands before the first render. */
   liveToastFor(e) {
     const T = this._t || {};
-    const s = T.liveToast || (this.state.lang === 'ar'
-      ? 'مباشر من الكاشير — {who} {what} · Live'
-      : 'Live from the till — {who} {what} · مباشر');
+    const AR = this.state.lang === 'ar';
+    /* a leave is not "live from the till" — nobody served it, and framing a
+       departure in the earn wording would read as good news. It gets its own
+       sentence, and its own one. */
+    const s = (e && e.kind === 'leave')
+      ? (T.liveToastLeave || (AR
+        ? 'غادر {who} — البطاقة خرجت من محفظته · Left'
+        : '{who} left — the pass is out of their wallet · غادر'))
+      : (T.liveToast || (AR
+        ? 'مباشر من الكاشير — {who} {what} · Live'
+        : 'Live from the till — {who} {what} · مباشر'));
     return String(s).replace('{who}', (e && e.who) || '').replace('{what}', (e && e.what) || '')
-      .replace(/\s+/g, ' ').trim();
+      .replace('{card}', (e && e.card) || '').replace(/\s+/g, ' ').trim();
   }
   qr() {
     if (!this._qr) { this._qr = []; let s = 7; for (let i = 0; i < 289; i++) { s = (s * 1103515245 + 12345) % 2147483648; const row = Math.floor(i / 17), col = i % 17; const finder = (row < 5 && col < 5) || (row < 5 && col > 11) || (row > 11 && col < 5); const on = finder ? ((row % 4 === 0 || col % 4 === 0 || (row > 0 && row < 4 && col > 0 && col < 4)) ? (row === 2 && col === 2) || row % 4 === 0 || col % 4 === 0 : false) : (s / 2147483648) < 0.46; this._qr.push({ c: on ? '#1C1C20' : 'transparent' }); } }
@@ -3634,6 +4028,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     this.armConsoleSync();
+    this.armOverrideSync();
     const { account: Acc, cards, types, members, activity, staff, broadcasts } = this.db();
     const st = this.state, wiz = st.wiz, tick = st.tick;
     const EN = st.lang === 'en';
@@ -3678,6 +4073,44 @@ class Component extends DCLogic {
         msgPlaceholder: 'We miss you — your next visit earns a little extra.', msgSend: 'Send', msgChars: 'characters', msgWallets: 'wallets',
         msgNeedsText: 'Write the message first', msgSent: 'Sent to {n} members', msgLogTitle: 'Direct message · {n} members',
         grpToday: 'Today', grpYesterday: 'Yesterday', grpEarlier: 'Earlier',
+        /* ── a member walked away ─────────────────────────────────────────── */
+        liveToastLeave: '{who} left {card} — the pass is out of their wallet · غادر',
+        dgLeftOne: '1 member left', dgLeftMany: '{n} members left',
+        /* ── the manager override queue ───────────────────────────────────── */
+        overrides: 'Overrides', saOverrides: 'Open the overrides queue',
+        ovTitle: 'The till is asking.',
+        ovSub: 'Three times a shift the scanner has to refuse someone, and it tells your staff you can lift it from here. This is here. Every request below has a person standing at a counter behind it.',
+        ovFoot: 'Requests arrive from the scanner and stay for the last twenty. A grant applies to that one customer, that one time — it does not change the rule. To change the rule itself, open the card and edit it under “What the till enforces”.',
+        ovPendingTitle: 'Waiting on you',
+        ovDecidedTitle: 'Decided',
+        ovNone: 'Nothing to decide.',
+        ovNoneSub: 'When the till refuses a customer and your staff ask for an exception, it lands here — and on your home screen, and in the sidebar, with a count.',
+        ovWaitingOne: '1 request waiting — someone is standing at a till right now.',
+        ovWaitingMany: '{n} requests waiting — people are standing at tills right now.',
+        ovHomeOne: '1 override request — a customer is waiting at the counter.',
+        ovHomeMany: '{n} override requests — customers are waiting at the counter.',
+        ovOpenQueue: 'Decide now',
+        ovKindGuard: 'Earning guard', ovKindOvercap: 'Redemption cap', ovKindTierlock: 'Tier perk',
+        ovRuleGuard: 'Earning guard · one stamp per customer per day · resets at midnight',
+        ovRuleOvercap: 'Redemption cap · the daily limit for this card has been reached',
+        ovRuleTierlock: 'Tier rule · a perk unlocks at the tier that owns it',
+        ovAskedBy: 'asked by {staff} · {branch}',
+        ovAtTheTill: 'At the till',
+        ovGrant: 'Grant — once', ovDecline: 'Decline',
+        ovDeclineWhy: 'Why — your staff read this out',
+        ovDeclinePh: 'Rules are rules today — she can come back tomorrow',
+        ovDeclineFoot: 'A “no” without a reason is a reason your staff have to invent at the counter. Give them yours.',
+        ovDeclineSend: 'Send the decline', ovCancel: 'Cancel',
+        ovNeedNote: 'Write a short reason first — your staff read it out',
+        ovGranted: 'Granted', ovDeclinedLbl: 'Declined', ovBy: 'by {who}',
+        ovGrantToast: 'Granted — {staff} can serve {member} now',
+        ovDeclineToast: 'Declined — {staff} sees your reason at the till',
+        ovToastNew: '{staff} is waiting at the till — {member} · {detail}',
+        ovAlready: 'Already decided — someone got there first',
+        ovActGranted: 'granted an override — {member} · {detail}',
+        ovActDeclined: 'declined an override — {member} · {detail}',
+        ovAgoMin: '{n} min ago', ovAgoHour: '{n} h ago', ovAgoDay: '{n} days ago',
+        dgOvOne: '1 override waiting', dgOvMany: '{n} overrides waiting',
         membersTitle: 'Every member, in one place.', membersSub: 'Everyone across all your cards — filter, then open anyone.', membersFilterHint: 'Filter by name or phone…', allCards: 'All cards',
         branchLabel: 'Branch', scansToday: 'Scans today', cardsAssigned: 'Cards assigned', canScanLabel: 'CARDS THIS PERSON CAN SCAN', removeAccess: 'Remove access', removeAccessQ: 'Remove access for', removeAccessBody: 'Their scanner signs out immediately. Past scans stay in the log, and you can invite them again anytime.', accessGranted: 'can now scan', accessRemoved: 'can no longer scan', accessGone: 'access removed, scanner signed out',
         inviteTitle: 'Invite a teammate', inviteSub: 'They get a WhatsApp link. The scanner only opens the cards you tick.', nameLabel: 'Name', namePlaceholder: 'e.g. Huda Salem', cardsLabel: 'Cards they can scan', sendInvite: 'Send the invite', inviteNeedsName: 'Give them a name first', inviteSent: 'invited — WhatsApp link sent',
@@ -3868,6 +4301,26 @@ class Component extends DCLogic {
         rlMbRem: 'Renewal reminder', rlMbBenefit: 'What membership includes',
         rlMbNote: 'Staff scan for a verdict: active, expiring soon, or lapsed.',
         rlWelcome: 'Welcome bonus', rlExpiry: 'Expiry policy', rlCap: 'Redemptions per day',
+        /* ── what the till enforces ───────────────────────────────────────── */
+        rlGuardNote: 'What staff read out when it refuses',
+        rlRedeemCap: 'Redemptions per customer, per day',
+        rlMinRedeem: 'Redeem from', rlGrace: 'Grace after expiry',
+        rlGraceNone: 'No grace — lapsed is lapsed', rlGraceDays: '{n} days',
+        tillEnforces: 'The till enforces this for real customers.',
+        tillStaffSee: 'Staff see',
+        tillCapNone: 'No redemption cap — a full card can be redeemed as often as it fills',
+        tillCapOne: 'Redemption cap · 1 per customer per day',
+        tillCapMany: 'Redemption cap · {n} per customer per day',
+        tillTier: 'Tier rule · a perk unlocks at the tier that owns it',
+        tillMin: 'Cashback rule · balances redeem from JOD {v}',
+        tillGrace: 'Membership rule · a lapsed pass is still honoured for {n} days',
+        tillGuardFoot: 'This exact sentence appears on the scanner when it turns a customer away, and it is what your staff read out. Change the rule and the sentence together — they go to Wasla as one edit, and the old rule keeps running until it is approved.',
+        tillCapFoot: 'Instant — this one does not wait for review. It throttles how fast a customer can redeem, never whether they can: a full card stays on the pass until it is spent. It is also the dial to move when somebody is at the counter right now.',
+        tillTierFoot: 'The till compares a member’s visits against these numbers. Lowering one hands existing members a tier they have not earned; raising one demotes people already carrying the pass — so it goes to Wasla first.',
+        tillMinFoot: 'This is money customers already hold. Raising the floor strands balances they earned, so the change waits for review and the old floor stays live.',
+        tillGraceFoot: 'This decides whether a lapsed member is still let in. Shortening it turns people away at the door, so it goes for review and the current window keeps running.',
+        capRuleReview: 'Rule staged for review — the till keeps enforcing the old one until Wasla approves.',
+        capRuleInstant: 'Rule updated — the till is enforcing it from the next scan.',
         capLogo: 'Logo swapped — this card’s passes redraw tonight.',
         capLogoOff: 'Logo removed — the card falls back to its initial.',
         capBanner: 'Banner swapped — cropped to both wallet specs.',
@@ -3990,7 +4443,7 @@ class Component extends DCLogic {
         wExpiryPolicy: 'Progress expires', wExpiryNote: 'Measured from the last visit, never from signup.',
         wRedeemCap: 'Redemptions per customer', wRedeemCapNote: 'A quiet guard for busy days — the scanner explains rather than refuses.',
         wChipNever: 'Never', wChip6mo: '6 months', wChip1yr: '1 year',
-        wChipNoCap: 'No cap', wChip1Day: '1 / day', wChip3Day: '3 / day',
+        wChipNoCap: 'No cap', wChip1Day: '1 / day', wChip2Day: '2 / day', wChip3Day: '3 / day',
         wReviewSubmit: 'Review & submit →',
         wSubmitTitle: 'Publish is a request.',
         wSubmitSub: 'Your account manager gives every new card a quick check — usually within a day — then it goes straight to your customers’ wallets.',
@@ -4077,6 +4530,44 @@ class Component extends DCLogic {
         msgPlaceholder: 'اشتقنا لك — زيارتك القادمة تكسب أكثر.', msgSend: 'أرسل', msgChars: 'حرفاً', msgWallets: 'محفظة',
         msgNeedsText: 'اكتب الرسالة أولاً', msgSent: 'أُرسلت إلى {n} عضواً', msgLogTitle: 'رسالة مباشرة · {n} عضواً',
         grpToday: 'اليوم', grpYesterday: 'أمس', grpEarlier: 'ما قبل',
+        /* ── عضو غادر ─────────────────────────────────────────────────────── */
+        liveToastLeave: 'غادر {who} — {card} خرجت من محفظته · Left',
+        dgLeftOne: 'غادر عضو واحد', dgLeftMany: 'غادر {n} أعضاء',
+        /* ── طلبات الاستثناء من الكاشير ───────────────────────────────────── */
+        overrides: 'الاستثناءات', saOverrides: 'افتح طلبات الاستثناء',
+        ovTitle: 'الكاشير يسأل.',
+        ovSub: 'ثلاث مرات في المناوبة يضطر الماسح لرفض زبون، ويقول لموظفيك إنك تستطيعين رفع المنع من هنا. هذا هو «هنا». خلف كل طلب أدناه شخص واقف عند الكاونتر.',
+        ovFoot: 'الطلبات تصل من الماسح ويُحفظ آخر عشرين. الموافقة تخص هذا الزبون في هذه المرة فقط — ولا تغيّر القاعدة. لتغيير القاعدة نفسها، افتحي البطاقة وحرّريها تحت «ما ينفّذه الكاشير».',
+        ovPendingTitle: 'بانتظارك',
+        ovDecidedTitle: 'تمّ البتّ فيها',
+        ovNone: 'لا شيء يحتاج قراراً.',
+        ovNoneSub: 'حين يرفض الكاشير زبوناً ويطلب موظفوك استثناءً، يظهر الطلب هنا — وعلى شاشتك الرئيسية، وفي القائمة الجانبية مع عدّاد.',
+        ovWaitingOne: 'طلب واحد ينتظر — هناك شخص واقف عند الكاشير الآن.',
+        ovWaitingMany: '{n} طلبات تنتظر — هناك أشخاص واقفون عند الكاشير الآن.',
+        ovHomeOne: 'طلب استثناء واحد — زبون ينتظر عند الكاونتر.',
+        ovHomeMany: '{n} طلبات استثناء — زبائن ينتظرون عند الكاونتر.',
+        ovOpenQueue: 'قرّري الآن',
+        ovKindGuard: 'حارس الجمع', ovKindOvercap: 'حد الاستبدال', ovKindTierlock: 'ميزة مستوى',
+        ovRuleGuard: 'حارس الجمع · ختم واحد لكل زبون يومياً · يُصفَّر منتصف الليل',
+        ovRuleOvercap: 'حد الاستبدال · بلغت هذه البطاقة حدّها اليومي',
+        ovRuleTierlock: 'قاعدة المستويات · تُفتح الميزة عند مستواها',
+        ovAskedBy: 'طلبها {staff} · {branch}',
+        ovAtTheTill: 'عند الكاشير',
+        ovGrant: 'وافقي — لمرة', ovDecline: 'ارفضي',
+        ovDeclineWhy: 'السبب — موظفوك يقرأونه بصوتٍ عالٍ',
+        ovDeclinePh: 'القاعدة قاعدة اليوم — تستطيع العودة غداً',
+        ovDeclineFoot: '«لا» بلا سبب يعني سبباً يخترعه موظفوك عند الكاونتر. أعطيهم سببك.',
+        ovDeclineSend: 'أرسلي الرفض', ovCancel: 'إلغاء',
+        ovNeedNote: 'اكتبي سبباً قصيراً أولاً — موظفوك يقرأونه',
+        ovGranted: 'موافَق عليه', ovDeclinedLbl: 'مرفوض', ovBy: 'بواسطة {who}',
+        ovGrantToast: 'تمت الموافقة — يستطيع {staff} خدمة {member} الآن',
+        ovDeclineToast: 'رُفض — يرى {staff} سببك عند الكاشير',
+        ovToastNew: '{staff} ينتظر عند الكاشير — {member} · {detail}',
+        ovAlready: 'تمّ البتّ فيه — سبقك أحدهم',
+        ovActGranted: 'وافقت على استثناء — {member} · {detail}',
+        ovActDeclined: 'رفضت استثناءً — {member} · {detail}',
+        ovAgoMin: 'قبل {n} دقيقة', ovAgoHour: 'قبل {n} ساعة', ovAgoDay: 'قبل {n} يوماً',
+        dgOvOne: 'استثناء واحد ينتظر', dgOvMany: '{n} استثناءات تنتظر',
         membersTitle: 'كل الأعضاء في مكان واحد.', membersSub: 'جميع الأعضاء عبر كل بطاقاتك — صفِّ ثم افتح أي عضو.', membersFilterHint: 'ابحث بالاسم أو الهاتف…', allCards: 'كل البطاقات',
         branchLabel: 'الفرع', scansToday: 'مسحات اليوم', cardsAssigned: 'البطاقات المسندة', canScanLabel: 'البطاقات التي يمسحها', removeAccess: 'إلغاء الصلاحية', removeAccessQ: 'إلغاء صلاحية', removeAccessBody: 'سيخرج الماسح من حسابه فوراً. تبقى المسحات السابقة في السجل، ويمكنك دعوته مجدداً في أي وقت.', accessGranted: 'يستطيع الآن مسح', accessRemoved: 'لم يعد يستطيع مسح', accessGone: 'أُلغيت الصلاحية وخرج الماسح',
         inviteTitle: 'ادعُ زميلاً', inviteSub: 'يصله رابط واتساب. الماسح يفتح فقط البطاقات التي تحددها.', nameLabel: 'الاسم', namePlaceholder: 'مثال: هدى سالم', cardsLabel: 'البطاقات التي يمسحها', sendInvite: 'أرسل الدعوة', inviteNeedsName: 'اكتب الاسم أولاً', inviteSent: 'تمت دعوته — أُرسل رابط واتساب',
@@ -4263,6 +4754,26 @@ class Component extends DCLogic {
         rlMbRem: 'تذكير التجديد', rlMbBenefit: 'ماذا تشمل العضوية',
         rlMbNote: 'الموظف يمسح ليرى الحكم: فعّالة، أو توشك على الانتهاء، أو منتهية.',
         rlWelcome: 'مكافأة الترحيب', rlExpiry: 'سياسة الانتهاء', rlCap: 'الاستبدالات يومياً',
+        /* ── ما ينفّذه الكاشير ────────────────────────────────────────────── */
+        rlGuardNote: 'ما يقرأه الموظف عند الرفض',
+        rlRedeemCap: 'الاستبدالات لكل زبون يومياً',
+        rlMinRedeem: 'الاستبدال يبدأ من', rlGrace: 'مهلة بعد الانتهاء',
+        rlGraceNone: 'بلا مهلة — المنتهية منتهية', rlGraceDays: '{n} يوماً',
+        tillEnforces: 'الكاشير ينفّذ هذا على زبائن حقيقيين.',
+        tillStaffSee: 'يرى الموظف',
+        tillCapNone: 'بلا حد للاستبدال — البطاقة المكتملة تُستبدل كلما امتلأت',
+        tillCapOne: 'حد الاستبدال · واحد لكل زبون يومياً',
+        tillCapMany: 'حد الاستبدال · {n} لكل زبون يومياً',
+        tillTier: 'قاعدة المستويات · تُفتح الميزة عند مستواها',
+        tillMin: 'قاعدة الكاش باك · يبدأ الاستبدال من {v} دينار',
+        tillGrace: 'قاعدة العضوية · البطاقة المنتهية تُقبل {n} يوماً بعدها',
+        tillGuardFoot: 'هذه الجملة بالذات تظهر على الماسح حين يردّ زبوناً، وهي ما يقرأه موظفوك. غيّري القاعدة والجملة معاً — تذهبان إلى وصلة كتعديل واحد، وتبقى القاعدة القديمة سارية حتى الموافقة.',
+        tillCapFoot: 'فوري — هذا وحده لا ينتظر المراجعة. يضبط سرعة الاستبدال لا حقّه: البطاقة المكتملة تبقى على المحفظة حتى تُصرف. وهو المفتاح الذي تحرّكينه حين يقف أحدهم عند الكاونتر الآن.',
+        tillTierFoot: 'الكاشير يقارن زيارات العضو بهذه الأرقام. خفض أحدها يمنح أعضاء حاليين مستوى لم يبلغوه، ورفعه ينزل بمن يحملون البطاقة أصلاً — لذلك يمرّ على وصلة أولاً.',
+        tillMinFoot: 'هذا مال يملكه الزبائن فعلاً. رفع الحد يحبس أرصدة كسبوها، فينتظر التغيير المراجعة ويبقى الحد القديم سارياً.',
+        tillGraceFoot: 'هذه تقرر إن كان العضو المنتهي ما زال يُقبل. تقصيرها يردّ الناس عند الباب، فتذهب للمراجعة وتبقى المهلة الحالية سارية.',
+        capRuleReview: 'القاعدة بانتظار المراجعة — الكاشير يواصل تنفيذ القديمة حتى توافق وصلة.',
+        capRuleInstant: 'تحدّثت القاعدة — الكاشير ينفّذها من المسحة التالية.',
         capLogo: 'بُدّل الشعار — بطاقات هذه البطاقة تُعاد رسمها الليلة.',
         capLogoOff: 'أُزيل الشعار — البطاقة تعود لحرفها الأول.',
         capBanner: 'بُدّل البانر — مقصوص لمواصفات المحفظتين.',
@@ -4385,7 +4896,7 @@ class Component extends DCLogic {
         wExpiryPolicy: 'التقدّم ينتهي', wExpiryNote: 'يُحتسب من آخر زيارة، لا من تاريخ التسجيل.',
         wRedeemCap: 'الاستبدالات لكل عميل', wRedeemCapNote: 'حارس هادئ للأيام المزدحمة — الماسح يشرح بدل أن يرفض.',
         wChipNever: 'أبداً', wChip6mo: '٦ أشهر', wChip1yr: 'سنة',
-        wChipNoCap: 'بلا حد', wChip1Day: '١ / يوم', wChip3Day: '٣ / يوم',
+        wChipNoCap: 'بلا حد', wChip1Day: '١ / يوم', wChip2Day: '٢ / يوم', wChip3Day: '٣ / يوم',
         wReviewSubmit: 'راجع وأرسل ←',
         wSubmitTitle: 'النشر طلب، لا زر.',
         wSubmitSub: 'مدير حسابك يفحص كل بطاقة جديدة فحصاً سريعاً — عادةً خلال يوم — ثم تذهب مباشرة إلى محافظ عملائك.',
@@ -4436,17 +4947,33 @@ class Component extends DCLogic {
     const RO = this.isRO();
     const g = (fn) => RO ? ((e) => { if (e && e.stopPropagation) e.stopPropagation(); this.roSay(); }) : fn;
     const roDim = RO ? '.5' : '1';
-    const navDef = [['home', t.home], ['members', t.members], ['activity', t.activity], ['broadcasts', t.broadcasts], ['staff', t.staff], ['settings', t.settings]];
-    const mkNav = (keys) => keys.map(([key, label]) => { const active = st.screen === key || (key === 'home' && (st.screen === 'card' || st.screen === 'wizard')); return { label, go: () => this.setState({ screen: key, memberIdx: null }), bg: active ? 'rgba(232,128,36,.14)' : 'transparent', fg: active ? '#C96A14' : '#5D5348', fw: active ? 800 : 500, dot: active ? '#E88024' : 'transparent' }; });
+    const navDef = [['home', t.home], ['members', t.members], ['activity', t.activity], ['overrides', t.overrides], ['broadcasts', t.broadcasts], ['staff', t.staff], ['settings', t.settings]];
+    /* the sidebar count. It is red and it pulses because the thing it counts
+       is a customer standing at a till waiting for an answer — the only
+       number in this navigation that is measured in somebody's patience. */
+    const navBadge = { overrides: this.ovPendingCount() };
+    const mkNav = (keys) => keys.map(([key, label]) => { const active = st.screen === key || (key === 'home' && (st.screen === 'card' || st.screen === 'wizard')); const bn = navBadge[key] || 0; return { label, go: () => this.setState({ screen: key, memberIdx: null }), bg: active ? 'rgba(232,128,36,.14)' : 'transparent', fg: active ? '#C96A14' : '#5D5348', fw: active ? 800 : 500, dot: active ? '#E88024' : 'transparent',
+      hasBadge: bn > 0, badge: bn > 0 ? String(bn) : '', badgeAnim: (bn > 0 && !st.settled) ? 'notifPulse 1.9s ease-in-out infinite' : 'none' }; });
     const navItems = mkNav(navDef);
+    /* mobile keeps five slots — a sixth wraps inside the phone shell. The
+       home banner is the phone's way in, so nothing is unreachable. */
     const mNavItems = mkNav([['home', t.home], ['activity', t.activity], ['broadcasts', t.broadcasts], ['staff', t.staffShort], ['settings', t.settings]]).map(n => ({ ...n, dot: n.dot === 'transparent' ? '#D8D0C2' : n.dot }));
     /* the console's own takedowns, overlaid UNDER this dashboard's own cardMods —
        so if Yara somehow retired the same card herself in this session, her own
        action (spread last, below) wins the wording, exactly as the task requires. */
     const consoleTd = this.consoleOverlay(this.consoleAcct(), this.consoleCardMap()) || {};
     const allCards = [...cards.map(c => { const mod = st.cardMods[c.id] || {}; const cTd = consoleTd[c.id]; const merged = { ...c, ...(cTd || {}), ...mod }; if (mod.color) merged.color2 = this.shade(mod.color);
+      /* `rules` is the one field the overlay must MERGE rather than replace:
+         a spread would let an instant edit to the redemption cap silently
+         delete the guard the till is still enforcing. After this line
+         `card.rules` is the LIVE rule set everywhere in this file — the same
+         thing the scanner reads out of cardMods. */
+      merged.rules = this.liveRules(c, mod);
       if (c.id === 'sukkar') { const ls = this._lsGet(this.sukkarKey()); if (ls === 'approved') { merged.state = 'live'; merged.passes = 41; merged.stat1 = { label: 'Approved by Wasla', v: 'Just now' }; merged.stat2 = { label: 'First passes', v: '41' }; merged.note = 'Live — Yara got the WhatsApp.'; } else if (ls === 'rejected') { merged.state = 'returned'; merged.stat1 = { label: 'Sent back', v: 'Just now' }; merged.stat2 = { label: 'In wallets', v: 'Nothing' }; } else if (ls === 'resubmitted') { merged.stat1 = { label: 'Resubmitted', v: 'Just now' }; merged.stat2 = { label: 'Reviewer', v: 'Wasla · Omar' }; } }
-      return merged; }), ...st.addedCards];
+      return merged; }),
+      /* a card born in this session gets the same treatment: whatever the
+         wizard wrote into its `rules`, plus any instant edit made since. */
+      ...st.addedCards.map(c => ({ ...c, rules: this.liveRules(c, st.cardMods[c.id]) }))];
     const typeOf = (id) => types.find(x => x.id === id) || {};
     const cardTiles = allCards.map((c, i) => { const b = this.badge(c.state); const wa = c.weekActivity || []; const max = Math.max(...wa, 1); return { ...c, open: () => this.setState({ screen: 'card', activeCardId: c.id, memberIdx: null, cardTab: 'members', memFilter: 'all', wbSent: false }), anim: AN('fadeUp', '.55s', (0.06 * i + 0.15) + 's'), typeName: typeOf(c.type).name || c.type, badge: b.label, badgeBg: b.bg, badgeFg: b.fg, dotAnim: b.anim,
       /* the hover shortcut into this card's settings tab — the tile is the
@@ -4483,13 +5010,27 @@ class Component extends DCLogic {
     /* the live `t`, parked on the instance the same way _searchFlat is: a
        toast fired from a DOM listener has no renderVals scope to borrow. */
     this._t = t;
+    /* the one-line template filler. It used to be declared down in the
+       wizard block; the activity feed now needs it too (override rows), and
+       a `const` cannot be read before its declaration, so it moved up here
+       where every consumer is below it. */
+    const fill = (s, m) => String(s || '').replace(/\{(\w+)\}/g, (_, k) => (m[k] === undefined || m[k] === null) ? '' : String(m[k]));
     /* the row palette. The first five kinds are the ones the seeded activity
        log uses; redeem/renew/referral only ever arrive live from the till,
        and each gets its own dot so a glance down the feed still separates
-       "spent a reward" from "renewed" from "brought a friend". */
-    const dotFor = { earn: '#2FAE66', reward: '#E88024', join: '#4E6E8E', broadcast: '#7A5A2E', review: '#B14A32', redeem: '#C96A14', renew: '#0F5B63', referral: '#6E8F3E' };
-    const softFor = { earn: '#E7F6EE', reward: '#FDF4EC', join: '#EDF1F6', broadcast: '#F4EFE6', review: '#FBE6E1', redeem: '#FBEBDA', renew: '#E4F0F1', referral: '#EEF4E4' };
-    const glyphFor = { earn: '✓', reward: '★', join: '+', broadcast: '≡', review: '⏳', redeem: '◆', renew: '↻', referral: '⇢' };
+       "spent a reward" from "renewed" from "brought a friend".
+
+       LEAVE is the odd one out and is drawn that way on purpose. Every other
+       row in this feed is something good or something neutral; a leave is a
+       member walking away from the programme, and it earns the file's danger
+       red and the exact visual opposite of `join`: '+' becomes '−'. Nothing
+       else in the palette is red, so one glance down the column finds it.
+
+       OVERRIDE is a decision Yara made, not something a customer did — it
+       gets the one hue no customer event uses. */
+    const dotFor = { earn: '#2FAE66', reward: '#E88024', join: '#4E6E8E', broadcast: '#7A5A2E', review: '#B14A32', redeem: '#C96A14', renew: '#0F5B63', referral: '#6E8F3E', leave: '#E2563A', override: '#6E37A0' };
+    const softFor = { earn: '#E7F6EE', reward: '#FDF4EC', join: '#EDF1F6', broadcast: '#F4EFE6', review: '#FBE6E1', redeem: '#FBEBDA', renew: '#E4F0F1', referral: '#EEF4E4', leave: '#FBE9E5', override: '#F0EAF7' };
+    const glyphFor = { earn: '✓', reward: '★', join: '+', broadcast: '≡', review: '⏳', redeem: '◆', renew: '↻', referral: '⇢', leave: '−', override: '⚖' };
     const dayOf = (tt) => { const s0 = String(tt || '').toLowerCase();
       if (s0.indexOf('yesterday') >= 0 || s0.indexOf('أمس') >= 0) return 'y';
       if (/day|week|month|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|يوم|أسبوع|شهر/.test(s0)) return 'e';
@@ -4497,7 +5038,10 @@ class Component extends DCLogic {
     const openActRow = (a) => () => { const mi = members.findIndex(m => m.name === a.who); if (mi >= 0) { openMemberAt(mi); return; }
       const c0 = allCards.find(x => x.name === a.card); if (c0) openCardId(c0.id); };
     const mkActRow = (a, delay) => ({ ...a, dot: dotFor[a.kind] || '#93887A', soft: softFor[a.kind] || '#F1EBE1', glyph: glyphFor[a.kind] || '·',
-      anim: AN('fadeUp', '.45s', delay), openRow: openActRow(a),
+      /* an override row is Yara's own decision — `who` is the decider, not a
+         member, so the member lookup would land on the wrong screen. It goes
+         back to the queue it came from. */
+      anim: AN('fadeUp', '.45s', delay), openRow: a.isOv ? (() => this.setState({ screen: 'overrides', memberIdx: null })) : openActRow(a),
       isLive: !!a.isLive,
       liveCss: 'display:inline-flex;align-items:center;gap:4px;background:#E7F6EE;color:#1E7D47;font-size:8.5px;font-weight:900;letter-spacing:.09em;border-radius:999px;padding:2px 7px;white-space:nowrap;flex-shrink:0;vertical-align:middle;',
       liveDot: 'width:5px;height:5px;border-radius:50%;background:#2FAE66;flex-shrink:0;animation:' + (st.settled ? 'none' : 'pulse 1.35s infinite') + ';' });
@@ -4509,9 +5053,38 @@ class Component extends DCLogic {
        the first group in both feeds without a special case anywhere. */
     const liveRows = (st.liveEvents || []).map(e => ({
       t: t.liveJustNow, who: e.who, what: e.what, card: e.card, kind: e.kind, isLive: true }));
+    /* ── the override queue ────────────────────────────────────────────────
+       Read straight off the shared key — nothing about overrides is kept in
+       this dashboard's own blob, so the store IS the log and a decision
+       survives a reload without a second copy of the truth anywhere. */
+    const ovAll = this.ovList();
+    const ovPendingList = ovAll.filter(o => o.state === 'pending');
+    const ovDecidedList = ovAll.filter(o => o.state !== 'pending');
+    const ovPendingN = ovPendingList.length;
+    /* relative time that lands in the right dayOf() bucket without a special
+       case: "just now" and "x min/h ago" read as TODAY, "Yesterday" as
+       yesterday, "x days ago" as earlier. */
+    const agoLabel = (ms) => {
+      const d = Date.now() - (Number(ms) || 0);
+      if (!(Number(ms) > 0) || d < 90000) return t.liveJustNow;
+      const mins = Math.round(d / 60000);
+      if (mins < 60) return fill(t.ovAgoMin, { n: mins });
+      const hrs = Math.round(mins / 60);
+      if (hrs < 24) return fill(t.ovAgoHour, { n: hrs });
+      const days = Math.round(hrs / 24);
+      return days <= 1 ? t.grpYesterday : fill(t.ovAgoDay, { n: days });
+    };
+    /* a decided override lands in the activity feed the same way everything
+       else does: as an ordinary row through mkActRow/dayOf. `who` is the
+       decider because that is whose action this was. */
+    const ovActRows = ovDecidedList.map(o => ({
+      t: agoLabel(o.at), who: o.by || Acc.owner || '', kind: 'override', card: o.card,
+      isOv: true,
+      what: fill(o.state === 'granted' ? t.ovActGranted : t.ovActDeclined,
+        { member: o.member || '', detail: o.detail || '', staff: (o.staff || '').split(' ')[0] }) }));
     /* the home card is a glance, not a log — four live rows at most, so a
        busy till cannot push the whole seeded day off the bottom */
-    const feedItems = [...liveRows.slice(0, 4), ...activity].slice(0, 7);
+    const feedItems = [...liveRows.slice(0, 4), ...ovActRows.slice(0, 2), ...activity].slice(0, 7);
     let fIdx = 0;
     const feedGroups = dayDefs.map(([k, label]) => ({ label, items: feedItems.filter(a => dayOf(a.t) === k) }))
       .filter(gp => gp.items.length)
@@ -4635,7 +5208,7 @@ class Component extends DCLogic {
       membership: [['Valid for', cfg.validity], ['Fee', cfg.fee > 0 ? 'JOD ' + cfg.fee : 'Free'], ['Reminder', cfg.rem || ''], ['Includes', cfg.benefit]]
     }[wtype] || [];
     // ── wizard 2.0: helpers ────────────────────────────────────────────────
-    const fill = (s, m) => String(s || '').replace(/\{(\w+)\}/g, (_, k) => (m[k] === undefined || m[k] === null) ? '' : String(m[k]));
+    // (fill() now lives above the activity palette — the override rows need it)
     const reAnim = (nm, dur, seed) => nm + ' ' + dur + ' cubic-bezier(.22,.61,.36,1) ' + (Math.abs(seed) % 13) + 'ms both';
     const money = (n) => (Math.round(n * 100) / 100).toFixed(2);
     const MONS = t.wMonths || [];
@@ -4744,8 +5317,13 @@ class Component extends DCLogic {
     const ladderJod = (cost) => fill(t.wLadderJod, { v: money((cost || 0) / Math.max(perN, 1)) });
     // step 4 — extras
     const xExpDefs = [['never', t.wChipNever], ['6m', t.wChip6mo], ['1y', t.wChip1yr]];
-    const xCapDefs = [['none', t.wChipNoCap], ['1d', t.wChip1Day], ['3d', t.wChip3Day]];
-    const xExpVal = cfg.xexp || 'never', xCapVal = cfg.xcap || 'none';
+    /* the redemption cap is a NUMBER, here and in Edit Card and on the card's
+       own `rules` — 0 means no cap. It used to be a 'none'/'1d'/'3d' chip id,
+       which could not express the "2 per customer per day" the till actually
+       enforces; redeemCapNum() still reads the old spellings on the way in. */
+    const xCapDefs = [[0, t.wChipNoCap], [1, t.wChip1Day], [2, t.wChip2Day], [3, t.wChip3Day]];
+    const xCapRaw = this.redeemCapNum(cfg.xcap);
+    const xExpVal = cfg.xexp || 'never', xCapVal = xCapRaw === null ? 0 : xCapRaw;
     const showXExp = wtype === 'stamps' || wtype === 'points' || wtype === 'vip';
     const mkXChips = (defs, key, cur, kind) => defs.map(([id, label]) => ({ label, pick: () => { setCfg({ [key]: id }); this.wnote((t.wNotes || {})[kind], 'extras'); },
       br: cur === id ? '#E88024' : '#E7E0D5', bg: cur === id ? '#FDF4EC' : '#FFFFFF', fg: cur === id ? '#C96A14' : '#5D5348' }));
@@ -4753,7 +5331,7 @@ class Component extends DCLogic {
     const extrasBits = [];
     if (xWelcome) extrasBits.push(t.wWelcome);
     if (showXExp && xExpVal !== 'never') extrasBits.push(t.wExpiryPolicy + ' ' + labelOf(xExpDefs, xExpVal));
-    if (xCapVal !== 'none') extrasBits.push(t.wRedeemCap + ' ' + labelOf(xCapDefs, xCapVal));
+    if (xCapVal !== 0) extrasBits.push(t.wRedeemCap + ' ' + labelOf(xCapDefs, xCapVal));
     const extrasSummary = extrasBits.length ? extrasBits.join(' · ') : t.wValNone;
     const passNoteFull = [model.note, extrasBits.join(' · ')].filter(Boolean).join(' · ');
     let headVal = hd[1];
@@ -4801,7 +5379,11 @@ class Component extends DCLogic {
       ar: edRaw.ar !== undefined ? edRaw.ar : (ac.ar || ''),
       reward: edRaw.reward !== undefined ? edRaw.reward : (ac.reward || ''),
       goal: edRaw.goal !== undefined ? edRaw.goal : (ac.goal || 8),
-      cfg: edRaw.cfg || {}, pending: !!edRaw.pending };
+      /* `rules` has to be listed here for the same reason `cfg` is: setEd()
+         spreads `ed` before the patch, so a key missing from this object is a
+         key that silently resets to {} on the next edit — the second staged
+         rule would erase the first. */
+      cfg: edRaw.cfg || {}, rules: edRaw.rules || {}, pending: !!edRaw.pending };
     const edNote = (msg, kind) => this.setState({ edNote: msg || '', edNoteKind: kind || 'edit' });
     const setEd = (patch) => this.setState({ edits: { ...st.edits, [ac.id]: { ...ed, ...patch, pending: false } } });
     const lastLbl = (d) => d === 0 ? (EN ? 'today' : 'اليوم') : d === 1 ? (EN ? 'yesterday' : 'أمس') : d + (EN ? 'd ago' : ' يوم');
@@ -5054,10 +5636,10 @@ class Component extends DCLogic {
     const acCfgLive = { ...acCfgBase, ...(acMod.cfg || {}) };
     const acCfg = { ...acCfgLive, ...(ed.cfg || {}) };
     const setEdCfg = (patch) => { setEd({ cfg: { ...(ed.cfg || {}), ...patch } }); edNote(t.capRulesEd, 'rules'); };
-    /* the one INSTANT control that lives inside the review band (the per-day
-       redemption cap). Its caption is filed under 'rules' so it renders beside
-       the chip it belongs to rather than up in the branches panel — the text
-       itself carries the tier, and the chip wears an INSTANT pill. */
+    /* the INSTANT escape hatch inside the review band. The per-day redemption
+       cap used to be its only user; that control now writes `rules` instead
+       (see setModRules below), but the path stays because the band's contract
+       is "review unless the chip wears an INSTANT pill", not "review only". */
     const setModCfg = (patch, cap) => { putMod({ cfg: { ...(acMod.cfg || {}), ...patch } }); edNote(cap || t.capCapEd, 'rules'); this.say(cap || t.capCapEd); };
     /* one chip factory for the editor. `defs` are [rawValue, bilingualLabel] so
        the stored values stay identical to the wizard's — a card configured in
@@ -5066,8 +5648,34 @@ class Component extends DCLogic {
     const mkEdChips = (defs, key, review) => defs.map(([v, label]) => ({ label,
       pick: g(() => { if (review) setEdCfg({ [key]: v }); else setModCfg({ [key]: v }); }),
       br: acCfg[key] === v ? '#E88024' : '#E7E0D5', bg: acCfg[key] === v ? '#FDF4EC' : '#FFFFFF', fg: acCfg[key] === v ? '#C96A14' : '#5D5348' }));
+    /* ══ WHAT THE TILL ENFORCES ═══════════════════════════════════════════
+       The scanner's three hardcoded constants, edited here. `acRulesLive` is
+       what the till is running RIGHT NOW (data file + instant overlay);
+       `acRules` folds the staged proposal on top so the controls show what
+       you are asking for while the "was live / now in review" chips keep
+       showing what the customer at the counter still gets. */
+    const acRulesLive = ac.rules || this.rulesDefaults(ac.type);
+    const acRules = { ...acRulesLive, ...(ed.rules || {}) };
+    const setEdRules = (patch, cap) => { setEd({ rules: { ...(ed.rules || {}), ...patch } }); edNote(cap || t.capRuleReview, 'rules'); };
+    const setModRules = (patch, cap) => { const cur = (acMod.rules && typeof acMod.rules === 'object' && !Array.isArray(acMod.rules)) ? acMod.rules : {};
+      putMod({ rules: { ...cur, ...patch } }); edNote(cap || t.capRuleInstant, 'rules'); this.say(cap || t.capRuleInstant); };
+    const mkRuleChips = (defs, key, review) => defs.map(([v, label]) => ({ label,
+      pick: g(() => { if (review) setEdRules({ [key]: v }); else setModRules({ [key]: v }); }),
+      br: acRules[key] === v ? '#E88024' : '#E7E0D5', bg: acRules[key] === v ? '#FDF4EC' : '#FFFFFF', fg: acRules[key] === v ? '#C96A14' : '#5D5348' }));
+    /* the sentences staff actually read out. Each one is the line the scanner
+       prints on its refusal screen, rebuilt from the rule as it now stands —
+       so an owner can see, before saving, exactly what a customer will be
+       told when this rule turns someone away. */
+    const edCapN = this.redeemCapNum(acRules.redeemCap);
+    const edGuardStaff = String(acRules.guardNote || '').trim() || this.guardNoteFor(acRules.guard);
+    const edCapStaff = (edCapN === null || edCapN === 0) ? t.tillCapNone
+      : fill(edCapN === 1 ? t.tillCapOne : t.tillCapMany, { n: edCapN });
     const edLadder = acCfg.ladder || [];
-    const edTiers = acCfg.tiers || [];
+    /* the VIP ladder is a RULE now, not a wizard cfg blob: the till reads the
+       thresholds out of `rules.tiers`, so that is the only copy the editor
+       writes. Perks ride along on the same rows — the scanner ignores them,
+       the pass does not. */
+    const edTiers = Array.isArray(acRules.tiers) ? acRules.tiers : (acCfg.tiers || []);
     const edLadderJod = (cost) => fill(t.wLadderJod, { v: money((cost || 0) / Math.max(acCfg.per || 10, 1)) });
     // ── the diff: what is staged, what is live, and how many of each.
     const edPairs = [
@@ -5083,11 +5691,20 @@ class Component extends DCLogic {
       offer: t.rlCpOffer, expiry: t.rlCpExp, qty: t.rlCpQty, tiers: t.rlVipLadder,
       visits: t.rlChMission, window: t.rlChWindow, minv: t.rlChMin, prize: t.rlChPrize,
       validity: t.rlMbValidity, fee: t.rlMbFee, rem: t.rlMbRem, benefit: t.rlMbBenefit,
-      xwel: t.rlWelcome, xexp: t.rlExpiry, xcap: t.rlCap };
+      xwel: t.rlWelcome, xexp: t.rlExpiry, xcap: t.rlCap,
+      /* the till's own rules, same summary line, same voice */
+      guard: t.rlEarnGuard, guardNote: t.rlGuardNote, redeemCap: t.rlRedeemCap,
+      minRedeem: t.rlMinRedeem, graceDays: t.rlGrace };
+    const asText = (v) => Array.isArray(v) ? v.map(x => (x && (x.name || '')) + (x && x.cost !== undefined ? ' · ' + x.cost : (x && x.at !== undefined ? ' · ' + x.at : ''))).join(' / ')
+      : (v === true ? (EN ? 'on' : 'مفعّل') : v === false ? (EN ? 'off' : 'معطّل') : String(v === undefined || v === null ? '' : v));
     Object.keys(ed.cfg || {}).forEach(k => {
-      const asText = (v) => Array.isArray(v) ? v.map(x => (x && (x.name || '')) + (x && x.cost !== undefined ? ' · ' + x.cost : (x && x.at !== undefined ? ' · ' + x.at : ''))).join(' / ')
-        : (v === true ? (EN ? 'on' : 'مفعّل') : v === false ? (EN ? 'off' : 'معطّل') : String(v === undefined || v === null ? '' : v));
       edPairs.push({ id: 'cfg.' + k, label: RULE_LABEL[k] || k, live: asText(acCfgLive[k]), next: asText((ed.cfg || {})[k]) });
+    });
+    /* a staged rule reads in the diff exactly like a staged name does — the
+       point of the QUICK-REVIEW band is that Yara can see the old rule and
+       the proposed one side by side while the old one keeps running. */
+    Object.keys(ed.rules || {}).forEach(k => {
+      edPairs.push({ id: 'rules.' + k, label: RULE_LABEL[k] || k, live: asText(acRulesLive[k]), next: asText((ed.rules || {})[k]) });
     });
     const edChanged = edPairs.filter(p => String(p.live) !== String(p.next));
     const edChangedIds = {}; edChanged.forEach(p => { edChangedIds[p.id] = p; });
@@ -5356,7 +5973,7 @@ class Component extends DCLogic {
     // activity screen
     const actChips = [{ id: 'all', label: EN ? 'All cards' : 'كل البطاقات' }, ...allCards.filter(c => c.members > 0).map(c => ({ id: c.name, label: c.name }))].map(f => ({ ...f, pick: () => this.setState({ actFilter: f.id }), br: st.actFilter === f.id ? '#E88024' : '#E7E0D5', bg: st.actFilter === f.id ? '#E88024' : '#FFFFFF', fg: st.actFilter === f.id ? '#FFFFFF' : '#5D5348' }));
     /* the Activity screen is the log, so it takes every live row it has */
-    const actItemsRaw = [...liveRows, ...activity].filter(a => st.actFilter === 'all' || a.card === st.actFilter);
+    const actItemsRaw = [...liveRows, ...ovActRows, ...activity].filter(a => st.actFilter === 'all' || a.card === st.actFilter);
     let aIdx = 0;
     const actGroups = dayDefs.map(([k, label]) => ({ label, items: actItemsRaw.filter(a => dayOf(a.t) === k) }))
       .filter(gp => gp.items.length)
@@ -5430,7 +6047,7 @@ class Component extends DCLogic {
       { label: 'English', sub: 'Dashboard in English', dirTag: 'LTR', on: EN, pick: () => { if (!EN) { this.setState({ lang: 'en' }); this.saveDemo(); this.say('Dashboard switched to English'); } } },
       { label: 'العربية', sub: 'لوحة التحكم بالعربية — كاملة الاتجاه', dirTag: 'RTL', on: !EN, pick: () => { if (EN) { this.setState({ lang: 'ar' }); this.saveDemo(); this.say('تم التبديل إلى العربية'); } } }
     ].map(r => ({ ...r, ring: r.on ? '#E88024' : '#D8D0C2', dot: r.on ? '#E88024' : 'transparent' }));
-    const crumbs = { home: EN ? 'Dashboard' : 'لوحة التحكم', wizard: EN ? 'Dashboard / New card' : 'لوحة التحكم / بطاقة جديدة', card: (EN ? 'Dashboard / ' : 'لوحة التحكم / ') + (ac.name || ''), members: EN ? 'Dashboard / Members' : 'لوحة التحكم / الأعضاء', activity: EN ? 'Dashboard / Activity' : 'لوحة التحكم / النشاط', broadcasts: EN ? 'Dashboard / Broadcasts' : 'لوحة التحكم / الإشعارات', staff: EN ? 'Dashboard / Staff' : 'لوحة التحكم / الموظفون', settings: EN ? 'Dashboard / Settings' : 'لوحة التحكم / الإعدادات' };
+    const crumbs = { home: EN ? 'Dashboard' : 'لوحة التحكم', wizard: EN ? 'Dashboard / New card' : 'لوحة التحكم / بطاقة جديدة', card: (EN ? 'Dashboard / ' : 'لوحة التحكم / ') + (ac.name || ''), members: EN ? 'Dashboard / Members' : 'لوحة التحكم / الأعضاء', activity: EN ? 'Dashboard / Activity' : 'لوحة التحكم / النشاط', overrides: (EN ? 'Dashboard / ' : 'لوحة التحكم / ') + t.overrides, broadcasts: EN ? 'Dashboard / Broadcasts' : 'لوحة التحكم / الإشعارات', staff: EN ? 'Dashboard / Staff' : 'لوحة التحكم / الموظفون', settings: EN ? 'Dashboard / Settings' : 'لوحة التحكم / الإعدادات' };
     const crumbParts = (crumbs[st.screen] || '').split(' / ');
     const crumbRoot = crumbParts[0] || '', crumbTail = crumbParts.slice(1).join(' / ');
     // search palette · members directory · staff panel · view-as
@@ -5443,6 +6060,7 @@ class Component extends DCLogic {
     const goHref = (h) => () => { this.setState(shutSearch); try { window.location.href = h; } catch (e) {} };
     const actDefs = [
       { label: t.saBroadcast, hint: t.saHintScreen, glyph: '≡', color: '#7A5A2E', keys: 'broadcast send message push notify blast إشعار أرسل رسالة', run: goScreen('broadcasts') },
+      { label: t.saOverrides, hint: t.saHintScreen, glyph: '⚖', color: '#6E37A0', keys: 'override overrides guard cap tier refuse till manager approve grant decline استثناء تجاوز حد رفض', run: goScreen('overrides') },
       { label: t.saAddCard, hint: t.saHintScreen, glyph: '+', color: '#E88024', keys: 'add card new create wizard make بطاقة أضف جديدة', run: () => { this.setState(shutSearch); this.openWiz(); } },
       /* "Edit <card>" — the third way into the editor, after the tile hover and
          the profile header, for the owner who lives on ⌘K. One row per card is
@@ -5487,6 +6105,16 @@ class Component extends DCLogic {
     const bcLeft = Math.max(0, (Acc.broadcastQuota || 10) - used);
     const inReview = allCards.filter(c => c.state === 'review' || c.state === 'returned');
     const dgRaw = [];
+    /* the queue leads the digest when it is not empty — everything else on
+       this line can wait an hour, and this cannot. */
+    if (ovPendingN > 0) dgRaw.push({ label: fill(ovPendingN === 1 ? t.dgOvOne : t.dgOvMany, { n: ovPendingN }), fg: '#B23420', go: goScreen('overrides') });
+    /* people who LEFT. Counted from the live bus only — the events this
+       session actually saw — because inventing a smaller member total would
+       contradict WASLA_DB and every panel that derives from it (segments,
+       broadcast reach, the analytics funnel). This is an honest count of
+       departures observed, not a rewritten headline number. */
+    const leftN = (st.liveEvents || []).filter(e => e && e.kind === 'leave').length;
+    if (leftN > 0) dgRaw.push({ label: fill(leftN === 1 ? t.dgLeftOne : t.dgLeftMany, { n: leftN }), fg: '#B23420', go: goScreen('activity') });
     if (readyTotal > 0 && readyCard) dgRaw.push({ label: fill(t.dgRewards, { n: readyTotal }), fg: '#C96A14', go: () => openCardId(readyCard.id) });
     allCards.filter(c => c.state === 'paused').forEach(c => { const raw = ((c.stat2 || {}).label === 'Paused') ? String((c.stat2 || {}).v || '') : '';
       dgRaw.push({ label: fill(t.dgPaused, { name: c.name, d: EN ? raw : raw.replace('days', 'يوماً').replace('day', 'يوم') }).trim(), fg: '#9A6B12', go: () => openCardId(c.id) }); });
@@ -5507,6 +6135,53 @@ class Component extends DCLogic {
     inReview.forEach(c => pdRaw.push({ label: c.name + ' · ' + (c.state === 'returned' ? t.pdReturned : t.pdCard),
       when: t.pdSubmitted + ' ' + (((c.stat1 || {}).v) || t.pdJustNow), dot: c.state === 'returned' ? '#E2563A' : '#B14A32', go: () => openCardId(c.id) }));
     const pending = pdRaw.map((p, i) => ({ ...p, anim: AN('popIn', '.42s', (0.06 * i + 0.12) + 's') }));
+    /* ══ THE OVERRIDES SURFACE ═══════════════════════════════════════════════
+       One row per request: who asked, which member, which branch, what the
+       till refused, when — and the sentence the staff member was reading off
+       the screen while they asked. Grant is one tap because a customer is
+       waiting; Decline needs a reason, because "no" without a reason is
+       something the staff member has to invent at the counter.
+
+       Every mutating handler goes through g(): under ?viewas=1 a Wasla
+       viewer can read the whole queue and change nothing in it. ════════ */
+    const OV_KIND = {
+      guard: { label: t.ovKindGuard, rule: t.ovRuleGuard, tone: '#F0A92B', soft: '#FDF1DC', fg: '#9A6B12', mark: '⏱' },
+      overcap: { label: t.ovKindOvercap, rule: t.ovRuleOvercap, tone: '#E2563A', soft: '#FBE9E5', fg: '#B23420', mark: '2×' },
+      tierlock: { label: t.ovKindTierlock, rule: t.ovRuleTierlock, tone: '#E8B824', soft: '#FBF3DC', fg: '#8A6B18', mark: '★' }
+    };
+    const ovKindOf = (k) => OV_KIND[k] || OV_KIND.guard;
+    const ovDecide = (o, state, note) => {
+      const who = Acc.owner || 'Yara Nassar';
+      if (!this.decideOverride(o.id, state, who, note)) { this.say(t.ovAlready); this.forceUpdate(); return; }
+      this.setState({ ovDeclining: null, ovNote: '' });
+      this.say(fill(state === 'granted' ? t.ovGrantToast : t.ovDeclineToast,
+        { member: o.member || '', staff: (o.staff || '').split(' ')[0], card: o.card || '' }));
+    };
+    const ovRow = (o, i, decided) => ({
+      id: o.id, member: o.member || '—', card: o.card || '', detail: o.detail || '',
+      kindLabel: ovKindOf(o.kind).label, kindTone: ovKindOf(o.kind).tone,
+      kindSoft: ovKindOf(o.kind).soft, kindFg: ovKindOf(o.kind).fg, mark: ovKindOf(o.kind).mark,
+      /* the exact line the staff member is looking at while they ask */
+      ruleLine: ovKindOf(o.kind).rule,
+      askedLine: fill(t.ovAskedBy, { staff: o.staff || '—', branch: o.branch || '—' }),
+      when: agoLabel(o.at),
+      anim: AN('fadeUp', '.42s', (0.05 * i + 0.06) + 's'),
+      isGranted: o.state === 'granted', isDeclined: o.state === 'declined',
+      stateLabel: o.state === 'granted' ? t.ovGranted : t.ovDeclinedLbl,
+      stateBg: o.state === 'granted' ? '#E7F6EE' : '#EFEDE8',
+      stateFg: o.state === 'granted' ? '#1E7D47' : '#6B6760',
+      byLine: o.by ? fill(t.ovBy, { who: o.by }) : '',
+      hasBy: !!o.by, hasNote: !decided ? false : !!o.note, note: o.note || '',
+      /* — the two verdicts — */
+      declining: st.ovDeclining === o.id, notDeclining: st.ovDeclining !== o.id,
+      grant: g(() => ovDecide(o, 'granted')),
+      startDecline: g(() => this.setState({ ovDeclining: o.id, ovNote: '' })),
+      cancelDecline: g(() => this.setState({ ovDeclining: null, ovNote: '' })),
+      sendDecline: g(() => { const n = (st.ovNote || '').trim(); if (!n) { this.say(t.ovNeedNote); return; } ovDecide(o, 'declined', n); }),
+      openCard: () => { const c0 = allCards.find(x => x.id === o.cardId) || allCards.find(x => x.name === o.card); if (c0) openCardId(c0.id); }
+    });
+    const ovPendingRows = ovPendingList.map((o, i) => ovRow(o, i, false));
+    const ovDecidedRows = ovDecidedList.map((o, i) => ovRow(o, i, true));
     const memDirChips = [{ id: 'all', label: t.allCards }, ...allCards.map(c => ({ id: c.name, label: c.name }))].map(f => ({ ...f, pick: () => this.setState({ memDirCard: f.id, memSel: [] }), br: st.memDirCard === f.id ? '#E88024' : '#E7E0D5', bg: st.memDirCard === f.id ? '#E88024' : '#FFFFFF', fg: st.memDirCard === f.id ? '#FFFFFF' : '#5D5348' }));
     const mq = (st.memDirQ || '').trim().toLowerCase(), mqn = norm(mq);
     const memBase = members.map((m, i) => ({ m, i }))
@@ -5720,6 +6395,20 @@ class Component extends DCLogic {
       ownerName: EN ? (Acc.owner || '') : (Acc.ownerAr || ''), ownerInitials: Acc.initials || '',
       quotaLabel: (Acc.cardsUsed || 0) + ' of ' + (Acc.cardQuota || 10), quotaPct: Math.round((Acc.cardsUsed || 0) / (Acc.cardQuota || 10) * 100 * tick) + '%',
       isHome: st.screen === 'home', isWizard: st.screen === 'wizard', isCard: st.screen === 'card', isMembers: st.screen === 'members', isActivity: st.screen === 'activity', isBroadcasts: st.screen === 'broadcasts', isStaff: st.screen === 'staff', isSettings: st.screen === 'settings',
+      // ── the manager override queue ──────────────────────────────────────
+      isOverrides: st.screen === 'overrides',
+      ovPendingRows, ovDecidedRows,
+      ovHasPending: ovPendingN > 0, ovHasDecided: ovDecidedRows.length > 0,
+      ovEmpty: ovAll.length === 0,
+      ovCountLine: fill(ovPendingN === 1 ? t.ovWaitingOne : t.ovWaitingMany, { n: ovPendingN }),
+      ovBannerAnim: AN('popIn', '.42s', '.06s'),
+      ovNoteText: st.ovNote, setOvNote: g((e) => this.setState({ ovNote: e.target.value })),
+      ovNoteLen: (st.ovNote || '').trim().length,
+      goOverrides: () => this.setState({ screen: 'overrides', memberIdx: null }),
+      /* the home banner: red, pulsing, and above the fold — a customer is
+         standing at a counter while this is on screen. */
+      ovHomeAlert: ovPendingN > 0 && st.screen === 'home',
+      ovHomeLine: fill(ovPendingN === 1 ? t.ovHomeOne : t.ovHomeMany, { n: ovPendingN }),
       viewAs, viewAsLine,
       searchOpen: st.searchOpen, searchQ: st.searchQ, searchCards, searchMembers, searchActions,
       hasSearchCards: searchCards.length > 0, hasSearchMembers: searchMembers.length > 0, hasSearchActions: searchActions.length > 0,
@@ -5875,7 +6564,11 @@ class Component extends DCLogic {
       notSubmitted: !wiz.submitted, isSubmitted: wiz.submitted,
       wizSubmit: g(() => this.setState({ wiz: { ...wiz, submitted: true } })),
       wizApprove: () => {
-        const nc = { id: 'new' + Date.now(), name: wName, ar: wiz.ar || wName, type: wiz.typeId || 'stamps', state: 'live', color: wiz.color, color2: this.shade(wiz.color), initial: wName[0].toUpperCase(), tagline: wReward, members: 1, passes: 1, weekActivity: [0, 0, 0, 0, 0, 0, 1], stat1: { label: 'First member', v: 'just now' }, stat2: { label: 'Approved', v: 'today' }, goal: wiz.goal, reward: wReward, branch: (Acc.branches || [])[0] || '' };
+        /* the card is born carrying the rules the wizard just configured, in
+           the same shape Edit Card writes and the till reads — this is the
+           join that stops the wizard and the editor describing two different
+           counters. */
+        const nc = { id: 'new' + Date.now(), name: wName, ar: wiz.ar || wName, type: wiz.typeId || 'stamps', state: 'live', color: wiz.color, color2: this.shade(wiz.color), initial: wName[0].toUpperCase(), tagline: wReward, members: 1, passes: 1, weekActivity: [0, 0, 0, 0, 0, 0, 1], stat1: { label: 'First member', v: 'just now' }, stat2: { label: 'Approved', v: 'today' }, goal: wiz.goal, reward: wReward, branch: (Acc.branches || [])[0] || '', rules: this.rulesFromCfg(wiz.typeId || 'stamps', wiz.cfg) };
         this.setState({ addedCards: [...st.addedCards, nc], screen: 'home', celebrating: true, celebName: wName });
         this.saveDemo();
         setTimeout(() => this.setState({ celebrating: false }), 30000);
@@ -5956,9 +6649,29 @@ class Component extends DCLogic {
       edIsDiscount: ac.type === 'discount', edIsCoupon: ac.type === 'coupon', edIsVip: ac.type === 'vip',
       edIsChallenge: ac.type === 'challenge', edIsMembership: ac.type === 'membership',
       edRewardAtLine: fill(t.rlRewardAt, { n: ed.goal }),
-      edCapChips: mkEdChips([['1 / visit', EN ? '1 / visit' : '١ لكل زيارة'], ['2 / day', EN ? '2 / day' : '٢ يومياً'], ['No limit', EN ? 'No limit' : 'بلا حد']], 'cap', true),
+      /* ── the till's rules ──────────────────────────────────────────────
+         The earning guard is the same three values the wizard offers, and
+         it now writes the same place the wizard's card is born with:
+         rules.guard. QUICK REVIEW, because it decides what a visit is worth
+         — loosening it multiplies what every customer earns in a day. */
+      edCapChips: mkRuleChips([['1 / visit', EN ? '1 / visit' : '١ لكل زيارة'], ['2 / day', EN ? '2 / day' : '٢ يومياً'], ['No limit', EN ? 'No limit' : 'بلا حد']], 'guard', true),
+      edGuardNote: acRules.guardNote === undefined ? this.guardNoteFor(acRules.guard) : acRules.guardNote,
+      setEdGuardNote: g((e) => setEdRules({ guardNote: e.target.value })),
+      edGuardStaffLine: edGuardStaff, edCapStaffLine: edCapStaff,
+      edTierStaffLine: t.tillTier,
+      edMinStaffLine: fill(t.tillMin, { v: money(Number(acRules.minRedeem) || 0) }),
+      edGraceStaffLine: fill(t.tillGrace, { n: Number(acRules.graceDays) || 0 }),
       edRate: acCfg.rate, edRateUp: g(() => setEdCfg({ rate: Math.min(15, (acCfg.rate || 5) + 1) })), edRateDown: g(() => setEdCfg({ rate: Math.max(1, (acCfg.rate || 5) - 1) })),
-      edMin: acCfg.min, edMinUp: g(() => setEdCfg({ min: Math.min(10, (acCfg.min || 2) + 1) })), edMinDown: g(() => setEdCfg({ min: Math.max(0, (acCfg.min || 2) - 1) })),
+      /* "Redeem from" is money the customer already holds — raising it
+         strands a balance they earned, so it goes for review with the rest. */
+      edMin: Number(acRules.minRedeem) || 0,
+      edMinUp: g(() => setEdRules({ minRedeem: Math.min(10, (Number(acRules.minRedeem) || 0) + 1) })),
+      edMinDown: g(() => setEdRules({ minRedeem: Math.max(0, (Number(acRules.minRedeem) || 0) - 1) })),
+      /* the membership grace window — how long a lapsed pass is still let in */
+      edShowGrace: ac.type === 'membership', edGrace: Number(acRules.graceDays) || 0,
+      edGraceUp: g(() => setEdRules({ graceDays: Math.min(90, (Number(acRules.graceDays) || 0) + 7) })),
+      edGraceDown: g(() => setEdRules({ graceDays: Math.max(0, (Number(acRules.graceDays) || 0) - 7) })),
+      edGraceLabel: (Number(acRules.graceDays) || 0) === 0 ? t.rlGraceNone : fill(t.rlGraceDays, { n: Number(acRules.graceDays) || 0 }),
       edBexpChips: mkEdChips([['Never', t.wChipNever], ['6 months', t.wChip6mo], ['1 year', t.wChip1yr]], 'bexp', true),
       edPer: acCfg.per, edPerUp: g(() => setEdCfg({ per: Math.min(20, (acCfg.per || 10) + 1) })), edPerDown: g(() => setEdCfg({ per: Math.max(1, (acCfg.per || 10) - 1) })),
       edLadderRows: edLadder.map((r, i) => ({ name: r.name, cost: String(r.cost), xColor: edLadder.length > 1 ? '#93887A' : '#E7E0D5', jodHint: edLadderJod(r.cost),
@@ -5971,10 +6684,14 @@ class Component extends DCLogic {
       edOffer: acCfg.offer || '', setEdOffer: g((e) => setEdCfg({ offer: e.target.value })),
       edExpChips: mkEdChips([['2 weeks', EN ? '2 weeks' : 'أسبوعان'], ['1 month', EN ? '1 month' : 'شهر'], ['3 months', EN ? '3 months' : '٣ أشهر']], 'expiry', true),
       edQtyChips: mkEdChips([['Unlimited', EN ? 'Unlimited' : 'بلا حد'], ['First 50', EN ? 'First 50' : 'أول ٥٠'], ['First 100', EN ? 'First 100' : 'أول ١٠٠'], ['First 500', EN ? 'First 500' : 'أول ٥٠٠']], 'qty', true),
-      edTierRows: edTiers.map((tr, i) => ({ val: tr.name, at: String(tr.at), perk: tr.perk, dot: tierDots[i] || '#AEB7C2', isFirst: i === 0, notFirst: i > 0,
-        set: g((e) => setEdCfg({ tiers: edTiers.map((x, j) => j === i ? { ...x, name: e.target.value } : x) })),
-        setAt: g((e) => { const v = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setEdCfg({ tiers: edTiers.map((x, j) => j === i ? { ...x, at: v } : x) }); }),
-        setPerk: g((e) => setEdCfg({ tiers: edTiers.map((x, j) => j === i ? { ...x, perk: e.target.value } : x) })) })),
+      /* the tier ladder writes rules.tiers — the same thresholds the till
+         compares a member's visits against. QUICK REVIEW: dropping a
+         threshold hands existing members a tier they never earned, raising
+         one demotes people who are already carrying the pass. */
+      edTierRows: edTiers.map((tr, i) => ({ val: tr.name, at: String(tr.at), perk: tr.perk || '', dot: tierDots[i] || '#AEB7C2', isFirst: i === 0, notFirst: i > 0,
+        set: g((e) => setEdRules({ tiers: edTiers.map((x, j) => j === i ? { ...x, name: e.target.value } : x) })),
+        setAt: g((e) => { const v = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setEdRules({ tiers: edTiers.map((x, j) => j === i ? { ...x, at: v } : x) }); }),
+        setPerk: g((e) => setEdRules({ tiers: edTiers.map((x, j) => j === i ? { ...x, perk: e.target.value } : x) })) })),
       edVisits: acCfg.visits, edVisitsUp: g(() => setEdCfg({ visits: Math.min(10, (acCfg.visits || 5) + 1) })), edVisitsDown: g(() => setEdCfg({ visits: Math.max(3, (acCfg.visits || 5) - 1) })),
       edWindowChips: mkEdChips([['2 weeks', EN ? '2 weeks' : 'أسبوعان'], ['1 month', EN ? '1 month' : 'شهر'], ['Ramadan', EN ? 'Ramadan' : 'رمضان']], 'window', true),
       edMinv: acCfg.minv > 0 ? 'JOD ' + acCfg.minv + '+' : t.rlChAny,
@@ -5992,7 +6709,16 @@ class Component extends DCLogic {
       edWelcomeLine: (t.wWelcomeLine || {})[ac.type] || '',
       edShowExpiry: ac.type === 'stamps' || ac.type === 'points' || ac.type === 'vip',
       edXExpChips: mkEdChips([['never', t.wChipNever], ['6m', t.wChip6mo], ['1y', t.wChip1yr]], 'xexp', true),
-      edXCapChips: mkEdChips([['none', t.wChipNoCap], ['1d', t.wChip1Day], ['3d', t.wChip3Day]], 'xcap', false),
+      /* the daily redemption cap — the ONE till rule that stays INSTANT.
+         It throttles pace, not entitlement: the full card stays on the pass
+         either way, so nothing a customer earned is taken from them. It is
+         also the exact dial an owner needs while somebody is standing at the
+         counter — the rule the Overrides queue exists to bypass one customer
+         at a time. Making it wait on Wasla's review would mean the only fast
+         path to "yes" is an override, which is precisely the trap this
+         build is here to close. */
+      edShowRedeemCap: ac.type !== 'membership',
+      edRedeemCapChips: mkRuleChips([[0, t.wChipNoCap], [1, t.wChip1Day], [2, t.wChip2Day], [3, t.wChip3Day]], 'redeemCap', false),
       /* ── the editor: the save contract ────────────────────────────────── */
       edReviewRows, edHasReviewRows: edReviewRows.length > 0, edAfterLine,
       edDirty, edUnsavedLabel: edChanged.length === 1 ? t.edUnsavedOne : fill(t.edUnsavedMany, { n: edChanged.length }),

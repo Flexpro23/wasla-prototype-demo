@@ -1080,13 +1080,17 @@ class Component extends DCLogic {
      Shared contract, identical in the Scanner; the Dashboard is the listener.
        key   'wasla_demo_live_events'
        value JSON array, NEWEST FIRST, capped 20
-       entry { at: Date.now(), kind: 'earn'|'reward'|'join'|'redeem'|'renew'|'referral',
+       entry { at: Date.now(), kind: 'earn'|'reward'|'join'|'redeem'|'renew'|'referral'|'leave',
                who, what, card }
      Read-modify-write rather than keeping an in-memory copy, so two demo tabs writing
      at once interleave instead of one clobbering the other. `who` is always the
      CARDHOLDER — including the referral, where the card that moved is Sara's — so the
      Dashboard feed stays keyed to one member per row. Wrapped end to end in try/catch:
-     a storage failure must never break the action that triggered it. ──────── */
+     a storage failure must never break the action that triggered it.
+     `leave` is the member's own goodbye (doLeave) — never emitted for pause/retire,
+     those are the merchant's/Wasla's calls, not hers. A rejoin after leaving is not
+     this kind: it is a genuine 'join' (see doRestore), so the feed reads as a full
+     story rather than only the exit. ──────── */
   liveKey() { return 'wasla_demo_live_events'; }
   emitLive(kind, what) {
     try {
@@ -1678,6 +1682,9 @@ class Component extends DCLogic {
     const phone = this.state.recPhone || '';
     const m = this.lookupMember(phone) || {};
     const EN = this.state.lang === 'en';
+    // captured before the state flips: this is what tells a genuine "she came back
+    // after leaving" apart from an ordinary "same member, new phone" reissue.
+    const wasLeft = this.state.cardState === 'left';
     this.kill(this._vc);
     this.setState((s) => ({
       joined: true, recovered: true, cardState: 'live',
@@ -1691,7 +1698,13 @@ class Component extends DCLogic {
     this.broadcast('Daraj Coffee', EN
       ? 'Your card is on this phone. The pass on the old one is void.'
       : 'بطاقتك على هذا الهاتف. البطاقة على الهاتف القديم لم تعد صالحة.', 'recovered');
-    this.emitLive('renew', 'pass re-issued to a new device — the old barcode is void');
+    // a recovery after LEFT is a genuine return — the feed should read it as a
+    // join, same as a first signup, not as a device swap.
+    if (wasLeft) {
+      this.emitLive('join', this.memberName() + ' rejoined the programme — stamps restored');
+    } else {
+      this.emitLive('renew', 'pass re-issued to a new device — the old barcode is void');
+    }
     this.save();
   }
 
@@ -1714,12 +1727,16 @@ class Component extends DCLogic {
   }
   doLeave() {
     const EN = this.state.lang === 'en';
+    const stamps = this.state.stamps;
     this.setState((s) => ({ cardState: 'left', leaveArm: false, gift: false, shareSheet: false, termsOpen: false, backSide: false,
       histAdd: [{ id: 'left' }].concat((s.histAdd || []).filter((x) => x && x.id !== 'left')).slice(0, 4) }));
     this.go('wallet');
     this.notify('Wallet', EN
       ? 'Daraj Coffee was removed from your wallet.'
       : 'أُزيلت قهوة الدرج من محفظتك.');
+    // she is gone — the merchant side must not learn this from silence. Progress
+    // is the number the owner actually cares about, so it rides along in `what`.
+    this.emitLive('leave', this.memberName() + ' left the programme — ' + stamps + ' stamps released');
     this.save();
   }
 
