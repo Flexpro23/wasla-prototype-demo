@@ -436,6 +436,119 @@
               <div onClick="{{ countVisit }}" class="{{ chBtnCls }}" style="cursor:{{ chBtnCursor }};background:{{ chBtnBg }};color:{{ chBtnFg }};font-weight:800;font-size:15px;border-radius:14px;padding:16px 0;text-align:center;animation:{{ ctaAnim }};">{{ chBtnLabel }}</div>
             </sc-if>
 
+            <!-- ══ PREPAID · stored value ═══════════════════════════════════════════════════════
+                 BALANCE AND REFUNDABLE ARE TWO DIFFERENT NUMBERS AND BOTH ARE ALWAYS ON SCREEN.
+                 A customer must never discover the difference at a counter, so the header below
+                 sits above BOTH tabs and above every refusal this type can raise. -->
+            <sc-if value="{{ bPrepaid }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:16px;padding:12px 15px 11px;text-align:center;flex-shrink:0;">
+                <div style="font-size:10px;font-weight:800;letter-spacing:.09em;color:#9B99A3;text-transform:uppercase;">{{ ppOnCardLabel }}</div>
+                <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:31px;font-variant-numeric:tabular-nums;line-height:1.15;margin-top:2px;color:{{ ppBalTone }};animation:{{ ppBumpAnim }};">{{ ppBalanceStr }}</div>
+                <div style="font-size:11.5px;font-weight:800;color:#C3AEEC;margin-top:3px;font-variant-numeric:tabular-nums;">{{ ppRefundLine }}</div>
+                <div style="font-size:10px;color:#8E8C96;margin-top:6px;line-height:1.55;">{{ ppCashRule }}</div>
+              </div>
+
+              <sc-if value="{{ ppLow }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:9px;background:rgba(240,169,43,.1);border:1px solid rgba(240,169,43,.34);color:#F0A92B;border-radius:12px;padding:9px 13px;font-size:11px;font-weight:700;line-height:1.5;flex-shrink:0;">{{ ppLowLine }}</div>
+              </sc-if>
+
+              <!-- every refusal this type owns lands here: names the rule, says the sentence -->
+              <sc-if value="{{ ppHasRefusal }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px;background:{{ ppRfTint }};border:1px solid {{ ppRfTone }};border-radius:16px;padding:13px 15px;text-align:start;flex-shrink:0;animation:{{ refusalShake }};">
+                  <div style="display:flex;align-items:center;gap:9px;">
+                    <span style="width:26px;height:26px;border-radius:50%;background:{{ ppRfTint }};border:1.5px solid {{ ppRfTone }};color:{{ ppRfTone }};display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">{{ ppRfMark }}</span>
+                    <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:14px;color:{{ ppRfTone }};line-height:1.3;">{{ ppRfTitle }}</div>
+                  </div>
+                  <div style="font-size:11.5px;color:#9B99A3;line-height:1.6;margin-top:7px;">{{ ppRfWhy }}</div>
+                  <div style="display:inline-block;margin-top:8px;background:rgba(244,242,238,.05);border:1px dashed rgba(244,242,238,.2);color:#9B99A3;border-radius:999px;padding:5px 11px;font-size:10px;font-weight:800;line-height:1.45;">{{ ppRfRule }}</div>
+                  <div style="margin-top:9px;background:rgba(232,128,36,.1);border:1px solid rgba(232,128,36,.35);color:#F09A4D;border-radius:12px;padding:9px 12px;font-size:11.5px;font-weight:700;line-height:1.55;">{{ ppRfDo }}</div>
+                  <sc-if value="{{ ppRfHasFix }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ ppRfFix }}" class="ws-cta" style="cursor:pointer;margin-top:9px;background:rgba(47,174,102,.14);border:1.5px solid rgba(47,174,102,.5);color:#7BD8A5;font-weight:800;font-size:12.5px;border-radius:12px;padding:11px 0;text-align:center;">{{ ppRfFixLabel }}</div>
+                  </sc-if>
+                </div>
+              </sc-if>
+
+              <!-- the pad · FILS-SHIFT, no decimal key, shared by both tabs -->
+              <sc-if value="{{ ppPadOn }}" hint-placeholder-val="{{ true }}">
+                <div style="text-align:center;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:14px;padding:11px;margin-top:10px;flex-shrink:0;">
+                  <div style="font-size:10.5px;color:#9B99A3;">{{ ppAmtLabel }}</div>
+                  <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;animation:{{ ppBumpAnim }};">{{ ppAmtStr }}</div>
+                  <div style="font-size:9.5px;color:#6E6C77;margin-top:2px;line-height:1.4;">{{ ppShiftHint }}</div>
+                </div>
+                <sc-if value="{{ ppTopupTab }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:9px;flex-shrink:0;">
+                    <sc-for list="{{ ppChips }}" as="pc" hint-placeholder-count="4">
+                      <div onClick="{{ pc.pick }}" class="{{ pc.cls }}" style="cursor:{{ pc.cur }};border:1.5px solid {{ pc.br }};background:{{ pc.bg }};color:{{ pc.fg }};font-weight:800;font-size:12px;border-radius:999px;padding:8px 14px;font-variant-numeric:tabular-nums;animation:{{ pc.enter }};">{{ pc.label }}</div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px;flex-shrink:0;">
+                  <sc-for list="{{ ppKeys }}" as="pk2" hint-placeholder-count="12">
+                    <div onClick="{{ pk2.tap }}" class="{{ pk2.cls }}" style="cursor:pointer;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:11px;padding:11px 0;text-align:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:16px;">{{ pk2.k }}</div>
+                  </sc-for>
+                </div>
+
+                <!-- TOP UP · the preview, and the next rung said as an offer -->
+                <sc-if value="{{ ppTopupTab }}" hint-placeholder-val="{{ false }}">
+                  <!-- THE PREVIEW STANDS DOWN WHEN THE TOP-UP CANNOT HAPPEN — the same rule the Pay
+                       tab keeps with ppPayPrevOn. "What she gets" is a promise about cash that is
+                       about to cross the counter; it must never sit under a refusal quoting the
+                       very amount being refused, because the cashier reads down the screen and the
+                       last thing they read wins. The keypad above stays up on purpose: the next
+                       move is a different number. Only the promise and the rung go. -->
+                  <sc-if value="{{ ppTopupPrevOn }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:10px;background:rgba(47,174,102,.07);border:1px solid rgba(47,174,102,.28);border-radius:14px;padding:11px 13px;text-align:start;flex-shrink:0;">
+                      <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#7BD8A5;text-transform:uppercase;">{{ ppPreviewLabel }}</div>
+                      <div style="display:flex;align-items:baseline;gap:8px;margin-top:4px;flex-wrap:wrap;">
+                        <span style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;font-variant-numeric:tabular-nums;">{{ ppPrevCash }}</span>
+                        <span style="font-size:12.5px;font-weight:800;color:{{ ppPrevBonusTone }};">{{ ppPrevBonus }}</span>
+                      </div>
+                      <div style="font-size:12px;font-weight:800;color:#F4F2EE;margin-top:5px;font-variant-numeric:tabular-nums;">{{ ppPrevMove }}</div>
+                      <div style="font-size:11px;color:#C3AEEC;margin-top:2px;font-variant-numeric:tabular-nums;">{{ ppPrevRefund }}</div>
+                      <sc-if value="{{ ppHasRung }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top:8px;background:rgba(232,128,36,.1);border:1px dashed rgba(232,128,36,.4);color:#F09A4D;border-radius:10px;padding:8px 11px;font-size:11px;font-weight:700;line-height:1.5;">{{ ppRungLine }}</div>
+                      </sc-if>
+                    </div>
+                    <div style="font-size:10px;color:#8E8C96;margin-top:8px;line-height:1.5;text-align:center;flex-shrink:0;">{{ ppNoUndoLine }}</div>
+                  </sc-if>
+                  <div onClick="{{ ppTopupGo }}" class="{{ ppTopupCls }}" style="cursor:{{ ppTopupCur }};background:{{ ppTopupBg }};color:{{ ppTopupFg }};font-weight:800;font-size:14.5px;border-radius:14px;padding:15px 0;text-align:center;margin-top:9px;flex-shrink:0;animation:{{ ctaAnim }};">{{ ppTopupLabel }}</div>
+                </sc-if>
+
+                <!-- PAY · what comes off the card, what does not, and where the balance lands -->
+                <sc-if value="{{ ppPayTab }}" hint-placeholder-val="{{ true }}">
+                  <sc-if value="{{ ppOffPay }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:9px;background:rgba(240,169,43,.1);border:1px solid rgba(240,169,43,.34);color:#F0A92B;border-radius:12px;padding:9px 13px;font-size:11px;font-weight:700;line-height:1.5;flex-shrink:0;">{{ ppOffPayLine }}</div>
+                  </sc-if>
+                  <!-- THE PREVIEW STANDS DOWN WHEN THE HARD-STOP IS UP. A refusal that says "this
+                       is refused, not part-paid" cannot sit above a panel quoting the exact partial
+                       it is refusing — the cashier would read the second one and start collecting. -->
+                  <sc-if value="{{ ppPayPrevOn }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:10px;background:rgba(232,128,36,.07);border:1px solid rgba(232,128,36,.28);border-radius:14px;padding:11px 13px;text-align:start;flex-shrink:0;">
+                      <div style="font-size:13px;font-weight:800;color:#F09A4D;font-variant-numeric:tabular-nums;">{{ ppPayFrom }}</div>
+                      <sc-if value="{{ ppPayShort }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-size:12px;font-weight:800;color:#F0A92B;margin-top:3px;font-variant-numeric:tabular-nums;">{{ ppPayShortLine }}</div>
+                      </sc-if>
+                      <div style="font-size:12px;font-weight:800;color:#F4F2EE;margin-top:5px;font-variant-numeric:tabular-nums;">{{ ppPayMove }}</div>
+                      <div style="font-size:10.5px;color:#9B99A3;margin-top:3px;line-height:1.5;">{{ ppPaySplit }}</div>
+                    </div>
+                  </sc-if>
+                  <div onClick="{{ ppPayGo }}" class="{{ ppPayCls }}" style="cursor:{{ ppPayCur }};background:{{ ppPayBg }};color:{{ ppPayFg }};font-weight:800;font-size:14.5px;border-radius:14px;padding:15px 0;text-align:center;margin-top:10px;flex-shrink:0;animation:{{ ctaAnim }};">{{ ppPayLabel }}</div>
+                </sc-if>
+              </sc-if>
+
+              <!-- the two things a counter needs when a customer disputes a balance -->
+              <div style="display:flex;gap:7px;margin-top:9px;flex-shrink:0;">
+                <div onClick="{{ ppOpenStmt }}" class="ws-ghost" style="cursor:pointer;flex:1;border:1.5px solid rgba(244,242,238,.2);color:#F4F2EE;font-weight:800;font-size:11.5px;border-radius:12px;padding:11px 6px;text-align:center;line-height:1.3;animation:{{ ctaAnim2 }};">{{ ppStmtBtn }}</div>
+                <sc-if value="{{ ppCanRefund }}" hint-placeholder-val="{{ true }}">
+                  <div onClick="{{ ppOpenRefund }}" class="ws-ghost" style="cursor:pointer;flex:1;border:1.5px solid rgba(240,169,43,.45);color:#F0A92B;font-weight:800;font-size:11.5px;border-radius:12px;padding:11px 6px;text-align:center;line-height:1.3;animation:{{ ctaAnim2 }};">{{ ppRefundBtnLabel }}</div>
+                </sc-if>
+              </div>
+              <!-- a merchant who switched refunds off gets a sentence, not a missing button -->
+              <sc-if value="{{ ppNoRefund }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:8px;background:rgba(244,242,238,.05);border:1px dashed rgba(244,242,238,.2);color:#9B99A3;border-radius:12px;padding:9px 12px;font-size:10.5px;font-weight:700;line-height:1.55;flex-shrink:0;">{{ ppNoRefundLine }}</div>
+              </sc-if>
+            </sc-if>
+
             <sc-if value="{{ bVerdict }}" hint-placeholder-val="{{ false }}">
               <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;">
                 <div style="position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center;">
@@ -628,6 +741,20 @@
               <div style="animation:{{ sT.anim }};"><div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;">{{ sT.n }}</div><div style="font-size:10.5px;color:#9B99A3;">{{ sT.label }}</div></div>
             </sc-for>
           </div>
+          <!-- CLOSING A SHIFT THAT TOOK CASH. Without these five numbers the drawer cannot be
+               counted, and a cashier who credits JOD 90 while taking JOD 100 appears nowhere. -->
+          <sc-if value="{{ shiftHasMoney }}" hint-placeholder-val="{{ false }}">
+            <div style="width:100%;max-width:280px;text-align:start;flex-shrink:0;background:#1B1B1F;border:1px solid rgba(244,242,238,.09);border-radius:14px;padding:11px 13px;">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;margin-bottom:7px;">{{ shiftMoneyLabel }}</div>
+              <sc-for list="{{ shiftMoney }}" as="sm" hint-placeholder-count="5">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:3px 0;animation:{{ sm.anim }};">
+                  <span style="font-size:11.5px;color:#9B99A3;">{{ sm.label }}</span>
+                  <span style="font-size:12.5px;font-weight:900;font-variant-numeric:tabular-nums;color:{{ sm.fg }};">{{ sm.v }}</span>
+                </div>
+              </sc-for>
+              <div style="font-size:9.5px;color:#6E6C77;line-height:1.5;margin-top:7px;">{{ shiftMoneyNote }}</div>
+            </div>
+          </sc-if>
           <div style="width:100%;max-width:280px;text-align:start;flex-shrink:0;">
             <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;margin-bottom:8px;">{{ t.lastActions }}</div>
             <div style="display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto;">
@@ -753,6 +880,59 @@
       </div>
     </sc-if>
 
+    <!-- ══ PREPAID · the ONE confirm sheet every stored-value commit passes through. Take the cash,
+             empty the card, a partial, the same-amount debounce and the refund all wear the same
+             face: what is about to move, what the customer will be told, and one button. -->
+    <sc-if value="{{ ppSheetOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:96;background:rgba(16,16,19,.96);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:28px;text-align:center;animation:flashIn .3s both;">
+        <div style="width:66px;height:66px;border-radius:50%;background:rgba(244,242,238,.06);border:2.5px solid {{ ppSheetTone }};color:{{ ppSheetTone }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:22px;flex-shrink:0;animation:{{ popAnim }};">JOD</div>
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:20px;line-height:1.3;">{{ ppSheetTitle }}</div>
+        <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;color:{{ ppSheetTone }};line-height:1;">{{ ppSheetBig }}</div>
+        <div style="font-size:12px;color:#9B99A3;line-height:1.6;max-width:290px;">{{ ppSheetLine }}</div>
+        <div style="background:rgba(232,128,36,.1);border:1px solid rgba(232,128,36,.35);color:#F09A4D;border-radius:12px;padding:10px 14px;font-size:11.5px;font-weight:700;max-width:290px;line-height:1.55;">{{ ppSheetSay }}</div>
+        <div onClick="{{ ppSheetGo }}" class="ws-cta" style="cursor:pointer;width:100%;max-width:290px;background:{{ ppSheetTone }};color:#101013;font-weight:800;font-size:14.5px;border-radius:14px;padding:15px 0;text-align:center;animation:{{ ctaAnim }};">{{ ppSheetBtn }}</div>
+        <sc-if value="{{ ppSheetHasAbort }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ ppSheetAbort }}" class="ws-cta" style="cursor:pointer;width:100%;max-width:290px;background:transparent;border:1.5px solid rgba(244,242,238,.24);color:#F4F2EE;font-weight:800;font-size:12.5px;border-radius:14px;padding:12px 0;text-align:center;line-height:1.35;">{{ ppSheetAbortLabel }}</div>
+        </sc-if>
+        <div onClick="{{ ppSheetClose }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:12.5px;font-weight:700;padding:4px 10px;">{{ t.cancel }}</div>
+      </div>
+    </sc-if>
+
+    <!-- ══ PREPAID · the counter statement, for "it should be 110". Derived from the PERSISTED
+             ledger keyed by card — never from the staff-scoped shift log, which is exactly the
+             list that would be missing the row she is disputing. -->
+    <sc-if value="{{ ppStmtOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:95;background:rgba(16,16,19,.97);display:flex;flex-direction:column;padding:26px 20px 20px;gap:10px;animation:flashIn .3s both;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;">
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:17px;">{{ ppStmtTitle }}</div>
+          <div onClick="{{ ppStmtClose }}" class="ws-x" style="cursor:pointer;color:#8E8C96;font-size:18px;padding:4px 6px;">✕</div>
+        </div>
+        <div style="font-size:11.5px;font-weight:800;color:#C3AEEC;line-height:1.5;flex-shrink:0;font-variant-numeric:tabular-nums;">{{ ppStmtHead }}</div>
+        <div style="font-size:10.5px;color:#9B99A3;line-height:1.5;flex-shrink:0;">{{ ppStmtNote }}</div>
+        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:7px;min-height:0;">
+          <sc-if value="{{ ppStmtEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;color:#8E8C96;font-size:12px;padding:34px 10px;line-height:1.6;">{{ ppStmtEmptyLine }}</div>
+          </sc-if>
+          <sc-for list="{{ ppStmtRows }}" as="ps" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:9px;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:12px;padding:9px 12px;opacity:{{ ps.op }};animation:{{ ps.anim }};">
+              <div style="min-width:0;flex:1;text-align:start;">
+                <div style="font-size:12px;font-weight:800;">{{ ps.kind }}</div>
+                <div style="font-size:9.5px;color:#6E6C77;">{{ ps.meta }}</div>
+              </div>
+              <sc-if value="{{ ps.corrected }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:9px;font-weight:800;color:#F0A92B;border:1px solid rgba(240,169,43,.4);border-radius:999px;padding:3px 7px;white-space:nowrap;flex-shrink:0;">{{ ps.correctedLabel }}</span>
+              </sc-if>
+              <div style="text-align:end;flex-shrink:0;">
+                <div style="font-size:12.5px;font-weight:900;font-variant-numeric:tabular-nums;color:{{ ps.amountFg }};">{{ ps.amount }}</div>
+                <div style="font-size:9.5px;color:#8E8C96;font-variant-numeric:tabular-nums;">{{ ps.after }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:rgba(232,128,36,.09);border:1px solid rgba(232,128,36,.3);color:#F09A4D;border-radius:12px;padding:10px 13px;font-size:10.5px;font-weight:700;text-align:center;line-height:1.5;flex-shrink:0;">{{ ppCashRule }}</div>
+      </div>
+    </sc-if>
+
     <sc-if value="{{ joinOpen }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;inset:0;z-index:92;background:rgba(16,16,19,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px 22px 22px;text-align:center;animation:flashIn .3s both;">
         <div onClick="{{ closeJoin }}" class="ws-x" style="position:absolute;top:18px;inset-inline-end:20px;z-index:2;cursor:pointer;color:#8E8C96;font-size:19px;padding:6px 8px;line-height:1;">✕</div>
@@ -855,7 +1035,7 @@
                 <div onClick="{{ lk.tap }}" class="{{ lk.cls }}" style="cursor:{{ lk.cur }};height:48px;border-radius:14px;background:#1B1B1F;border:1px solid rgba(244,242,238,.1);display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:800;font-size:17px;visibility:{{ lk.vis }};">{{ lk.k }}</div>
               </sc-for>
             </div>
-            <div style="background:rgba(232,128,36,.1);border:1px dashed rgba(232,128,36,.4);color:#F09A4D;border-radius:999px;padding:5px 13px;font-size:10.5px;font-weight:800;letter-spacing:.03em;">{{ t.pinHint }}</div>
+            <div style="background:rgba(232,128,36,.1);border:1px dashed rgba(232,128,36,.4);color:#F09A4D;border-radius:999px;padding:5px 13px;font-size:10.5px;font-weight:800;letter-spacing:.03em;">{{ lockPinHint }}</div>
             <div onClick="{{ lockBackToPick }}" class="ws-ghost" style="cursor:pointer;color:#9B99A3;font-size:11.5px;font-weight:700;padding:4px 10px;text-decoration:underline;">{{ lockBackLabel }}</div>
           </div>
         </sc-if>
@@ -870,11 +1050,11 @@
       <svg viewBox="213.44 0 314.91 314.51" preserveAspectRatio="xMidYMid meet" style="width:26px;height:26px;display:block;"><path fill="#E88024" d="M385.82,261.53c11.27,40.31,54.39,63.14,94.51,48.85,34.32-12.22,54.43-48.93,46.34-84.45-2.49-10.95-7.28-20.68-13.75-28.87-7.72-9.83-17.8-17.42-29.19-22.15-14.53-6.08-31.13-7.48-47.48-2.91-6.99,1.96-13.43,4.85-19.26,8.55-.24.14-.45.28-.66.41-5.71,3.89-8.03,11.74-4.13,18.55,3.1,5.41,9.72,7.93,15.71,6.22,1.09-.31,2.09-.74,3.02-1.29.08,0,.12-.03.16-.07.09-.03.16-.07.21-.13.03.02.05-.01.06-.04.15-.09.3-.18.45-.27h.05c3.56-2.28,7.55-4.07,11.84-5.27,13.78-3.85,27.83-.84,38.56,6.98,7.92,5.75,14.02,14.08,16.86,24.23.12.42.23.83.33,1.26,5.88,23.53-8.02,47.59-31.53,54.16-23.51,6.57-47.87-6.79-55.04-29.96-.21-.84-.93-3.39-1.2-4.31l-23.45-84.05,87.12-24.31c40.31-11.27,63.14-54.39,48.85-94.51-12.22-34.32-48.93-54.43-84.45-46.34-10.95,2.49-20.68,7.28-28.87,13.75-9.83,7.72-17.42,17.8-22.15,29.19-6.08,14.53-7.48,31.13-2.91,47.48,1.96,6.99,4.85,13.43,8.55,19.26.14.24.27.45.41.66,3.89,5.71,11.74,8.03,18.55,4.13,5.41-3.1,7.93-9.72,6.22-15.71-.31-1.09-.74-2.09-1.29-3.02,0-.08-.03-.12-.07-.16-.03-.09-.07-.16-.13-.21.02-.03-.01-.05-.04-.06-.09-.15-.18-.3-.27-.45v-.05c-2.28-3.56-4.07-7.55-5.27-11.84-3.85-13.78-.84-27.83,6.98-38.56,5.75-7.92,14.08-14.02,24.23-16.86.42-.12.83-.23,1.26-.33,23.53-5.88,47.59,8.02,54.16,31.53,6.57,23.51-6.8,47.87-29.96,55.04-.84.21-3.39.93-4.31,1.2l-84.05,23.45-24.31-87.12c-11.27-40.31-54.39-63.14-94.51-48.85-34.32,12.22-54.43,48.93-46.34,84.45,2.49,10.95,7.28,20.68,13.75,28.87,7.72,9.83,17.8,17.42,29.19,22.15,14.53,6.08,31.13,7.48,47.48,2.91,6.99-1.95,13.43-4.85,19.26-8.55.24-.14.45-.27.66-.41,5.71-3.89,8.03-11.74,4.13-18.55-3.1-5.41-9.72-7.93-15.71-6.22-1.09.31-2.09.74-3.02,1.29-.08,0-.12.03-.16.07-.09.03-.16.07-.21.13-.03-.02-.05.01-.06.04-.15.09-.3.18-.45.28h-.05c-3.56,2.28-7.55,4.07-11.84,5.27-13.78,3.85-27.83.84-38.56-6.98-7.92-5.75-14.02-14.08-16.86-24.23-.12-.42-.23-.83-.33-1.26-5.88-23.53,8.02-47.59,31.53-54.16,23.51-6.57,47.87,6.8,55.04,29.96.21.84.93,3.39,1.2,4.31l23.45,84.05-87.12,24.31c-40.31,11.27-63.14,54.39-48.85,94.51,12.22,34.32,48.93,54.43,84.45,46.34,10.95-2.49,20.68-7.28,28.87-13.75,9.83-7.72,17.42-17.8,22.15-29.19,6.08-14.53,7.48-31.13,2.91-47.48-1.95-6.99-4.85-13.43-8.55-19.26-.14-.24-.27-.45-.41-.66-3.89-5.71-11.74-8.03-18.55-4.13-5.41,3.1-7.93,9.72-6.22,15.71.31,1.09.74,2.09,1.29,3.02,0,.08.03.12.07.16.03.09.07.16.13.21-.02.03.01.05.04.06.09.15.18.3.27.45v.05c2.28,3.56,4.07,7.55,5.27,11.84,3.85,13.78.84,27.83-6.98,38.56-5.75,7.92-14.08,14.02-24.23,16.86-.42.12-.83.23-1.26.33-23.53,5.88-47.59-8.02-54.16-31.53-6.57-23.51,6.8-47.87,29.96-55.04.84-.21,3.39-.93,4.31-1.2l84.05-23.45,24.31,87.12Z"></path></svg>
       <div>
         <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:16px;line-height:1;">The staff scanner</div>
-        <div style="font-size:11px;color:#93887A;margin-top:3px;">One screen · 9 card types · ٩ أنواع · 3 seconds</div>
+        <div style="font-size:11px;color:#93887A;margin-top:3px;">{{ railTypesHead }}</div>
       </div>
     </div>
     <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
-      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">Scan a customer · 9 types</div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">{{ railTypesLabel }}</div>
       <div style="display:flex;flex-direction:column;gap:7px;">
         <sc-for list="{{ demoScans }}" as="dsc" hint-placeholder-count="9">
           <div onClick="{{ dsc.go }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ dsc.br }};background:{{ dsc.bg }};border-radius:11px;padding:9px 11px;animation:{{ dsc.anim }};">
@@ -885,10 +1065,10 @@
       </div>
     </div>
     <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
-      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:4px;">When it isn’t a simple yes · 5</div>
-      <div style="font-size:10.5px;color:#93887A;margin-bottom:10px;line-height:1.5;">Four refusals and a warning — each one names the rule and the sentence to say next.</div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:4px;">{{ railEdgeLabel }}</div>
+      <div style="font-size:10.5px;color:#93887A;margin-bottom:10px;line-height:1.5;">{{ railEdgeSub }}</div>
       <div style="display:flex;flex-direction:column;gap:7px;">
-        <sc-for list="{{ edgeScans }}" as="edg" hint-placeholder-count="5">
+        <sc-for list="{{ edgeScans }}" as="edg" hint-placeholder-count="7">
           <div onClick="{{ edg.go }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ edg.br }};background:{{ edg.bg }};border-radius:11px;padding:9px 11px;animation:{{ edg.anim }};">
             <span style="width:28px;height:28px;border-radius:9px;background:{{ edg.discBg }};border:1px solid {{ edg.discBr }};color:{{ edg.dot }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:{{ edg.glyphSize }};letter-spacing:-.02em;flex-shrink:0;">{{ edg.glyph }}</span>
             <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#241C16;">{{ edg.label }}</div><div style="font-size:10.5px;color:#93887A;">{{ edg.sub }}</div></div>
@@ -920,7 +1100,21 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;offlineStart&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
 class Component extends DCLogic {
-  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, flash: null, flashOut: false, syncing: false, syncDone: 0, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, sessionLog: [], queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ', ramp: 1, scanSeq: 0, stampSeq: 0, amtSeq: 0, chSeq: 0, chFrom: 0, staffSeq: 0, vipSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false,
+  state = { lang: 'en', screen: 'idle', resolving: false, scenario: null, mode: 'collect', stamps: 6, goal: 8, amount: '', selRw: null, cbSel: null, couponDone: false, pin: null, pinDigits: '', pinTries: 0, pinErr: false, flash: null, flashOut: false, syncing: false, syncDone: 0, offline: this.props.offlineStart ?? false, queued: 0, shiftOpen: false, cbBal: 3.2, pts: 460, rVisits: 11, scansToday: 61, sStamps: 44, sRewards: 9, settled: false, manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null, chVisits: 3, chGoal: 5, chDays: 9, chDone: false, queueLog: [], queueSheetOpen: false, handoverPick: false, staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ', ramp: 1, scanSeq: 0, stampSeq: 0, amtSeq: 0, chSeq: 0, chFrom: 0, staffSeq: 0, vipSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false,
+    // ── THE RECORD · a TILL-level ledger, keyed by the day it happened on. It is NOT the shift's
+    //    log and handover does not touch it: the money a shift moved outlives the shift that moved
+    //    it, and a row that vanished while the balance it caused stayed behind would be "the money
+    //    moved and the record did not" — the one thing a deposit-taking till can never do. The
+    //    shift summary is a VIEW of this list filtered by `shiftId`; the counters reset, the log
+    //    never does. `dayKey` is the local YYYY-MM-DD the row was written on, so a blob restored
+    //    on a later day cannot pass yesterday's work off as today's.
+    tillLog: [], shiftId: 'sh1', shiftSeq: 1,
+    // ── PREPAID · stored value. Every field is INTEGER FILS and every name ends in "Minor", so a
+    //    2-decimal float from the cashback paths cannot be silently passed into a 3-decimal
+    //    currency. `prepaid` is scenario → the live store; absent means "still as the shared data
+    //    seeded it". `ppLast` is the same-card/same-amount debounce, `ppSheet` the one confirm
+    //    sheet every prepaid commit passes through, `ppBy` the staff record whose PIN authorised it.
+    prepaid: {}, ppAmt: '', ppSheet: null, ppBy: '', ppSeq: 0, ppLast: {}, ppStmt: null,
     // ── the beginning of the app · a till with no sign-in is a till anyone can use ──
     locked: true, shiftLive: false, lockMode: 'start', lockStaff: null, lockDigits: '', lockTries: 0, lockErr: false, lockWarn: false, lockSeq: 0, lockAuto: false,
     // ── history · corrections · lookup · enrolment ──
@@ -960,8 +1154,13 @@ class Component extends DCLogic {
       noRedeemVip: { en: 'VIP has no redeem — the tier is the reward.', ar: 'بطاقة كبار الزبائن بلا استبدال — المستوى نفسه هو المكافأة.' },
       nextCustomer: { en: 'Next customer', ar: 'الزبون التالي' },
       pinTitle: { en: 'Staff PIN', ar: 'رمز الموظف' },
-      pinSub: { en: 'Redeems ask for a PIN — collections never do.', ar: 'الاستبدال يطلب رمزاً — أما الجمع فلا.' },
-      pinHint: { en: 'Demo PIN 1234', ar: 'رمز العرض 1234' },
+      // THE HOUSE RULE, RESTATED. It used to read "Redeems ask for a PIN — collections never do",
+      // which prepaid breaks in both directions: a top-up is a collection and asks for a code
+      // BEFORE the cash is taken, and a small card payment below the merchant's threshold asks for
+      // nothing at all. The line that survives every card type is about what is moving, not which
+      // tab you are standing on.
+      pinSub: { en: 'A code is asked whenever cash crosses the counter — or when value leaves a card without the customer choosing it.', ar: 'يُطلب الرمز كلما عبر مال فوق الصندوق — أو حين تُسحب قيمة من بطاقة دون أن يختار ذلك صاحبها.' },
+      pinHint: { en: 'Demo PIN', ar: 'رمز العرض' },
       cancel: { en: 'Cancel', ar: 'إلغاء' },
       // ── sign-in · the shift has a beginning now ──
       lockWho: { en: 'Who’s on the till?', ar: 'من على الصندوق؟' },
@@ -974,13 +1173,13 @@ class Component extends DCLogic {
       lockTakeOver: { en: 'Someone else is taking over', ar: 'شخص آخر سيتسلّم المناوبة' },
       lockWarnStay: { en: 'Locking soon · tap to stay', ar: 'سيُقفل قريباً · اضغط للبقاء' },
       // ── history + corrections ──
-      histTitle: { en: 'The last 7 days', ar: 'آخر ٧ أيام' },
+      histTitle: { en: 'The last 7 days', ar: 'آخر 7 أيام' },
       histNote: { en: 'Tap any action to correct it — PIN’d, logged, once. Anything older goes to the dashboard.', ar: 'اضغط أي عملية لتصحيحها — برمز، ومسجَّلة، ومرة واحدة. وما هو أقدم فشأن لوحة التحكم.' },
-      histPh: { en: 'Name · phone · last 4', ar: 'الاسم · الهاتف · آخر ٤ أرقام' },
+      histPh: { en: 'Name · phone · last 4', ar: 'الاسم · الهاتف · آخر 4 أرقام' },
       histAllDays: { en: 'All 7 days', ar: 'كل الأيام' },
       histToday: { en: 'Today', ar: 'اليوم' },
       histYesterday: { en: 'Yesterday', ar: 'أمس' },
-      histNoMatch: { en: 'Nothing matches that in the last 7 days. Try a surname, or the last 4 digits of her phone.', ar: 'لا شيء يطابق ذلك في آخر ٧ أيام. جرّب اسم العائلة أو آخر أربعة أرقام من هاتفها.' },
+      histNoMatch: { en: 'Nothing matches that in the last 7 days. Try a surname, or the last 4 digits of her phone.', ar: 'لا شيء يطابق ذلك في آخر 7 أيام. جرّب اسم العائلة أو آخر أربعة أرقام من هاتفها.' },
       correctedBadge: { en: 'Corrected', ar: 'مصحَّحة' },
       tooOldBadge: { en: 'Dashboard', ar: 'لوحة التحكم' },
       corrTitle: { en: 'Correct this action?', ar: 'تصحيح هذه العملية؟' },
@@ -1006,7 +1205,7 @@ class Component extends DCLogic {
       // ── lookup ──
       lookupTitle: { en: 'I forgot my phone', ar: 'نسيت هاتفي' },
       lookupSub: { en: 'Search by name, phone, or the last 4 digits of either.', ar: 'ابحث بالاسم أو رقم الهاتف أو آخر أربعة أرقام.' },
-      lookupPh: { en: 'Name · phone · last 4', ar: 'الاسم · الهاتف · آخر ٤ أرقام' },
+      lookupPh: { en: 'Name · phone · last 4', ar: 'الاسم · الهاتف · آخر 4 أرقام' },
       lookupNote: { en: 'Found by lookup is written into today’s log — it matters if a customer disputes.', ar: 'العثور بالبحث يُكتب في سجل اليوم — وهذا ما يحسم أي اعتراض.' },
       lookupStart: { en: 'Start typing — or pick someone you served today.', ar: 'ابدأ بالكتابة — أو اختر أحد زبائن اليوم.' },
       // ── enrolment at the counter ──
@@ -1023,13 +1222,13 @@ class Component extends DCLogic {
       mgrPinHint: { en: 'Demo manager PIN 4680', ar: 'رمز المدير للعرض 4680' },
       rdLockTitle: { en: 'Redeem locked', ar: 'الاستبدال مقفل' },
       shiftDone: { en: 'Shift summary', ar: 'ملخص المناوبة' },
-      shiftNote: { en: 'The count starts fresh for the next teammate — the history stays on the dashboard.', ar: 'العدّاد يبدأ من الصفر للزميل التالي — والسجل الكامل يبقى في لوحة التحكم.' },
+      shiftNote: { en: 'The count starts fresh for the next teammate. Today’s record stays on this till — handover never erases it.', ar: 'العدّاد يبدأ من الصفر للزميل التالي. وسجل اليوم يبقى على هذا الصندوق — والتسليم لا يمحوه أبداً.' },
       handOver: { en: 'Hand the phone over', ar: 'سلّم الجهاز' },
       onShift: { en: 'On shift', ar: 'على المناوبة' },
       manualTitle: { en: 'Enter the code', ar: 'أدخل الرمز' },
       manualSub: { en: 'Type the 8 digits printed under the QR', ar: 'اكتب الأرقام الثمانية المطبوعة تحت الرمز' },
       manualNoMatch: { en: 'No member with this code', ar: 'لا يوجد عضو بهذا الرمز' },
-      renewBtn: { en: 'Renew · JOD 25', ar: 'تجديد · 25 ديناراً' },
+      renewBtn: { en: 'Renew · JOD 25', ar: 'تجديد · JOD 25' },
       undo: { en: 'Undo', ar: 'تراجع' },
       crossSellStamp: { en: '+ Add a stamp instead', ar: '+ أضف ختماً بدلاً منه' },
       crossSellFlashTitle: { en: 'Switched to the stamp card', ar: 'تحوّلنا إلى بطاقة الأختام' },
@@ -1042,7 +1241,7 @@ class Component extends DCLogic {
       lastActions: { en: 'Last actions', ar: 'آخر العمليات' },
       noActionsYet: { en: 'No actions yet this shift', ar: 'لا عمليات في هذه المناوبة بعد' },
       handoverPickTitle: { en: 'Who’s taking over?', ar: 'من سيكمل المناوبة؟' },
-      handoverPickSub: { en: 'Pick the next teammate — the counters reset for them.', ar: 'اختر الزميل التالي — وتُصفَّر العدّادات باسمه.' },
+      handoverPickSub: { en: 'Pick the next teammate. They sign in with their own code — the counters reset, the day’s record does not.', ar: 'اختر الزميل التالي. يسجّل الدخول برمزه هو — تُصفَّر العدّادات، ولا يُمسّ سجل اليوم.' },
       queueTitle: { en: 'Queued while offline', ar: 'بانتظار المزامنة' },
       queueEmptyLine: { en: 'Nothing queued right now', ar: 'لا شيء بالانتظار الآن' },
       queueSyncNote: { en: 'Syncs automatically the moment the till is back online', ar: 'تتم المزامنة تلقائياً لحظة عودة الاتصال' },
@@ -1051,7 +1250,54 @@ class Component extends DCLogic {
       couponTitle: { en: 'One free dessert', ar: 'حلوى مجانية واحدة' },
       couponSub: { en: 'Expires 29 AUG · one per customer · no undo', ar: 'تنتهي 29 آب · واحدة لكل زبون · بلا تراجع' },
       couponUsedTitle: { en: 'Already used — Jul 12, 14:02', ar: 'استُخدم — 12 تموز، 14:02' },
-      couponUsedSub: { en: 'Coupons are one-shot. Offer the stamp card instead — same QR, one tap.', ar: 'الكوبون يُستخدم مرة واحدة فقط. اعرض بطاقة الأختام بدلاً منه — نفس الرمز، لمسة واحدة.' }
+      couponUsedSub: { en: 'Coupons are one-shot. Offer the stamp card instead — same QR, one tap.', ar: 'الكوبون يُستخدم مرة واحدة فقط. اعرض بطاقة الأختام بدلاً منه — نفس الرمز، لمسة واحدة.' },
+      // ── PREPAID · the counter vocabulary of stored value. "Collect" and "Redeem" are both wrong
+      //    for a card the customer paid cash into: she is topping it up, and later she is paying
+      //    with it. Arabic is written as the words a Jordanian cashier actually says.
+      ppTopupTab: { en: 'Top up', ar: 'تعبئة' },
+      ppPayTab: { en: 'Pay', ar: 'دفع' },
+      ppOnCard: { en: 'On the card', ar: 'على البطاقة' },
+      ppRefundableWord: { en: 'Refundable', ar: 'قابل للاسترداد' },
+      // THE SENTENCE A CASHIER SAYS. It has to carry in both languages as an original, because it
+      // is the difference between a customer who understands the card and a customer who feels
+      // cheated at a counter.
+      ppCashRule: { en: 'You get back the cash you put in, less what you have spent. The bonus is not cash.', ar: 'يُعاد إليك ما دفعته نقداً بعد خصم ما صرفته. أما المكافأة فليست نقداً.' },
+      ppNoUndo: { en: 'No undo on a top-up. A correction needs a code, and it signs itself.', ar: 'لا تراجع عن التعبئة. التصحيح يحتاج رمزاً، ويوقّع باسم صاحبه.' },
+      ppTakeTitle: { en: 'Now take the cash', ar: 'الآن استلم المبلغ' },
+      ppTakeBtn: { en: 'I have the cash — load it', ar: 'استلمت المبلغ — عبّئها' },
+      ppPinFirst: { en: 'The code comes first, the cash second — so nothing can be taken that the till cannot record.', ar: 'الرمز أولاً والمال ثانياً — فلا يُؤخذ شيء لا يستطيع الصندوق تسجيله.' },
+      ppPreviewLabel: { en: 'What she gets', ar: 'ما ستحصل عليه' },
+      ppTopupBtn: { en: 'Staff code, then take the cash', ar: 'رمز الموظف ثم استلام المبلغ' },
+      ppPayBtn: { en: 'Take it off the card', ar: 'اخصمها من البطاقة' },
+      ppTypeBill: { en: 'Type the bill', ar: 'أدخل قيمة الفاتورة' },
+      ppTypeAmount: { en: 'Type the amount, or tap one', ar: 'أدخل المبلغ، أو اضغط أحدها' },
+      // the worked example has to be spelled the way the pad above it will spell the result — see M()
+      ppShiftLabel: { en: 'Each digit moves one place — 5, 6, 0 reads JOD 5.60', ar: 'كل رقم يزيح خانة — 5 ثم 6 ثم 0 تُقرأ JOD 5.60' },
+      ppEmptyTitle: { en: 'This empties the card', ar: 'هذا يُفرغ البطاقة' },
+      ppEmptyBtn: { en: 'Yes — empty it (code)', ar: 'نعم — أفرغها (رمز)' },
+      ppPartialTitle: { en: 'Part card, part something else', ar: 'جزء من البطاقة وجزء بوسيلة أخرى' },
+      ppPartialBtn: { en: 'The other payment cleared — take the card leg', ar: 'تمّت الدفعة الأخرى — اخصم حصة البطاقة' },
+      ppPartialAbort: { en: 'She’ll pay the whole bill another way — keep her balance', ar: 'ستدفع الفاتورة كاملة بطريقة أخرى — أبقِ رصيدها' },
+      ppAgainTitle: { en: 'Same card, same amount', ar: 'نفس البطاقة ونفس المبلغ' },
+      ppAgainBtn: { en: 'Yes, this is a second one', ar: 'نعم، هذه عملية ثانية' },
+      ppRefundTitle: { en: 'Refund and close the card', ar: 'استرداد وإغلاق البطاقة' },
+      ppRefundOpen: { en: 'Refund · manager code', ar: 'استرداد · رمز المدير' },
+      ppRefundBtn: { en: 'Manager code — pay it out and close', ar: 'رمز المدير — ادفعها وأغلق البطاقة' },
+      ppRefundClose: { en: 'A refund closes the card for good. There is no partial refund.', ar: 'الاسترداد يُغلق البطاقة نهائياً. ولا يوجد استرداد جزئي.' },
+      ppStmtOpen: { en: 'Show her the card’s history', ar: 'اعرض عليها سجل البطاقة' },
+      ppStmtTitle: { en: 'This card, movement by movement', ar: 'هذه البطاقة، حركة حركة' },
+      ppStmtNote: { en: 'Every load, every bonus, every payment — read it to her from the top.', ar: 'كل تعبئة وكل مكافأة وكل دفعة — اقرأها لها من الأعلى.' },
+      ppStmtEmpty: { en: 'Nothing on this card yet', ar: 'لا حركات على هذه البطاقة بعد' },
+      ppOfflineCeiling: { en: 'Offline — payments up to', ar: 'دون إنترنت — الدفع حتى' },
+      ppLowBalance: { en: 'Running low', ar: 'الرصيد يوشك على الانتهاء' },
+      ppBonusIs: { en: 'is bonus', ar: 'مكافأة' },
+      ppShiftMoneyLabel: { en: 'Money this shift', ar: 'حركة المال في المناوبة' },
+      ppCashIn: { en: 'Cash taken in', ar: 'نقد مستلم' },
+      ppIssued: { en: 'Value issued', ar: 'قيمة صادرة' },
+      ppBonusIssued: { en: 'Of which bonus', ar: 'منها مكافأة' },
+      ppSpentDown: { en: 'Value spent down', ar: 'قيمة مصروفة' },
+      ppRefundsOut: { en: 'Refunds paid out', ar: 'مبالغ مستردة' },
+      ppDrawerNote: { en: 'Count the drawer against “cash taken in”. Value issued is higher by exactly the bonus.', ar: 'اعدّ الصندوق مقابل «النقد المستلم». القيمة الصادرة أعلى بمقدار المكافأة تماماً.' }
     };
   }
   /** The tmap resolved down to plain strings for the active language. */
@@ -1130,7 +1376,10 @@ class Component extends DCLogic {
       try {
         this._lsSet(this.scanKey(), JSON.stringify({ v: 1,
           lang: s.lang, scansToday: s.scansToday, sStamps: s.sStamps, sRewards: s.sRewards,
-          sessionLog: (s.sessionLog || []).slice(0, 20),
+          // the till ledger, not the shift log — it survives handover, the lock and a reload
+          tillLog: (s.tillLog || []).slice(0, 80), shiftId: s.shiftId, shiftSeq: s.shiftSeq,
+          // stored value is real money on somebody's pass: it persists like a balance, not like a screen
+          prepaid: s.prepaid, ppLast: s.ppLast,
           staffName: s.staffName, staffAr: s.staffAr, staffInitials: s.staffInitials,
           couponDone: s.couponDone, renewedMembership: s.renewedMembership,
           chVisits: s.chVisits, chDone: s.chDone,
@@ -1164,6 +1413,16 @@ class Component extends DCLogic {
     const ev = (e) => (e && typeof e === 'object' && !Array.isArray(e) && typeof e.kind === 'string')
       ? { kind: e.kind.slice(0, 16), who: str(e.who, 60) || '', what: str(e.what, 160) || '', card: str(e.card, 60) || '' } : undefined;
     const log = (v) => Array.isArray(v) ? v.filter(l => l && typeof l === 'object' && typeof l.scen === 'string' && typeof l.k === 'string').slice(0, 20).map(l => ({ scen: l.scen, k: l.k, v: l.v, ts: 0, old: true, id: str(l.id, 24), by: str(l.by, 40), who: str(l.who, 60), corrected: l.corrected === true, live: ev(l.live) })) : null;
+    // The TILL ledger round-trips with more than the queue does, because a prepaid row has to be
+    // reversible after a reload: `pp` carries the exact legs a spend consumed and the exact lot a
+    // top-up granted, so a correction restores what actually happened rather than guessing.
+    const tlog = (v) => Array.isArray(v) ? v.filter(l => l && typeof l === 'object' && typeof l.k === 'string').slice(0, 80).map(l => ({
+      scen: (typeof l.scen === 'string' ? l.scen.slice(0, 24) : null), k: l.k.slice(0, 24), v: l.v,
+      ts: (typeof l.ts === 'number' && isFinite(l.ts)) ? l.ts : 0,
+      id: str(l.id, 24), by: str(l.by, 40), who: str(l.who, 60), whoAr: str(l.whoAr, 60),
+      staff: str(l.staff, 40), staffAr: str(l.staffAr, 40), shiftId: str(l.shiftId, 24), dayKey: str(l.dayKey, 12),
+      ovr: str(l.ovr, 40), corrected: l.corrected === true, live: ev(l.live), pp: this.ppRowShape(l.pp)
+    })) : null;
     if (b.lang === 'en' || b.lang === 'ar') p.lang = b.lang;
     [['scansToday', 0, 9999], ['sStamps', 0, 9999], ['sRewards', 0, 9999], ['queued', 0, 999], ['pts', 0, 999999], ['rVisits', 0, 999], ['chVisits', 0, 99], ['logSeq', 0, 999999], ['earnsToday', 0, 99]].forEach(([k, lo, hi]) => { const n = int(b[k], lo, hi); if (n !== null) p[k] = n; });
     { const n = int(b.stamps, 0, 8); if (n !== null) p.stamps = n; }
@@ -1194,7 +1453,28 @@ class Component extends DCLogic {
     { const r = this.ovReqShape(b.ovReq); if (r) p.ovReq = r; else if (b.ovReq === null) p.ovReq = null; }
     { const g2 = this.ovGrantShape(b.ovGrant); if (g2) p.ovGrant = g2; }
     { const d = this.ovDeclineShape(b.ovDecline); if (d) p.ovDecline = d; }
-    { const l = log(b.sessionLog); if (l) p.sessionLog = l; }
+    // THE TILL LEDGER · rows that were written on an earlier day are dropped rather than
+    // relabelled: a till ledger is a day's record, the seven-day history has its own source, and a
+    // row silently becoming "today" is exactly the lie this ledger exists to prevent.
+    { const l = tlog(b.tillLog); if (l) { const dk = this.dayKey(); p.tillLog = l.filter(r => !r.dayKey || r.dayKey === dk); } }
+    if (typeof b.shiftId === 'string' && b.shiftId) p.shiftId = b.shiftId.slice(0, 24);
+    { const n = int(b.shiftSeq, 1, 99999); if (n !== null) p.shiftSeq = n; }
+    // stored value · every store re-sanitised through the same shape the seed goes through
+    if (b.prepaid && typeof b.prepaid === 'object' && !Array.isArray(b.prepaid)) {
+      const pm = {};
+      Object.keys(b.prepaid).slice(0, 12).forEach(k => { const st2 = this.ppShape(b.prepaid[k]); if (typeof k === 'string' && k.length < 24 && st2) pm[k] = st2; });
+      p.prepaid = pm;
+    }
+    if (b.ppLast && typeof b.ppLast === 'object' && !Array.isArray(b.ppLast)) {
+      const pl = {};
+      Object.keys(b.ppLast).slice(0, 12).forEach(k => {
+        const r = b.ppLast[k];
+        if (typeof k !== 'string' || k.length >= 24 || !r || typeof r !== 'object') return;
+        const m = int(r.minor, 0, 99999999), ts = (typeof r.ts === 'number' && isFinite(r.ts)) ? r.ts : null;
+        if (m !== null && ts !== null) pl[k] = { minor: m, ts };
+      });
+      p.ppLast = pl;
+    }
     { const l = log(b.queueLog); if (l) p.queueLog = l; }
     // an offline queue with nothing left offline is a contradiction — drop it rather than lie
     if (p.offline === false) { p.queued = 0; p.queueLog = []; }
@@ -1229,6 +1509,7 @@ class Component extends DCLogic {
     this.dropMyOverrides();
     this.__restored = false;
     this._prior = null;
+    this._ppSeed = null;   // the stored-value seeds are re-read from the shared data on the way back up
     const h = this.__host || this;
     h.__wsWelcomed = true;   // a reset is not a return — no welcome-back on the way out
     h.__wsRampKey = null;
@@ -1239,7 +1520,8 @@ class Component extends DCLogic {
       flash: null, flashOut: false, offline: false, queued: 0, queueLog: [], queueSheetOpen: false,
       cbBal: 3.2, pts: 460, rVisits: 11, scansToday: 61, sStamps: 44, sRewards: 9,
       manualOpen: false, manualCode: '', manualError: false, renewedMembership: false, undo: null,
-      chVisits: 3, chDone: false, chFrom: 0, sessionLog: [], shiftOpen: false, handoverPick: false,
+      chVisits: 3, chDone: false, chFrom: 0, tillLog: [], shiftId: 'sh1', shiftSeq: 1, shiftOpen: false, handoverPick: false,
+      prepaid: {}, ppAmt: '', ppSheet: null, ppBy: '', ppSeq: 0, ppLast: {}, ppStmt: null,
       staffName: 'Ahmad Zoubi', staffAr: 'أحمد الزعبي', staffInitials: 'AZ',
       locked: true, shiftLive: false, lockMode: 'start', lockStaff: null, lockDigits: '', lockTries: 0, lockErr: false, lockWarn: false, lockAuto: false,
       historyOpen: false, corrId: null, lookupOpen: false, lookupQ: '', foundBy: null,
@@ -1390,9 +1672,11 @@ class Component extends DCLogic {
     return {
       daraj: { name: 'Daraj Coffee', ar: 'مقهى درج', initial: 'D', color: '#1E5C43', dot: '#2FAE66', fg: '#7BD8A5', bg: 'rgba(30,92,67,.25)', br: 'rgba(47,174,102,.35)', slug: 'daraj', line: 'Buy 7, the 8th is on us', lineAr: 'اشترِ سبعة والثامن علينا' },
       layl: { name: 'Layl Lounge', ar: 'صالة ليل', initial: 'L', color: '#1B2440', dot: '#6E82C4', fg: '#A9B6E0', bg: 'rgba(27,36,64,.4)', br: 'rgba(120,140,200,.3)', slug: 'layl', line: 'Three tiers, real perks', lineAr: 'ثلاث فئات ومزايا حقيقية' },
-      zaytoun: { name: 'Zaytoun Kitchen', ar: 'مطبخ زيتون', initial: 'Z', color: '#5C6B2F', dot: '#8FA34A', fg: '#C3D190', bg: 'rgba(92,107,47,.28)', br: 'rgba(143,163,74,.35)', slug: 'zaytoun', line: '5% back on every bill', lineAr: '٥٪ استرداد على كل فاتورة' },
+      zaytoun: { name: 'Zaytoun Kitchen', ar: 'مطبخ زيتون', initial: 'Z', color: '#5C6B2F', dot: '#8FA34A', fg: '#C3D190', bg: 'rgba(92,107,47,.28)', br: 'rgba(143,163,74,.35)', slug: 'zaytoun', line: '5% back on every bill', lineAr: '5٪ استرداد على كل فاتورة' },
       sukkar: { name: 'Sukkar Bakery', ar: 'مخبز سكّر', initial: 'S', color: '#B14A32', dot: '#D4715A', fg: '#F0AE9B', bg: 'rgba(177,74,50,.26)', br: 'rgba(212,113,90,.35)', slug: 'sukkar', line: 'Points on every basket', lineAr: 'نقاط على كل طلب' },
-      ghaim: { name: 'Ghaim Studio', ar: 'استوديو غيم', initial: 'G', color: '#4E6E8E', dot: '#7C9CBC', fg: '#B4CBE0', bg: 'rgba(78,110,142,.28)', br: 'rgba(124,156,188,.35)', slug: 'ghaim', line: 'A year of studio time', lineAr: 'سنة كاملة في الاستوديو' }
+      ghaim: { name: 'Ghaim Studio', ar: 'استوديو غيم', initial: 'G', color: '#4E6E8E', dot: '#7C9CBC', fg: '#B4CBE0', bg: 'rgba(78,110,142,.28)', br: 'rgba(124,156,188,.35)', slug: 'ghaim', line: 'A year of studio time', lineAr: 'سنة كاملة في الاستوديو' },
+      // the sixth card on this account · stored value, and the only one where the till takes cash
+      zaman: { name: 'Zaman Arcade', ar: 'زمان أركيد', initial: 'Z', color: '#4B2E83', dot: '#8C6BD0', fg: '#C3AEEC', bg: 'rgba(75,46,131,.3)', br: 'rgba(140,107,208,.35)', slug: 'zaman', line: 'Load it once, play all week', lineAr: 'اشحنها مرة، وتلعب طول الأسبوع' }
     };
   }
   /** The person on shift, resolved back to the roster so their cards and branch travel with them. */
@@ -1402,7 +1686,42 @@ class Component extends DCLogic {
   /** A demo tile tapped through the lock: the lock card bumps rather than pretending nothing
       happened — the PIN is printed right there on it. */
   lockNudge() { this.setState(s => ({ lockSeq: s.lockSeq + 1 })); }
-  staffPin() { return '1234'; }
+  /** IDENTITY · a code that everybody shares is not identity, it is a door key. Every PIN'd action
+      in this till signs itself with a name, and until now that name was "whoever happens to be
+      signed in" rather than "whoever typed the code" — worthless on a flow that takes deposits.
+      A PIN belongs to a PERSON now. The roster is the account's (WASLA_DB.staff), so the code comes
+      from the roster row when it carries one; the demo roster does not, so these are the
+      demo codes — deterministic, one per person, printed on the sheet that asks for them, and
+      never the same four digits twice. A person the table has never met still gets their own,
+      derived from their name, so a roster that grows never falls back to a shared code. */
+  demoPins() {
+    return { 'Ahmad Zoubi': '1234', 'Rasha Kilani': '2345', 'Samir Awad': '3456', 'Tareq Majali': '4567', 'Farah Amari': '5678' };
+  }
+  /** The four digits that belong to one person. `pin` on the roster row wins; then the demo table;
+      then a stable hash of the name, so the answer is always four digits and always the same. */
+  pinForStaff(p) {
+    if (!p) return '';
+    if (typeof p.pin === 'string' && /^\d{4}$/.test(p.pin)) return p.pin;
+    const known = this.demoPins()[String(p.name || '')];
+    if (known) return known;
+    let h = 2166136261;
+    const s = String(p.name || '');
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return String(1000 + ((h >>> 0) % 9000));
+  }
+  /** WHO TYPED THAT CODE. Returns the roster record whose PIN matches, or null. Only staff at THIS
+      till's branch can authorise anything here — the same rule the lock screen already enforces on
+      the way in, applied to every code typed after it. A duplicate PIN in a roster resolves to the
+      first match and is never treated as "close enough": two people cannot share a signature. */
+  staffByPin(code) {
+    const c = String(code || '');
+    if (!/^\d{4}$/.test(c)) return null;
+    const L = this.staffList();
+    for (let i = 0; i < L.length; i++) if (L[i].branch === this.tillBranch() && this.pinForStaff(L[i]) === c) return L[i];
+    return null;
+  }
+  /** The person on shift's own code — the hint on the lock screen, and nothing else. */
+  staffPin() { return this.pinForStaff(this.meStaff()); }
   managerPin() { return '4680'; }
   /** Locks the phone WITHOUT ending the shift — the between-customers gesture. Everything
       transient goes with it: an open PIN pad, a half-typed bill, a live undo. */
@@ -1471,7 +1790,10 @@ class Component extends DCLogic {
   checkLockPin() {
     const s = this.state;
     if (s.lockStaff == null || s.lockDigits.length !== 4) return;
-    if (s.lockDigits === this.staffPin()) { this.openTill(); return; }
+    // the code has to be THIS person's, not "a staff code" — picking Rasha's name and typing
+    // Ahmad's PIN signs Ahmad's shift in under Rasha's face, which is the whole bug
+    const who = this.staffList()[s.lockStaff];
+    if (who && s.lockDigits === this.pinForStaff(who)) { this.openTill(); return; }
     const tries = s.lockTries + 1;
     if (tries >= 3) {
       // back to the picker with the reason showing — a till that pretends to brick itself is worse
@@ -1493,9 +1815,14 @@ class Component extends DCLogic {
     // withdrawn from the manager's dashboard rather than dropped and left pending forever
     if (fresh) this.withdrawPending('Withdrawn at the till — the shift ended before the answer came.');
     if (fresh) {
+      // A NEW SHIFT RESETS THE COUNTERS, NEVER THE LEDGER. `shiftId` moves on, so the summary is a
+      // filtered view of a till ledger that keeps every row — the money this till moved today stays
+      // written down whoever is standing at it.
       this.setState(st => ({ locked: false, shiftLive: true, lockDigits: '', lockTries: 0, lockErr: false, lockStaff: null, lockWarn: false, lockAuto: false,
         staffName: p.name, staffAr: p.ar, staffInitials: p.initials, staffSeq: st.staffSeq + 1,
-        scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', scenario: null, undo: null, foundBy: null,
+        shiftId: 'sh' + (st.shiftSeq + 1), shiftSeq: st.shiftSeq + 1,
+        scansToday: 0, sStamps: 0, sRewards: 0, screen: 'idle', scenario: null, undo: null, foundBy: null,
+        ppAmt: '', ppSheet: null, ppBy: '', ppStmt: null,
         // a new shift is a new day at this till: the guard and the cap count from zero, and a
         // request nobody is standing at the counter for any more is dropped rather than left hanging
         earnsToday: 0, redeemsToday: {}, ovReq: null, ovGrant: null, ovDecline: null }));
@@ -1541,8 +1868,12 @@ class Component extends DCLogic {
     // collect side — walking her back in should land where the thing she is owed lives
     if (this.hasOvGrant('overcap', scen)) forced.mode = 'redeem';
     clearTimeout(this._ut); clearTimeout(this._s1); clearTimeout(this._s2);
-    this.setState(s => ({ screen: 'scan', resolving: false, scenario: scen, mode: scen === 'coupon' ? 'redeem' : 'collect',
+    // PAY IS THE DEFAULT TAB ON A PREPAID CARD. Most of a stored-value card's life is spending it
+    // down; landing on "Top up" would put the cash-taking screen in front of a customer who walked
+    // up to play a game.
+    this.setState(s => ({ screen: 'scan', resolving: false, scenario: scen, mode: (scen === 'coupon' || this.isPrepaid(scen)) ? 'redeem' : 'collect',
       amount: '', selRw: null, cbSel: null, pin: null, pinDigits: '', pinTries: 0, pinErr: false, undo: null,
+      ppAmt: '', ppSheet: null, ppBy: '', ppStmt: null,
       // a new customer is not the last customer's refusal — the manager's verbatim "no" clears when
       // we move on to somebody else, and is KEPT when she is the one being scanned, because an
       // answer that landed while she was away from the counter is still hers to hear
@@ -1573,11 +1904,26 @@ class Component extends DCLogic {
   checkPin() {
     const st = this.state, tag = st.pin;
     if (!tag || st.pinDigits.length !== 4) return;
-    const expect = this.isMgrTag(tag) ? this.managerPin() : this.demoPin();
-    if (st.pinDigits === expect) { this.finishPin(); return; }
+    // A MANAGER CODE AND A STAFF CODE ARE DIFFERENT AUTHORITIES, and a staff code is a PERSON.
+    // The manager path checks the one owner code; the staff path RESOLVES the code back to the
+    // roster row that owns it, and that row — not whoever happens to be signed in — is what the
+    // action signs itself with from here on.
+    const wantsMgr = this.isMgrTag(tag) || this.isPpMgrTag(tag);
+    if (wantsMgr) { if (st.pinDigits === this.managerPin()) { this.finishPin(this.mgrOnSiteName()); return; } }
+    else { const who = this.staffByPin(st.pinDigits); if (who) { this.finishPin(who.name); return; } }
     const tries = st.pinTries + 1;
     if (tries >= 3) {
       this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false });
+      // PREPAID NEVER LOCKS ITSELF OUT. The whole order of the prepaid flow is PIN first, cash
+      // second, precisely so a wrong code cannot strand a customer's note in the drawer — a
+      // persistent lock here would put that failure back, and there is nothing yet to lock.
+      if (this.isPpTag(tag)) {
+        this.setState({ ppSheet: null, ppBy: '' });
+        this.flashNow('✕', '#E2563A', this.L('Three wrong codes', 'ثلاثة رموز خاطئة'),
+          this.L('Nothing was taken and nothing moved. Start again, or ask a colleague to enter their own code.',
+            'لم يُؤخذ شيء ولم يتحرّك شيء. ابدأ من جديد، أو اطلب من زميل إدخال رمزه.'));
+        return;
+      }
       if (this.isOvrTag(tag)) {
         this.flashNow('🔒', '#E2563A', this.L('Not lifted', 'لم يُرفع'), this.L('Three wrong manager codes — the rule still stands.', 'ثلاثة رموز مدير خاطئة — القاعدة ما زالت قائمة.'));
         return;
@@ -1602,9 +1948,15 @@ class Component extends DCLogic {
   }
   /** Every PIN'd action now signs itself: `by` is the person whose code authorised it, which is the
       one thing a disputed redeem always needs and the log never used to carry. */
-  finishPin() {
-    const st = this.state, tag = st.pin, scen = st.scenario, by = st.staffName;
+  finishPin(byName) {
+    const st = this.state, tag = st.pin, scen = st.scenario;
+    // `by` is WHOSE CODE THIS WAS, resolved by checkPin from the roster — not the name on the
+    // shift. On a till that takes deposits those two being the same field was the audit trail's
+    // whole problem.
+    const by = (typeof byName === 'string' && byName) ? byName : st.staffName;
     this.setState({ pin: null, pinDigits: '', pinTries: 0, pinErr: false });
+    // ── stored value · every prepaid commit is authorised here and nowhere else ──
+    if (this.isPpTag(tag)) { this.ppFinishPin(tag, scen, by); return; }
     // the offline fallback: the manager standing at the counter types their own code and the
     // override lands exactly where a granted dashboard request would have landed
     if (this.isOvrTag(tag)) { this.applyGranted(tag.slice(8), this.mgrOnSiteName(), scen, true); return; }
@@ -1626,10 +1978,11 @@ class Component extends DCLogic {
     // the card that resets is the one that was full — hers, not whoever else's count `stamps` holds
     if (tag === 'stamps') { this.setState(s => ({ ...this.stampPatch(s, scen, 0), sRewards: s.sRewards + 1, mode: 'collect', stampSeq: 0 })); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L('Free drink — a fresh card is already counting.', 'مشروب مجاني — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward', undefined, sig); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free drink' + ovPhrase)); }
     if (tag === 'cash') {
-      const paused = scen === 'paused', bal = paused ? st.pausedBal : st.cbBal;
+      // ONE wallet key, resolved by the one function — see walletKeyFor
+      const K = this.walletKeyFor(scen), bal = st[K];
       const v = st.cbSel, nb = +(bal - v).toFixed(2);
-      this.setState(paused ? { pausedBal: nb, cbSel: null } : { cbBal: nb, cbSel: null });
-      this.flashNow('✓', '#2FAE66', this.L('JOD ' + v.toFixed(2) + ' off the bill', 'خُصم ' + v.toFixed(2) + ' ديناراً من الفاتورة'), this.L('New balance JOD ' + nb.toFixed(2) + ' — it spends like money.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — يُصرف كالنقود.'));
+      this.setState({ [K]: nb, cbSel: null });
+      this.flashNow('✓', '#2FAE66', this.L('JOD ' + v.toFixed(2) + ' off the bill', 'خُصم JOD ' + v.toFixed(2) + ' من الفاتورة'), this.L('New balance JOD ' + nb.toFixed(2) + ' — it spends like money.', 'الرصيد الجديد JOD ' + nb.toFixed(2) + ' — يُصرف كالنقود.'));
       this.logAction(scen, 'redCash', v, sig); this.emitLive(this.liveFor(scen, 'reward', 'redeemed JOD ' + v.toFixed(2) + ' off the bill' + ovPhrase));
     }
     if (tag === 'pts') { const i = st.selRw; const r = this.rungs()[i]; const np = st.pts - r.cost; this.setState({ pts: np, selRw: null }); this.flashNow('✓', '#2FAE66', this.rungName(i), this.L(r.cost + ' pts spent · ' + np + ' left.', 'صُرفت ' + r.cost + ' نقطة · بقي ' + np + ' نقطة.')); this.logAction(scen, 'redPts', i, sig); this.emitLive(this.liveFor(scen, 'reward', 'redeemed ' + this.rungs()[i].en + ovPhrase)); }
@@ -1666,7 +2019,7 @@ class Component extends DCLogic {
     const title = this.L('Corrected', 'تم التصحيح');
     // the stamp comes off the card it landed on, and only a guarded member's earn moves the guard
     if (u.type === 'stamp') { this.setState(s => ({ ...base, ...this.stampPatch(s, scen, this.stampsIn(s, scen) - 1), sStamps: Math.max(0, s.sStamps - 1), stampSeq: 0, ...(this.guardedScen(scen) ? { earnsToday: Math.max(0, s.earnsToday - 1) } : {}) })); this.flashNow('↺', '#F0A92B', title, this.L('−1 stamp — the card is back where it was.', 'ختم واحد أُزيل — والبطاقة عادت كما كانت.')); this.logAction(scen, 'undoStamp'); }
-    else if (u.type === 'cash') { const K = this.cashKeyFor(scen); this.setState(s => ({ ...base, [K]: Math.max(0, +(s[K] - u.amount).toFixed(2)) })); this.flashNow('↺', '#F0A92B', title, this.L('− JOD ' + u.amount.toFixed(2) + ' off the wallet again.', 'خُصم ' + u.amount.toFixed(2) + ' ديناراً من الرصيد مجدداً.')); this.logAction(scen, 'undoCash'); }
+    else if (u.type === 'cash') { const K = this.walletKeyFor(scen); this.setState(s => ({ ...base, [K]: Math.max(0, +(s[K] - u.amount).toFixed(2)) })); this.flashNow('↺', '#F0A92B', title, this.L('− JOD ' + u.amount.toFixed(2) + ' off the wallet again.', 'خُصم JOD ' + u.amount.toFixed(2) + ' من الرصيد مجدداً.')); this.logAction(scen, 'undoCash'); }
     else if (u.type === 'pts') { this.setState({ ...base, pts: Math.max(0, st.pts - u.amount) }); this.flashNow('↺', '#F0A92B', title, this.L('− ' + u.amount + ' pts taken back.', 'أُزيلت ' + u.amount + ' نقطة.')); this.logAction(scen, 'undoPts'); }
     // the tier is DERIVED from the visit count now, so taking the visit back takes the tier with it
     else if (u.type === 'visit') { this.setState(s => ({ ...base, rVisits: Math.max(0, st.rVisits - 1), vipClimb: false, vipFromPct: '0%', vipSeq: s.vipSeq + 1 })); this.flashNow('↺', '#F0A92B', title, this.L('The check-in is off her card again.', 'أُزيلت الزيارة من بطاقتها.')); this.logAction(scen, 'undoVisit'); }
@@ -1699,12 +2052,12 @@ class Component extends DCLogic {
     // WHOSE card, WHOSE wallet. Every movement is reversed on the exact pass it happened to — the
     // row carries its own scenario, so a paused-card redemption never lands in the live wallet and
     // a stamp taken off Noor's card never comes off Sara's.
-    const K = this.cashKeyFor(l.scen);
+    const K = this.walletKeyFor(l.scen);
     switch (l.k) {
       case 'stamp': case 'qStamp': return { patch: s => ({ ...this.stampPatch(s, l.scen, this.stampsIn(s, l.scen) - 1), sStamps: Math.max(0, s.sStamps - 1), stampSeq: 0, ...(this.guardedScen(l.scen) ? { earnsToday: Math.max(0, s.earnsToday - 1) } : {}) }),
         effect: this.L('Removes 1 stamp from the card.', 'يُزيل ختماً واحداً من البطاقة.'), phrase: 'had a stamp corrected off (−1)' };
       case 'colCash': case 'qCash': return { patch: s => ({ [K]: Math.max(0, +(s[K] - n(l.v)).toFixed(2)) }),
-        effect: this.L('Takes JOD ' + n(l.v).toFixed(2) + ' back out of the wallet.', 'يُعيد سحب ' + n(l.v).toFixed(2) + ' ديناراً من المحفظة.'), phrase: 'had JOD ' + n(l.v).toFixed(2) + ' cashback corrected off' };
+        effect: this.L('Takes JOD ' + n(l.v).toFixed(2) + ' back out of the wallet.', 'يُعيد سحب JOD ' + n(l.v).toFixed(2) + ' من المحفظة.'), phrase: 'had JOD ' + n(l.v).toFixed(2) + ' cashback corrected off' };
       case 'colPts': case 'qPts': return { patch: s => ({ pts: Math.max(0, s.pts - n(l.v)) }),
         effect: this.L('Takes ' + n(l.v) + ' points back off the balance.', 'يُزيل ' + n(l.v) + ' نقطة من الرصيد.'), phrase: 'had ' + n(l.v) + ' points corrected off' };
       case 'visit': return { patch: s => ({ rVisits: Math.max(0, s.rVisits - 1), vipClimb: false, vipFromPct: '0%', vipSeq: s.vipSeq + 1 }),
@@ -1714,13 +2067,94 @@ class Component extends DCLogic {
       case 'redReward': return { patch: s => ({ ...this.stampPatch(s, l.scen, s.goal), sRewards: Math.max(0, s.sRewards - 1), stampSeq: 0, ...this.unCount(s, l) }),
         effect: this.L('Puts the full card back — the free drink is un-spent.', 'يُعيد البطاقة مكتملة — والمشروب المجاني لم يُصرف.'), phrase: 'had a redeemed reward credited back' };
       case 'redCash': return { patch: s => ({ [K]: +(s[K] + n(l.v)).toFixed(2), ...this.unCount(s, l) }),
-        effect: this.L('Credits JOD ' + n(l.v).toFixed(2) + ' back to the wallet.', 'يُعيد ' + n(l.v).toFixed(2) + ' ديناراً إلى المحفظة.'), phrase: 'had JOD ' + n(l.v).toFixed(2) + ' credited back' };
+        effect: this.L('Credits JOD ' + n(l.v).toFixed(2) + ' back to the wallet.', 'يُعيد JOD ' + n(l.v).toFixed(2) + ' إلى المحفظة.'), phrase: 'had JOD ' + n(l.v).toFixed(2) + ' credited back' };
       case 'redPts': { const r = this.rungs()[l.v] || { cost: 0, en: '' }; return { patch: s => ({ pts: s.pts + r.cost, ...this.unCount(s, l) }),
         effect: this.L('Credits ' + r.cost + ' points back.', 'يُعيد ' + r.cost + ' نقطة إلى الرصيد.'), phrase: 'had ' + r.en + ' credited back' }; }
       case 'redCoupon': return { patch: s => ({ couponDone: false, ...this.unCount(s, l) }),
         effect: this.L('Puts the coupon back — unused, and usable once.', 'يُعيد الكوبون — غير مستخدم، وقابل للاستخدام مرة واحدة.'), phrase: 'had a coupon credited back' };
+      // ── stored value · THE ONLY REVERSAL A TOP-UP HAS. There is no eight-second undo on a
+      //    top-up: that bar passes no `by` and would silently remove a credit from a customer who
+      //    has just handed over a note. This path is PIN'd, it signs itself, and it can be refused.
+      case 'ppTopup': {
+        const P = (l.pp || {});
+        return { patch: s => this.ppUncredit(s, l),
+          effect: this.L('Takes ' + this.jodM(P.cashMinor) + ' back off the card' + ((Number(P.bonusMinor) || 0) > 0 ? ' and cancels the ' + this.jodM(P.bonusMinor) + ' bonus that came with it' : '') + ' — the top-up becomes a thing that never happened. Give her the cash back out of the drawer.',
+            'يسحب ' + this.jodM(P.cashMinor) + ' من البطاقة' + ((Number(P.bonusMinor) || 0) > 0 ? ' ويلغي مكافأة ' + this.jodM(P.bonusMinor) + ' التي رافقتها' : '') + ' — وكأن التعبئة لم تحدث. أعد لها المبلغ من الصندوق.'),
+          phrase: 'had a ' + this.jodM(P.cashMinor) + ' top-up corrected off' };
+      }
+      case 'ppSpend': case 'ppPartial': {
+        const P = (l.pp || {});
+        return { patch: s => this.ppUnspend(s, l),
+          effect: this.L('Puts ' + this.jodM(P.takeMinor) + ' back on the card, into the exact buckets it came out of — bonus back as bonus, her own money back as her own money.',
+            'يُعيد ' + this.jodM(P.takeMinor) + ' إلى البطاقة، إلى نفس الجيوب التي خرج منها — المكافأة مكافأةً ومالها مالاً.'),
+          phrase: 'had a ' + this.jodM(P.takeMinor) + ' card payment corrected back' };
+      }
       default: return null;
     }
+  }
+  /** WALKING A TOP-UP BACK. The reversal is exact: the cash comes off principal, the lot that
+      top-up granted is pulled by its own id, and the LIFETIME deposited counter comes down by the
+      same cash — a correction means "this never happened", which is a different thing from a
+      refund. It is REFUSED outright once the card has moved on (see ppCanUncredit): taking JOD 50
+      back off a principal of JOD 20 would write a negative balance, and the contract forbids that
+      far more than it wants a tidy log. */
+  ppUncredit(s, l) {
+    const scen = l.scen, P = l.pp || {};
+    const pp = this.ppOf(s, scen);
+    if (!pp) return {};
+    const cash = Math.max(0, Math.round(Number(P.cashMinor) || 0));
+    const lotId = (P.lot && P.lot.id) ? P.lot.id : null;
+    const next = { ...pp,
+      principalMinor: pp.principalMinor - cash,
+      depositedMinor: Math.max(0, pp.depositedMinor - cash),
+      bonus: (pp.bonus || []).filter(b => !(lotId && b.id === lotId)) };
+    if (!this.ppAssert(next, this.ppBalance(next), 'uncredit')) return {};
+    return this.ppPatch(s, scen, next);
+  }
+  /** Putting a card payment back where it came from. `legs` recorded the exact lots the spend
+      consumed and how much each gave, with a snapshot — a lot emptied to zero was dropped from the
+      store, and the snapshot is the only thing that can put it back as the same lot with the same
+      expiry rather than as a fresh grant with a fresh one. */
+  ppUnspend(s, l) {
+    const scen = l.scen, P = l.pp || {};
+    const pp = this.ppOf(s, scen);
+    if (!pp) return {};
+    const take = Math.max(0, Math.round(Number(P.takeMinor) || 0));
+    const lots = (pp.bonus || []).slice();
+    (P.legs || []).forEach(g => {
+      if (!g || !g.minor) return;
+      let hit = -1;
+      for (let i = 0; i < lots.length; i++) if (lots[i].id === g.id) { hit = i; break; }
+      if (hit >= 0) lots[hit] = { ...lots[hit], remainingMinor: lots[hit].remainingMinor + g.minor };
+      else if (g.lot) lots.push({ ...g.lot, remainingMinor: g.minor });
+    });
+    const next = { ...pp, bonus: lots,
+      principalMinor: pp.principalMinor + (Math.max(0, Math.round(Number(P.principalMinor) || 0))),
+      spentMinor: Math.max(0, pp.spentMinor - take) };
+    if (!this.ppAssert(next, this.ppBalance(next), 'unspend')) return {};
+    return this.ppPatch(s, scen, next);
+  }
+  /** Can this prepaid row still be walked back HERE? A top-up only while the card has not moved
+      since — same lifetime spend, principal still holding the cash, the granted lot still whole.
+      Anything else is a dashboard job and the history row says so, because a partial unwind of a
+      deposit is the arbitrage the refund rule exists to close. */
+  ppCanReverse(l) {
+    if (!l || !l.pp || !l.scen || !this.isPrepaid(l.scen)) return true;   // not a prepaid row: not our question
+    const pp = this.ppFor(l.scen), P = l.pp;
+    if (!pp || this.ppClosed(pp)) return false;
+    if (P.kind === 'topup') {
+      const cash = Math.max(0, Math.round(Number(P.cashMinor) || 0));
+      if (pp.principalMinor < cash) return false;
+      if (Math.round(Number(P.spentAtMinor) || 0) !== pp.spentMinor) return false;
+      const lotId = (P.lot && P.lot.id) ? P.lot.id : null;
+      if (lotId) {
+        const lot = (pp.bonus || []).filter(b => b.id === lotId)[0];
+        if (!lot || lot.remainingMinor !== lot.grantedMinor) return false;
+      }
+      return true;
+    }
+    if (P.kind === 'spend') return true;
+    return false;
   }
   /** The row the confirm sheet is pointed at, found by id across the whole seven days so a growing
       log — or a prior day — can never shift it. */
@@ -1734,7 +2168,15 @@ class Component extends DCLogic {
       says so rather than quietly moving value it can no longer be trusted to move. */
   corrWindowDays() { return 2; }
   /** Correctable HERE: it is a movement, it has not been walked back, and it is inside the window. */
-  canCorrect(l) { return !!(l && this.correctionFor(l) && !this.isFixed(l) && this.rowAgeDays(l) < this.corrWindowDays()); }
+  canCorrect(l) { return !!(l && this.correctionFor(l) && !this.isFixed(l) && this.rowAgeDays(l) < this.corrWindowDays() && this.ppCanReverse(l)); }
+  /** Why a prepaid row is greyed out, said in one sentence rather than left as a dead row. */
+  ppNoReverseWhy(l) {
+    if (!l || !l.pp || !this.isPrepaid(l.scen) || this.ppCanReverse(l)) return '';
+    const pp = this.ppFor(l.scen);
+    if (this.ppClosed(pp)) return this.L('The card was refunded and closed — this is a dashboard job now.', 'استُردّت البطاقة وأُغلقت — هذا شأن لوحة التحكم الآن.');
+    return this.L('She has spent from the card since — correcting this here would write a negative balance. Ask the dashboard.',
+      'صرفت من البطاقة بعدها — تصحيحها هنا سيكتب رصيداً سالباً. اطلبها من لوحة التحكم.');
+  }
   /** PIN'd, once per action, logged, and announced on the shared bus — offline it queues like any
       other write and the announcement waits for the sync, same as everything else the till does.
       A prior-day row goes through exactly this path: same PIN, same exact reversal, same guard. */
@@ -1746,7 +2188,7 @@ class Component extends DCLogic {
     // a stale sheet must never be the thing that lets a balance move twice
     if (!c || !this.canCorrect(l)) { this.setState({ corrId: null }); return; }
     this.setState(s => ({ ...c.patch(s), corrId: null, historyOpen: false,
-      sessionLog: s.sessionLog.map(r => r.id === l.id ? { ...r, corrected: true } : r),
+      tillLog: s.tillLog.map(r => r.id === l.id ? { ...r, corrected: true } : r),
       priorFixed: l.prior ? [l.id, ...(s.priorFixed || []).filter(x => x !== l.id)].slice(0, 40) : (s.priorFixed || []) }));
     this.logAction(l.scen, l.prior ? 'priorCorrection' : 'correction', l.k, { by, who: l.who, whoAr: l.whoAr, day: l.prior ? this.rowAgeDays(l) : undefined });
     this.flashNow('↺', '#F0A92B', this.L('Corrected', 'تم التصحيح'), c.effect + this.L(' Authorised by ' + String(by).split(' ')[0] + '.', ' بموافقة ' + String(this.state.staffAr).split(' ')[0] + '.'));
@@ -1770,7 +2212,10 @@ class Component extends DCLogic {
       points: { m: ['Salma Oweis', 'سلمى عويس', 'SO'], card: 'Sukkar Bakery · Points', cardAr: 'مخبز سكّر · نقاط', color: '#B14A32', phone: '+962 79 555 0244', code: '01924410' },
       // Nadia's coupon is a Daraj coupon, so the stamp card the cross-sell offers her is a Daraj
       // stamp card — it draws the same cups as everybody else's
-      coupon: { m: ['Nadia Farhat', 'نادية فرحات', 'NF'], card: 'Daraj Coffee · Coupon', cardAr: 'مقهى درج · كوبون', color: '#1E5C43', art: 'coffee', phone: '+962 78 555 0231', code: '01330077' },
+      // Nadia's number moved one digit when the prepaid members arrived: the shared data gives Jude
+      // Barghouti +962 78 555 0231, and two different women answering the same "last 4" in a
+      // counter lookup is a bug the customer meets, not a detail.
+      coupon: { m: ['Nadia Farhat', 'نادية فرحات', 'NF'], card: 'Daraj Coffee · Coupon', cardAr: 'مقهى درج · كوبون', color: '#1E5C43', art: 'coffee', phone: '+962 78 555 0236', code: '01330077' },
       vip: { m: ['Rania Qasem', 'رانيا قاسم', 'RQ'], card: 'Layl Lounge · VIP tiers', cardAr: 'صالة ليل · فئات كبار الزبائن', color: '#1B2440', phone: '+962 77 555 0143', code: '01455812' },
       discount: { m: ['Ruba Zureikat', 'روبا زريقات', 'RZ'], card: 'Zaytoun Kitchen · Discount', cardAr: 'مطبخ زيتون · بطاقة خصم', color: '#5C6B2F', phone: '+962 79 555 0268', code: '01568230' },
       membership: { m: ['Anas Freihat', 'أنس فريحات', 'AF'], card: 'Ghaim Studio · Membership', cardAr: 'استوديو غيم · اشتراك', color: '#4E6E8E', phone: '+962 78 555 0293', code: '01671945' },
@@ -1782,6 +2227,15 @@ class Component extends DCLogic {
       overcap: { m: ['Noor Shami', 'نور الشامي', 'NS'], card: 'Daraj Coffee · Stamp card', cardAr: 'مقهى درج · بطاقة أختام', color: '#1E5C43', art: 'coffee', phone: '+962 78 555 0121', code: '01214408' },
       tierlock: { m: ['Rania Qasem', 'رانيا قاسم', 'RQ'], card: 'Layl Lounge · VIP tiers', cardAr: 'صالة ليل · فئات كبار الزبائن', color: '#1B2440', phone: '+962 77 555 0143' },
       expiring: { m: ['Luay Sharif', 'لؤي شريف', 'LS'], card: 'Ghaim Studio · Membership', cardAr: 'استوديو غيم · اشتراك', color: '#4E6E8E', phone: '+962 79 555 0277', code: '01337790' },
+      // ── stored value · three real states of the same card, all seeded from the shared data ──
+      //    prepaid   Rakan, a healthy card: balance JOD 140.250, refundable JOD 127.750.
+      //    ppbonus   Jude, principal spent to zero and an Eid bonus lot on top: balance JOD 8.00,
+      //              refundable JOD 0.00. This is the counter conversation the type exists to make
+      //              sayable — "the bonus is not cash" — so it lives on the edge rail.
+      //    ppfils    Nadeen, JOD 4.125: a three-decimal balance and an expired lot in her ledger.
+      prepaid: { m: ['Rakan Al-Tell', 'راكان التل', 'RT'], card: 'Zaman Arcade · Prepaid', cardAr: 'زمان أركيد · مسبقة الدفع', color: '#4B2E83', phone: '+962 79 555 0223', code: '02231041' },
+      ppbonus: { m: ['Jude Barghouti', 'جود البرغوثي', 'JB'], card: 'Zaman Arcade · Prepaid', cardAr: 'زمان أركيد · مسبقة الدفع', color: '#4B2E83', phone: '+962 78 555 0231', code: '02311102' },
+      ppfils: { m: ['Nadeen Fakhoury', 'نادين الفاخوري', 'NF'], card: 'Zaman Arcade · Prepaid', cardAr: 'زمان أركيد · مسبقة الدفع', color: '#4B2E83', phone: '+962 77 555 0247', code: '02470817' },
       // the counter enrolment writes its own rows into the log and the queue
       join: { m: ['New member', 'عضو جديد', '+'], card: 'Counter QR', cardAr: 'رمز الصندوق', color: '#E88024' }
     };
@@ -1885,10 +2339,10 @@ class Component extends DCLogic {
       case 'undoStamp': return this.L('Undo · stamp', 'تراجع · ختم');
       case 'undoCash': return this.L('Undo · cashback', 'تراجع · استرداد');
       case 'undoPts': return this.L('Undo · points', 'تراجع · نقاط');
-      case 'colCash': return this.L('Collected · JOD ' + v, 'جمع · ' + v + ' ديناراً');
+      case 'colCash': return this.L('Collected · JOD ' + v, 'جمع · JOD ' + v);
       case 'colPts': return this.L('Collected · ' + v + ' pts', 'جمع · ' + v + ' نقطة');
       case 'redReward': return this.L('Redeemed · reward', 'استبدال · مكافأة');
-      case 'redCash': return this.L('Redeemed · JOD ' + Number(v).toFixed(2), 'استبدال · ' + Number(v).toFixed(2) + ' ديناراً');
+      case 'redCash': return this.L('Redeemed · JOD ' + Number(v).toFixed(2), 'استبدال · JOD ' + Number(v).toFixed(2));
       case 'redPts': return this.L('Redeemed · ', 'استبدال · ') + this.rungName(v);
       case 'redCoupon': return this.L('Redeemed · coupon', 'استبدال · كوبون');
       case 'renew': return this.L('Renewed · membership', 'تجديد · اشتراك');
@@ -1897,13 +2351,13 @@ class Component extends DCLogic {
       case 'chVisit': return this.L('Challenge visit', 'زيارة تحدٍّ');
       case 'chDone': return this.L('Challenge complete', 'اكتمل التحدي');
       case 'qStamp': return this.L('Stamp added', 'أُضيف ختم');
-      case 'qCash': return this.L('JOD ' + v + ' cashback', v + ' ديناراً استرداد');
+      case 'qCash': return this.L('JOD ' + v + ' cashback', 'JOD ' + v + ' استرداد');
       case 'qPts': return this.L(v + ' pts', v + ' نقطة');
       case 'shiftStart': return this.L('Shift started', 'بدأت المناوبة');
       case 'foundScan': return this.L('Found by lookup', 'عُثر عليه بالبحث');
       case 'undoVisit': return this.L('Undo · visit', 'تراجع · زيارة');
       case 'undoChVisit': return this.L('Undo · challenge visit', 'تراجع · زيارة تحدٍّ');
-      case 'rdLocked': return this.L('Redeem locked · 3 wrong PINs', 'قُفل الاستبدال · ٣ رموز خاطئة');
+      case 'rdLocked': return this.L('Redeem locked · 3 wrong PINs', 'قُفل الاستبدال · 3 رموز خاطئة');
       case 'mgrUnlock': return this.L('Manager unlocked · ', 'فتح المدير · ') + this.actionNoun(v);
       case 'correction': return this.L('Correction · ', 'تصحيح · ') + this.actionNoun(v);
       case 'qCorrection': return this.L('Correction · ', 'تصحيح · ') + this.actionNoun(v);
@@ -1916,6 +2370,13 @@ class Component extends DCLogic {
       case 'ovGranted': return this.L('Manager lifted it · ', 'رفعها المدير · ') + this.ovNoun(v);
       case 'ovDeclined': return this.L('Manager said no · ', 'رفض المدير · ') + this.ovNoun(v);
       case 'ovWithdrew': return this.L('Request withdrawn · ', 'سُحب الطلب · ') + this.ovNoun(v);
+      // ── stored value · a money row says the money, in the language the till is in ──
+      case 'ppTopup': return this.L('Loaded · ' + this.jodM(v), 'تعبئة · ' + this.jodM(v));
+      case 'ppSpend': return this.L('Paid · ' + this.jodM(v), 'دفع · ' + this.jodM(v));
+      case 'ppPartial': return this.L('Paid · ' + this.jodM(v) + ' (part of the bill)', 'دفع · ' + this.jodM(v) + ' (جزء من الفاتورة)');
+      case 'ppRefund': return this.L('Refunded · ' + this.jodM(v) + ' · card closed', 'استرداد · ' + this.jodM(v) + ' · أُغلقت البطاقة');
+      case 'ppExpire': return this.L('Bonus expired · ' + this.jodM(v), 'انتهت مكافأة · ' + this.jodM(v));
+      case 'ppIncident': return this.L('Stopped — the numbers did not add up', 'توقّف — الأرقام لم تتطابق');
       default: return '';
     }
   }
@@ -1931,6 +2392,9 @@ class Component extends DCLogic {
       case 'renew': return this.L('renewal', 'تجديد');
       case 'visit': return this.L('visit', 'زيارة');
       case 'chVisit': return this.L('challenge visit', 'زيارة تحدٍّ');
+      case 'ppTopup': return this.L('top-up', 'تعبئة');
+      case 'ppSpend': case 'ppPartial': return this.L('card payment', 'دفعة من البطاقة');
+      case 'ppRefund': return this.L('refund', 'استرداد');
       default: return this.L('action', 'عملية');
     }
   }
@@ -1945,13 +2409,31 @@ class Component extends DCLogic {
   /** Rows carry an id (so a correction can point at exactly one), and `by` — the code that
       authorised it. `who` overrides the scenario's member for rows that belong to nobody's card:
       a sign-in, a counter join. */
+  /** THE ONE WRITE. Every row lands in the till ledger, stamped with the day it happened on, the
+      shift that was running and the person who was standing there — so the shift summary can be a
+      VIEW rather than a second, destroyable copy. `by` still means "whose code authorised this",
+      and it is now genuinely a different field from `staff`. */
   logAction(scen, k, v, extra) {
     this.setState(s => {
       const id = 'a' + (s.logSeq + 1);
-      return { logSeq: s.logSeq + 1, sessionLog: [{ scen, k, v, ts: Date.now(), id, ...(extra || {}) }, ...s.sessionLog].slice(0, 20) };
+      const row = { scen, k, v, ts: Date.now(), id, dayKey: this.dayKey(), shiftId: s.shiftId,
+        staff: s.staffName, staffAr: s.staffAr, ...(extra || {}) };
+      return { logSeq: s.logSeq + 1, tillLog: [row, ...s.tillLog].slice(0, 80) };
     });
     this.saveScan();
   }
+  /** The local calendar day, as a plain sortable key. Local on purpose: a till closes at midnight
+      where it stands, not at midnight in UTC. */
+  dayKey(ms) {
+    const d = (typeof ms === 'number' && isFinite(ms)) ? new Date(ms) : new Date();
+    const p2 = (n) => (n < 10 ? '0' : '') + n;
+    return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+  }
+  /** THE SHIFT SUMMARY IS A FILTER, NOT A LIST. Handover resets the counters above it and leaves
+      every row exactly where it is. */
+  shiftRows() { return (this.state.tillLog || []).filter(l => l && l.shiftId === this.state.shiftId); }
+  /** Today's rows out of the till ledger — the record, whoever was on the till when it was made. */
+  todayRows() { const dk = this.dayKey(); return (this.state.tillLog || []).filter(l => l && (!l.dayKey || l.dayKey === dk)); }
   /** A queued row carries the live event it will fire once it actually reaches the server. */
   pushQueue(scen, k, v, live, extra) {
     this.setState(s => { const ql = [{ scen, k, v, ts: Date.now(), live, ...(extra || {}) }, ...s.queueLog].slice(0, 20); return { queueLog: ql, queued: ql.length }; });
@@ -1998,6 +2480,11 @@ class Component extends DCLogic {
     this.setState({ syncing: false, syncDone: 0, queueLog: left, queued: left.length, queueSheetOpen: goingOffline ? false : s.queueSheetOpen });
     this.saveScan();
   }
+  /** HANDOVER IS A SIGN-IN. Picking a name here used to BE the handover: no code, no proof, and
+      every action the new person then took signed itself with a name nobody authenticated. It hands
+      the phone to the LOCK SCREEN instead, with the incoming person pre-selected — they type their
+      own PIN and `openTill` mints the shift, exactly as it does at the start of a day. The one
+      thing it must never do is empty the ledger; it does not touch it. */
   pickStaff(idx) {
     clearTimeout(this._ut);
     const p = this.staffList()[idx];
@@ -2005,14 +2492,12 @@ class Component extends DCLogic {
     // the phone is changing hands · the question the outgoing person asked has nobody waiting on
     // it any more, so it is withdrawn from the manager's screen instead of hanging there
     this.withdrawPending('Withdrawn at the till — the phone was handed over before the answer came.');
-    this.setState(s => ({ staffName: p.name, staffAr: p.ar, staffInitials: p.initials, shiftOpen: false, handoverPick: false,
-      scansToday: 0, sStamps: 0, sRewards: 0, sessionLog: [], screen: 'idle', scenario: null, undo: null, staffSeq: s.staffSeq + 1,
-      earnsToday: 0, redeemsToday: {}, ovReq: null, ovGrant: null, ovDecline: null,
-      foundBy: null, shiftLive: true }));
     const h = this.__host || this;
     h.__wsRampKey = null;   // the totals are a new person's now — let them count up again
     h.__wsLockKey = null;
-    this.logAction(null, 'shiftStart', p.name, { who: p.name, whoAr: p.ar });
+    this.setState({ shiftOpen: false, handoverPick: false, screen: 'idle', scenario: null, undo: null, foundBy: null,
+      ppAmt: '', ppSheet: null, ppBy: '', ppStmt: null,
+      locked: true, lockMode: 'start', lockStaff: idx, lockDigits: '', lockTries: 0, lockErr: false, lockWarn: false, lockAuto: false });
     this.saveScan();
   }
 
@@ -2151,7 +2636,8 @@ class Component extends DCLogic {
       vip: 'layl', tierlock: 'layl',
       cashback: 'zaytoun', paused: 'zaytoun', discount: 'zaytoun',
       points: 'sukkar',
-      membership: 'ghaim', expiring: 'ghaim' }[scen] || 'daraj';
+      membership: 'ghaim', expiring: 'ghaim',
+      prepaid: 'zaman', ppbonus: 'zaman', ppfils: 'zaman' }[scen] || 'daraj';
   }
   /** LAYER 3 — what this file enforced before the rules had a data home. Unchanged on purpose:
       it is the fallback, so its job is to preserve today's behaviour exactly, not to be right. */
@@ -2161,7 +2647,17 @@ class Component extends DCLogic {
       layl: { redeemCap: 2, tiers: [{ name: 'Silver', at: 0 }, { name: 'Gold', at: 12 }, { name: 'Royal', at: 30 }] },
       zaytoun: { minRedeem: 2, redeemCap: 2 },
       sukkar: { redeemCap: 2 },
-      ghaim: { graceDays: 14 }
+      ghaim: { graceDays: 14 },
+      // PREPAID INHERITS NOTHING FROM CASHBACK. minRedeem and redeemCap are pinned to 0 here as
+      // well as in the shared data, so even a floor read of this card can never pick up
+      // {minRedeem:2, redeemCap:2} from somewhere else and quietly apply a cashback rule to a
+      // customer's own deposited money.
+      zaman: { topupsMinor: [10000, 25000, 50000, 100000],
+        bonusTiers: [{ atMinor: 50000, pct: 5 }, { atMinor: 100000, pct: 10 }],
+        maxPrincipalMinor: 300000, bonusExpiryDays: 180,
+        refundable: true, allowPartial: true,
+        offlineFloorMinor: 10000, spendPinAboveMinor: 20000, lowBalanceAtMinor: 5000,
+        minRedeem: 0, redeemCap: 0 }
     }[cardId] || {};
   }
   /** Narrow whatever we were handed down to rules this till understands. Everything else — unknown
@@ -2189,6 +2685,29 @@ class Component extends DCLogic {
         .map(x => ({ name: x.name.trim().slice(0, 24), at: Math.max(0, Math.min(9999, Math.round(Number(x.at) || 0))) }))
         .sort((a, b) => a.at - b.at);
       if (t.length) out.tiers = t;
+    }
+    // ── the prepaid half of the shape · ALL INTEGER FILS, and every key ends in "Minor" so a
+    //    2-decimal float from a cashback path cannot be mistaken for one of these. A key that
+    //    arrives as the wrong type is DROPPED rather than coerced: a maxPrincipal that silently
+    //    became 0 would refuse every top-up on the card, and a refusal nobody wrote is worse than
+    //    a missing rule the floor can supply.
+    ['maxPrincipalMinor', 'offlineFloorMinor', 'spendPinAboveMinor', 'lowBalanceAtMinor'].forEach(k => {
+      const v = int(o[k], 0, 100000000); if (v !== null) out[k] = v;
+    });
+    { const v = int(o.bonusExpiryDays, 0, 3650); if (v !== null) out.bonusExpiryDays = v; }
+    ['refundable', 'allowPartial'].forEach(k => { if (typeof o[k] === 'boolean') out[k] = o[k]; });
+    if (Array.isArray(o.topupsMinor)) {
+      const c = o.topupsMinor.map(x => int(x, 1, 100000000)).filter(x => x !== null).slice(0, 8).sort((a, b) => a - b);
+      if (c.length) out.topupsMinor = c;
+    }
+    if (Array.isArray(o.bonusTiers)) {
+      const b = o.bonusTiers
+        .filter(x => x && typeof x === 'object' && !Array.isArray(x))
+        .map(x => ({ atMinor: int(x.atMinor, 0, 100000000), pct: num(x.pct, 0, 100) }))
+        .filter(x => x.atMinor !== null && x.pct !== null)
+        .slice(0, 6)
+        .sort((a, b2) => a.atMinor - b2.atMinor);
+      if (b.length) out.bonusTiers = b;
     }
     return out;
   }
@@ -2313,13 +2832,20 @@ class Component extends DCLogic {
   capTimesLine(n) {
     const T = this.capTimes(n);
     if (T.length === 1) return this.L('at ' + T[0], 'الساعة ' + T[0]);
-    return this.L(T.slice(0, -1).join(', ') + ' and ' + T[T.length - 1], T.slice(0, -1).join('، ') + ' و' + T[T.length - 1]);
+    // the waw takes a space before a Latin clock time: it is a right-joining letter and cannot bond
+    // leftward into Latin script, so `و13:40` only reads as a typo. `الـ14` below is the opposite
+    // case — that tatweel exists precisely to carry the article into a Latin token, and it stays.
+    return this.L(T.slice(0, -1).join(', ') + ' and ' + T[T.length - 1], T.slice(0, -1).join('، ') + ' و ' + T[T.length - 1]);
   }
 
-  /** WHICH WALLET a cashback row belongs to. The paused card carries its own balance — Dana's —
-      and `finishPin` has always known that. Anything that moves cashback has to know it too, or a
-      correction pays Khaled for a redemption Dana took. */
-  cashKeyFor(scen) { return scen === 'paused' ? 'pausedBal' : 'cbBal'; }
+  /** WHICH WALLET a row belongs to — the ONE answer, and every caller really calls it. This used to
+      be written out three times that did not know about each other (here, a local inside
+      renderVals, and an inline copy inside finishPin), which is how a fourth card type gets added
+      to two of them and quietly credits the wrong person on the third. The paused card carries its
+      own balance — Dana's — and anything that moves value has to know that, or a correction pays
+      Khaled for a redemption Dana took. Prepaid does NOT appear here: stored value is not a
+      cashback balance and must never share a code path with one. */
+  walletKeyFor(scen) { return scen === 'paused' ? 'pausedBal' : 'cbBal'; }
 
   // ── the cashback minimum and the membership grace ───────────────────────────
   minRedeemFor(scen) { const m = this.rulesForScen(scen).minRedeem; return (typeof m === 'number' && isFinite(m)) ? m : 0; }
@@ -2718,7 +3244,9 @@ class Component extends DCLogic {
   /** Today's shift plus the six days behind it, newest first. */
   allRows() {
     const st = this.state;
-    const today = (st.sessionLog || []).map(l => ({ ...l, day: 0, prior: false, staff: l.by || st.staffName, staffAr: st.staffAr }));
+    // the TILL's day, not the shift's — a row Rasha wrote before she handed the phone to Ahmad is
+    // still today's work and still correctable, which is the whole point of persisting it
+    const today = this.todayRows().map(l => ({ ...l, day: 0, prior: false, staff: l.staff || l.by || st.staffName, staffAr: l.staffAr || st.staffAr }));
     return today.concat(this.priorSeed());
   }
   /** Day labels, generated so "Yesterday" is genuinely yesterday whenever the demo is opened. */
@@ -2811,8 +3339,8 @@ class Component extends DCLogic {
       title: this.L('Earning is paused', 'الجمع موقوف'),
       why: this.L('Zaytoun Kitchen paused this card 12 days ago for the renovation. Nothing earns while it is paused — and nothing was charged.', 'أوقف مطبخ زيتون هذه البطاقة قبل 12 يوماً بسبب التجديد. لا جمع أثناء الإيقاف — ولم يُخصم شيء.'),
       rule: this.L('Card rule · a paused card stops earning, never redeeming', 'قاعدة البطاقة · الموقوفة تتوقف عن الجمع لا عن الاستبدال'),
-      doLine: this.L('What to do: her JOD ' + st.pausedBal.toFixed(2) + ' is still hers and still spends. Tell her earning restarts the day Zaytoun reopens.', 'ما العمل: ' + st.pausedBal.toFixed(2) + ' ديناراً ما زالت لها وما زالت تُصرف. أخبرها أن الجمع يعود يوم إعادة الافتتاح.'),
-      altLabel: this.L('Redeem her JOD ' + st.pausedBal.toFixed(2) + ' anyway', 'استبدل ' + st.pausedBal.toFixed(2) + ' ديناراً رغم ذلك'),
+      doLine: this.L('What to do: her JOD ' + st.pausedBal.toFixed(2) + ' is still hers and still spends. Tell her earning restarts the day Zaytoun reopens.', 'ما العمل: JOD ' + st.pausedBal.toFixed(2) + ' ما زالت لها وما زالت تُصرف. أخبرها أن الجمع يعود يوم إعادة الافتتاح.'),
+      altLabel: this.L('Redeem her JOD ' + st.pausedBal.toFixed(2) + ' anyway', 'استبدل JOD ' + st.pausedBal.toFixed(2) + ' رغم ذلك'),
       altBr: 'rgba(47,174,102,.45)', altFg: '#7BD8A5',
       altGo: () => this.setState({ mode: 'redeem', cbSel: null })
     };
@@ -2915,6 +3443,676 @@ class Component extends DCLogic {
     };
   }
 
+  // ════════════════════════════════════════════════════════════════════════════
+  //  PREPAID · STORED VALUE
+  //  The customer hands the cashier real cash and it sits on her pass as HER
+  //  money. That is the whole difference from cashback: cashback is EARNED (the
+  //  merchant funded a rebate out of margin), prepaid is DEPOSITED (she handed
+  //  over a note). It is a financial liability, so nothing below shares a line of
+  //  code, a rule or a sentence with the cashback paths.
+  //
+  //  ALL money here is INTEGER FILS. 1000 fils = 1 JOD. Every field ends in
+  //  "Minor" so a 2-decimal float cannot be passed in without it being obvious.
+  //  Formatting happens ONLY at the display boundary; a stored value is never
+  //  rounded, and never re-rounded.
+  //
+  //  TWO NUMBERS, ALWAYS TOGETHER:
+  //    balanceMinor    = principalMinor + sum(live bonus lots)
+  //    refundableMinor = max(0, deposited − spent − refunded)
+  //  They are different numbers and a customer must never discover that at a
+  //  counter, so every screen that shows one shows the other.
+  // ════════════════════════════════════════════════════════════════════════════
+
+  /** The display boundary, and the only place fils becomes a string. Three decimals only when the
+      number actually has them: 84500 → "JOD 84.50", 5625 → "JOD 5.625". Identical in all five
+      Wasla surfaces on purpose — a balance must read the same on the pass and at the till. */
+  jodM(m) { const n = Math.round(Number(m) || 0); return 'JOD ' + (n / 1000).toFixed(n % 10 === 0 ? 2 : 3); }
+  /** MONEY LOOKS THE SAME IN BOTH LANGUAGES, and there is deliberately no Arabic variant of jodM.
+      The till and the customer's pass are read side by side at a counter, seconds apart, by the
+      same person — if one spelled the amount one way and the other spelled it another, the first
+      question at that counter would be whether they are the same number. Every Wasla surface
+      prints JOD in both languages; this one does too. There is deliberately no Arabic-only money
+      formatter here, and a grep for one should come back empty. */
+  M(m) { return this.jodM(m); }
+
+  /** The three scannable states of the prepaid card, and the member each one is. An explicit map —
+      never a lookup with no fallback — so `isPrepaid(anything)` is a safe question to ask on every
+      render of every screen. */
+  ppScens() { return { prepaid: 'Rakan Al-Tell', ppbonus: 'Jude Barghouti', ppfils: 'Nadeen Fakhoury' }; }
+  isPrepaid(scen) { return !!this.ppScens()[scen]; }
+  /** PIN tags this type owns. `ppr` is the refund, and it wants the MANAGER code, never staff. */
+  isPpTag(tag) { return typeof tag === 'string' && tag.slice(0, 2) === 'pp'; }
+  isPpMgrTag(tag) { return tag === 'ppRefund'; }
+
+  // ── shapes · everything that round-trips through localStorage is re-sanitised on the way in ──
+  /** A stored-value store, narrowed. Anything that is not a whole non-negative number of fils is
+      refused outright rather than coerced: a balance that quietly became NaN is a balance that
+      quietly became zero, and this is somebody's deposit.
+
+      BOUNDED ON BOTH SIDES. The low side was always here; the high side matters just as much,
+      because everything in this store round-trips through localStorage and a blob is editable by
+      anyone sitting at the machine. An unbounded restore cannot manufacture REFUNDABLE cash —
+      refundable is deposited − spent − refunded and no lot touches it — but a bonus lot is
+      SPENDABLE, so the exposure is goods off the shelf rather than notes out of the drawer. That
+      is still the merchant's money. ppCapMinor() is the same ceiling the customer's pass applies
+      to the same values, deliberately: two readers of one shared blob that disagree about what is
+      too large would let a number in through whichever door is wider.
+
+      AND IT IS AN INTEGER TEST, NOT A ROUND. Rounding 100.7 fils to 101 would repair a row nobody
+      can vouch for and then present the repair as a balance — exactly the half-understood money
+      row this whole shape exists to drop. A fractional amount fails, the row is refused, and the
+      seed the till already trusts stands in for it. */
+  /** JOD 10,000 in fils. Far above any real card on this till — Zaman Arcade's own ceiling is
+      JOD 300 of principal — and far below the point where a restored number stops being money and
+      starts being an attack. The customer's pass uses this same number for the same job. */
+  ppCapMinor() { return 10000000; }
+  ppShape(o) {
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return null;
+    const CAP = this.ppCapMinor();
+    const int = (x) => (typeof x === 'number' && isFinite(x) && x >= 0 && x <= CAP && Math.floor(x) === x) ? x : null;
+    const p = int(o.principalMinor), d = int(o.depositedMinor), s = int(o.spentMinor), r = int(o.refundedMinor);
+    if (p === null || d === null || s === null || r === null) return null;
+    const bonus = (Array.isArray(o.bonus) ? o.bonus : []).slice(0, 12).map(b => {
+      if (!b || typeof b !== 'object') return null;
+      const g = int(b.grantedMinor), rem = int(b.remainingMinor);
+      if (rem === null) return null;
+      return { id: (typeof b.id === 'string' ? b.id.slice(0, 24) : 'lot'), grantedMinor: (g === null ? rem : g), remainingMinor: rem,
+        grantedAt: (typeof b.grantedAt === 'string' ? b.grantedAt.slice(0, 24) : ''),
+        expiresAt: (typeof b.expiresAt === 'string' ? b.expiresAt.slice(0, 24) : ''),
+        campaign: (typeof b.campaign === 'string' ? b.campaign.slice(0, 32) : '') };
+    }).filter(b => !!b);
+    return { principalMinor: p, bonus, depositedMinor: d, spentMinor: s, refundedMinor: r, closed: o.closed === true };
+  }
+  /** The prepaid detail a ledger row carries, so a correction after a reload reverses what actually
+      happened rather than what it can guess. `legs` is the exact list of lots a spend consumed,
+      each with a snapshot of the lot — a lot emptied to zero is dropped from the store, and without
+      the snapshot there would be nothing left to put back. */
+  ppRowShape(o) {
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return undefined;
+    const int = (x) => (typeof x === 'number' && isFinite(x)) ? Math.round(x) : 0;
+    const lot = (b) => (b && typeof b === 'object') ? {
+      id: (typeof b.id === 'string' ? b.id.slice(0, 24) : 'lot'),
+      grantedMinor: int(b.grantedMinor), remainingMinor: int(b.remainingMinor),
+      grantedAt: (typeof b.grantedAt === 'string' ? b.grantedAt.slice(0, 24) : ''),
+      expiresAt: (typeof b.expiresAt === 'string' ? b.expiresAt.slice(0, 24) : ''),
+      campaign: (typeof b.campaign === 'string' ? b.campaign.slice(0, 32) : '')
+    } : null;
+    return {
+      kind: (typeof o.kind === 'string' ? o.kind.slice(0, 16) : ''),
+      cashMinor: int(o.cashMinor), bonusMinor: int(o.bonusMinor), takeMinor: int(o.takeMinor),
+      paidMinor: int(o.paidMinor), expiredMinor: int(o.expiredMinor),
+      principalMinor: int(o.principalMinor), shortfallMinor: int(o.shortfallMinor),
+      beforeMinor: int(o.beforeMinor), afterMinor: int(o.afterMinor), spentAtMinor: int(o.spentAtMinor),
+      lot: lot(o.lot),
+      legs: (Array.isArray(o.legs) ? o.legs : []).slice(0, 12)
+        .map(g => (g && typeof g === 'object') ? { id: (typeof g.id === 'string' ? g.id.slice(0, 24) : ''), minor: int(g.minor), lot: lot(g.lot) } : null)
+        .filter(g => !!g),
+      ref: (typeof o.ref === 'string' ? o.ref.slice(0, 24) : '')
+    };
+  }
+
+  // ── the store · seeded from the shared data, then owned by this till ─────────
+  /** THE SEED IS THE ACCOUNT'S, NOT THIS FILE'S. `WASLA_DB.members[].prepaid` carries the real
+      principal, the real bonus lots with their real expiry dates and the lifetime counters; the
+      literals below are the FLOOR, kept so a missing database degrades into a demonstrable card
+      instead of an empty one. Cached per instance: a balance that moved under a confirm sheet
+      would be the exact bug this whole type is written to avoid. */
+  ppSeedFor(scen) {
+    const name = this.ppScens()[scen];
+    if (!name) return null;
+    if (this._ppSeed && this._ppSeed[scen]) return this._ppSeed[scen];
+    let src = null;
+    try {
+      const DB = (typeof window !== 'undefined' && window.WASLA_DB) || null;
+      const M = (DB && Array.isArray(DB.members)) ? DB.members : [];
+      for (let i = 0; i < M.length; i++) if (M[i] && M[i].name === name && M[i].prepaid) { src = M[i].prepaid; break; }
+    } catch (e) { src = null; }
+    const floor = {
+      prepaid: { principalMinor: 137750, bonus: [{ id: 'rk-b2', grantedMinor: 2500, remainingMinor: 2500, grantedAt: '2026-08-03', expiresAt: '2027-01-30', campaign: 'summer-5' }], depositedMinor: 175000, spentMinor: 47250, refundedMinor: 0 },
+      ppbonus: { principalMinor: 0, bonus: [{ id: 'jb-b2', grantedMinor: 8000, remainingMinor: 8000, grantedAt: '2026-08-02', expiresAt: '2027-01-29', campaign: 'eid-gift' }], depositedMinor: 100000, spentMinor: 110000, refundedMinor: 0 },
+      ppfils: { principalMinor: 4125, bonus: [], depositedMinor: 50000, spentMinor: 47375, refundedMinor: 0 }
+    }[scen];
+    const out = this.ppShape(src) || this.ppShape(floor) || { principalMinor: 0, bonus: [], depositedMinor: 0, spentMinor: 0, refundedMinor: 0, closed: false };
+    (this._ppSeed = this._ppSeed || {})[scen] = out;
+    return out;
+  }
+  /** Reads a store out of ANY state object — the updater form of setState hands us `s`, not `this.state`. */
+  ppOf(s, scen) {
+    const seed = this.ppSeedFor(scen);
+    if (!seed) return null;
+    const m = (s || {}).prepaid || {};
+    return m[scen] || seed;
+  }
+  ppFor(scen) { return this.ppOf(this.state, scen); }
+  /** A state patch that writes ONE member's store back where it belongs and touches nothing else. */
+  ppPatch(s, scen, next) { return { prepaid: { ...((s || {}).prepaid || {}), [scen]: next } }; }
+
+  // ── arithmetic · pure, and asserted after every mutation ─────────────────────
+  ppLotEnd(b) { const t = Date.parse(String((b || {}).expiresAt || '')); return isFinite(t) ? t : null; }
+  /** Lots, soonest-expiring first. A lot with no readable expiry sorts LAST and never expires —
+      when the data is ambiguous the customer keeps her money. */
+  ppLotsByExpiry(pp) {
+    const end = (b) => { const t = this.ppLotEnd(b); return t === null ? 8.64e15 : t; };
+    return ((pp && pp.bonus) || []).slice().sort((a, b) => end(a) - end(b));
+  }
+  /** EXPIRY IS APPLIED AT READ TIME AND NEVER CACHED — before any preview, and AGAIN inside every
+      commit, so the commit always wins over the preview. Returns a NEW store; the caller decides
+      whether to persist it, which is what lets a preview stay side-effect free. */
+  ppExpire(pp, nowMs) {
+    if (!pp) return { pp: null, expiredMinor: 0, dropped: [] };
+    const now = (typeof nowMs === 'number' && isFinite(nowMs)) ? nowMs : Date.now();
+    const keep = [], dropped = [];
+    (pp.bonus || []).forEach(b => { const t = this.ppLotEnd(b); if (t !== null && t <= now) dropped.push(b); else keep.push(b); });
+    if (!dropped.length) return { pp, expiredMinor: 0, dropped };
+    return { pp: { ...pp, bonus: keep }, expiredMinor: dropped.reduce((a, b) => a + (b.remainingMinor || 0), 0), dropped };
+  }
+  ppBonusMinor(pp) { return ((pp && pp.bonus) || []).reduce((a, b) => a + (Number(b.remainingMinor) || 0), 0); }
+  ppBalance(pp) { return (Number(pp && pp.principalMinor) || 0) + this.ppBonusMinor(pp); }
+  /** THE REFUND RULE, and the one line that closes the arbitrage. */
+  ppRefundable(pp) { return Math.max(0, (Number(pp && pp.depositedMinor) || 0) - (Number(pp && pp.spentMinor) || 0) - (Number(pp && pp.refundedMinor) || 0)); }
+  ppClosed(pp) { return !!(pp && pp.closed); }
+  /** THE INVARIANTS, asserted after every mutation and before it is written:
+        balanceMinor = principalMinor + sum(bonus[].remainingMinor)
+        principalMinor >= 0, every lot remainingMinor >= 0, no lifetime counter negative
+      A violation is SURFACED as an incident and the write is abandoned. It is never clamped: a till
+      that quietly repairs a stored-value balance is a till hiding a bug that has already moved
+      somebody's money. */
+  ppAssert(pp, expectBalMinor, where) {
+    const lots = (pp && pp.bonus) || [];
+    const bal = this.ppBalance(pp);
+    const ok = !!pp
+      && (Number(pp.principalMinor) || 0) >= 0
+      && lots.every(b => (Number(b.remainingMinor) || 0) >= 0)
+      && (Number(pp.depositedMinor) || 0) >= 0 && (Number(pp.spentMinor) || 0) >= 0 && (Number(pp.refundedMinor) || 0) >= 0
+      && (typeof expectBalMinor !== 'number' || bal === expectBalMinor);
+    if (!ok) this.ppIncident(where, bal, expectBalMinor);
+    return ok;
+  }
+  /** The one thing a till must do when the numbers stop adding up: stop, write nothing, say so, and
+      name the person who has to be called. */
+  ppIncident(where, got, want) {
+    this.setState({ ppSheet: null, ppBy: '', ppAmt: '' });
+    this.flashNow('⚠', '#E2563A', this.L('Stopped — the numbers don’t add up', 'توقّفنا — الأرقام لا تتطابق'),
+      this.L('Nothing was written and nothing was taken. Do not take the cash. Call the manager and read them this card.',
+        'لم يُكتب شيء ولم يُؤخذ شيء. لا تستلم المبلغ. اتصل بالمدير واقرأ له هذه البطاقة.'));
+    this.logAction(this.state.scenario, 'ppIncident', String(where || ''), { pp: { kind: 'incident', beforeMinor: Number(want) || 0, afterMinor: Number(got) || 0 } });
+    this.saveScan();
+  }
+
+  /** BONUS TIER SELECTION · ONE pure function. The preview calls it, the button label calls it, the
+      log row calls it and the ledger row calls it — nobody re-derives it inline, because the number
+      shown and the number credited have to be the same number. The percentage is the HIGHEST tier
+      whose atMinor is at or below THIS TOP-UP (never the resulting balance), and the rounding is
+      half-up to a whole fils, with the tie going to the customer.
+
+      TWO TIERS ON THE SAME THRESHOLD · THE LATER ENTRY WINS. It is a state the dashboard's editor
+      now refuses to write, but a blob written before that refusal existed can still carry it, and
+      "whichever one we happened to meet first" is not an answer a cashier can defend at a counter.
+      Last-wins is the rule on every Wasla surface, so the merchant's preview, the customer's pass
+      and this till all quote one percentage. The comparison is `>=`, and that single character is
+      the whole rule — at a tie the later entry replaces the earlier one instead of losing to it. */
+  bonusFor(cashMinor, rules) {
+    const cash = Math.max(0, Math.round(Number(cashMinor) || 0));
+    const tiers = (rules && Array.isArray(rules.bonusTiers)) ? rules.bonusTiers : [];
+    let pct = 0, best = -1;
+    tiers.forEach(t => {
+      const at = Math.max(0, Math.round(Number((t || {}).atMinor) || 0));
+      const p = Math.max(0, Number((t || {}).pct) || 0);
+      if (at <= cash && at >= best) { best = at; pct = p; }
+    });
+    return Math.floor((cash * pct + 50) / 100);
+  }
+  /** "Load JOD 50 more, get JOD 10 extra." The next rung up from where this top-up lands, or null
+      when she is already on the top one.
+
+      The tie-break has to be bonusFor's, not the sort's. `extraMinor` is bonusFor's answer; if the
+      pct printed next to it came from the FIRST of two tied thresholds while the extra came from
+      the LAST, this line would offer one number and credit another — a money defect wearing the
+      clothes of a typo. So tied thresholds are collapsed last-wins BEFORE the rung is chosen. */
+  ppNextRung(cashMinor, rules) {
+    const cash = Math.max(0, Math.round(Number(cashMinor) || 0));
+    const raw = ((rules && Array.isArray(rules.bonusTiers)) ? rules.bonusTiers : [])
+      .map(t => ({ atMinor: Math.max(0, Math.round(Number((t || {}).atMinor) || 0)), pct: Math.max(0, Number((t || {}).pct) || 0) }));
+    const tiers = [];
+    raw.forEach(t => {
+      for (let i = 0; i < tiers.length; i++) if (tiers[i].atMinor === t.atMinor) { tiers[i] = t; return; }
+      tiers.push(t);
+    });
+    tiers.sort((a, b) => a.atMinor - b.atMinor);
+    for (let i = 0; i < tiers.length; i++) {
+      if (tiers[i].atMinor > cash) {
+        return { atMinor: tiers[i].atMinor, pct: tiers[i].pct,
+          moreMinor: tiers[i].atMinor - cash,
+          extraMinor: this.bonusFor(tiers[i].atMinor, rules) - this.bonusFor(cash, rules) };
+      }
+    }
+    return null;
+  }
+  /** maxPrincipal constrains PRINCIPAL ONLY. Bonus may overflow it: capping the bonus would punish
+      the customer for the merchant's own promotion, and is how a till ends up in the "took 100,
+      issued 20" state. A card with no usable ceiling has no ceiling, rather than a ceiling of zero. */
+  ppHeadroom(pp, rules) {
+    const max = Number((rules || {}).maxPrincipalMinor);
+    if (!isFinite(max) || max <= 0) return Infinity;
+    return Math.max(0, Math.round(max) - (Number(pp && pp.principalMinor) || 0));
+  }
+  /** SPEND ORDER: BONUS FIRST, soonest-expiring lot first, then principal — so the customer never
+      loses promo value she was shown on her pass. Pure: it returns the legs and the resulting
+      store and mutates nothing it was handed. `legs` snapshots each lot it touched, which is what
+      makes the spend reversible after the lot itself has been emptied and dropped. */
+  ppSpendPlan(pp, takeMinor) {
+    const take = Math.max(0, Math.round(Number(takeMinor) || 0));
+    let left = take;
+    const next = [], legs = [];
+    this.ppLotsByExpiry(pp).forEach(b => {
+      const have = Math.max(0, Number(b.remainingMinor) || 0);
+      const use = Math.min(left, have);
+      left -= use;
+      if (use > 0) legs.push({ id: b.id, minor: use, lot: { ...b } });
+      if (have - use > 0) next.push({ ...b, remainingMinor: have - use });
+    });
+    const fromPrincipal = Math.min(left, Math.max(0, Number(pp && pp.principalMinor) || 0));
+    left -= fromPrincipal;
+    return {
+      ok: left === 0, shortMinor: left,
+      bonusMinor: take - left - fromPrincipal, principalMinor: fromPrincipal, legs,
+      store: { ...pp, bonus: next,
+        principalMinor: (Number(pp && pp.principalMinor) || 0) - fromPrincipal,
+        spentMinor: (Number(pp && pp.spentMinor) || 0) + (take - left) }
+    };
+  }
+  ppRules(scen) { return this.rulesFor(this.cardIdFor(scen)) || {}; }
+  ppFloorMinor(scen) { const v = Number(this.ppRules(scen).offlineFloorMinor); return (isFinite(v) && v >= 0) ? Math.round(v) : 10000; }
+  ppPinAboveMinor(scen) { const v = Number(this.ppRules(scen).spendPinAboveMinor); return (isFinite(v) && v >= 0) ? Math.round(v) : 20000; }
+  ppLowAtMinor(scen) { const v = Number(this.ppRules(scen).lowBalanceAtMinor); return (isFinite(v) && v >= 0) ? Math.round(v) : 0; }
+  ppRefundableCard(scen) { const r = this.ppRules(scen); return r.refundable !== false; }
+  ppPartialOk(scen) { const r = this.ppRules(scen); return r.allowPartial !== false; }
+
+  // ── the keypad · FILS-SHIFT, never a free decimal ────────────────────────────
+  /** Each digit pushes right, exactly like a real till: "5","6","0" reads JOD 5.60. There is no
+      decimal key, so there is no "I meant to press the dot" — the only typo left is a digit too
+      many, and that is what the hard-stop below catches. Internally the digit string is hundredths
+      of a dinar; fils precision arrives from bonus arithmetic, never from a cashier's thumb. */
+  ppAmtMinor(digits) { const d = String(digits == null ? this.state.ppAmt : digits).replace(/\D/g, ''); return d ? parseInt(d, 10) * 10 : 0; }
+  ppKeyTap(k) {
+    this.setState(s => {
+      let a = String(s.ppAmt || '');
+      if (k === '⌫') a = a.slice(0, -1);
+      else if (/^\d$/.test(k)) { if (a.length < 7) a = (a === '0' ? '' : a) + k; }
+      else if (k === 'C') a = '';
+      return { ppAmt: a, ppSeq: s.ppSeq + 1 };
+    });
+  }
+  ppSetMinor(minor) { this.setState(s => ({ ppAmt: String(Math.max(0, Math.round(minor / 10))), ppSeq: s.ppSeq + 1 })); }
+
+  // ── TOP-UP · the ORDER is load-bearing: amount → headroom → preview → PIN → cash → commit ────
+  /** Step 2 and 4 of the contract. The headroom refusal happens HERE, before a single dinar has
+      been asked for; the PIN happens next, still before the cash. By the time the cashier says
+      "JOD 100 please" the code is already accepted and the commit is one tap away, so there is no
+      state in which a note is in the drawer and the till will not record it. */
+  ppTopupAsk(scen) {
+    const rules = this.ppRules(scen);
+    const ex = this.ppExpire(this.ppFor(scen));
+    const pp = ex.pp;
+    const cash = this.ppAmtMinor();
+    if (!pp || this.ppClosed(pp)) return;
+    if (this.state.offline) return;                 // the tab refuses before this is reachable
+    if (cash <= 0) return;
+    const head = this.ppHeadroom(pp, rules);
+    if (cash > head) return;                        // the preview already shows the refusal
+    this.setState({ ppSheet: { kind: 'topupPin', cashMinor: cash, bonusMinor: this.bonusFor(cash, rules) } });
+    this.askPin('ppTopup');
+  }
+  /** Step 7. Expiry is re-applied and the invariants re-asserted INSIDE the commit, so a lot that
+      lapsed between the preview and the cashier taking the note is gone from the number that gets
+      written. The bonus is a LOT with its own expiry, and a zero bonus writes no lot at all. */
+  ppCommitTopup(scen, by) {
+    const st = this.state, sheet = st.ppSheet || {};
+    const rules = this.ppRules(scen);
+    const cash = Math.max(0, Math.round(Number(sheet.cashMinor) || 0));
+    if (cash <= 0) { this.setState({ ppSheet: null, ppBy: '' }); return; }
+    const ex = this.ppExpire(this.ppFor(scen));
+    const pp = ex.pp;
+    if (!pp || this.ppClosed(pp)) { this.setState({ ppSheet: null, ppBy: '' }); return; }
+    // COMMIT-TIME REVALIDATION · the headroom is re-read, never trusted from the preview
+    const head = this.ppHeadroom(pp, rules);
+    if (cash > head) {
+      this.setState({ ppSheet: null, ppBy: '' });
+      this.flashNow('✕', '#E2563A', this.L('Not loaded — the card filled up', 'لم تُعبّأ — امتلأت البطاقة'),
+        this.L('Do not take the cash. The most this card can hold now is ' + this.jodM(head) + '.', 'لا تستلم المبلغ. أقصى ما تحمله البطاقة الآن ' + this.jodM(head) + '.'));
+      return;
+    }
+    const beforeMinor = this.ppBalance(pp);
+    const bonus = this.bonusFor(cash, rules);       // the ONE bonus function — see bonusFor
+    const days = Math.max(0, Math.round(Number(rules.bonusExpiryDays) || 0));
+    const lot = bonus > 0 ? {
+      id: 'l' + Date.now().toString(36),
+      grantedMinor: bonus, remainingMinor: bonus,
+      grantedAt: this.dayKey(),
+      expiresAt: this.dayKey(Date.now() + days * 86400000),
+      campaign: 'till-' + this.dayKey()
+    } : null;
+    const next = { ...pp,
+      principalMinor: pp.principalMinor + cash,
+      depositedMinor: pp.depositedMinor + cash,
+      bonus: lot ? (pp.bonus || []).concat([lot]) : (pp.bonus || []) };
+    const afterMinor = beforeMinor - ex.expiredMinor + cash + bonus;
+    if (!this.ppAssert(next, afterMinor, 'topup')) return;
+    this.setState(s => ({ ...this.ppPatch(s, scen, next), ppSheet: null, ppBy: '', ppAmt: '', ppSeq: s.ppSeq + 1, undo: null }));
+    if (ex.expiredMinor > 0) this.ppLogExpiry(scen, ex, beforeMinor);
+    this.logAction(scen, 'ppTopup', cash, { by, pp: { kind: 'topup', cashMinor: cash, bonusMinor: bonus, lot,
+      beforeMinor: beforeMinor - ex.expiredMinor, afterMinor, spentAtMinor: pp.spentMinor } });
+    // NO UNDO ON A TOP-UP · the eight-second bar passes no `by` and would silently remove a credit
+    // from a customer who has just handed over a note. The PIN'd correction is the only reversal.
+    this.flashNow('✓', '#2FAE66',
+      this.L('Loaded ' + this.jodM(cash) + (bonus > 0 ? ' + ' + this.jodM(bonus) + ' bonus' : ''), 'عُبِّئت ' + this.jodM(cash) + (bonus > 0 ? ' + ' + this.jodM(bonus) + ' مكافأة' : '')),
+      this.L(this.jodM(beforeMinor - ex.expiredMinor) + ' → ' + this.jodM(afterMinor) + ' · refundable ' + this.jodM(this.ppRefundable(next)),
+        this.jodM(beforeMinor - ex.expiredMinor) + ' ← ' + this.jodM(afterMinor) + ' · القابل للاسترداد ' + this.jodM(this.ppRefundable(next))));
+    this.emitLive(this.liveFor(scen, 'topup', 'loaded ' + this.jodM(cash) + (bonus > 0 ? ' — ' + this.jodM(bonus) + ' bonus on top' : '')));
+    this.saveScan();
+  }
+  /** A lot that lapsed is written down before the movement that noticed it, so a ledger read top to
+      bottom still reconciles. `system` authored it, because nobody at the counter did. */
+  ppLogExpiry(scen, ex, beforeMinor) {
+    this.logAction(scen, 'ppExpire', ex.expiredMinor, { by: 'system', pp: { kind: 'expire', expiredMinor: ex.expiredMinor,
+      beforeMinor, afterMinor: beforeMinor - ex.expiredMinor } });
+  }
+
+  // ── SPEND · the bill comes off the stored balance, and the typo never does ───
+  /** THE SINGLE MOST IMPORTANT REFUSAL IN THIS TYPE. A missed decimal (56000 typed for 5600)
+      silently empties the card and then tells the cashier to collect the rest by other means. It is
+      a REFUSAL, not a partial: a bill more than three times the balance AND over JOD 20 is a typo
+      far more often than it is a customer. */
+  ppTypo(billMinor, balMinor) { return billMinor > 3 * balMinor && billMinor > 20000; }
+  /** Everything the Pay tab needs, resolved once, with expiry applied at read. Pure. */
+  ppPayPlan(scen) {
+    const st = this.state, rules = this.ppRules(scen);
+    const ex = this.ppExpire(this.ppFor(scen));
+    const pp = ex.pp || { principalMinor: 0, bonus: [], depositedMinor: 0, spentMinor: 0, refundedMinor: 0 };
+    const balMinor = this.ppBalance(pp);
+    const floorMinor = this.ppFloorMinor(scen);
+    const availMinor = st.offline ? Math.min(balMinor, floorMinor) : balMinor;
+    const billMinor = this.ppAmtMinor();
+    const takeMinor = Math.min(billMinor, availMinor);
+    const shortfallMinor = Math.max(0, billMinor - takeMinor);
+    const plan = this.ppSpendPlan(pp, takeMinor);
+    return { pp, ex, rules, balMinor, availMinor, floorMinor, billMinor, takeMinor, shortfallMinor, plan,
+      typo: this.ppTypo(billMinor, balMinor),
+      empties: takeMinor > 0 && takeMinor === balMinor && balMinor > 0,
+      needsPin: billMinor >= this.ppPinAboveMinor(scen) || (takeMinor > 0 && takeMinor === balMinor && balMinor > 0) };
+  }
+  /** The Pay button. Every gate the contract names, in the order it names them — and the partial
+      leg is only ever OFFERED here, never taken: the card is debited last, after the cashier says
+      the other tender cleared. */
+  ppPayGo(scen) {
+    const P = this.ppPayPlan(scen);
+    if (this.ppClosed(P.pp)) return;
+    if (P.billMinor <= 0) return;
+    if (P.typo) return;                                   // the screen is already showing the refusal
+    if (P.takeMinor <= 0) return;
+    // SAME CARD, SAME AMOUNT, INSIDE A MINUTE. A double-tap at a busy counter looks exactly like a
+    // second customer, so the till asks rather than guessing.
+    const last = ((this.state.ppLast || {})[scen]) || null;
+    if (last && last.minor === P.takeMinor && (Date.now() - last.ts) < 60000) {
+      this.setState({ ppSheet: { kind: 'again', takeMinor: P.takeMinor, shortfallMinor: P.shortfallMinor, atMs: last.ts } });
+      return;
+    }
+    this.ppPayAfterDebounce(scen, P);
+  }
+  ppPayAfterDebounce(scen, plan) {
+    const P = plan || this.ppPayPlan(scen);
+    if (P.shortfallMinor > 0) {
+      if (!this.ppPartialOk(scen)) return;
+      this.setState({ ppSheet: { kind: 'partial', takeMinor: P.takeMinor, shortfallMinor: P.shortfallMinor, billMinor: P.billMinor } });
+      return;
+    }
+    if (P.empties) { this.setState({ ppSheet: { kind: 'empty', takeMinor: P.takeMinor, shortfallMinor: 0, billMinor: P.billMinor } }); return; }
+    if (P.needsPin) { this.setState({ ppSheet: { kind: 'spendPin', takeMinor: P.takeMinor, shortfallMinor: 0, billMinor: P.billMinor } }); this.askPin('ppSpend'); return; }
+    this.ppCommitSpend(scen, this.state.staffName, { takeMinor: P.takeMinor, shortfallMinor: 0, billMinor: P.billMinor });
+  }
+  /** COMMIT-TIME REVALIDATION lives here, not in the preview: the balance is re-read, expiry is
+      re-applied, and the take is re-checked against what is actually available. If it no longer
+      fits, nothing is written and the screen re-previews with the new number. It never writes a
+      negative. */
+  ppCommitSpend(scen, by, sheet) {
+    const S = sheet || this.state.ppSheet || {};
+    const want = Math.max(0, Math.round(Number(S.takeMinor) || 0));
+    const P = this.ppPayPlan(scen);
+    if (this.ppClosed(P.pp) || want <= 0) { this.setState({ ppSheet: null, ppBy: '' }); return; }
+    if (want > P.availMinor) {
+      this.setState({ ppSheet: null, ppBy: '' });
+      this.flashNow('✕', '#E2563A', this.L('Nothing was taken', 'لم يُخصم شيء'),
+        this.L('The card moved while you were confirming — ' + this.jodM(P.availMinor) + ' is what is on it now. Read the new amount and try again.',
+          'تغيّرت البطاقة أثناء التأكيد — الموجود عليها الآن ' + this.jodM(P.availMinor) + '. اقرأ المبلغ الجديد وأعد المحاولة.'));
+      return;
+    }
+    const beforeAll = this.ppBalance(this.ppFor(scen));
+    const beforeMinor = this.ppBalance(P.pp);
+    const plan = this.ppSpendPlan(P.pp, want);
+    if (!plan.ok) { this.ppIncident('spend-plan', beforeMinor, want); return; }
+    const afterMinor = beforeMinor - want;
+    if (!this.ppAssert(plan.store, afterMinor, 'spend')) return;
+    const shortfall = Math.max(0, Math.round(Number(S.shortfallMinor) || 0));
+    this.setState(s => ({ ...this.ppPatch(s, scen, plan.store), ppSheet: null, ppBy: '', ppAmt: '', ppSeq: s.ppSeq + 1, undo: null,
+      ppLast: { ...(s.ppLast || {}), [scen]: { minor: want, ts: Date.now() } } }));
+    if (P.ex.expiredMinor > 0) this.ppLogExpiry(scen, P.ex, beforeAll);
+    this.logAction(scen, shortfall > 0 ? 'ppPartial' : 'ppSpend', want, { by, pp: { kind: 'spend',
+      takeMinor: want, shortfallMinor: shortfall, billMinor: Math.max(0, Math.round(Number(S.billMinor) || want)),
+      bonusMinor: plan.bonusMinor, principalMinor: plan.principalMinor, legs: plan.legs,
+      beforeMinor, afterMinor } });
+    const rf = this.ppRefundable(plan.store);
+    this.flashNow('✓', '#2FAE66',
+      this.L(this.jodM(want) + ' off the card', 'خُصم ' + this.jodM(want) + ' من البطاقة'),
+      shortfall > 0
+        ? this.L(this.jodM(beforeMinor) + ' → ' + this.jodM(afterMinor) + ' · collect ' + this.jodM(shortfall) + ' by other means.',
+          this.jodM(beforeMinor) + ' ← ' + this.jodM(afterMinor) + ' · حصّل ' + this.jodM(shortfall) + ' بوسيلة أخرى.')
+        : this.L(this.jodM(beforeMinor) + ' → ' + this.jodM(afterMinor) + ' · refundable ' + this.jodM(rf),
+          this.jodM(beforeMinor) + ' ← ' + this.jodM(afterMinor) + ' · القابل للاسترداد ' + this.jodM(rf)));
+    const ev = this.liveFor(scen, 'reward', 'paid ' + this.jodM(want) + ' from the card' + (shortfall > 0 ? ' — ' + this.jodM(shortfall) + ' collected by other means' : ''));
+    // OFFLINE SPEND IS PERMITTED, so its announcement rides the queue like every other offline write
+    if (this.state.offline) this.pushQueue(scen, 'ppSpend', want, ev); else this.emitLive(ev);
+    this.saveScan();
+  }
+
+  // ── REFUND · manager only, pays the refundable, and CLOSES the card ──────────
+  ppRefundAsk(scen) {
+    const ex = this.ppExpire(this.ppFor(scen));
+    if (!ex.pp || this.ppClosed(ex.pp)) return;
+    if (!this.ppRefundableCard(scen)) return;
+    this.setState({ ppSheet: { kind: 'refund', paidMinor: this.ppRefundable(ex.pp), balMinor: this.ppBalance(ex.pp), bonusMinor: this.ppBonusMinor(ex.pp) } });
+  }
+  /** A REFUND CLOSES THE CARD. It pays refundableMinor, zeroes principal AND every bonus lot, and
+      there is no partial refund that leaves the card open — that is the rule that closes the
+      arbitrage, so it is written once, here, with nothing else able to reach it. */
+  ppCommitRefund(scen, by) {
+    const ex = this.ppExpire(this.ppFor(scen));
+    const pp = ex.pp;
+    if (!pp || this.ppClosed(pp)) { this.setState({ ppSheet: null, ppBy: '' }); return; }
+    const beforeMinor = this.ppBalance(pp);
+    const paid = this.ppRefundable(pp);
+    const forfeitMinor = Math.max(0, beforeMinor - paid);
+    const next = { ...pp, principalMinor: 0, bonus: [], refundedMinor: pp.refundedMinor + paid, closed: true };
+    if (!this.ppAssert(next, 0, 'refund')) return;
+    this.setState(s => ({ ...this.ppPatch(s, scen, next), ppSheet: null, ppBy: '', ppAmt: '', ppSeq: s.ppSeq + 1, undo: null }));
+    if (ex.expiredMinor > 0) this.ppLogExpiry(scen, ex, this.ppBalance(this.ppFor(scen)));
+    this.logAction(scen, 'ppRefund', paid, { by, pp: { kind: 'refund', paidMinor: paid, beforeMinor, afterMinor: 0 } });
+    this.flashNow('↩', '#F0A92B', this.L('Refunded ' + this.jodM(paid) + ' — card closed', 'استُرد ' + this.jodM(paid) + ' — أُغلقت البطاقة'),
+      forfeitMinor > 0
+        ? this.L('Pay her ' + this.jodM(paid) + ' from the drawer. ' + this.jodM(forfeitMinor) + ' was bonus and is not cash. Authorised by ' + String(by).split(' ')[0] + ' · ' + this.tillBranch() + '.',
+          'ادفع لها ' + this.jodM(paid) + ' من الصندوق. ' + this.jodM(forfeitMinor) + ' كانت مكافأة وليست نقداً. بموافقة ' + this.ovName(by).split(' ')[0] + ' · ' + this.branchAr(this.tillBranch()) + '.')
+        : this.L('Pay her ' + this.jodM(paid) + ' from the drawer. Authorised by ' + String(by).split(' ')[0] + ' · ' + this.tillBranch() + '.',
+          'ادفع لها ' + this.jodM(paid) + ' من الصندوق. بموافقة ' + this.ovName(by).split(' ')[0] + ' · ' + this.branchAr(this.tillBranch()) + '.'));
+    this.emitLive(this.liveFor(scen, 'reward', 'was refunded ' + this.jodM(paid) + ' and the card was closed'));
+    this.saveScan();
+  }
+
+  /** The one door every prepaid commit comes through, once a code has been accepted and resolved to
+      the person who owns it. `by` is that person, never the name on the shift. */
+  ppFinishPin(tag, scen, by) {
+    if (tag === 'ppTopup') {
+      // PIN PRECEDES CASH: the code is in, the drawer has not been opened. The take-cash sheet is
+      // the last step, and the commit is behind it.
+      const s = this.state.ppSheet || {};
+      this.setState({ ppBy: by, ppSheet: { kind: 'take', cashMinor: s.cashMinor, bonusMinor: s.bonusMinor } });
+      return;
+    }
+    if (tag === 'ppSpend') { this.ppCommitSpend(scen, by, this.state.ppSheet); return; }
+    if (tag === 'ppRefund') { this.ppCommitRefund(scen, by); return; }
+    this.setState({ ppSheet: null, ppBy: '' });
+  }
+
+  // ── the counter statement · for the customer who says "it should be 110" ─────
+  /** PER CARD, from the persisted ledger — never from the staff-scoped shift log, which is exactly
+      the list that would be missing the row she is disputing. Two sources, one list: the movements
+      this till has written today, and the member's own ledger out of the shared data behind them. */
+  ppStatementRows(scen) {
+    const out = [];
+    (this.state.tillLog || []).forEach(l => {
+      if (!l || l.scen !== scen || !l.pp || !l.pp.kind) return;
+      out.push({ id: l.id, ts: l.ts, kind: l.pp.kind, by: l.by || l.staff || '', branch: this.tillBranch(),
+        deltaMinor: this.ppRowDelta(l.pp), beforeMinor: l.pp.beforeMinor, afterMinor: l.pp.afterMinor,
+        corrected: l.corrected === true, mine: true, ref: l.pp.ref || '' });
+    });
+    const name = this.ppScens()[scen];
+    try {
+      const DB = (typeof window !== 'undefined' && window.WASLA_DB) || null;
+      const M = (DB && Array.isArray(DB.members)) ? DB.members : [];
+      for (let i = 0; i < M.length; i++) {
+        if (!M[i] || M[i].name !== name || !M[i].prepaid || !Array.isArray(M[i].prepaid.ledger)) continue;
+        M[i].prepaid.ledger.forEach(r => {
+          if (!r || typeof r !== 'object') return;
+          out.push({ id: String(r.id || ''), ts: Number(r.ts) || 0, kind: String(r.kind || ''), by: String(r.by || ''),
+            branch: String(r.branch || ''), deltaMinor: Number(r.deltaMinor) || 0,
+            beforeMinor: Number(r.beforeMinor) || 0, afterMinor: Number(r.afterMinor) || 0,
+            corrected: false, mine: false, ref: String(r.ref || '') });
+        });
+        break;
+      }
+    } catch (e) {}
+    return out.sort((a, b) => b.ts - a.ts).slice(0, 40);
+  }
+  /** The signed movement a ledger row represents, from the row's own numbers. */
+  ppRowDelta(pp) {
+    if (!pp) return 0;
+    if (pp.kind === 'topup') return (Number(pp.cashMinor) || 0) + (Number(pp.bonusMinor) || 0);
+    if (pp.kind === 'spend') return -(Number(pp.takeMinor) || 0);
+    if (pp.kind === 'refund') return -((Number(pp.beforeMinor) || 0));
+    if (pp.kind === 'expire') return -(Number(pp.expiredMinor) || 0);
+    return 0;
+  }
+  /** A wall clock, because "14:02" is what a customer remembers and "18 minutes ago" is not. */
+  clockOf(ms) {
+    const d = new Date((typeof ms === 'number' && isFinite(ms)) ? ms : Date.now());
+    const p2 = (n) => (n < 10 ? '0' : '') + n;
+    return p2(d.getHours()) + ':' + p2(d.getMinutes());
+  }
+  /** A statement row's date: today's rows show the clock, everything older shows the day it was. */
+  ppStmtWhen(ts) {
+    if (!ts) return this.L('Earlier', 'سابقاً');
+    if (this.dayKey(ts) === this.dayKey()) return this.L('Today ' + this.clockOf(ts), 'اليوم ' + this.clockOf(ts));
+    const d = new Date(ts);
+    const EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const AR = ['كانون الثاني', 'شباط', 'آذار', 'نيسان', 'أيار', 'حزيران', 'تموز', 'آب', 'أيلول', 'تشرين الأول', 'تشرين الثاني', 'كانون الأول'];
+    return this.L(d.getDate() + ' ' + EN[d.getMonth()] + ' · ' + this.clockOf(ts), d.getDate() + ' ' + AR[d.getMonth()] + ' · ' + this.clockOf(ts));
+  }
+  ppKindWord(k) {
+    return { topup: this.L('Loaded', 'تعبئة'), bonus: this.L('Bonus', 'مكافأة'), spend: this.L('Paid', 'دفع'),
+      expire: this.L('Bonus expired', 'انتهت المكافأة'), refund: this.L('Refunded', 'استرداد'),
+      correct: this.L('Correction', 'تصحيح'), incident: this.L('Stopped', 'توقّف') }[String(k || '')] || this.L('Movement', 'حركة');
+  }
+
+  // ── shift close WITH MONEY · without these the drawer cannot be counted ──────
+  /** Five numbers, from the shift's own rows: cash taken in, value issued, bonus issued, value
+      spent down, refunds paid out. A cashier who credits 90 while taking 100 shows up as a
+      difference between the first two, on the screen the shift ends on. */
+  ppShiftMoney() {
+    const out = { cashInMinor: 0, issuedMinor: 0, bonusMinor: 0, spentMinor: 0, refundMinor: 0, n: 0 };
+    this.shiftRows().forEach(l => {
+      const p = l && l.pp;
+      if (!p || l.corrected) return;
+      if (p.kind === 'topup') { out.cashInMinor += Number(p.cashMinor) || 0; out.bonusMinor += Number(p.bonusMinor) || 0; out.issuedMinor += (Number(p.cashMinor) || 0) + (Number(p.bonusMinor) || 0); out.n++; }
+      else if (p.kind === 'spend') { out.spentMinor += Number(p.takeMinor) || 0; out.n++; }
+      else if (p.kind === 'refund') { out.refundMinor += Number(p.paidMinor) || 0; out.n++; }
+    });
+    return out;
+  }
+  /** Does the person on this till handle stored value at all? The money block on the shift summary
+      belongs on a till that can take a deposit and nowhere else. */
+  ppOnThisTill() { return this.myCardIds().indexOf('zaman') >= 0; }
+
+  // ── the refusals this type owns, in both languages ──────────────────────────
+  /** The prepaid screen's own refusal, or null. Every one names the rule and the sentence to say —
+      the same discipline as refusalDef, kept separate because these are states of a live card
+      rather than states of a scan. */
+  ppRefusalFor(scen, tab) {
+    const st = this.state, rules = this.ppRules(scen);
+    const ex = this.ppExpire(this.ppFor(scen));
+    const pp = ex.pp;
+    if (!pp) return null;
+    if (this.ppClosed(pp)) return {
+      mark: '⊘', tone: '#8E8C96',
+      title: this.L('This card is closed', 'هذه البطاقة مغلقة'),
+      why: this.L('It was refunded, and a refund closes the card for good. There is nothing on it and nothing can be loaded onto it.',
+        'استُردّ رصيدها، والاسترداد يُغلق البطاقة نهائياً. لا يوجد عليها شيء ولا يمكن تعبئتها.'),
+      rule: this.L('Card rule · a refund closes the card — there is no partial refund', 'قاعدة البطاقة · الاسترداد يُغلق البطاقة — ولا يوجد استرداد جزئي'),
+      doLine: this.L('What to do: hand her a new pass from “New customer” and load it. The old one stays closed in the record.',
+        'ما العمل: امنحها بطاقة جديدة من «زبون جديد» واشحنها. وتبقى القديمة مغلقة في السجل.')
+    };
+    if (tab === 'collect') {
+      // OFFLINE TOP-UP IS A HARD LOCK, refused on the TAB before an amount is typed — never on the
+      // confirm button after the cashier has taken the note. There is no manager override, and the
+      // screen says so out loud, because the override machinery exists and somebody will try it.
+      if (st.offline) return {
+        mark: '⚑', tone: '#E2563A',
+        title: this.L('No top-ups while the till is offline', 'لا تعبئة والصندوق دون إنترنت'),
+        why: this.L('A top-up is real cash crossing the counter, and the till cannot record it right now. Do not take the money — nothing here would remember it.',
+          'التعبئة نقد حقيقي يعبر الصندوق، والجهاز لا يستطيع تسجيلها الآن. لا تستلم المبلغ — لن يتذكّره شيء هنا.'),
+        rule: this.L('Card rule · refuse to TAKE money you cannot record. A manager cannot lift this.',
+          'قاعدة البطاقة · لا تستلم مالاً لا تستطيع تسجيله. ولا يستطيع المدير رفع هذا.'),
+        doLine: this.L('What to do: tell her the loading machine is down for a few minutes and she can still play on what is already on the card — up to ' + this.jodM(this.ppFloorMinor(scen)) + '.',
+          'ما العمل: أخبرها أن التعبئة متوقفة لدقائق، وأنها ما زالت تستطيع اللعب بما على البطاقة — حتى ' + this.jodM(this.ppFloorMinor(scen)) + '.')
+      };
+      const cash = this.ppAmtMinor();
+      const head = this.ppHeadroom(pp, rules);
+      // THE HEADROOM REFUSAL, before a single dinar is asked for
+      if (cash > head) return {
+        mark: '✕', tone: '#F0A92B',
+        title: this.L('That is more than the card can hold', 'هذا أكثر مما تحمله البطاقة'),
+        why: this.L('This card already holds ' + this.jodM(pp.principalMinor) + ' of her own money, and ' + this.jodM(Number(rules.maxPrincipalMinor) || 0) + ' is the ceiling. Do not take the cash yet.',
+          'البطاقة تحمل الآن ' + this.jodM(pp.principalMinor) + ' من مالها، والحد الأقصى ' + this.jodM(Number(rules.maxPrincipalMinor) || 0) + '. لا تستلم المبلغ بعد.'),
+        rule: this.L('Card rule · at most ' + this.jodM(Number(rules.maxPrincipalMinor) || 0) + ' of the customer’s own money on one card',
+          'قاعدة البطاقة · حتى ' + this.jodM(Number(rules.maxPrincipalMinor) || 0) + ' من مال الزبون على بطاقة واحدة'),
+        doLine: head > 0
+          ? this.L('What to do: offer ' + this.jodM(head) + ' — that is the most this card takes today. Tap it below.',
+            'ما العمل: اعرض عليها ' + this.jodM(head) + ' — وهو أقصى ما تقبله البطاقة اليوم. اضغطه بالأسفل.')
+          : this.L('What to do: this card is full. She can spend some of it down and load again, or take a second pass.',
+            'ما العمل: البطاقة ممتلئة. تستطيع صرف جزء منها ثم التعبئة، أو أخذ بطاقة ثانية.'),
+        headMinor: head
+      };
+      return null;
+    }
+    // ── the Pay tab ──
+    const P = this.ppPayPlan(scen);
+    if (P.typo) return {
+      mark: '⏸', tone: '#E2563A',
+      title: this.L('Check the amount', 'راجع المبلغ'),
+      why: this.L('You typed ' + this.jodM(P.billMinor) + ' and there is ' + this.jodM(P.balMinor) + ' on the card. That is almost always a digit too many — nothing has been taken.',
+        'أدخلت ' + this.jodM(P.billMinor) + ' وعلى البطاقة ' + this.jodM(P.balMinor) + '. غالباً رقم زائد — ولم يُخصم شيء.'),
+      rule: this.L('Till rule · a bill this far above the balance is refused, not part-paid', 'قاعدة الصندوق · فاتورة تتجاوز الرصيد بهذا الفارق تُرفض ولا تُدفع جزئياً'),
+      doLine: this.L('What to do: clear it and type the bill again. Each digit moves one place: 5, 6, 0 reads ' + this.jodM(5600) + '.',
+        'ما العمل: امسحه وأعد إدخال الفاتورة. كل رقم يزيح خانة: 5 ثم 6 ثم 0 تُقرأ ' + this.jodM(5600) + '.')
+    };
+    if (P.balMinor <= 0) return {
+      mark: '○', tone: '#F0A92B',
+      title: this.L('Nothing on this card yet', 'لا رصيد على هذه البطاقة'),
+      why: this.L('The balance is ' + this.jodM(0) + '. Nothing can come off it, and nothing was charged.', 'الرصيد ' + this.jodM(0) + '. لا يمكن خصم شيء منها، ولم يُخصم شيء.'),
+      rule: this.L('Card rule · a prepaid card spends what is on it, never more', 'قاعدة البطاقة · المسبقة الدفع تصرف ما عليها فقط'),
+      doLine: this.L('What to do: offer to load it — switch to Top up. She pays the bill as normal today.',
+        'ما العمل: اعرض عليها تعبئتها — انتقل إلى تبويب التعبئة. وتدفع الفاتورة اليوم كالمعتاد.')
+    };
+    return null;
+  }
+
   // ────────────────────────────────────────────────────────────────────────────
   renderVals() {
     this.armWelcome();
@@ -2938,14 +4136,40 @@ class Component extends DCLogic {
     const isPaused = scen === 'paused', pausedRedeem = isPaused && st.mode === 'redeem';
     // the paused card borrows the whole cashback machine, on its own balance
     const isCash = scen === 'cashback' || pausedRedeem;
-    const cbBal = isPaused ? st.pausedBal : st.cbBal;
+    // ONE wallet key, resolved by the one function — see walletKeyFor
+    const cbBal = st[this.walletKeyFor(scen)];
     // the wallet minimum is the merchant's, not the till's — zero is a legitimate answer
     const cbMin = this.minRedeemFor(scen);
+    // ── STORED VALUE. Everything below is computed on EVERY render of EVERY screen, because
+    //    renderVals is one function — so every read here goes through a helper that answers safely
+    //    for a scenario that is not prepaid at all. `isPp` is the only gate.
+    const isPp = this.isPrepaid(scen);
+    const ppRules = this.ppRules(scen);
+    const ppEx = isPp ? this.ppExpire(this.ppFor(scen)) : { pp: null, expiredMinor: 0, dropped: [] };
+    const ppNow = ppEx.pp;
+    const ppClosed = this.ppClosed(ppNow);
+    const ppBal = isPp ? this.ppBalance(ppNow) : 0;
+    const ppBonus = isPp ? this.ppBonusMinor(ppNow) : 0;
+    const ppRefundable = isPp ? this.ppRefundable(ppNow) : 0;
+    const ppTopTab = isPp && st.mode === 'collect', ppPayTab = isPp && st.mode === 'redeem';
+    const ppPlan = isPp ? this.ppPayPlan(scen) : null;
+    const ppCash = isPp ? this.ppAmtMinor() : 0;
+    const ppBonusPrev = isPp ? this.bonusFor(ppCash, ppRules) : 0;   // the ONE bonus function
+    const ppRung = isPp ? this.ppNextRung(ppCash, ppRules) : null;
+    const ppHead = isPp ? this.ppHeadroom(ppNow, ppRules) : Infinity;
+    const ppRF = isPp ? this.ppRefusalFor(scen, st.mode) : null;
+    // ONE condition, four uses: can this top-up actually happen? The CTA's colour, its cursor, its
+    // class and — the point of it being a named const — whether the "What she gets" panel is on
+    // screen at all. See ppTopupPrevOn.
+    const ppTopupOk = !!(isPp && !ppClosed && !st.offline && ppCash > 0 && ppCash <= ppHead);
+    const ppSheet = (isPp && st.ppSheet) ? st.ppSheet : null;
+    const ppLowAt = this.ppLowAtMinor(scen);
+    const ppMoney = this.ppShiftMoney();
     const isVerdict = scen === 'discount' || scen === 'membership' || scen === 'expiring';
     const renewedNow = (scen === 'membership' && st.renewedMembership) || (scen === 'expiring' && st.renewedExpiring);
     const membershipRenewed = renewedNow;
     // the coupon keeps its tabs in BOTH modes, so the cross-sell has a way back to the coupon
-    const hasTabs = isStampsS || scen === 'cashback' || isPts || scen === 'coupon' || ovcapRedeem;
+    const hasTabs = isStampsS || scen === 'cashback' || isPts || scen === 'coupon' || ovcapRedeem || isPp;
     const full = sCount >= st.goal;
     const amt = parseFloat(st.amount) || 0;
     const rungs = this.rungs();
@@ -2953,7 +4177,10 @@ class Component extends DCLogic {
     const tierIdx = this.tierIdxFor(st.rVisits, this.tiersFor(scen === 'tierlock' ? 'tierlock' : 'vip'));
     const brand = SCEN.color;   // the SVG fallback disc is the card's own brand colour
     const cardArt = this.cardArt(scen);
-    const jod = (n) => this.L('JOD ' + n, n + ' ديناراً');
+    // ONE money format for both languages — "JOD <n>". Latin digits are already what every other
+    // number in the Arabic UI uses, and the prepaid work standardised on this; a second currency
+    // shape on the same counter is how a cashier and a customer end up reading two prices.
+    const jod = (n) => 'JOD ' + n;
     const ptsWord = (n) => this.L(n + ' pts', n + ' نقطة');
 
     // ── the count-up ramp: exactly one target per screen, re-armed on entry ──
@@ -2965,7 +4192,7 @@ class Component extends DCLogic {
     //    changes on every return to idle so coming back from a customer restarts the clock ──
     const lockable = !st.locked && st.shiftLive && st.screen === 'idle' && !st.flash && !st.pin
       && !st.shiftOpen && !st.manualOpen && !st.queueSheetOpen && !st.historyOpen && !st.lookupOpen && !st.joinOpen && !st.syncing;
-    this.armIdleLock(lockable ? ['idle', st.scansToday, st.sessionLog.length, st.lang, st.staffName, st.lockSeq, st.offline].join(':') : '');
+    this.armIdleLock(lockable ? ['idle', st.scansToday, (st.tillLog || []).length, st.lang, st.staffName, st.lockSeq, st.offline].join(':') : '');
     const RP = rampKey ? st.ramp : 1;
     const rampIdle = rampKey === 'idle' ? RP : 1;
     const rampAmt = rampKey.slice(0, 4) === 'amt:' ? RP : 1;
@@ -3002,7 +4229,11 @@ class Component extends DCLogic {
       ['discount', 'Ruba — a verdict, not a transaction', 'discount card · valid', '#2FAE66', '−15%', '9px'],
       ['membership', 'Anas — lapsed membership', 'verdict · expired 12 days ago', '#F0A92B', 'ID', '11px'],
       ['challenge', 'Huda — a challenge has a clock', '3/5 visits this month · 9-day window', '#7A4FA3', '3/5', '10.5px'],
-      ['foreign', 'A stranger’s card', 'another account · polite refusal', '#E2563A', '⚠', '13px']
+      // THE NINTH TYPE IS A TYPE. This rail used to reach nine by counting the foreign-card
+      // REFUSAL as a card type, which made the header's "9 card types" a claim about nine things
+      // that were not all card types. The refusal moved down to the refusals, where it always
+      // belonged, and its slot went to the card the header was always short of.
+      ['prepaid', 'Rakan — money he already paid in', 'prepaid · ' + this.jodM(this.ppBalance(this.ppSeedFor('prepaid'))) + ' on the card, ' + this.jodM(this.ppRefundable(this.ppSeedFor('prepaid'))) + ' refundable', '#4B2E83', 'JOD', '9px']
     ];
     // the states where the answer is no — or not yet. Each one names the rule it comes from.
     const railCap = this.redeemCapFor('overcap'), railGuard = this.guardPerDay(this.rulesForScen('stamps'));
@@ -3011,7 +4242,11 @@ class Component extends DCLogic {
       ['guard', 'Sara — already stamped today', 'the earning guard (' + (railGuard === Infinity ? 'off' : railGuard + '/day') + ') · ask the manager', '#F0A92B', '⏱', '12px'],
       ['overcap', 'Noor — the daily redeem cap', railCap <= 0 ? 'the merchant switched the cap off' : railCap + ' already taken today · ask the manager', '#E2563A', railCap <= 0 ? '∞' : railCap + '×', '11px'],
       ['tierlock', 'Rania — a perk she hasn’t reached', railTS.perk.name + ' perk, ' + railTS.cur.name + ' member · ask the manager', '#E8B824', '★', '13px'],
-      ['expiring', 'Luay — expiring in 9 days', 'the third verdict · amber, with a way out', '#F0A92B', '9d', '11px']
+      ['expiring', 'Luay — expiring in 9 days', 'the third verdict · amber, with a way out', '#F0A92B', '9d', '11px'],
+      ['foreign', 'A stranger’s card', 'another account · polite refusal', '#E2563A', '⚠', '13px'],
+      // the conversation the prepaid card exists to make sayable: her balance is real, and none of
+      // it is refundable, because none of it is cash she paid in
+      ['ppbonus', 'Jude — her balance is bonus', this.jodM(this.ppBalance(this.ppSeedFor('ppbonus'))) + ' on the card · ' + this.jodM(this.ppRefundable(this.ppSeedFor('ppbonus'))) + ' refundable', '#8C6BD0', '★', '12px']
     ];
     const tint = (hex, a) => 'rgba(' + parseInt(hex.slice(1, 3), 16) + ',' + parseInt(hex.slice(3, 5), 16) + ',' + parseInt(hex.slice(5, 7), 16) + ',' + a + ')';
     // ── the refusal in play, and the redeem lock that belongs to this screen ──
@@ -3075,7 +4310,7 @@ class Component extends DCLogic {
         { icon: '#', label: t.manual, go: () => this.setState({ manualOpen: true, manualCode: '', manualError: false }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' },
         { icon: '⌕', label: this.L('Find a customer', 'ابحث عن زبون'), go: () => this.setState({ lookupOpen: true, lookupQ: '' }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' },
         { icon: '＋', label: this.L('New customer', 'زبون جديد'), go: () => this.openJoin(), br: 'rgba(232,128,36,.5)', bg: 'rgba(232,128,36,.08)', fg: '#F09A4D' },
-        { icon: '☰', label: this.L('History · 7 days', 'السجل · ٧ أيام'), go: () => this.setState({ historyOpen: true, corrId: null, histQ: '', histDay: 'all' }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' }
+        { icon: '☰', label: this.L('History · 7 days', 'السجل · 7 أيام'), go: () => this.setState({ historyOpen: true, corrId: null, histQ: '', histDay: 'all' }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' }
       ].map((a, i) => ({ ...a, anim: AN('fadeUp', '.34s', (0.1 + 0.04 * i) + 's') })),
       // the chips are the cards this person is cleared for — not a pair of literals
       myCards: this.myCardIds().map((id, i) => {
@@ -3150,10 +4385,12 @@ class Component extends DCLogic {
       // ── member header ──
       scMemberName: EN ? SCEN.m[0] : SCEN.m[1], scMemberAr: EN ? SCEN.m[1] : SCEN.m[0],
       scMemberInitials: SCEN.m[2], scCardLine: this.L(SCEN.card, SCEN.cardAr), scCardColor: SCEN.color,
+      // "Collect" and "Redeem" are both wrong for a card the customer paid cash into: she TOPS IT
+      // UP, and later she PAYS with it. Same two slots, the words the counter actually uses.
       hasTabs, tabItems: [
-        { label: this.L('Collect', 'جمع'), key: 'collect', c: '#2FAE66' },
-        { label: this.L('Redeem', 'استبدال'), key: 'redeem', c: '#E88024' }
-      ].map(x => ({ label: x.label, go: () => this.setState({ mode: x.key, selRw: null, cbSel: null }), br: st.mode === x.key ? x.c : 'rgba(244,242,238,.14)', bg: st.mode === x.key ? (x.key === 'collect' ? 'rgba(47,174,102,.16)' : 'rgba(232,128,36,.16)') : 'transparent', fg: st.mode === x.key ? (x.key === 'collect' ? '#7BD8A5' : '#F09A4D') : '#9B99A3' })),
+        { label: isPp ? t.ppTopupTab : this.L('Collect', 'جمع'), key: 'collect', c: '#2FAE66' },
+        { label: isPp ? t.ppPayTab : this.L('Redeem', 'استبدال'), key: 'redeem', c: '#E88024' }
+      ].map(x => ({ label: x.label, go: () => this.setState({ mode: x.key, selRw: null, cbSel: null, ppAmt: '', ppSheet: null, ppBy: '' }), br: st.mode === x.key ? x.c : 'rgba(244,242,238,.14)', bg: st.mode === x.key ? (x.key === 'collect' ? 'rgba(47,174,102,.16)' : 'rgba(232,128,36,.16)') : 'transparent', fg: st.mode === x.key ? (x.key === 'collect' ? '#7BD8A5' : '#F09A4D') : '#9B99A3' })),
       modeCollect: st.mode === 'collect', modeRedeem: st.mode === 'redeem',
       collectBg: '#2FAE66',
       // ── the paused card keeps its redeem and loses its earn, and says so on every screen ──
@@ -3172,6 +4409,215 @@ class Component extends DCLogic {
       // what is left of the merchant's cap for this customer today — or that there isn't one
       capLeftLine: capOff ? this.L('No daily redemption cap on this card', 'لا حد يومي للاستبدال على هذه البطاقة')
         : this.L(capLeft + ' of ' + dayCap + ' redemptions left today', 'بقي ' + capLeft + ' من ' + this.arRedeems(dayCap) + ' اليوم'),
+      // ══ PREPAID ══════════════════════════════════════════════════════════════
+      // BALANCE AND REFUNDABLE ARE TWO DIFFERENT NUMBERS AND BOTH ARE ALWAYS HERE. A customer must
+      // never discover the difference at a counter, so there is no screen, tab or sheet in this
+      // type that shows one without the other.
+      bPrepaid: isPp && !capTrip,
+      ppOnCardLabel: t.ppOnCard,
+      ppBalanceStr: this.M(ppBal),
+      // The bonus figure sits BESIDE the refundable one, never inside it. The Arabic used to read
+      // "منها" — "of which" — which hangs the bonus off the refundable number and says the exact
+      // thing this card can never say: that some of what she gets back is bonus. Bonus is not cash
+      // and is never refundable. Both languages now name two numbers and claim nothing between them.
+      ppRefundLine: this.L(t.ppRefundableWord + ' ' + this.jodM(ppRefundable) + (ppBonus > 0 ? ' · ' + this.jodM(ppBonus) + ' ' + t.ppBonusIs : ''),
+        t.ppRefundableWord + ' ' + this.jodM(ppRefundable) + (ppBonus > 0 ? ' · ' + this.jodM(ppBonus) + ' ' + t.ppBonusIs : '')),
+      ppCashRule: t.ppCashRule,
+      ppBalTone: ppClosed ? '#8E8C96' : (ppLowAt > 0 && ppBal <= ppLowAt ? '#F0A92B' : '#F4F2EE'),
+      ppLow: isPp && !ppClosed && ppLowAt > 0 && ppBal <= ppLowAt && ppBal > 0,
+      ppLowLine: this.L(t.ppLowBalance + ' — ' + this.jodM(ppBal) + ' left. Offer a top-up before she starts playing.',
+        t.ppLowBalance + ' — بقي ' + this.jodM(ppBal) + '. اعرض التعبئة قبل أن تبدأ اللعب.'),
+      ppBumpAnim: st.ppSeq > 0 ? SEED(st.ppSeq, 'bumpA', 'bumpB', '.32s') : 'none',
+      ppTopupTab: ppTopTab, ppPayTab,
+      // THE PAD STANDS DOWN ONLY WHERE TYPING IS POINTLESS: a closed card, a top-up while the till
+      // is offline, a payment against an empty card. It deliberately STAYS UP for the headroom
+      // refusal and for the typo hard-stop, because in both of those the cashier's next move is to
+      // type a different number — taking the keypad away would leave them with a wall.
+      ppPadOn: isPp && !ppClosed && !(ppTopTab && st.offline) && !(ppPayTab && ppBal <= 0),
+      // ── the refusal this screen is showing, if any ──
+      ppHasRefusal: !!ppRF,
+      ppRfMark: ppRF ? ppRF.mark : '✕', ppRfTone: ppRF ? ppRF.tone : '#E2563A',
+      ppRfTint: tint(ppRF ? ppRF.tone : '#E2563A', .12),
+      ppRfTitle: ppRF ? ppRF.title : '', ppRfWhy: ppRF ? ppRF.why : '',
+      ppRfRule: ppRF ? ppRF.rule : '', ppRfDo: ppRF ? ppRF.doLine : '',
+      // the headroom refusal offers the largest amount that IS acceptable, as a tap
+      ppRfHasFix: !!(ppRF && typeof ppRF.headMinor === 'number' && ppRF.headMinor > 0),
+      ppRfFixLabel: (ppRF && typeof ppRF.headMinor === 'number') ? this.L('Offer ' + this.jodM(ppRF.headMinor) + ' instead', 'اعرض ' + this.jodM(ppRF.headMinor) + ' بدلاً منها') : '',
+      ppRfFix: () => { if (ppRF && typeof ppRF.headMinor === 'number') this.ppSetMinor(ppRF.headMinor); },
+      // ── the amount pad · fils-shift, shared by both tabs ──
+      ppAmtLabel: ppTopTab ? t.ppTypeAmount : t.ppTypeBill,
+      ppAmtStr: this.M(ppCash),
+      ppShiftHint: t.ppShiftLabel,
+      ppChips: (Array.isArray(ppRules.topupsMinor) ? ppRules.topupsMinor : []).slice(0, 6).map((m, i) => {
+        const fits = m <= ppHead;
+        return { label: this.M(m), sel: ppCash === m, ok: fits,
+          br: ppCash === m ? '#E88024' : (fits ? 'rgba(47,174,102,.3)' : 'rgba(244,242,238,.1)'),
+          bg: ppCash === m ? 'rgba(232,128,36,.16)' : 'transparent',
+          fg: fits ? (ppCash === m ? '#F09A4D' : '#F4F2EE') : '#5D5B66',
+          cls: fits ? 'ws-press' : 'ws-press ws-off', cur: fits ? 'pointer' : 'not-allowed',
+          enter: AN('popIn', '.32s', (0.1 + 0.04 * i) + 's'),
+          pick: () => { if (fits) this.ppSetMinor(m); } };
+      }),
+      ppKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '⌫'].map(k => ({
+        k, cls: 'ws-key', tap: () => this.ppKeyTap(k)
+      })),
+      // ── TOP UP · preview, then the code, then the cash ──
+      ppPreviewLabel: t.ppPreviewLabel,
+      ppPrevCash: this.M(ppCash),
+      ppPrevBonus: ppBonusPrev > 0 ? this.L('+ ' + this.jodM(ppBonusPrev) + ' bonus', '+ ' + this.jodM(ppBonusPrev) + ' مكافأة') : this.L('No bonus at this amount', 'لا مكافأة عند هذا المبلغ'),
+      ppPrevBonusTone: ppBonusPrev > 0 ? '#7BD8A5' : '#8E8C96',
+      ppPrevMove: this.L(this.jodM(ppBal) + ' → ' + this.jodM(ppBal + ppCash + ppBonusPrev), this.jodM(ppBal) + ' ← ' + this.jodM(ppBal + ppCash + ppBonusPrev)),
+      ppPrevRefund: this.L(t.ppRefundableWord + ' ' + this.jodM(ppRefundable) + ' → ' + this.jodM(ppRefundable + ppCash),
+        t.ppRefundableWord + ' ' + this.jodM(ppRefundable) + ' ← ' + this.jodM(ppRefundable + ppCash)),
+      // the next rung, said as an offer rather than as a rule
+      ppHasRung: !!(ppRung && ppCash > 0 && ppRung.extraMinor > 0),
+      ppRungLine: ppRung ? this.L('Load ' + this.jodM(ppRung.moreMinor) + ' more and she gets ' + this.jodM(ppRung.extraMinor) + ' extra — ' + ppRung.pct + '% from ' + this.jodM(ppRung.atMinor) + '.',
+        'زِد ' + this.jodM(ppRung.moreMinor) + ' وتحصل على ' + this.jodM(ppRung.extraMinor) + ' إضافية — ' + ppRung.pct + '٪ من ' + this.jodM(ppRung.atMinor) + '.') : '',
+      ppNoUndoLine: t.ppNoUndo,
+      // THE PREVIEW STANDS DOWN WHENEVER THE TOP-UP CANNOT HAPPEN — the Pay tab's ppPayPrevOn rule,
+      // now on this tab too. "What she gets" is a promise, and the one thing it must never do is
+      // sit under a refusal describing the same amount. Proven live before this line existed: an
+      // over-the-ceiling amount rendered "That is more than the card can hold" and, directly under
+      // it, "JOD 200.00 · + JOD 20.00 bonus · JOD 140.25 → JOD 360.25". A cashier reading down the
+      // screen reaches the confirmation last and takes the note. The pad itself deliberately STAYS
+      // up (see ppPadOn) — the next move is a different number, not a wall — but the promise goes.
+      ppTopupPrevOn: ppTopupOk,
+      ppTopupCan: ppTopupOk,
+      // The label answers the SAME question the panel above it does, so it names every reason the
+      // top-up is off — not just the two about the amount. It used to say "Staff code, then take
+      // the cash" on a closed card and on an offline till, which is the sentence that ends with a
+      // cashier holding money the till will never record.
+      ppTopupLabel: ppClosed ? this.L('This card is closed', 'هذه البطاقة مغلقة')
+        : st.offline ? this.L('No top-ups while offline', 'لا تعبئة دون إنترنت')
+          : ppCash <= 0 ? t.ppTypeAmount
+            : ppCash > ppHead ? this.L('More than the card can hold', 'أكثر مما تحمله البطاقة')
+              : t.ppTopupBtn,
+      ppTopupBg: ppTopupOk ? '#2FAE66' : '#26262B',
+      ppTopupFg: ppTopupOk ? '#FFFFFF' : '#8E8C96',
+      ppTopupCls: ppTopupOk ? 'ws-cta' : 'ws-cta ws-off',
+      ppTopupCur: ppTopupOk ? 'pointer' : 'not-allowed',
+      ppTopupGo: () => this.ppTopupAsk(scen),
+      // ── PAY · what comes off the card, what does not, and where it lands ──
+      // no preview at all while the typo hard-stop is up — see the template note
+      ppPayPrevOn: !!(ppPlan && !ppPlan.typo && ppPlan.billMinor > 0),
+      ppPayFrom: ppPlan ? this.L('From the card ' + this.jodM(ppPlan.takeMinor), 'من البطاقة ' + this.jodM(ppPlan.takeMinor)) : '',
+      ppPayShort: !!(ppPlan && ppPlan.shortfallMinor > 0),
+      ppPayShortLine: ppPlan ? this.L('Collect ' + this.jodM(ppPlan.shortfallMinor) + ' by other means', 'حصّل ' + this.jodM(ppPlan.shortfallMinor) + ' بوسيلة أخرى') : '',
+      ppPayMove: ppPlan ? this.L(this.jodM(ppBal) + ' → ' + this.jodM(ppBal - ppPlan.takeMinor), this.jodM(ppBal) + ' ← ' + this.jodM(ppBal - ppPlan.takeMinor)) : '',
+      ppPaySplit: (ppPlan && ppPlan.takeMinor > 0) ? this.L(this.jodM(ppPlan.plan.bonusMinor) + ' bonus first, then ' + this.jodM(ppPlan.plan.principalMinor) + ' of her own money',
+        this.jodM(ppPlan.plan.bonusMinor) + ' من المكافأة أولاً، ثم ' + this.jodM(ppPlan.plan.principalMinor) + ' من مالها') : '',
+      ppPayCan: !!(isPp && ppPlan && !ppClosed && ppPlan.billMinor > 0 && !ppPlan.typo && ppPlan.takeMinor > 0),
+      ppPayLabel: (ppPlan && ppPlan.billMinor <= 0) ? t.ppTypeBill
+        : (ppPlan && ppPlan.typo) ? this.L('Check the amount', 'راجع المبلغ')
+          : (ppPlan && ppPlan.shortfallMinor > 0) ? this.L('Take ' + this.jodM(ppPlan.takeMinor) + ' from the card, collect ' + this.jodM(ppPlan.shortfallMinor), 'اخصم ' + this.jodM(ppPlan.takeMinor) + ' وحصّل ' + this.jodM(ppPlan.shortfallMinor))
+            : (ppPlan && ppPlan.needsPin) ? this.L(t.ppPayBtn + ' (code)', t.ppPayBtn + ' (رمز)') : t.ppPayBtn,
+      ppPayBg: (isPp && ppPlan && !ppClosed && ppPlan.billMinor > 0 && !ppPlan.typo && ppPlan.takeMinor > 0) ? '#E88024' : '#26262B',
+      ppPayFg: (isPp && ppPlan && !ppClosed && ppPlan.billMinor > 0 && !ppPlan.typo && ppPlan.takeMinor > 0) ? '#FFFFFF' : '#8E8C96',
+      ppPayCls: (isPp && ppPlan && !ppClosed && ppPlan.billMinor > 0 && !ppPlan.typo && ppPlan.takeMinor > 0) ? 'ws-cta' : 'ws-cta ws-off',
+      ppPayCur: (isPp && ppPlan && !ppClosed && ppPlan.billMinor > 0 && !ppPlan.typo && ppPlan.takeMinor > 0) ? 'pointer' : 'not-allowed',
+      ppPayGo: () => this.ppPayGo(scen),
+      // OFFLINE IS ASYMMETRIC ON PURPOSE: refuse to TAKE money you cannot record, never refuse to
+      // HONOUR money you already took. The ceiling is stated rather than discovered.
+      ppOffPay: isPp && ppPayTab && st.offline && !ppClosed,
+      ppOffPayLine: this.L(t.ppOfflineCeiling + ' ' + this.jodM(this.ppFloorMinor(scen)) + ' while the till is offline. She already paid this money in — it is honoured.',
+        t.ppOfflineCeiling + ' ' + this.jodM(this.ppFloorMinor(scen)) + ' والصندوق دون إنترنت. لقد دفعت هذا المال مسبقاً — ويُعتمد.'),
+      // ── the counter statement, and the refund ──
+      ppStmtBtn: t.ppStmtOpen,
+      ppOpenStmt: () => this.setState({ ppStmt: scen }),
+      ppRefundBtnLabel: t.ppRefundOpen,
+      ppCanRefund: isPp && !ppClosed && this.ppRefundableCard(scen),
+      ppNoRefund: isPp && !ppClosed && !this.ppRefundableCard(scen),
+      ppNoRefundLine: this.L('This card is not refundable at the counter — the merchant has turned that off. The balance is still hers to spend, and a wind-down would turn refunds back on.',
+        'هذه البطاقة غير قابلة للاسترداد على الصندوق — المحل أوقف ذلك. الرصيد ما زال لها لتصرفه، وإيقاف البطاقة نهائياً يعيد تفعيل الاسترداد.'),
+      ppOpenRefund: () => this.ppRefundAsk(scen),
+      // ── the ONE confirm sheet every prepaid commit passes through ──
+      // 'topupPin' and 'spendPin' are sheets waiting BEHIND the PIN overlay — they carry the
+      // payload the commit will need and draw nothing of their own
+      ppSheetOpen: !!(ppSheet && ['take', 'empty', 'partial', 'again', 'refund'].indexOf(ppSheet.kind) >= 0),
+      ppSheetTake: !!(ppSheet && ppSheet.kind === 'take'),
+      ppSheetEmpty: !!(ppSheet && ppSheet.kind === 'empty'),
+      ppSheetPartial: !!(ppSheet && ppSheet.kind === 'partial'),
+      ppSheetAgain: !!(ppSheet && ppSheet.kind === 'again'),
+      ppSheetRefund: !!(ppSheet && ppSheet.kind === 'refund'),
+      ppSheetTitle: ppSheet ? ({
+        take: t.ppTakeTitle, empty: t.ppEmptyTitle, partial: t.ppPartialTitle,
+        again: t.ppAgainTitle, refund: t.ppRefundTitle
+      }[ppSheet.kind] || '') : '',
+      ppSheetBig: ppSheet ? this.M(ppSheet.kind === 'take' ? ppSheet.cashMinor : ppSheet.kind === 'refund' ? ppSheet.paidMinor : ppSheet.takeMinor) : '',
+      ppSheetLine: ppSheet ? ({
+        take: this.L('Take ' + this.jodM(ppSheet.cashMinor) + ' from her now. The code is already accepted — one tap loads ' + this.jodM((ppSheet.cashMinor || 0) + (ppSheet.bonusMinor || 0)) + ' onto the card.',
+          'استلم منها ' + this.jodM(ppSheet.cashMinor) + ' الآن. الرمز مقبول أصلاً — ولمسة واحدة تُعبّئ ' + this.jodM((ppSheet.cashMinor || 0) + (ppSheet.bonusMinor || 0)) + ' على البطاقة.'),
+        empty: this.L('This takes everything on the card — ' + this.jodM(ppBal) + ' — and leaves ' + this.jodM(0) + '. It needs a code as well as a yes.',
+          'هذا يأخذ كل ما على البطاقة — ' + this.jodM(ppBal) + ' — ويتركها على ' + this.jodM(0) + '. ويحتاج رمزاً إضافة إلى الموافقة.'),
+        partial: this.L(this.jodM(ppSheet.takeMinor) + ' comes off the card and ' + this.jodM(ppSheet.shortfallMinor) + ' is collected by other means. Take the other payment FIRST — the card is debited last, so a declined payment leaves her balance untouched.',
+          this.jodM(ppSheet.takeMinor) + ' تُخصم من البطاقة، بينما ' + this.jodM(ppSheet.shortfallMinor) + ' تُحصَّل بوسيلة أخرى. خذ الدفعة الأخرى أولاً — فالبطاقة تُخصم آخراً، وأي دفعة مرفوضة تترك رصيدها كما هو.'),
+        again: this.L('You took ' + this.jodM(ppSheet.takeMinor) + ' off this card at ' + this.clockOf(ppSheet.atMs) + '. Again?',
+          'خصمت ' + this.jodM(ppSheet.takeMinor) + ' من هذه البطاقة الساعة ' + this.clockOf(ppSheet.atMs) + '. مرة أخرى؟'),
+        // THE GAP IS NOT "THE BONUS". balance − refundable is live bonus PLUS principal that a
+        // refund will not return, because bonus-first spending already paid for goods with it.
+        // Calling the whole gap bonus is false, and this is the one screen where a manager is
+        // counting real notes out of a drawer. So the head sentence claims only what is true of
+        // the whole figure — that it is not refundable in cash, the wording the Dashboard settled
+        // on — and the follow-on splits it into the live half and the already-played half, which
+        // is also why it differs from the "JOD 5.00 is bonus" header two inches above.
+        refund: (() => {
+          const bal = ppSheet.balMinor || 0, paid = ppSheet.paidMinor || 0;
+          const gap = Math.max(0, bal - paid), live = Math.min(gap, ppSheet.bonusMinor || 0), played = Math.max(0, gap - live);
+          const head = this.L('Balance ' + this.jodM(bal) + ' · refundable ' + this.jodM(paid) + ' · ' + this.jodM(gap) + ' is not refundable in cash.',
+            'الرصيد ' + this.jodM(bal) + ' · القابل للاسترداد ' + this.jodM(paid) + ' · ' + this.jodM(gap) + ' غير قابل للاسترداد نقداً.');
+          if (played <= 0) return head;
+          return head + this.L(' ' + this.jodM(live) + ' of it is still on the card and ' + this.jodM(played) + ' she has already played.',
+            ' منها ' + this.jodM(live) + ' ما زالت على البطاقة، بينما ' + this.jodM(played) + ' لعبت بها بالفعل.');
+        })()
+      }[ppSheet.kind] || '') : '',
+      ppSheetSay: ppSheet ? ({
+        take: t.ppPinFirst, empty: t.ppCashRule, partial: t.ppCashRule, again: t.ppNoUndo, refund: t.ppCashRule
+      }[ppSheet.kind] || '') : '',
+      ppSheetBtn: ppSheet ? ({
+        take: t.ppTakeBtn, empty: t.ppEmptyBtn, partial: t.ppPartialBtn, again: t.ppAgainBtn, refund: t.ppRefundBtn
+      }[ppSheet.kind] || '') : '',
+      ppSheetTone: ppSheet ? ({ take: '#2FAE66', empty: '#E2563A', partial: '#E88024', again: '#F0A92B', refund: '#F0A92B' }[ppSheet.kind] || '#E88024') : '#E88024',
+      ppSheetClose: () => this.setState({ ppSheet: null, ppBy: '' }),
+      // the abort a partial has to have: the other tender failed, so nothing comes off the card
+      ppSheetHasAbort: !!(ppSheet && ppSheet.kind === 'partial'),
+      ppSheetAbortLabel: t.ppPartialAbort,
+      ppSheetAbort: () => {
+        this.setState({ ppSheet: null, ppBy: '', ppAmt: '' });
+        this.flashNow('✓', '#2FAE66', this.L('Balance untouched', 'الرصيد كما هو'),
+          this.L('Nothing came off the card — ' + this.jodM(ppBal) + ' is still on it.', 'لم يُخصم شيء من البطاقة — ما زال عليها ' + this.jodM(ppBal) + '.'));
+      },
+      ppSheetGo: () => {
+        const S = this.state.ppSheet;
+        if (!S) return;
+        if (S.kind === 'take') { this.ppCommitTopup(scen, this.state.ppBy || st.staffName); return; }
+        if (S.kind === 'refund') { this.askPin('ppRefund'); return; }
+        if (S.kind === 'again') { this.setState({ ppSheet: null }); this.ppPayAfterDebounce(scen, null); return; }
+        // an emptying payment needs a code REGARDLESS of the merchant's threshold; a partial takes
+        // the same PIN rule as any other payment of its size
+        if (S.kind === 'empty') { this.setState({ ppSheet: { ...S, kind: 'spendPin' } }); this.askPin('ppSpend'); return; }
+        if (S.kind === 'partial') {
+          if (ppPlan && ppPlan.needsPin) { this.setState({ ppSheet: { ...S, kind: 'spendPin' } }); this.askPin('ppSpend'); return; }
+          this.ppCommitSpend(scen, st.staffName, S);
+        }
+      },
+      // ── the per-card statement · from the persisted ledger, never from the shift log ──
+      ppStmtOpen: !!st.ppStmt,
+      ppStmtTitle: t.ppStmtTitle, ppStmtNote: t.ppStmtNote,
+      ppStmtClose: () => this.setState({ ppStmt: null }),
+      ppStmtHead: st.ppStmt ? this.L(this.memberName(st.ppStmt) + ' · ' + this.jodM(this.ppBalance(this.ppFor(st.ppStmt))) + ' on the card · ' + this.jodM(this.ppRefundable(this.ppFor(st.ppStmt))) + ' refundable',
+        this.memberName(st.ppStmt) + ' · ' + this.jodM(this.ppBalance(this.ppFor(st.ppStmt))) + ' على البطاقة · ' + this.jodM(this.ppRefundable(this.ppFor(st.ppStmt))) + ' قابل للاسترداد') : '',
+      ppStmtEmpty: st.ppStmt ? this.ppStatementRows(st.ppStmt).length === 0 : true,
+      ppStmtEmptyLine: t.ppStmtEmpty,
+      ppStmtRows: (st.ppStmt ? this.ppStatementRows(st.ppStmt) : []).map((r, i) => ({
+        kind: this.ppKindWord(r.kind),
+        amount: (r.deltaMinor >= 0 ? '+ ' : '− ') + this.M(Math.abs(r.deltaMinor)),
+        amountFg: r.corrected ? '#6E6C77' : (r.deltaMinor >= 0 ? '#7BD8A5' : '#F09A4D'),
+        after: this.L('leaves ' + this.jodM(r.afterMinor), 'يتبقّى ' + this.jodM(r.afterMinor)),
+        meta: this.ppStmtWhen(r.ts) + ' · ' + (r.by ? this.ovName(r.by).split(' ')[0] : this.L('the till', 'الصندوق')) + (r.ref ? ' · ' + r.ref : ''),
+        corrected: r.corrected, correctedLabel: t.correctedBadge,
+        op: r.corrected ? '.55' : '1',
+        anim: AN('fadeUp', '.3s', (0.04 + 0.03 * Math.min(i, 9)) + 's')
+      })),
       // ── stamps · the type panel stands down when the cap refusal has taken the screen ──
       bStamps: isStampsS && !capTrip, stampCount: sCount, goal: st.goal,
       stampCells: Array.from({ length: st.goal }, (_, i) => {
@@ -3257,10 +4703,10 @@ class Component extends DCLogic {
       amtDisplay: jod(st.amount || '0'),
       amtBumpAnim: st.amtSeq > 0 ? SEED(st.amtSeq, 'bumpA', 'bumpB', '.28s') : 'none',
       previewAnim: st.amtSeq > 0 ? SEED(st.amtSeq, 'pvA', 'pvB', '.34s') : 'none',
-      collectPreview: isCash ? this.L('+ JOD ' + (amt * 0.05).toFixed(2) + ' back (5%)', '+ ' + (amt * 0.05).toFixed(2) + ' ديناراً استرداداً (5%)') : this.L('+ ' + Math.round(amt * 10) + ' pts', '+ ' + Math.round(amt * 10) + ' نقطة'),
+      collectPreview: isCash ? this.L('+ JOD ' + (amt * 0.05).toFixed(2) + ' back (5%)', '+ JOD ' + (amt * 0.05).toFixed(2) + ' استرداداً (5%)') : this.L('+ ' + Math.round(amt * 10) + ' pts', '+ ' + Math.round(amt * 10) + ' نقطة'),
       keypad: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map(k => ({ k, tap: () => this.setState(s => { let a = s.amount; if (k === '⌫') a = a.slice(0, -1); else if (k === '.') { if (!a.includes('.')) a = (a || '0') + '.'; } else if (a.replace('.', '').length < 5) a += k; return { amount: a, amtSeq: s.amtSeq + 1 }; }) })),
       collectAmtLabel: amt <= 0 ? this.L('Type the bill first', 'أدخل قيمة الفاتورة أولاً')
-        : ((isCash ? this.L('Add JOD ' + (amt * 0.05).toFixed(2) + ' to the wallet', 'أضف ' + (amt * 0.05).toFixed(2) + ' ديناراً إلى المحفظة') : this.L('Add ' + Math.round(amt * 10) + ' points', 'أضف ' + Math.round(amt * 10) + ' نقطة'))
+        : ((isCash ? this.L('Add JOD ' + (amt * 0.05).toFixed(2) + ' to the wallet', 'أضف JOD ' + (amt * 0.05).toFixed(2) + ' إلى المحفظة') : this.L('Add ' + Math.round(amt * 10) + ' points', 'أضف ' + Math.round(amt * 10) + ' نقطة'))
           + (st.offline ? this.L(' (queues)', ' (يُحفظ للمزامنة)') : '')),
       collectAmtCls: amt > 0 ? 'ws-cta' : 'ws-cta ws-off',
       collectAmtCursor: amt > 0 ? 'pointer' : 'not-allowed',
@@ -3270,11 +4716,11 @@ class Component extends DCLogic {
         if (isCash) {
           // the same wallet the screen is showing — a paused card cannot reach here, and if it ever
           // could it would credit its own balance rather than the live one
-          const K = this.cashKeyFor(scen);
+          const K = this.walletKeyFor(scen);
           const back = +(amt * 0.05).toFixed(2), nb = +(cbBal + back).toFixed(2);
           this.setState(s => ({ [K]: nb, amount: '', amtSeq: 0 }));
           this.armUndo('cash', back, st.offline);
-          this.flashNow('✓', '#2FAE66', this.L('+ JOD ' + back.toFixed(2), '+ ' + back.toFixed(2) + ' ديناراً'), st.offline ? this.L('Queued for sync.', 'محفوظ للمزامنة.') : this.L('New balance JOD ' + nb.toFixed(2) + ' — already on his pass.', 'الرصيد الجديد ' + nb.toFixed(2) + ' ديناراً — على بطاقته فوراً.'));
+          this.flashNow('✓', '#2FAE66', this.L('+ JOD ' + back.toFixed(2), '+ JOD ' + back.toFixed(2)), st.offline ? this.L('Queued for sync.', 'محفوظ للمزامنة.') : this.L('New balance JOD ' + nb.toFixed(2) + ' — already on his pass.', 'الرصيد الجديد JOD ' + nb.toFixed(2) + ' — على بطاقته فوراً.'));
           this.logAction(scen, 'colCash', back.toFixed(2));
           const ev = this.liveFor(scen, 'earn', 'earned JOD ' + back.toFixed(2) + ' cashback');
           if (st.offline) this.pushQueue(scen, 'qCash', back.toFixed(2), ev); else this.emitLive(ev);
@@ -3289,11 +4735,11 @@ class Component extends DCLogic {
         }
         this.saveScan();
       },
-      cbRedeemHint: this.L('Balance JOD ' + cbBal.toFixed(2) + ' — spend all of it or part of it.', 'الرصيد ' + cbBal.toFixed(2) + ' ديناراً — اصرفه كاملاً أو جزءاً منه.'),
+      cbRedeemHint: this.L('Balance JOD ' + cbBal.toFixed(2) + ' — spend all of it or part of it.', 'الرصيد JOD ' + cbBal.toFixed(2) + ' — اصرفه كاملاً أو جزءاً منه.'),
       cbQuick: [1, 2, cbBal].map((v, i) => {
         const val = i === 2 ? cbBal : v, ok = val <= cbBal && val >= cbMin, sel = st.cbSel === val;
         return {
-          label: i === 2 ? this.L('All · JOD ' + cbBal.toFixed(2), 'الكل · ' + cbBal.toFixed(2) + ' ديناراً') : this.L('JOD ' + val.toFixed(2), val.toFixed(2) + ' ديناراً'),
+          label: i === 2 ? this.L('All · JOD ' + cbBal.toFixed(2), 'الكل · JOD ' + cbBal.toFixed(2)) : 'JOD ' + val.toFixed(2),
           pick: () => ok && this.setState({ cbSel: sel ? null : val }),
           br: sel ? '#E88024' : (ok ? 'rgba(47,174,102,.3)' : 'rgba(244,242,238,.1)'),
           bg: sel ? 'rgba(232,128,36,.16)' : 'transparent',
@@ -3308,16 +4754,16 @@ class Component extends DCLogic {
       // earning has stopped, so that half of the sentence is branched rather than shared.
       cbMinLine: cbMin <= 0 ? this.L('No minimum — any amount can come off the bill.', 'بلا حد أدنى — أي مبلغ يمكن خصمه من الفاتورة.')
         : cbBal < cbMin ? (isPaused
-          ? this.L('Below the JOD ' + cbMin.toFixed(2) + ' minimum — and earning is paused, so it will not grow until the shop reopens.', 'أقل من الحد الأدنى (' + cbMin.toFixed(2) + ' ديناراً) — والجمع موقوف، فلن ينمو الرصيد حتى يعيد المحل الافتتاح.')
-          : this.L('Below the JOD ' + cbMin.toFixed(2) + ' minimum — kindly refused, the balance keeps growing.', 'أقل من الحد الأدنى (' + cbMin.toFixed(2) + ' ديناراً) — رفض بلطف، والرصيد يستمر بالنمو.'))
-          : this.L('House rule: redeem from JOD ' + cbMin.toFixed(2) + ' up.', 'قاعدة المحل: الاستبدال من ' + cbMin.toFixed(2) + ' ديناراً فما فوق.'),
+          ? this.L('Below the JOD ' + cbMin.toFixed(2) + ' minimum — and earning is paused, so it will not grow until the shop reopens.', 'أقل من الحد الأدنى (JOD ' + cbMin.toFixed(2) + ') — والجمع موقوف، فلن ينمو الرصيد حتى يعيد المحل الافتتاح.')
+          : this.L('Below the JOD ' + cbMin.toFixed(2) + ' minimum — kindly refused, the balance keeps growing.', 'أقل من الحد الأدنى (JOD ' + cbMin.toFixed(2) + ') — رفض بلطف، والرصيد يستمر بالنمو.'))
+          : this.L('House rule: redeem from JOD ' + cbMin.toFixed(2) + ' up.', 'قاعدة المحل: الاستبدال من JOD ' + cbMin.toFixed(2) + ' فما فوق.'),
       cbRedeemBg: cbCan ? '#E88024' : '#26262B', cbRedeemFg: cbCan ? '#FFFFFF' : '#8E8C96',
       cbRedeemCls: cbCan ? 'ws-cta' : 'ws-cta ws-off',
       cbRedeemLabel: rdLocked ? lockedLabel
         : st.offline ? this.L('Redeem locked offline', 'الاستبدال مقفل دون إنترنت')
           // "keep collecting" is an instruction to earn — never say it on a card that cannot earn
           : cbBal < cbMin ? (isPaused ? this.L('Below the minimum — and earning is paused', 'أقل من الحد الأدنى — والجمع موقوف') : this.L('Below minimum — keep collecting', 'أقل من الحد الأدنى — تابعوا الجمع'))
-            : st.cbSel ? this.L('Take JOD ' + st.cbSel.toFixed(2) + ' off the bill (PIN)', 'اخصم ' + st.cbSel.toFixed(2) + ' ديناراً من الفاتورة (رمز)')
+            : st.cbSel ? this.L('Take JOD ' + st.cbSel.toFixed(2) + ' off the bill (PIN)', 'اخصم JOD ' + st.cbSel.toFixed(2) + ' من الفاتورة (رمز)')
               : this.L('Pick an amount — nothing preselected', 'اختر المبلغ — لا شيء محدد مسبقاً'),
       redeemCash: () => { if (!cbCan) return; this.askPin('cash'); },
       // ── the redeem ladder · ready-glow above, shortfall bar below ──
@@ -3473,11 +4919,11 @@ class Component extends DCLogic {
             : this.L('Expired 12 days ago', 'انتهى قبل 12 يوماً'),
       vdSub: scen === 'discount' ? this.L('Apply it at the till. No tabs, no typing — the card is a verdict.', 'طبّق الخصم على الصندوق. لا تبويبات ولا كتابة — البطاقة حكم لا معاملة.')
         : renewedNow ? this.L('Renewed just now — same pass, active again.', 'جُدّد للتو — نفس البطاقة، فعّالة من جديد.')
-          : scen === 'expiring' ? this.L('Valid until 9 Aug 2026 — honour it today. Renewing now is JOD 25 and keeps the same pass, so he never lapses at all.', 'سارٍ حتى 9 آب 2026 — اعتمده اليوم. التجديد الآن 25 ديناراً ويبقيه على نفس البطاقة، فلا ينقطع اشتراكه أصلاً.')
+          : scen === 'expiring' ? this.L('Valid until 9 Aug 2026 — honour it today. Renewing now is JOD 25 and keeps the same pass, so he never lapses at all.', 'سارٍ حتى 9 آب 2026 — اعتمده اليوم. التجديد الآن JOD 25 ويبقيه على نفس البطاقة، فلا ينقطع اشتراكه أصلاً.')
             // the grace window is the merchant's number too — inside it a renewal keeps the streak
             : inGrace
-              ? this.L('Lapsed Jul 18 — 12 days ago, still inside the ' + graceD + '-day grace window, so renewing keeps his streak. JOD 25 at the counter.', 'انتهى في 18 تموز — قبل 12 يوماً، وما زال ضمن مهلة الـ' + graceD + ' يوماً، فالتجديد يحفظ تسلسله. التجديد 25 ديناراً على الصندوق.')
-              : this.L('Lapsed Jul 18 — 12 days ago, past the ' + graceD + '-day grace window, so this renewal starts a fresh streak. JOD 25 at the counter.', 'انتهى في 18 تموز — قبل 12 يوماً، وتجاوز مهلة الـ' + graceD + ' يوماً، فالتجديد يبدأ تسلسلاً جديداً. التجديد 25 ديناراً على الصندوق.'),
+              ? this.L('Lapsed Jul 18 — 12 days ago, still inside the ' + graceD + '-day grace window, so renewing keeps his streak. JOD 25 at the counter.', 'انتهى في 18 تموز — قبل 12 يوماً، وما زال ضمن مهلة الـ' + graceD + ' يوماً، فالتجديد يحفظ تسلسله. التجديد JOD 25 على الصندوق.')
+              : this.L('Lapsed Jul 18 — 12 days ago, past the ' + graceD + '-day grace window, so this renewal starts a fresh streak. JOD 25 at the counter.', 'انتهى في 18 تموز — قبل 12 يوماً، وتجاوز مهلة الـ' + graceD + ' يوماً، فالتجديد يبدأ تسلسلاً جديداً. التجديد JOD 25 على الصندوق.'),
       // ── refusals · six of them now, and every one carries the rule it comes from ──
       //    Three of them can be lifted, so three of them can ASK — and while the ask is out, the
       //    refusal body is replaced by an honest waiting state with a way back out of it.
@@ -3547,12 +4993,18 @@ class Component extends DCLogic {
       flashSubAnim: 'fadeUp .38s cubic-bezier(.22,.61,.36,1) .15s both',
       // ── PIN · the staff code for a redeem, a different manager code for an unlock ──
       pinOpen: !!st.pin,
-      pinTitleLine: this.isMgrTag(st.pin) ? t.mgrPinTitle : (st.pin === 'correct' ? t.corrTitle : t.pinTitle),
+      pinTitleLine: (this.isMgrTag(st.pin) || this.isPpMgrTag(st.pin)) ? t.mgrPinTitle : (st.pin === 'correct' ? t.corrTitle : t.pinTitle),
       pinSubLine: this.isOvrTag(st.pin) ? t.mgrOvrPinSub
-        : this.isMgrTag(st.pin) ? t.mgrPinSub
-          : st.pin === 'correct' ? this.L('A correction moves real value — it needs a code and it signs itself.', 'التصحيح يحرّك قيمة حقيقية — يطلب رمزاً ويوقّع باسم صاحبه.')
-            : t.pinSub,
-      pinHintLine: this.isMgrTag(st.pin) ? t.mgrPinHint : t.pinHint,
+        : this.isPpMgrTag(st.pin) ? this.L('A refund pays real cash out of the drawer and closes the card. Only a manager signs that.', 'الاسترداد يدفع نقداً من الصندوق ويُغلق البطاقة. والمدير وحده يوقّع ذلك.')
+          : this.isMgrTag(st.pin) ? t.mgrPinSub
+            : st.pin === 'ppTopup' ? t.ppPinFirst
+              : st.pin === 'correct' ? this.L('A correction moves real value — it needs a code and it signs itself.', 'التصحيح يحرّك قيمة حقيقية — يطلب رمزاً ويوقّع باسم صاحبه.')
+                : t.pinSub,
+      // THE HINT NAMES A PERSON NOW, because the code does. A colleague standing at the same till
+      // authorises with their own four digits and the row signs itself with their name.
+      pinHintLine: (this.isMgrTag(st.pin) || this.isPpMgrTag(st.pin)) ? t.mgrPinHint
+        : this.L(t.pinHint + ' ' + this.staffPin() + ' · ' + String(st.staffName).split(' ')[0] + ' — a colleague’s own code works too',
+          t.pinHint + ' ' + this.staffPin() + ' · ' + String(st.staffAr).split(' ')[0] + ' — ورمز الزميل يعمل كذلك'),
       pinDots: [0, 1, 2, 3].map(i => ({
         bg: st.pinErr ? '#E2563A' : (i < st.pinDigits.length ? '#E88024' : 'transparent'),
         br: st.pinErr ? '#E2563A' : (i < st.pinDigits.length ? '#E88024' : 'rgba(244,242,238,.4)'),
@@ -3592,9 +5044,24 @@ class Component extends DCLogic {
         [st.sStamps, this.L('stamps', 'أختام')],
         [st.sRewards, this.L('rewards', 'مكافآت')]
       ].map(([n, label], i) => ({ n: Math.round(n * rampShift), label, anim: AN('fadeUp', '.4s', (0.06 + 0.06 * i) + 's') })),
-      shiftLogEmpty: st.sessionLog.length === 0,
-      // the summary shows the whole log it keeps, not the first six of twenty
-      shiftLog: st.sessionLog.map((l, i) => ({ member: this.rowWho(l), action: this.actionText(l.k, l.v), time: this.timeAgo(l), anim: AN('fadeUp', '.34s', (0.14 + 0.04 * Math.min(i, 8)) + 's') })),
+      // THE SUMMARY IS A VIEW OF THE TILL LEDGER, filtered to this shift — handover resets the
+      // counters above and leaves every row where it is
+      shiftLogEmpty: this.shiftRows().length === 0,
+      shiftLog: this.shiftRows().map((l, i) => ({ member: this.rowWho(l), action: this.actionText(l.k, l.v), time: this.timeAgo(l), anim: AN('fadeUp', '.34s', (0.14 + 0.04 * Math.min(i, 8)) + 's') })),
+      // ── CLOSING A SHIFT THAT TOOK CASH. Without these five numbers the drawer cannot be counted,
+      //    and a cashier who credits JOD 90 while taking JOD 100 shows up nowhere at all. Cash
+      //    taken in is what should be IN the drawer; value issued is higher by exactly the bonus,
+      //    which is the merchant's money and never was in the drawer.
+      shiftHasMoney: this.ppOnThisTill(),
+      shiftMoneyLabel: t.ppShiftMoneyLabel,
+      shiftMoneyNote: t.ppDrawerNote,
+      shiftMoney: [
+        [t.ppCashIn, this.M(ppMoney.cashInMinor), '#7BD8A5'],
+        [t.ppIssued, this.M(ppMoney.issuedMinor), '#F4F2EE'],
+        [t.ppBonusIssued, this.M(ppMoney.bonusMinor), '#9B99A3'],
+        [t.ppSpentDown, this.M(ppMoney.spentMinor), '#F09A4D'],
+        [t.ppRefundsOut, this.M(ppMoney.refundMinor), '#F0A92B']
+      ].map(([label, v, fg], i) => ({ label, v, fg, anim: AN('fadeUp', '.34s', (0.1 + 0.04 * i) + 's') })),
       startHandover: () => this.setState({ handoverPick: true }),
       cancelHandover: () => this.setState({ handoverPick: false }),
       // only the people cleared for THIS branch can be handed the phone
@@ -3641,6 +5108,8 @@ class Component extends DCLogic {
         k, vis: k ? 'visible' : 'hidden', cur: k ? 'pointer' : 'default', cls: k ? 'ws-key' : '',
         tap: () => { if (k) this.lockKeyTap(k); }
       })),
+      // the code on the lock screen belongs to the person whose name is above it
+      lockPinHint: this.L(t.pinHint + ' ' + this.pinForStaff(this.staffList()[st.lockStaff]), t.pinHint + ' ' + this.pinForStaff(this.staffList()[st.lockStaff])),
       lockBackLabel: st.lockMode === 'start' ? t.lockNotYou : t.lockTakeOver,
       lockBackToPick: () => this.setState({ lockMode: 'start', lockStaff: null, lockDigits: '', lockTries: 0, lockErr: false }),
       lockWarnOpen: st.lockWarn && !st.locked,
@@ -3667,7 +5136,8 @@ class Component extends DCLogic {
       histEmptyLine: (st.histQ || st.histDay !== 'all') ? t.histNoMatch : t.noActionsYet,
       histRows: histHits.map((l, i) => {
         const c = this.correctionFor(l), fixed = this.isFixed(l);
-        const tooOld = !!c && !fixed && this.rowAgeDays(l) >= this.corrWindowDays();
+        const noPp = !!c && !fixed && !this.ppCanReverse(l);
+        const tooOld = (!!c && !fixed && this.rowAgeDays(l) >= this.corrWindowDays()) || noPp;
         const canFix = this.canCorrect(l);
         const S = this.scenInfo(l.scen);
         const staffFirst = l.prior ? this.L(String(l.staff || '').split(' ')[0], String(l.staffAr || l.staff || '').split(' ')[0]) : this.L(String(st.staffName).split(' ')[0], String(st.staffAr).split(' ')[0]);
@@ -3675,7 +5145,7 @@ class Component extends DCLogic {
           member: this.rowWho(l), action: this.actionText(l.k, l.v),
           actionFg: fixed ? '#6E6C77' : '#9B99A3',
           initials: (S.m[2] || '·'), color: S.color,
-          meta: this.rowWhen(l) + ' · ' + staffFirst + (l.ovr ? (' · ' + t.grantedBadge + ' ' + this.ovName(l.ovr)) : ''),
+          meta: this.rowWhen(l) + ' · ' + staffFirst + (l.by && l.by !== (l.staff || st.staffName) ? (' · ' + this.L('code: ', 'رمز: ') + this.ovName(l.by).split(' ')[0]) : '') + (l.ovr ? (' · ' + t.grantedBadge + ' ' + this.ovName(l.ovr)) : '') + (noPp ? ' · ' + this.ppNoReverseWhy(l) : ''),
           corrected: fixed, canFix, tooOld,
           cls: canFix ? 'ws-row' : '', cur: canFix ? 'pointer' : 'default',
           br: canFix ? 'rgba(244,242,238,.11)' : 'rgba(244,242,238,.06)',
@@ -3741,7 +5211,12 @@ class Component extends DCLogic {
       joinDoneSub: this.L('It is in her wallet already — ' + joinCard.name + ', counting from today. Yara sees the join on the dashboard.', 'صارت في محفظتها — ' + joinCard.ar + '، وتعدّ من اليوم. ويارا ترى الانضمام على لوحة التحكم.'),
       joinAgain: () => this.setState({ joinStage: this.myCardIds().length > 1 ? 'pick' : 'qr' }),
 
-      // ── the demo rail ──
+      // ── the demo rail · the counts are COMPUTED, so the header can never claim nine and list
+      //    eight-and-a-refusal again ──
+      railTypesHead: 'One screen · ' + demoDefs.length + ' card types · ' + demoDefs.length + ' أنواع · 3 seconds',
+      railTypesLabel: 'Scan a customer · ' + demoDefs.length + ' types',
+      railEdgeLabel: 'When it isn’t a simple yes · ' + edgeDefs.length,
+      railEdgeSub: 'Five refusals and two cards you have to explain — each one names the rule and the sentence to say next.',
       demoScans: demoDefs.map(([key, label, sub, dot, glyph, glyphSize], i) => ({
         label, sub, dot, glyph, glyphSize,
         discBg: tint(dot, .10), discBr: tint(dot, .3),

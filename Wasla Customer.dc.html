@@ -802,10 +802,43 @@
                     <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;">{{ cdName }}</div><div style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px;opacity:.72;">{{ cdAr }} · <span style="font-family:'Plus Jakarta Sans',sans-serif;">{{ cdMerchant }}</span></div></div>
                     <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ cdTagLabel }}</div><div style="font-size:13.5px;font-weight:800;font-variant-numeric:tabular-nums;">{{ cdTagValue }}</div></div>
                   </div>
+                  <!-- the one-line state of the pass: low, bonus-only, expiring, empty,
+                       or an arithmetic incident. Highest stakes wins; see ppNotice. -->
+                  <sc-if value="{{ cdNoticeOn }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:13px;background:{{ cdNoticeBg }};color:{{ cdNoticeFg }};border-radius:9px;padding:8px 11px;font-size:10.5px;font-weight:700;line-height:1.5;">{{ cdNoticeText }}</div>
+                  </sc-if>
                   <div style="margin-top:17px;">
                     <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:33px;line-height:1.05;letter-spacing:-.01em;">{{ cdHero }}</div>
-                    <div style="font-size:11px;opacity:.78;margin-top:4px;">{{ cdHeroSub }}</div>
+                    <div style="font-size:11px;opacity:.78;margin-top:4px;line-height:1.5;">{{ cdHeroSub }}</div>
                   </div>
+
+                  <!-- ══ THE SPLIT · the hero above is the TOTAL. These two boxes are what
+                       the total is made of, and the strip under them is the only number
+                       that ever comes back as cash. They are never rendered apart. ══ -->
+                  <sc-if value="{{ cdHasSplit }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:15px;">
+                      <div style="display:flex;gap:8px;">
+                        <div style="flex:1;min-width:0;background:rgba(255,255,255,.1);border-radius:11px;padding:10px 11px;">
+                          <div style="font-size:8px;font-weight:800;letter-spacing:.09em;opacity:.7;">{{ cdSplitYoursK }}</div>
+                          <div dir="ltr" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;margin-top:3px;font-variant-numeric:tabular-nums;text-align:start;">{{ cdSplitYoursV }}</div>
+                          <div style="font-size:9.5px;opacity:.66;margin-top:3px;line-height:1.4;">{{ cdSplitYoursSub }}</div>
+                        </div>
+                        <div style="flex:1;min-width:0;background:rgba(242,183,5,.14);border-radius:11px;padding:10px 11px;">
+                          <div style="font-size:8px;font-weight:800;letter-spacing:.09em;color:#F7D77A;">{{ cdSplitBonusK }}</div>
+                          <div dir="ltr" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;margin-top:3px;color:#F7D77A;font-variant-numeric:tabular-nums;text-align:start;">{{ cdSplitBonusV }}</div>
+                          <div style="font-size:9.5px;opacity:.66;margin-top:3px;line-height:1.4;">{{ cdSplitBonusSub }}</div>
+                        </div>
+                      </div>
+                      <div style="margin-top:8px;background:rgba(255,255,255,.1);border-radius:11px;padding:10px 12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;">
+                          <span style="font-size:8px;font-weight:800;letter-spacing:.09em;opacity:.7;">{{ cdRefundK }}</span>
+                          <span dir="ltr" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;font-variant-numeric:tabular-nums;">{{ cdRefundV }}</span>
+                        </div>
+                        <div dir="ltr" style="font-size:9.5px;opacity:.6;margin-top:3px;text-align:start;">{{ cdRefundMath }}</div>
+                        <div style="font-size:10px;opacity:.8;margin-top:6px;line-height:1.55;">{{ cdRefundNote }}</div>
+                      </div>
+                    </div>
+                  </sc-if>
                   <div style="font-size:11px;line-height:1.65;opacity:.88;margin-top:13px;">{{ cdNote }}</div>
 
                   <sc-if value="{{ cdHasPerks }}" hint-placeholder-val="{{ false }}">
@@ -835,10 +868,16 @@
                       <div style="font-size:8.5px;font-weight:800;letter-spacing:.09em;opacity:.68;text-transform:uppercase;">{{ cdCreditsK }}</div>
                       <sc-for list="{{ cdCredits }}" as="cr" hint-placeholder-count="4">
                         <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.09);">
-                          <span style="font-size:11px;opacity:.86;min-width:0;">{{ cr.line }}</span>
+                          <span style="font-size:11px;opacity:.86;min-width:0;">{{ cr.line }}<!--
+                            the bucket that moved · "−6.500" with no pot beside it is the one
+                            ambiguity a stored-value ledger cannot afford
+                         --><sc-if value="{{ cr.hasTag }}" hint-placeholder-val="{{ false }}"><span style="margin-inline-start:6px;background:{{ cr.tagBg }};color:{{ cr.tagFg }};border-radius:99px;padding:1px 6px;font-size:8.5px;font-weight:800;white-space:nowrap;">{{ cr.tag }}</span></sc-if></span>
                           <span style="display:flex;gap:9px;align-items:baseline;flex-shrink:0;"><span style="font-size:9.5px;opacity:.55;">{{ cr.time }}</span><span dir="ltr" style="font-size:12px;font-weight:800;color:{{ cr.amtFg }};font-variant-numeric:tabular-nums;">{{ cr.amt }}</span></span>
                         </div>
                       </sc-for>
+                      <sc-if value="{{ cdLedgerFootOn }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-size:9.5px;opacity:.6;margin-top:9px;line-height:1.55;">{{ cdLedgerFoot }}</div>
+                      </sc-if>
                     </div>
                   </sc-if>
 
@@ -954,6 +993,25 @@
       </div>
     </sc-if>
 
+    <!-- ══ REMOVING A PREPAID PASS · the type-blind "stamps held for 90 days" copy is
+         wrong here twice over: nothing is being held, and what is on the pass is cash.
+         With a balance this dialog REFUSES and names the amount; empty, it removes. ══ -->
+    <sc-if value="{{ ppLeaveOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:63;display:flex;align-items:center;justify-content:center;padding:26px;background:rgba(8,10,9,.62);backdrop-filter:blur(5px);border-radius:37px;overflow:hidden;animation:{{ scrimAnim }};">
+        <div style="background:#FFFFFF;border-radius:18px;padding:20px 19px 16px;box-shadow:0 26px 60px rgba(0,0,0,.45);animation:{{ dlgAnim }};max-height:82%;overflow-y:auto;">
+          <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;line-height:1.3;">{{ ppLeaveTitle }}</div>
+          <div style="font-size:12.5px;color:#5D5348;line-height:1.7;margin-top:9px;">{{ ppLeaveBody }}</div>
+          <div style="font-size:11.5px;color:#8A5A22;background:#FDF4EC;border-radius:10px;padding:9px 11px;line-height:1.6;margin-top:11px;">{{ ppLeaveNote }}</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+            <div onClick="{{ closePPLeave }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-cta" style="cursor:pointer;background:#4B2E83;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 0;text-align:center;">{{ ppLeaveKeepLabel }}</div>
+            <sc-if value="{{ ppLeaveGoOn }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ confirmPPLeave }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" class="wl-press wl-lrow" style="cursor:pointer;color:#C0392B;font-weight:700;font-size:13px;border-radius:999px;padding:10px 0;text-align:center;">{{ ppLeaveGoLabel }}</div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
     <div style="width:110px;height:4px;border-radius:99px;background:{{ homeBarColor }};margin:0 auto 8px;flex-shrink:0;"></div>
   </div>
 
@@ -1007,6 +1065,18 @@
       </div>
       <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.55;">{{ lifeHint }}</div>
     </div>
+    <!-- ══ THE PREPAID PASS · every beat runs the real engine — tier selection,
+         bonus-first spending, read-time expiry — so what lands on the card afterwards
+         is computed from the ledger, never staged for the screenshot. ══ -->
+    <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">{{ prepaidK }}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <sc-for list="{{ prepaidBtns }}" as="pb" hint-placeholder-count="4">
+          <div onClick="{{ pb.go }}" onKeyDown="{{ keyGo }}" role="button" tabIndex="0" aria-label="{{ pb.label }}" class="wl-ghost wl-press" style="cursor:pointer;border:1.5px solid {{ pb.br }};color:{{ pb.fg }};background:{{ pb.bg }};font-weight:700;font-size:12.5px;border-radius:11px;padding:10px 13px;">{{ pb.label }}<div style="font-size:10.5px;font-weight:500;color:#93887A;margin-top:2px;line-height:1.45;">{{ pb.sub }}</div></div>
+        </sc-for>
+      </div>
+      <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.55;">{{ prepaidHint }}</div>
+    </div>
     <a href="Wasla Dashboard.dc.html" style="display:block;background:#26262B;color:#F4F2EE;border-radius:14px;padding:14px 16px;font-size:12.5px;font-weight:700;text-align:center;">{{ dashLink }}</a>
     <div style="display:flex;align-items:center;justify-content:center;gap:14px;padding-bottom:4px;">
       <a href="Wasla Demo.dc.html" class="wl-link" style="font-size:10.5px;font-weight:700;color:#93887A;letter-spacing:.03em;">{{ hubLink }}</a>
@@ -1051,8 +1121,17 @@ class Component extends DCLogic {
       /* ── MESSAGES · the broadcast inbox. `inbox` holds catalogue keys, not copy, so
            persistence stays tiny and every string still round-trips through T(). ── */
       inbox: [], msgRead: [], msgOpen: null, msgSeq: 0,
-      /* ── the other three wallet cards, the shared terms sheet, the coupon's second ask ── */
+      /* ── the other four wallet cards, the shared terms sheet, the coupon's second ask ── */
       cardOpen: 'nara', qamarUsed: false, couponArm: false, termsOpen: false,
+      /* ── THE PREPAID PASS · Zaman Arcade ────────────────────────────────
+           `ppAdd` is the ONLY prepaid state that persists: the list of things that
+           happened at the till after the seeded history, in the order they happened.
+           Every displayed number — balance, principal, each bonus lot, refundable —
+           is the FOLD of seed + ppAdd (see ppFold). Storing the balance as well would
+           be storing the same fact twice, and two copies of a money number is exactly
+           how a pass ends up disagreeing with its own ledger.
+           `ppLeaveArm` is the removal confirm; `zamanOut` is the pass having left. ── */
+      ppAdd: [], ppLeaveArm: false, zamanOut: false,
       /* bump-only, never persisted: a cross-tab dashboard edit nudges this so the
          card back re-renders against the new overlay. */
       linkSeq: 0
@@ -1081,6 +1160,9 @@ class Component extends DCLogic {
           histAdd: (s.histAdd || []).slice(0, 4),
           notifPref: s.notifPref, cardState: s.cardState, leftCard: s.leftCard || null,
           recovered: !!s.recovered, rejoined: !!s.rejoined, qamarUsed: !!s.qamarUsed,
+          /* the prepaid till events, capped — the fold rebuilds every money number from
+             these, so this is the whole of her stored value on disk */
+          ppAdd: (s.ppAdd || []).slice(0, 12), zamanOut: !!s.zamanOut,
           msgSeq: s.msgSeq, inbox: (s.inbox || []).slice(0, 6), msgRead: (s.msgRead || []).slice(0, 24),
           form: { name: f.name, phone: f.phone, drink: f.drink, birthday: f.birthday } }));
       } catch (e) {}
@@ -1155,7 +1237,11 @@ class Component extends DCLogic {
     if (b.platform === 'apple' || b.platform === 'google') p.platform = b.platform;
     const g = num(b.goal, 1, 12); if (g !== null) p.goal = g;
     const st = num(b.stamps, 0, 12); if (st !== null) p.stamps = st;
-    const ws = num(b.walletSel, 0, 3); if (ws !== null) p.walletSel = ws;
+    /* The clamp is DERIVED from the wallet itself. It used to be the literal 0–3 of a
+       four-card wallet, so the day a fifth pass was added a saved selection on it
+       snapped back to the last of the old four on every reload. WALLET_IDS() is the
+       one list both this clamp and the rendered stack are built from. */
+    const ws = num(b.walletSel, 0, Math.max(0, this.WALLET_IDS().length - 1)); if (ws !== null) p.walletSel = ws;
     /* A history entry is REBUILT rather than adopted: the id, then only the numbers
        this component knows how to print. Anything else a foreign blob carries is
        dropped, so a row can never render "Stamp null of 8". */
@@ -1180,6 +1266,42 @@ class Component extends DCLogic {
     if (typeof b.recovered === 'boolean') p.recovered = b.recovered;
     if (typeof b.rejoined === 'boolean') p.rejoined = b.rejoined;
     if (typeof b.qamarUsed === 'boolean') p.qamarUsed = b.qamarUsed;
+    if (typeof b.zamanOut === 'boolean') p.zamanOut = b.zamanOut;
+    /* ── the prepaid till events · the strictest gate in this reader, because these
+         are the only saved values that MOVE MONEY. A row survives only if it is one
+         of the four kinds the fold can execute AND its amount is a whole, finite,
+         non-negative count of FILS inside a sane ceiling. Anything else is dropped
+         rather than repaired: a half-understood money row is worse than a missing one,
+         and the fold is happy to rebuild from fewer events. `b` (the bonus that was
+         granted with a top-up) is preserved when present so a later change to the
+         tier table cannot retroactively rewrite a bonus she was already shown. ── */
+    if (Array.isArray(b.ppAdd)) {
+      /* A WHOLE count of fils or nothing. Math.round() here would have REPAIRED a
+         fractional amount into a plausible-looking one — 12500.4 quietly becoming
+         12500 — which is the exact opposite of the paragraph above: a half-understood
+         money row is dropped, never rounded into something the fold will then treat
+         as fact. Non-integers fail the test and the row is discarded. */
+      const fils = (v) => (typeof v === 'number' && isFinite(v) && v >= 0 && v <= 10000000 && Math.floor(v) === v) ? v : null;
+      p.ppAdd = b.ppAdd.filter((x) => x && typeof x === 'object' && !Array.isArray(x) && typeof x.k === 'string').map((x) => {
+        const at = (typeof x.at === 'number' && isFinite(x.at)) ? x.at : null;
+        if (at === null) return null;
+        /* topup · a `b` that is ABSENT means "no bonus was granted" and reads as 0. A
+           `b` that is PRESENT but not a whole count of fils is unreadable, and an
+           unreadable bonus is not one this reader gets to quietly call zero — that
+           would delete a lot she was shown. The whole row goes instead. */
+        if (x.k === 'topup') {
+          const m = fils(x.m);
+          if (!m) return null;
+          const hasB = x.b !== undefined && x.b !== null;
+          const bb = hasB ? fils(x.b) : 0;
+          return bb === null ? null : { k: 'topup', m, b: bb, at };
+        }
+        if (x.k === 'spend') { const m = fils(x.m); return m ? { k: 'spend', m, at } : null; }
+        if (x.k === 'grant') { const m = fils(x.m), d = num(x.days, 1, 3650); return (m && d !== null) ? { k: 'grant', m, days: d, c: typeof x.c === 'string' ? x.c.slice(0, 24) : '', at } : null; }
+        if (x.k === 'skip')  { const d = num(x.d, 1, 3650); return d === null ? null : { k: 'skip', d, at }; }
+        return null;
+      }).filter(Boolean).slice(0, 12);
+    }
     const ms = num(b.msgSeq, 0, 9999); if (ms !== null) p.msgSeq = ms;
     if (Array.isArray(b.inbox)) p.inbox = b.inbox.filter(x => x && typeof x === 'object' && typeof x.k === 'string' && typeof x.n === 'number' && isFinite(x.n)).slice(0, 6);
     if (Array.isArray(b.msgRead)) p.msgRead = b.msgRead.filter(x => typeof x === 'string').slice(0, 24);
@@ -1590,6 +1712,461 @@ class Component extends DCLogic {
     });
   }
 
+  /* ══ THE WALLET · one list of ids, used twice ════════════════════════════
+     The rendered stack and the saved-selection clamp are both built from this, so a
+     new pass can never make the header count lie or strand a saved selection on an
+     index that no longer exists. Order here IS the order on screen. */
+  WALLET_IDS() { return ['daraj', 'nara', 'marmar', 'qamar', 'zaman']; }
+
+  /* ══ THE PREPAID PASS · Zaman Arcade · stored value ══════════════════════
+     This is NOT the cashback card with a different colour. Cashback shows a JOD
+     balance that the merchant funded out of margin; prepaid shows a JOD balance that
+     SARA HANDED OVER IN CASH at the counter. It is her money, sitting on a pass, and
+     that single fact decides every rule below.
+
+     TWO BUCKETS
+       principal — the cash she paid in. Refundable, subject to what she has spent.
+       bonus     — merchant-funded promo, held as a LOT LEDGER because each grant
+                   carries its own expiry date. Never refundable, ever.
+     Spending takes BONUS FIRST, soonest-expiring lot first, so she never loses promo
+     value the pass already showed her.
+
+     THE TWO NUMBERS
+       balanceMinor    = principalMinor + sum(live lot remainingMinor)
+       refundableMinor = max(0, deposited − spent − refunded)
+     They are DIFFERENT NUMBERS and this pass shows BOTH, together, everywhere a
+     prepaid balance appears. Sara must never discover the gap at a counter, in front
+     of a queue. The sentence a cashier says is on the card and in the terms sheet:
+     you get back the cash you put in, less what you have spent — the bonus is not cash.
+
+     MONEY REPRESENTATION
+       Every amount is an INTEGER COUNT OF FILS. 1000 fils = 1 JOD, and JOD is a
+       three-decimal currency. Every field name ends in "Minor" so a 2-decimal float
+       from the older cashback paths cannot be passed in by accident. Rounding happens
+       ONCE, at the display boundary, in jodM(). Stored values are never re-rounded.
+
+     THE LEDGER IS THE SOURCE
+       The hero number is not stored anywhere. It is the fold of the ledger (ppFold),
+       which is what makes "these rows add up to the balance above" a fact rather than
+       a decoration. EXPIRY IS APPLIED AT READ TIME, never cached — the fold drops
+       every lot whose expiresAt has passed, at each event and again at `now`.
+     ══════════════════════════════════════════════════════════════════════ */
+  PP_CARD_ID() { return 'zaman'; }
+  PP_DAY() { return 86400000; }
+  /** The demo's own clock, the same Thursday 30 July 2026 10:04 the lock screen and
+      the status bar show. Wall-clock time would make the bonus countdown read
+      differently every morning and eventually expire the demo's own promo lot. */
+  PP_NOW() { return Date.UTC(2026, 6, 30, 7, 4); }
+  /** Display, and ONLY display. 84500 → "JOD 84.50" · 5625 → "JOD 5.625".
+      Three decimals appear only when the value actually has fils precision, because
+      "JOD 84.500" on a pass reads as a mistake and "JOD 5.62" is a lie. */
+  jodN(m) { const n = (typeof m === 'number' && isFinite(m)) ? Math.round(m) : 0; const a = Math.abs(n); return (a / 1000).toFixed(a % 10 === 0 ? 2 : 3); }
+  /** The gap is U+00A0, NOT an ordinary space. Caught by measuring the live wallet row:
+      at 309px the Arabic row broke between the unit and its number and rendered the
+      refundable figure as "… ويعود JOD" on one line and "122.00 نقداً." on the next.
+      A number that is separated from its currency by a line break is a number a
+      customer can misread at a counter, and refundable is the figure the prepaid
+      contract says must always appear beside the balance. A non-breaking space binds
+      every amount on this surface into one unbreakable token. The space on either
+      SIDE of the token stays an ordinary space, so the line still wraps normally. */
+  jodM(m) { return 'JOD\u00A0' + this.jodN(m); }
+  /** A signed amount for a ledger row. The MINUS is U+2212, not an ASCII hyphen:
+      the credit/debit colour test downstream compares against U+2212, so a hyphen
+      here would paint a debit green and never raise an error. */
+  jodSigned(m) { return (m < 0 ? '−' : '+') + this.jodN(m); }
+  ppMonths(EN) {
+    return EN ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+              : ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+  }
+  /** UTC getters on purpose — every timestamp here is built with Date.UTC, so the
+      printed day is the same in Amman and in a reviewer's browser in another zone. */
+  ppDay(ms, EN) {
+    const d = new Date((typeof ms === 'number' && isFinite(ms)) ? ms : 0);
+    return d.getUTCDate() + ' ' + this.ppMonths(EN)[d.getUTCMonth()];
+  }
+  ppDaysLeft(ms, nowMs) { return Math.ceil((ms - nowMs) / this.PP_DAY()); }
+
+  /** The card's rules, read from the shared database with a full literal floor, the
+      same defensive posture as cardLinks(). minRedeem/redeemCap are pinned to 0 here
+      as well as in the data file: prepaid must never inherit the cashback pair. */
+  PP_RULES() {
+    const F = { topupsMinor: [10000, 25000, 50000, 100000],
+                bonusTiers: [{ atMinor: 50000, pct: 5 }, { atMinor: 100000, pct: 10 }],
+                maxPrincipalMinor: 300000, bonusExpiryDays: 180,
+                refundable: true, allowPartial: true,
+                offlineFloorMinor: 10000, spendPinAboveMinor: 20000, lowBalanceAtMinor: 5000,
+                minRedeem: 0, redeemCap: 0 };
+    try {
+      const db = (typeof window !== 'undefined') ? window.WASLA_DB : null;
+      const cards = (db && Array.isArray(db.cards)) ? db.cards : [];
+      const card = cards.find((c) => c && c.id === this.PP_CARD_ID()) || null;
+      const r = (card && typeof card.rules === 'object' && card.rules) || null;
+      if (!r) return F;
+      const n = (v, d) => (typeof v === 'number' && isFinite(v) && v >= 0) ? Math.round(v) : d;
+      const tiers = Array.isArray(r.bonusTiers)
+        ? r.bonusTiers.filter((t) => t && isFinite(t.atMinor) && isFinite(t.pct) && t.pct >= 0)
+            .map((t) => ({ atMinor: Math.round(t.atMinor), pct: +t.pct }))
+        : [];
+      return {
+        topupsMinor: Array.isArray(r.topupsMinor) ? r.topupsMinor.filter((x) => isFinite(x) && x > 0).map((x) => Math.round(x)) : F.topupsMinor,
+        bonusTiers: tiers.length ? tiers : F.bonusTiers,
+        maxPrincipalMinor: n(r.maxPrincipalMinor, F.maxPrincipalMinor),
+        bonusExpiryDays: n(r.bonusExpiryDays, F.bonusExpiryDays) || F.bonusExpiryDays,
+        refundable: r.refundable !== false,
+        allowPartial: r.allowPartial !== false,
+        offlineFloorMinor: n(r.offlineFloorMinor, F.offlineFloorMinor),
+        spendPinAboveMinor: n(r.spendPinAboveMinor, F.spendPinAboveMinor),
+        lowBalanceAtMinor: n(r.lowBalanceAtMinor, F.lowBalanceAtMinor),
+        minRedeem: 0, redeemCap: 0
+      };
+    } catch (e) { return F; }
+  }
+  /** THE one bonus function. The preview, the button label, the notification and the
+      ledger row all call this — nobody re-derives a percentage inline. (The cashback
+      card in this file writes its 5% out three separate times; that is exactly how the
+      number a customer is shown drifts from the number she is credited.)
+      Rules: the HIGHEST tier whose atMinor <= cash, inclusive; 0 below the lowest;
+      evaluated against THIS TOP-UP ONLY, never against the resulting balance; rounded
+      half-up to whole fils, so a tie goes to the customer.
+      TIED THRESHOLDS · LAST WINS. Two tiers can carry the same atMinor with different
+      percentages; the LATER entry in the merchant's list supplies the pct. The rule is
+      applied here WITHOUT relying on the sort being stable — the walk keeps the last
+      match at the best threshold it has seen, so the answer is the same whatever order
+      the runtime's sort happens to leave equal keys in. */
+  bonusFor(cashMinor, rules) {
+    const c = (typeof cashMinor === 'number' && isFinite(cashMinor) && cashMinor > 0) ? Math.round(cashMinor) : 0;
+    if (!c) return 0;
+    const tiers = (((rules || {}).bonusTiers) || []);
+    let pct = 0, bestAt = -1;
+    for (let i = 0; i < tiers.length; i++) {
+      const t = tiers[i];
+      if (!t || !isFinite(t.atMinor) || !isFinite(t.pct)) continue;
+      if (c >= t.atMinor && t.atMinor >= bestAt) { bestAt = t.atMinor; pct = t.pct; }
+    }
+    if (!pct) return 0;
+    return Math.floor((c * pct + 50) / 100);
+  }
+  /** The next rung up, for "load JOD 25 more and get JOD 5.00 extra". Null at the top.
+      The pct it reports is resolved by the SAME last-wins rule as bonusFor: previewing
+      one percentage while the till credits another is a money defect, not a cosmetic
+      one, so the two must not be allowed to read a tied tier list differently. */
+  nextRung(cashMinor, rules) {
+    const c = (typeof cashMinor === 'number' && isFinite(cashMinor)) ? Math.round(cashMinor) : 0;
+    const tiers = (((rules || {}).bonusTiers) || []).filter((t) => t && isFinite(t.atMinor) && isFinite(t.pct));
+    let at = null;
+    for (let i = 0; i < tiers.length; i++) if (tiers[i].atMinor > c && (at === null || tiers[i].atMinor < at)) at = tiers[i].atMinor;
+    if (at === null) return null;
+    let pct = 0;
+    for (let i = 0; i < tiers.length; i++) if (tiers[i].atMinor === at) pct = tiers[i].pct;
+    return { moreMinor: at - c, atMinor: at, pct,
+             extraMinor: this.bonusFor(at, rules) - this.bonusFor(c, rules) };
+  }
+
+  /** The seeded history — what happened at the till before the demo opened. These are
+      EVENTS, not balances: 100 JOD of cash, a bill, a campaign grant. Every number on
+      the pass is derived from them, so there is no seeded "balance" that could ever
+      disagree with the rows underneath it.
+        topup — cash in. `b` is the bonus granted at the time, kept on the event so a
+                later change to the tier table cannot rewrite a lot she already saw.
+        spend — a bill at the till.
+        grant — a campaign lot with ITS OWN expiry (the Eid/summer kind), which is why
+                bonus is a lot ledger and not a single number. */
+  PP_SEED() {
+    const D = (y, m, d) => Date.UTC(y, m - 1, d, 7, 0);
+    return [
+      { k: 'topup', m: 50000,  b: 2500,  at: D(2026, 2, 14) },
+      { k: 'spend', m: 12500,            at: D(2026, 3, 8) },
+      { k: 'topup', m: 100000, b: 10000, at: D(2026, 5, 2) },
+      { k: 'spend', m: 45500,            at: D(2026, 6, 11) },
+      { k: 'spend', m: 20000,            at: D(2026, 7, 4) },
+      { k: 'grant', m: 10000, days: 30, c: 'summer-nights', at: D(2026, 7, 20) }
+    ];
+  }
+  ppEvents() { return this.PP_SEED().concat((this.state.ppAdd || [])); }
+  /** The read clock: the demo's Thursday, plus any time the demo has skipped forward,
+      never earlier than the newest event. Skipping is an event too, so "three weeks
+      pass" survives a reload exactly like a top-up does. */
+  ppNow() {
+    const evs = (this.state.ppAdd || []);
+    let t = this.PP_NOW();
+    let last = 0;
+    for (let i = 0; i < evs.length; i++) {
+      const e = evs[i]; if (!e) continue;
+      if (e.k === 'skip') t += (e.d || 0) * this.PP_DAY();
+      if (typeof e.at === 'number' && isFinite(e.at) && e.at > last) last = e.at;
+    }
+    return Math.max(t, last);
+  }
+  /** The timestamp a new till event gets: after everything already recorded. */
+  ppStamp() { return this.ppNow() + 60000; }
+
+  /* ── THE FOLD ─────────────────────────────────────────────────────────────
+     PURE: events + rules + a clock in, a whole prepaid state out. No `this.state`
+     read anywhere below, which is what makes it testable against the worked refund
+     proofs without a browser.
+
+       balanceMinor   = principalMinor + sum(bonus[].remainingMinor)     (asserted)
+       principalMinor >= 0, every lot remainingMinor >= 0                (asserted)
+
+     A violation is SURFACED as an incident, never clamped away — a pass that quietly
+     repairs its own arithmetic is a pass that quietly loses somebody's money. Expiry
+     is applied before every event and again at `now`, never cached. */
+  ppFold(events, rules, nowMs) {
+    const R = rules || {};
+    const DAY = this.PP_DAY();
+    const now = (typeof nowMs === 'number' && isFinite(nowMs)) ? nowMs : 0;
+    let principal = 0, lots = [], deposited = 0, spent = 0, refunded = 0;
+    let closed = false, closedAt = 0, lastPaidMinor = 0;
+    const rows = [], incidents = [];
+    let n = 0;
+    const bal = () => principal + lots.reduce((a, l) => a + l.remainingMinor, 0);
+    const check = (where) => {
+      if (principal < 0) incidents.push(where + ':principal');
+      for (let i = 0; i < lots.length; i++) if (lots[i].remainingMinor < 0) incidents.push(where + ':lot');
+    };
+    const row = (ts, kind, bucket, delta, before, ref, extra) => {
+      rows.push(Object.assign({ id: 'pp' + (++n), ts, kind, bucket, deltaMinor: delta,
+        beforeMinor: before, afterMinor: bal(), by: 'Zaman Arcade', branch: 'Rainbow St', ref: ref || '' }, extra || {}));
+    };
+    /* READ-TIME EXPIRY. Called with the moment being read at; every lot already past
+       its own expiresAt is zeroed and written into the ledger as its own row, so an
+       expiry is a visible event rather than a number that silently got smaller. */
+    const expireAt = (ts) => {
+      for (let i = 0; i < lots.length; i++) {
+        const l = lots[i];
+        if (l.remainingMinor > 0 && l.expiresAt <= ts) {
+          const before = bal(), gone = l.remainingMinor;
+          l.remainingMinor = 0;
+          row(l.expiresAt, 'expire', 'bonus', -gone, before, 'ZA-EXP-' + l.id, { campaign: l.campaign });
+        }
+      }
+      lots = lots.filter((l) => l.remainingMinor > 0);
+      check('expire');
+    };
+    const evs = (events || []).filter((e) => e && typeof e === 'object' && typeof e.k === 'string' && typeof e.at === 'number' && isFinite(e.at))
+      .slice().sort((a, b) => a.at - b.at);
+    let lotN = 0;
+    for (let i = 0; i < evs.length; i++) {
+      const e = evs[i];
+      expireAt(e.at);
+      if (closed) continue;                       // a refund closes the card, full stop
+      if (e.k === 'topup') {
+        const cash = Math.max(0, Math.round(e.m || 0));
+        if (!cash) continue;
+        /* HEADROOM. maxPrincipal constrains PRINCIPAL ONLY — capping the bonus would
+           punish her for the merchant's own promo. A top-up over headroom is refused
+           at the tab, before any cash is asked for (see doTopup); reaching the fold it
+           can only be a corrupt saved event, so it is recorded as an incident. */
+        if (cash > (R.maxPrincipalMinor - principal)) { incidents.push('headroom'); continue; }
+        let before = bal();
+        principal += cash; deposited += cash;
+        row(e.at, 'topup', 'principal', cash, before, 'ZA-' + (1000 + i), { cashMinor: cash });
+        const b = (typeof e.b === 'number' && isFinite(e.b)) ? Math.max(0, Math.round(e.b)) : this.bonusFor(cash, R);
+        if (b > 0) {                              // a zero bonus writes NO lot and NO row
+          before = bal();
+          lots.push({ id: 'L' + (++lotN), grantedMinor: b, remainingMinor: b, grantedAt: e.at,
+                      expiresAt: e.at + (R.bonusExpiryDays || 180) * DAY, campaign: e.c || 'tier' });
+          row(e.at, 'bonus', 'bonus', b, before, 'ZA-' + (1000 + i), { campaign: e.c || 'tier' });
+        }
+        check('topup');
+      } else if (e.k === 'grant') {
+        const b = Math.max(0, Math.round(e.m || 0));
+        if (!b) continue;
+        const before = bal();
+        lots.push({ id: 'L' + (++lotN), grantedMinor: b, remainingMinor: b, grantedAt: e.at,
+                    expiresAt: e.at + ((e.days || R.bonusExpiryDays || 180) * DAY), campaign: e.c || 'campaign' });
+        row(e.at, 'bonus', 'bonus', b, before, 'ZA-GIFT', { campaign: e.c || 'campaign' });
+        check('grant');
+      } else if (e.k === 'spend') {
+        const bill = Math.max(0, Math.round(e.m || 0));
+        if (!bill) continue;
+        /* take = min(bill, available). The shortfall is NOT taken from anywhere — it
+           is the part of the bill that was settled in cash at the till, and it is
+           reported rather than absorbed. Never write a negative balance. */
+        const take = Math.min(bill, bal());
+        let left = take;
+        const order = lots.slice().sort((a, b2) => a.expiresAt - b2.expiresAt);   // soonest first
+        for (let j = 0; j < order.length && left > 0; j++) {
+          const l = order[j];
+          const use = Math.min(l.remainingMinor, left);
+          if (use <= 0) continue;
+          const before = bal();
+          l.remainingMinor -= use; left -= use;
+          row(e.at, 'spend', 'bonus', -use, before, 'ZA-' + (1500 + i), { campaign: l.campaign });
+        }
+        if (left > 0) {
+          const use = Math.min(principal, left);
+          if (use > 0) {
+            const before = bal();
+            principal -= use; left -= use;
+            row(e.at, 'spend', 'principal', -use, before, 'ZA-' + (1500 + i), {});
+          }
+        }
+        spent += take;
+        lots = lots.filter((l) => l.remainingMinor > 0);
+        check('spend');
+      } else if (e.k === 'refund') {
+        /* THE REFUND RULE. Pays the cash she put in less what she has spent, and
+           CLOSES the card: principal and every lot to zero. There is no partial
+           refund that leaves the card open, because that is the arbitrage — load,
+           spend the bonus, refund the cash, repeat. */
+        const pay = Math.max(0, deposited - spent - refunded);
+        const before = bal();
+        principal = 0; lots.forEach((l) => { l.remainingMinor = 0; }); lots = [];
+        refunded += pay; closed = true; closedAt = e.at; lastPaidMinor = pay;
+        row(e.at, 'refund', 'principal', -before, before, 'ZA-REF', { paidMinor: pay, forfeitMinor: before - pay });
+        check('refund');
+      }
+      // 'skip' moves the clock only; it is handled by `now` and needs no branch here
+    }
+    expireAt(now);
+    const balanceMinor = bal();
+    const sum = principal + lots.reduce((a, l) => a + l.remainingMinor, 0);
+    if (sum !== balanceMinor) incidents.push('sum');
+    if (rows.length && rows[rows.length - 1].afterMinor !== balanceMinor) incidents.push('fold');
+    const bonusMinor = balanceMinor - principal;
+    const soon = lots.slice().sort((a, b) => a.expiresAt - b.expiresAt)[0] || null;
+    return {
+      principalMinor: principal, bonusMinor, balanceMinor,
+      bonus: lots.map((l) => ({ id: l.id, grantedMinor: l.grantedMinor, remainingMinor: l.remainingMinor,
+                                grantedAt: l.grantedAt, expiresAt: l.expiresAt, campaign: l.campaign })),
+      depositedMinor: deposited, spentMinor: spent, refundedMinor: refunded,
+      refundableMinor: Math.max(0, deposited - spent - refunded),
+      closed, closedAt, lastPaidMinor,
+      soonestLot: soon ? { remainingMinor: soon.remainingMinor, expiresAt: soon.expiresAt, campaign: soon.campaign } : null,
+      ledger: rows, incidents, syncedAt: now
+    };
+  }
+  /** The fold at the current clock, defensive: any failure returns a coherent empty
+      card rather than taking the whole surface down with it. */
+  ppModel() {
+    try { return this.ppFold(this.ppEvents(), this.PP_RULES(), this.ppNow()); }
+    catch (e) {
+      console.error(e);
+      return { principalMinor: 0, bonusMinor: 0, balanceMinor: 0, bonus: [], depositedMinor: 0,
+               spentMinor: 0, refundedMinor: 0, refundableMinor: 0, closed: false, closedAt: 0,
+               lastPaidMinor: 0, soonestLot: null, ledger: [], incidents: ['fold-failed'], syncedAt: 0 };
+    }
+  }
+  pushPP(ev) {
+    this.setState((s) => ({ ppAdd: (s.ppAdd || []).concat([ev]).slice(-12) }));
+    this.save();
+  }
+  /** A prepaid message is about HER OWN MONEY, so it rides the 'system' tier — the
+      one tier a muted or rewards-only phone still receives. Riding 'reward' would let
+      a customer who muted marketing miss the fact that her balance is nearly gone.
+      It is also a per-member trigger and NOT a broadcast: it never touches the shop's
+      broadcast quota and never lands in the Daraj inbox, which belongs to one shop. */
+  ppNotify(body) { this.notify('Zaman Arcade', body, null, 'system'); }
+
+  /** TOP-UP · the order is load-bearing. Headroom is checked FIRST, before any cash
+      is requested, so a refusal can never strand a note in the drawer. */
+  doTopup(cashMinor) {
+    const EN = this.state.lang === 'en', R = this.PP_RULES(), m = this.ppModel();
+    const head = R.maxPrincipalMinor - m.principalMinor;
+    if (cashMinor > head) {
+      this.ppNotify(EN
+        ? 'That would put more than ' + this.jodM(R.maxPrincipalMinor) + ' of your own money on one pass. The most it can take today is ' + this.jodM(Math.max(0, head)) + ' — nothing was taken.'
+        : 'هذا يتجاوز حدّ ' + this.jodM(R.maxPrincipalMinor) + ' من مالك على بطاقة واحدة. أقصى ما تقبله اليوم ' + this.jodM(Math.max(0, head)) + ' — ولم يُؤخذ أي مبلغ.');
+      return;
+    }
+    const b = this.bonusFor(cashMinor, R);
+    const after = m.balanceMinor + cashMinor + b;
+    this.pushPP({ k: 'topup', m: cashMinor, b, at: this.ppStamp() });
+    this.ppNotify(EN
+      ? 'Loaded ' + this.jodM(cashMinor) + (b ? ' — ' + this.jodM(b) + ' bonus on top' : ' — no bonus at this amount') + '. ' + this.jodM(m.balanceMinor) + ' → ' + this.jodM(after) + '.'
+      /* NO Arabic conjunction immediately before a money token. The waw is a PREFIX —
+         it binds to the word after it — so ending a fragment with it and concatenating
+         jodM() renders the Latin JOD welded to an Arabic letter. A whole word carries
+         the conjunction here instead. */
+      : 'شُحنت ' + this.jodM(cashMinor) + (b ? ' — ومعها ' + this.jodM(b) + ' مكافأة' : ' — بلا مكافأة على هذا المبلغ') + '. ' + this.jodM(m.balanceMinor) + ' ← ' + this.jodM(after) + '.');
+  }
+  /** SPEND · bonus lots first, soonest expiry first, then her own money. What the card
+      cannot cover is a SHORTFALL that was settled in cash at the till — it is named
+      out loud, never quietly absorbed. */
+  doSpend(billMinor) {
+    const EN = this.state.lang === 'en', R = this.PP_RULES(), m = this.ppModel();
+    if (m.balanceMinor <= 0) {
+      this.ppNotify(EN ? 'This pass is empty — load it at the counter and the next game is on the card.'
+                       : 'هذه البطاقة فارغة — اشحنها عند الكاشير ويصير اللعب على البطاقة.');
+      return;
+    }
+    const take = Math.min(billMinor, m.balanceMinor);
+    const short = billMinor - take;
+    const after = m.balanceMinor - take;
+    this.pushPP({ k: 'spend', m: billMinor, at: this.ppStamp() });
+    this.ppNotify(EN
+      ? this.jodM(take) + ' off your pass' + (short ? ' · ' + this.jodM(short) + ' paid in cash' : '') + '. ' + this.jodM(m.balanceMinor) + ' → ' + this.jodM(after) + '.'
+      : this.jodM(take) + ' من بطاقتك' + (short ? ' · ودُفع ' + this.jodM(short) + ' نقداً' : '') + '. ' + this.jodM(m.balanceMinor) + ' ← ' + this.jodM(after) + '.');
+    /* THE LOW-BALANCE NUDGE. A per-member system trigger fired on the crossing, not a
+       merchant broadcast: it costs the shop no quota and it reaches her even muted. */
+    if (after > 0 && after < R.lowBalanceAtMinor && m.balanceMinor >= R.lowBalanceAtMinor) {
+      this.after(2200, () => {
+        const L = (this.__host && this.__host.logic) || this;
+        if (!L || !L.state) return;
+        const E2 = L.state.lang === 'en';
+        L.ppNotify(E2
+          ? 'Heads up — ' + L.jodM(after) + ' left on your Zaman pass. Top up at the counter whenever you are next in.'
+          : 'تنبيه — بقي ' + L.jodM(after) + ' على بطاقة زمان. اشحنها عند الكاشير في زيارتك القادمة.');
+      });
+    }
+  }
+  /** The demo's fast-forward. Time is the only thing that expires a bonus lot, so the
+      only honest way to show an expiry is to move the clock — not to invent a button
+      that deletes her bonus. */
+  doSkip(days) {
+    const EN = this.state.lang === 'en', before = this.ppModel();
+    this.pushPP({ k: 'skip', d: days, at: this.ppStamp() });
+    const lost = before.bonusMinor;
+    this.after(60, () => {
+      const L = (this.__host && this.__host.logic) || this;
+      if (!L || !L.state) return;
+      const after = L.ppModel(), E2 = L.state.lang === 'en';
+      if (after.bonusMinor < lost) {
+        L.ppNotify(E2
+          ? 'Your ' + L.jodM(lost - after.bonusMinor) + ' bonus reached its date and came off the pass. Your own ' + L.jodM(after.principalMinor) + ' is untouched.'
+          : 'انتهت مدة مكافأتك البالغة ' + L.jodM(lost - after.bonusMinor) + ' وأُزيلت من البطاقة. أما مالك ' + L.jodM(after.principalMinor) + ' فلم يُمس.');
+      } else {
+        L.ppNotify(E2 ? 'Three weeks on — nothing expired, the pass is exactly as you left it.'
+                      : 'مرّت ثلاثة أسابيع — لم ينته شيء، والبطاقة كما تركتِها.');
+      }
+    });
+  }
+  /** Removing a prepaid pass is NOT the stamps goodbye. Stamps are a promise the shop
+      is holding; a prepaid balance is HER CASH. A pass with money on it therefore
+      cannot be removed at all — the dialog names the outstanding amount and points at
+      the counter, which is the only place a refund can happen. */
+  doPPRemove() {
+    const EN = this.state.lang === 'en', m = this.ppModel();
+    if (m.balanceMinor > 0) return;                       // belt and braces; the UI already blocks
+    this.setState({ zamanOut: true, ppLeaveArm: false });
+    this.go('wallet');
+    this.notify('Wallet', EN ? 'Zaman Arcade was removed from your wallet.' : 'أُزيلت زمان أركيد من محفظتك.');
+    this.save();
+  }
+  /** The pre-expiry notice (H). Armed from renderVals for the same reason the welcome
+      nudge is — componentDidMount is skippable on the deferred mount path — and
+      latched on the HOST so a logic swap cannot fire it twice. It rides 'system'. */
+  armPPExpiry() {
+    const h = this.__host || this;
+    if (h.__wcPPExp) return;
+    let m = null;
+    try { m = this.ppModel(); } catch (e) { return; }
+    const lot = m.soonestLot;
+    if (!lot) return;
+    const days = this.ppDaysLeft(lot.expiresAt, this.ppNow());
+    if (days < 0 || days > 21) return;                    // only when it is actually close
+    h.__wcPPExp = true;
+    this._pe = this.after(2600, () => {
+      const L = (this.__host && this.__host.logic) || this;
+      if (!L || !L.state) return;
+      const EN = L.state.lang === 'en';
+      L.ppNotify(EN
+        ? L.jodM(lot.remainingMinor) + ' of bonus leaves your Zaman pass on ' + L.ppDay(lot.expiresAt, true) + ' — ' + days + ' days. Bonus is spent before your own money, so playing uses it first.'
+        : 'تنتهي مكافأتك البالغة ' + L.jodM(lot.remainingMinor) + ' على بطاقة زمان يوم ' + L.ppDay(lot.expiresAt, false) + ' — بعد ' + days + ' يوماً. المكافأة تُصرف قبل مالك، فاللعب يستهلكها أولاً.');
+    });
+  }
+
   /* ══ MESSAGES · the broadcast inbox ══════════════════════════════════════
      A broadcast used to live 3.6 seconds and then be gone forever. It now lands
      in a real inbox. `inbox` stores CATALOGUE KEYS + a monotonic serial, never
@@ -1977,12 +2554,12 @@ class Component extends DCLogic {
   }
   doReset() {
     this.kill(this._play); this._play = null; this.kill(this._tf); this._tf = null;
-    this.kill(this._lk); this.kill(this._rt); this.kill(this._ra); this.kill(this._rf); this.kill(this._ct); this.kill(this._vc); this.kill(this._cp);
+    this.kill(this._lk); this.kill(this._rt); this.kill(this._ra); this.kill(this._rf); this.kill(this._ct); this.kill(this._vc); this.kill(this._cp); this.kill(this._pe);
     this.dismissNotifNow();
     this.clearSaved();
     this.clearLive();
     const h = this.__host || this;
-    h.__wcWelcomed = true; h.__wcRefArmed = false;
+    h.__wcWelcomed = true; h.__wcRefArmed = false; h.__wcPPExp = false;
     this.__restored = false;
     this.setState((s) => ({
       walletSel: 0, redeemFlash: false, scene: 'counter', platform: 'apple', stamps: 5, goal: 8,
@@ -1994,6 +2571,8 @@ class Component extends DCLogic {
       recPhone: '', recCode: '', recErr: '', recovered: false, rejoined: false,
       inbox: [], msgRead: [], msgOpen: null, msgSeq: 0,
       cardOpen: 'nara', qamarUsed: false, couponArm: false, termsOpen: false, linkSeq: 0,
+      // the prepaid pass goes back to its seeded history — every till event she added is dropped
+      ppAdd: [], ppLeaveArm: false, zamanOut: false,
       form: { name: 'Sara Al-Amin', phone: '+962 79 555 0114', drink: 'Flat white', birthday: '14 Sep' }
     }));
   }
@@ -2002,6 +2581,7 @@ class Component extends DCLogic {
     this.armWelcome();
     this.armReferral();
     this.armLinkSync();
+    this.armPPExpiry();
     const st = this.state, EN = st.lang === 'en';
     const T = (en, ar) => EN ? en : ar;
     const AN = (n, du, dl) => st.settled ? 'none' : n + ' ' + du + ' cubic-bezier(.22,.61,.36,1) ' + (dl || '0s') + ' both';
@@ -2204,7 +2784,7 @@ class Component extends DCLogic {
         b: T('Your pass is in your wallet again, with the stamps you left with. Nothing was voided — you picked up exactly where you stopped.', 'بطاقتك في محفظتك من جديد، بأختامك التي غادرتِ بها. لم يُلغَ شيء — عدتِ من حيث توقّفتِ تماماً.'),
         when: T('Just now', 'الآن'), tone: '#1E5C43' },
       welcome: { t: T('Welcome to Daraj Coffee', 'أهلاً بك في قهوة الدرج'),
-        b: T('Your card is live. Buy 7, the 8th is on us — one stamp per visit, at any branch.', 'بطاقتك تعمل. اشترِ ٧ والثامن علينا — ختم لكل زيارة، في أي فرع.'),
+        b: T('Your card is live. Buy 7, the 8th is on us — one stamp per visit, at any branch.', 'بطاقتك تعمل. اشترِ 7 والثامن علينا — ختم لكل زيارة، في أي فرع.'),
         when: T('Mar 04', '4 مارس'), tone: '#1E5C43' }
     };
     const seededMsgs = [
@@ -2273,14 +2853,19 @@ class Component extends DCLogic {
       marmar: { name: 'Marmar Gold', ar: 'مرمر الذهبية', merchant: T('Marmar Lounge · Abdali', 'صالة مرمر · العبدلي'), i: 'M', c: '#26262B', c2: '#141417', kind: 'vip',
         links: { ig: '@marmarlounge', wa: '+962 78 555 0229', loc: 'Abdali Boulevard, Amman', web: '' } },
       qamar: { name: 'Qamar Eid Coupon', ar: 'كوبون قمر', merchant: T('Qamar Sweets · downtown', 'حلويات قمر · وسط البلد'), i: 'Q', c: '#B14A32', c2: '#7C3121', kind: 'coupon',
-        links: { ig: '@qamarsweets', wa: '', loc: 'Al-Malek Faisal St, Amman', web: '' } }
+        links: { ig: '@qamarsweets', wa: '', loc: 'Al-Malek Faisal St, Amman', web: '' } },
+      /* Zaman Arcade is the one sibling that belongs to Daraj's own account (Tala
+         Hospitality Group), which is why it is the one that INHERITS account links. */
+      zaman: { name: 'Zaman Arcade', ar: 'زمان أركيد', merchant: T('Tala Group · Rainbow St', 'مجموعة تالا · شارع الرينبو'), i: 'Z', c: '#4B2E83', c2: '#2E1B55', kind: 'prepaid',
+        links: { ig: '@zamanarcade', wa: '+962 78 555 0193', loc: 'Rainbow St, Amman', web: '' } }
     };
     const cdId = cardDefs[st.cardOpen] ? st.cardOpen : 'nara';
     const cd = cardDefs[cdId];
-    /* cardLinks() is the same resolver the Daraj back uses. These three belong to OTHER
-       merchants, so they pass inherit:false — a Nara card must never fall through to
-       Tala Hospitality's Instagram. Overrides/hidden/"" semantics are unchanged. */
-    const cdLinks = this.cardLinks(cdId, cd.links, { inherit: false });
+    /* cardLinks() is the same resolver the Daraj back uses. Nara, Marmar and Qamar
+       belong to OTHER merchants, so they pass inherit:false — a Nara card must never
+       fall through to Tala Hospitality's Instagram. Zaman Arcade is Tala's own card,
+       so it inherits exactly like Daraj does. Overrides/hidden/"" are unchanged. */
+    const cdLinks = this.cardLinks(cdId, cd.links, { inherit: cdId === 'zaman' });
     const cdBackRows = [];
     if (cdLinks.ig) cdBackRows.push({ k: 'Instagram', v: cdLinks.ig, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('Instagram', T('Opening ' + cdLinks.ig + '…', 'جارٍ فتح ' + cdLinks.ig + '…')); } });
     if (cdLinks.wa) cdBackRows.push({ k: 'WhatsApp', v: cdLinks.wa, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify('WhatsApp', T('Starting a chat with ' + cd.name + '…', 'بدء محادثة مع ' + cd.name + '…')); } });
@@ -2288,19 +2873,197 @@ class Component extends DCLogic {
     if (cdLinks.web) cdBackRows.push({ k: T('Website', 'الموقع الإلكتروني'), v: cdLinks.web, color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: () => { this.userTouch(); this.notify(cd.name, T('Opening ' + cdLinks.web + '…', 'جارٍ فتح ' + cdLinks.web + '…')); } });
     cdBackRows.push({ k: T('Terms', 'الشروط'), v: T('Tap for the short version', 'اضغط للنسخة المختصرة') + ' →', color: '#007AFF', cursor: 'pointer', cls: 'wl-row', action: openTerms });
     const couponUsed = !!st.qamarUsed;
-    const CD = {
+
+    /* ══ THE PREPAID PASS · ONE model, read by everything ═════════════════
+       The wallet row, the card face, the split line, the ledger, the notice chip and
+       the removal dialog all read THIS object. The cashback card two blocks down
+       hand-enters its balance twice — once in CD.cashback and once in walletCards —
+       with nothing keeping the two equal; money that a customer actually handed over
+       does not get to be typed twice. Every prepaid number below is derived. */
+    const PPR = this.PP_RULES();
+    const PP = this.ppModel();
+    const ppNowMs = this.ppNow();
+    const ppBalM = PP.balanceMinor, ppPrinM = PP.principalMinor, ppBonusM = PP.bonusMinor, ppRefM = PP.refundableMinor;
+    const ppEmpty = ppBalM <= 0;
+    const ppBonusOnly = ppPrinM <= 0 && ppBonusM > 0;      // 3.00 of expiring bonus is NOT 3.00 of her money
+    const ppLow = !ppEmpty && ppBalM < PPR.lowBalanceAtMinor;
+    const ppLot = PP.soonestLot;
+    const ppLotDays = ppLot ? this.ppDaysLeft(ppLot.expiresAt, ppNowMs) : 0;
+    const ppLotDay = ppLot ? this.ppDay(ppLot.expiresAt, EN) : '';
+    const ppExpSoon = !!ppLot && ppLotDays >= 0 && ppLotDays <= 21;
+    const ppOut = !!st.zamanOut;
+    /* ── WHICH BONUS EXPIRES WHEN · bonus is a LOT LEDGER, not a number, so the total
+         does not have one date. Printing the TOTAL against the SOONEST lot's date told
+         her that money was leaving sooner than it actually was — a conservative lie is
+         still a false statement about her own money, and the shipped demo reaches it
+         (the JOD 50 load's tier bonus sits behind the summer-nights grant, two live
+         lots with different dates). So: one lot, the total carries its date; more than
+         one, only the soonest lot's OWN amount is dated and the remainder is
+         summarised. Never a number against a date it does not belong to. ── */
+    const ppLots = (PP.bonus || []).slice().sort((a, b) => a.expiresAt - b.expiresAt);
+    const ppLotMany = ppLots.length > 1;
+    const ppSoonM = ppLot ? ppLot.remainingMinor : 0;
+    const ppRestM = Math.max(0, ppBonusM - ppSoonM);
+    /* "JOD 12.50 bonus, …" — the bonus half of the split line, dated honestly.
+       Note the Arabic: no bare "و" immediately before a money token, because the
+       conjunction is a prefix and would render glued to it as "وJOD 12.50".
+
+       ── TWO LENGTHS OF ONE TRUTH ──────────────────────────────────────────
+       The card face gets a full-width paragraph. The WALLET STACK ROW gets one
+       line of 10.5px under a 23px hero, and that line is NOT a fixed width: the
+       phone is a flex item at width:402px with no flex-shrink:0, so it gives room
+       back as the viewport narrows. Measured off the live box, the row ranges
+       about 276px to 322px (322 = 402 − 22 bezel − 28 column − 30 card padding;
+       the rest is shrink plus the scrollbar the column takes at five cards).
+
+       MEASURED ACROSS THAT RANGE at 276/284/292/300/309/315/322px, both languages,
+       webfont and system-ui fallback. The two languages did NOT behave the same:
+
+         EN, full sentence  — 569px of text. THREE lines below ~309px (315px on the
+                              fallback font), two above. It flips inside the range
+                              this layout actually produces, so the row gained a
+                              third line purely from the pane getting narrower.
+         AR, full sentence  — 494px. Two lines throughout; Arabic was never the
+                              one that spilled, and this comment should not pretend
+                              it was.
+         EN/AR, short form  — 412px / 394px. Two lines at every width tested, and
+                              it stays two down to ~206px, below anything this
+                              layout produces.
+
+       So the English row is the one that was breaking, and the Arabic row's gain is
+       a shorter second line rather than a line saved. Both wrap before the refund
+       clause instead of inside it.
+
+       So the row takes a shorter phrasing. What the short form may drop is the
+       explicit "and the remainder goes later" clause. What it may NEVER do is
+       print the TOTAL against the SOONEST lot's date — that is exactly the false
+       statement this block exists to prevent. "first expires <date>" is true of a
+       remainder it has not enumerated, and stays true when there is only one lot
+       left. Balance and refundable appear on the row in BOTH forms, always. ── */
+    const ppBonusPhraseFor = (wide) => ppLotMany
+      ? (wide
+        ? T(this.jodM(ppBonusM) + ' bonus — ' + this.jodM(ppSoonM) + ' of it expires ' + ppLotDay + ', the rest later',
+            this.jodM(ppBonusM) + ' مكافأة — منها ' + this.jodM(ppSoonM) + ' تنتهي في ' + ppLotDay + ' والباقي لاحقاً')
+        : T(this.jodM(ppBonusM) + ' bonus — first expires ' + ppLotDay,
+            this.jodM(ppBonusM) + ' مكافأة — أولها ينتهي في ' + ppLotDay))
+      : T(this.jodM(ppBonusM) + ' bonus, expires ' + ppLotDay,
+          this.jodM(ppBonusM) + ' مكافأة تنتهي في ' + ppLotDay);
+    /* The one sub-line the whole contract exists for: the hero is the TOTAL, and this
+       says immediately which part of the total is actually hers. Sara must never find
+       out at a counter, in front of a queue, that JOD 10 of her JOD 94.50 was never
+       her money to begin with. One builder, two widths — so the wallet row and the
+       card face cannot drift into disagreeing about her money. */
+    const ppSplitFor = (wide) => {
+      const bp = ppBonusPhraseFor(wide);
+      return ppEmpty
+        ? T('Nothing on the pass — load it at the counter', 'لا شيء على البطاقة — اشحنها عند الكاشير')
+        : (ppBonusM > 0
+          ? (ppPrinM > 0
+            ? T(this.jodM(ppPrinM) + ' yours · ' + bp,
+                this.jodM(ppPrinM) + ' مالك · ' + bp)
+            : T('None of this is your cash · ' + bp,
+                'لا شيء من هذا نقدك · ' + bp))
+          : T(this.jodM(ppPrinM) + ' yours · no bonus on the pass right now',
+              this.jodM(ppPrinM) + ' مالك · ولا مكافأة على البطاقة حالياً'));
+    };
+    const ppSplitLine = ppSplitFor(true);      // card face
+    const ppSplitLineRow = ppSplitFor(false);  // wallet stack row
+    /* The refund rule, in the words a cashier actually says. Identical meaning in both
+       languages, written as an original sentence in Arabic rather than a gloss. */
+    const ppRefundSentence = T(
+      'You get back the cash you put in, less what you have spent. The bonus is not cash, and a refund closes the card.',
+      'يعود إليك النقد الذي دفعته، ناقص ما أنفقته. المكافأة ليست نقداً، والاسترداد يُغلق البطاقة.');
+    const ppRefundMath = T(
+      this.jodM(PP.depositedMinor) + ' loaded − ' + this.jodM(PP.spentMinor) + ' spent',
+      this.jodM(PP.depositedMinor) + ' شُحنت − ' + this.jodM(PP.spentMinor) + ' أُنفقت');
+    /* The notice chip · ONE line, highest-stakes first. An arithmetic incident outranks
+       everything: the contract says a broken invariant is surfaced, never clamped. */
+    const ppNotice = PP.incidents.length
+      ? { on: true, bg: 'rgba(224,88,66,.22)', fg: '#FFD9D2',
+          text: T('These numbers do not add up — nothing has been changed. Show this pass at the counter before loading or spending.',
+                  'هذه الأرقام لا تتطابق — ولم يُغيَّر شيء. أظهري البطاقة عند الكاشير قبل أي شحن أو إنفاق.') }
+      : (ppEmpty
+        ? { on: true, bg: 'rgba(255,255,255,.14)', fg: 'rgba(255,255,255,.9)',
+            text: T('Empty — nothing left to spend. Loading happens at the counter.', 'فارغة — لا رصيد للإنفاق. الشحن يتم عند الكاشير.') }
+        : (ppBonusOnly
+          ? { on: true, bg: 'rgba(242,183,5,.2)', fg: '#F7D77A',
+              /* same lot-attribution rule as the split line: with more than one live
+                 lot the total does not share the soonest date, so only the soonest
+                 lot's own amount is dated here */
+              text: ppLotMany
+                ? T('All of this is bonus — none of it comes back as cash, and ' + this.jodM(ppSoonM) + ' of it goes on ' + ppLotDay + ', the rest later.',
+                    'كل هذا مكافأة — لا يعود منه شيء نقداً، وينتهي منه ' + this.jodM(ppSoonM) + ' في ' + ppLotDay + ' والباقي لاحقاً.')
+                : T('All of this is bonus — none of it comes back as cash, and it goes on ' + ppLotDay + '.',
+                    'كل هذا مكافأة — لا يعود منه شيء نقداً، وينتهي في ' + ppLotDay + '.') }
+          : (ppLow
+            ? { on: true, bg: 'rgba(242,183,5,.2)', fg: '#F7D77A',
+                text: T('Low balance — ' + this.jodM(ppBalM) + ' left. Top up at the counter next time you are in.',
+                        'الرصيد منخفض — بقي ' + this.jodM(ppBalM) + '. اشحنيها عند الكاشير في زيارتك القادمة.') }
+            : (ppExpSoon
+              ? { on: true, bg: 'rgba(242,183,5,.2)', fg: '#F7D77A',
+                  text: T(this.jodM(ppLot.remainingMinor) + ' of bonus expires in ' + ppLotDays + ' days · ' + ppLotDay + '. Playing spends bonus first.',
+                          'تنتهي مكافأة بقيمة ' + this.jodM(ppLot.remainingMinor) + ' بعد ' + ppLotDays + ' يوماً · ' + ppLotDay + '. واللعب يستهلك المكافأة أولاً.') }
+              : { on: false, bg: 'transparent', fg: 'transparent', text: '' }))));
+    /* THE LEDGER · the hero is the fold of these rows, so they reconcile by
+       construction. Each row names the bucket that moved, because "−6.500" without
+       "bonus" or "your money" beside it is the ambiguity this card type cannot afford. */
+    const PP_CAMPAIGN = { 'summer-nights': T('Summer nights bonus', 'مكافأة ليالي الصيف'), tier: T('Bonus on that top-up', 'مكافأة على ذلك الشحن') };
+    const ppRowLine = (r) => {
+      if (r.kind === 'topup') return T('Loaded at the counter · ' + r.branch, 'شُحنت عند الكاشير · شارع الرينبو');
+      if (r.kind === 'bonus') return PP_CAMPAIGN[r.campaign] || T('Bonus from Zaman', 'مكافأة من زمان');
+      if (r.kind === 'expire') return T('Bonus reached its date', 'انتهت مدة المكافأة');
+      if (r.kind === 'refund') return T('Refunded in cash — pass closed', 'استُرد نقداً — أُغلقت البطاقة');
+      return T('Played · ' + r.branch, 'لعب · شارع الرينبو');
+    };
+    const ppLedger = PP.ledger.slice().reverse().slice(0, 6).map((r) => ({
+      line: ppRowLine(r),
+      // U+2212 MINUS SIGN, never an ASCII hyphen — the debit colour test reads this char
+      amt: this.jodSigned(r.deltaMinor),
+      time: this.ppDay(r.ts, EN),
+      hasTag: true,
+      tag: r.bucket === 'bonus' ? T('bonus', 'مكافأة') : T('your money', 'مالك'),
+      tagBg: r.bucket === 'bonus' ? 'rgba(242,183,5,.2)' : 'rgba(255,255,255,.13)',
+      tagFg: r.bucket === 'bonus' ? '#F7D77A' : 'rgba(255,255,255,.8)'
+    }));
+    const ppReconciles = !PP.ledger.length || PP.ledger[PP.ledger.length - 1].afterMinor === ppBalM;
+    /* The count is honest about what is on screen AND about what the total is made of:
+       the visible rows are the newest few, and it is ALL of them together that are the
+       hero. Saying "these add up" under six of ten rows would be a lie you could check. */
+    const ppLedgerFoot = ppReconciles
+      ? T('The newest ' + ppLedger.length + ' of ' + PP.ledger.length + ' movements. All ' + PP.ledger.length + ' together are exactly the ' + this.jodM(ppBalM) + ' above — that number is not stored anywhere else.',
+          'أحدث ' + ppLedger.length + ' من أصل ' + PP.ledger.length + ' حركة. ومجموع الـ' + PP.ledger.length + ' كلها هو تماماً ' + this.jodM(ppBalM) + ' في الأعلى — وهذا الرقم غير مخزَّن في أي مكان آخر.')
+      : T('These rows and the balance above disagree. Nothing was changed — show this at the counter.',
+          'هذه الحركات لا تطابق الرصيد في الأعلى. لم يُغيَّر شيء — أظهري هذا عند الكاشير.');
+    const ppNextRung = this.nextRung(0, PPR);
+    /* ── LEAVING A PREPAID PASS (L) · the stamps goodbye does not apply here. Stamps
+         are a promise the shop is holding for her; a prepaid balance is HER CASH, and
+         a wallet that lets her swipe it away has just deleted money. The row exists on
+         the prepaid back only, and with a balance on the pass it opens a dialog that
+         REFUSES and names the amount rather than a confirm that proceeds. ── */
+    if (cdId === 'zaman') {
+      cdBackRows.push({ k: T('Remove this pass', 'إزالة هذه البطاقة'),
+        v: ppEmpty ? T('The pass is empty — it can come out of your wallet', 'البطاقة فارغة — يمكن إخراجها من محفظتك') + ' →'
+                   : T(this.jodM(ppBalM) + ' is still on it — removal is blocked', 'ما زال عليها ' + this.jodM(ppBalM) + ' — الإزالة موقوفة') + ' →',
+        color: ppEmpty ? '#007AFF' : '#C0392B', cursor: 'pointer', cls: 'wl-row',
+        action: () => { this.userTouch(); this.setState({ ppLeaveArm: true }); } });
+    }
+
+    /* Nara's balance, named ONCE. It used to be typed into CD.cashback and into the
+       wallet row separately, with nothing keeping the two equal. */
+    const NARA_BAL = 'JOD\u00A04.50';
+    const CD_MAP = {
       cashback: {
-        tagLabel: T('BALANCE', 'الرصيد'), tagValue: 'JOD 4.50', hero: 'JOD 4.50',
+        tagLabel: T('BALANCE', 'الرصيد'), tagValue: NARA_BAL, hero: NARA_BAL,
         heroSub: T('yours to spend, like cash', 'رصيدك، يُنفق كالنقد'),
-        note: T('7% of every bill comes back. Spend it from JOD 2 up — part of it or all of it, at any Nara counter. It never expires while the card is live.', '7% من كل فاتورة تعود إليك. أنفقه ابتداءً من دينارين — جزءاً منه أو كله، في أي فرع لنارا. ولا ينتهي ما دامت البطاقة تعمل.'),
+        note: T('7% of every bill comes back. Spend it from JOD\u00A02 up — part of it or all of it, at any Nara counter. It never expires while the card is live.', '7% من كل فاتورة تعود إليك. أنفقه ابتداءً من JOD\u00A02 — جزءاً منه أو كله، في أي فرع لنارا. ولا ينتهي ما دامت البطاقة تعمل.'),
         creditsK: T('Recent credits', 'آخر الإضافات'),
         credits: [
-          { line: T('Bill JOD 9.00 · Swefieh', 'فاتورة 9.00 د.أ · الصويفية'), amt: '+0.63', time: T('Today 09:12', 'اليوم 09:12') },
-          { line: T('Bill JOD 21.50 · Swefieh', 'فاتورة 21.50 د.أ · الصويفية'), amt: '+1.51', time: T('Sun 18:04', 'الأحد 18:04') },
+          { line: T('Bill JOD\u00A09.00 · Swefieh', 'فاتورة JOD\u00A09.00 · الصويفية'), amt: '+0.63', time: T('Today 09:12', 'اليوم 09:12') },
+          { line: T('Bill JOD\u00A021.50 · Swefieh', 'فاتورة JOD\u00A021.50 · الصويفية'), amt: '+1.51', time: T('Sun 18:04', 'الأحد 18:04') },
           { line: T('Redeemed at the till', 'استُبدل عند الكاشير'), amt: '−2.00', time: T('Jul 22', '22 يوليو') },
-          { line: T('Bill JOD 34.00 · Swefieh', 'فاتورة 34.00 د.أ · الصويفية'), amt: '+2.38', time: T('Jul 19', '19 يوليو') }
+          { line: T('Bill JOD\u00A034.00 · Swefieh', 'فاتورة JOD\u00A034.00 · الصويفية'), amt: '+2.38', time: T('Jul 19', '19 يوليو') }
         ],
-        ctaLabel: T('Spend JOD 2.00 at the till', 'أنفق 2.00 د.أ عند الكاشير'),
+        ctaLabel: T('Spend JOD\u00A02.00 at the till', 'أنفق JOD\u00A02.00 عند الكاشير'),
         cta: () => { this.userTouch(); this.notify('Nara Care', T('Show this pass — the cashier types the amount and the balance updates on your card.', 'أظهر هذه البطاقة — يُدخل الكاشير المبلغ ويتحدّث الرصيد على بطاقتك.')); },
         barcodeNo: '0452 7736'
       },
@@ -2341,14 +3104,72 @@ class Component extends DCLogic {
           this.save();
         },
         barcodeNo: '7743 0091'
+      },
+      /* ── PREPAID · stored value. Everything here is derived from PP; not one money
+           number is typed. The face answers, in this order: how much is on the pass,
+           how much of it is hers, what comes back as cash, and where the total came
+           from. The credits list is the real ledger, not a decorative sample. ── */
+      prepaid: {
+        tagLabel: T('BALANCE', 'الرصيد'), tagValue: this.jodM(ppBalM), hero: this.jodM(ppBalM),
+        heroSub: ppSplitLine,
+        note: ppEmpty
+          ? T('Stored value: you hand the cashier cash, it goes on the pass, and later visits come off it. Nothing can be loaded from the phone — top-ups happen at the counter, in front of you.',
+              'رصيد مدفوع مسبقاً: تسلّم الكاشير نقداً فيوضعه على البطاقة، وتُخصم زياراتك القادمة منه. لا يمكن الشحن من الهاتف — الشحن يتم عند الكاشير أمامك.')
+          : T('This is money you already paid, sitting on the pass. Playing spends your bonus first and your own money after, so nothing promo expires under you. No card is charged at the machine — it was paid for in advance.',
+              'هذا مال دفعتِه سلفاً، ويجلس على البطاقة. اللعب يستهلك المكافأة أولاً ثم مالك، حتى لا تنتهي مكافأة وأنتِ لا تدرين. ولا تُسحب أي بطاقة عند الجهاز — فالمبلغ مدفوع مسبقاً.'),
+        // the two-bucket split + the refundable figure, always together, never apart
+        hasSplit: true,
+        splitYoursK: T('YOUR MONEY', 'مالك'), splitYoursV: this.jodM(ppPrinM),
+        splitYoursSub: T('cash you loaded, still on the pass', 'نقد شحنتِه وما زال على البطاقة'),
+        splitBonusK: T('BONUS', 'مكافأة'), splitBonusV: this.jodM(ppBonusM),
+        /* the VALUE above is the total across every live lot, so the sub-line may not
+           hang that total on one date — with several lots it dates only the soonest */
+        splitBonusSub: ppBonusM > 0
+          ? (ppLotMany
+            ? T('from Zaman · ' + this.jodM(ppSoonM) + ' of it expires ' + ppLotDay + ' (' + ppLotDays + ' days), the rest later',
+                'من زمان · تنتهي منها ' + this.jodM(ppSoonM) + ' في ' + ppLotDay + ' (' + ppLotDays + ' يوماً) والباقي لاحقاً')
+            : T('from Zaman · expires ' + ppLotDay + ' (' + ppLotDays + ' days)', 'من زمان · تنتهي في ' + ppLotDay + ' (' + ppLotDays + ' يوماً)'))
+          : T('nothing running right now', 'لا مكافأة جارية حالياً'),
+        refundK: T('CASH BACK IF YOU CLOSE IT', 'ما يعود نقداً عند الإغلاق'), refundV: this.jodM(ppRefM),
+        refundMath: ppRefundMath, refundNote: ppRefundSentence,
+        noticeOn: ppNotice.on, noticeText: ppNotice.text, noticeBg: ppNotice.bg, noticeFg: ppNotice.fg,
+        creditsK: T('Every movement, both pots', 'كل الحركات، من الجيبين'),
+        credits: ppLedger,
+        ledgerFoot: ppLedgerFoot,
+        /* NOT the cashback CTA. "Spend JOD 2.00 at the till" would tell her she can
+           spend from her phone; a prepaid pass is shown, never operated. */
+        ctaLabel: T('Show this to top up — top-ups happen at the counter', 'أظهري هذه للشحن — الشحن يتم عند الكاشير'),
+        cta: () => {
+          this.userTouch();
+          this.ppNotify(EN
+            ? 'Hand the cashier the cash and watch it land on the pass. ' + (ppNextRung ? 'Loading ' + this.jodM(ppNextRung.atMinor) + ' or more adds ' + ppNextRung.pct + '% on top.' : '')
+            : 'سلّمي الكاشير النقد وشاهديه يهبط على البطاقة. ' + (ppNextRung ? 'شحن ' + this.jodM(ppNextRung.atMinor) + ' أو أكثر يضيف ' + ppNextRung.pct + '٪ فوقه.' : ''));
+        },
+        barcodeNo: '0223 5514'
       }
-    }[cd.kind];
+    };
+    /* ── THE CRASH GUARD ─────────────────────────────────────────────────
+       renderVals() is ONE function computing EVERY screen on EVERY render, whatever
+       screen is actually showing. A per-type lookup with no default therefore does not
+       render a blank card — it throws, and takes the whole surface down with it. This
+       fallback is a complete CD shape, so a card whose `kind` this file has never heard
+       of still renders as an honest, inert pass instead of a white screen. */
+    const CD_UNKNOWN = {
+      tagLabel: T('CARD', 'البطاقة'), tagValue: '—', hero: cd.name,
+      heroSub: T('this pass type is not supported on this phone yet', 'هذا النوع من البطاقات غير مدعوم على هذا الهاتف بعد'),
+      note: T('Your card is safe. This copy of the wallet does not know how to draw this kind of pass yet, so it shows you the barcode and nothing it would have to guess at.',
+              'بطاقتك بخير. هذه النسخة من المحفظة لا تعرف كيف ترسم هذا النوع بعد، لذا تعرض الباركود فقط ولا تخمّن أي شيء آخر.'),
+      ctaLabel: T('Show this pass', 'أظهري هذه البطاقة'),
+      cta: () => { this.userTouch(); this.notify(cd.name, T('Show the pass — the counter can read it.', 'أظهري البطاقة — الكاشير يستطيع قراءتها.'), null, 'system'); },
+      barcodeNo: '0000 0000'
+    };
+    const CD = CD_MAP[cd.kind] || CD_UNKNOWN;
 
     /* ══ THE GIFT · the banner used to announce a present with nowhere to go ══ */
     const giftArt = (this.stampArt('dessert') || this.stampArt('coffee') || {}).filled || null;
 
     /* ══ TERMS · short, honest, and the same in both languages ══════════════ */
-    const termsRows = [
+    const darajTerms = [
       { k: T('One stamp per visit', 'ختم واحد لكل زيارة'), v: T('However many coffees are on the tray. Staff can correct a mis-scan the same day.', 'مهما كان عدد الأكواب على الصينية. ويمكن للطاقم تصحيح مسح خاطئ في نفس اليوم.') },
       { k: T('The reward waits', 'المكافأة تنتظر'), v: T('A full card never expires while the programme is live. Redeem it whenever you come back.', 'البطاقة الممتلئة لا تنتهي ما دام البرنامج قائماً. استبدلها متى عدت.') },
       { k: T('If Daraj pauses or ends it', 'إذا أوقف الدرج البرنامج أو أنهاه'), v: T('You are told on the card itself. Stamps you already earned stay redeemable for 30 days after the last day.', 'تُخبَر على البطاقة نفسها. وتبقى أختامك المكتسبة قابلة للاستبدال 30 يوماً بعد آخر يوم.') },
@@ -2356,6 +3177,97 @@ class Component extends DCLogic {
       { k: T('Leaving', 'المغادرة'), v: T('Remove the pass any time from My details. Daraj holds your stamps for 90 days in case you come back.', 'أزل البطاقة متى شئت من «تفاصيلي». يحتفظ الدرج بأختامك 90 يوماً إن عدت.') },
       { k: T('Who runs what', 'من يدير ماذا'), v: T('Daraj Coffee owns the programme and the rewards. Wasla runs the pass and the reminders.', 'قهوة الدرج تملك البرنامج والمكافآت. وواصلة تشغّل البطاقة والتذكيرات.') }
     ];
+    /* Prepaid needs its OWN terms, because it is the one card type where the terms
+       decide what money is owed to whom. A stored-value pass wearing a stamp card's
+       "rewards never expire" would be the sheet lying about her cash. Per-type lookup
+       with a fallback: an unknown kind lands on the Daraj rows rather than nothing. */
+    const TERMS_BY_KIND = {
+      prepaid: [
+        { k: T('It is your money, not points', 'مالك، وليس نقاطاً'), v: T('What you load is cash you already paid. It never expires while the pass is live, and no one can spend it but you, at the counter.', 'ما تشحنينه نقد دفعتِه فعلاً. لا ينتهي ما دامت البطاقة تعمل، ولا يستطيع أحد إنفاقه غيرك، عند الكاشير.') },
+        { k: T('The bonus is a gift, with a date', 'المكافأة هدية، ولها تاريخ'), v: T('Bonus is Zaman’s money, added on top of yours. Each grant carries its own expiry, and it is always spent before your own balance so you never lose it by accident.', 'المكافأة مال زمان يُضاف فوق مالك. لكل منحة تاريخ انتهاء خاص بها، وتُصرف دائماً قبل رصيدك حتى لا تضيع منك سهواً.') },
+        { k: T('Refunds — the whole rule', 'الاسترداد — القاعدة كاملة'), v: ppRefundSentence + ' ' + T('There is no half refund: whatever is left in bonus stays with Zaman.', 'ولا يوجد استرداد جزئي: ما تبقّى من مكافأة يبقى لزمان.') },
+        { k: T('Every load and every game is logged', 'كل شحن وكل لعبة مسجّلة'), v: T('The list on the card is the whole record — what went on, what came off, and which of the two pots it came from. The balance is nothing but their total.', 'القائمة على البطاقة هي السجل كاملاً — ما دخل وما خرج ومن أي الجيبين خرج. والرصيد ليس إلا مجموعها.') },
+        { k: T('If the machine is offline', 'إذا انقطع الاتصال'), v: T('Playing still works up to ' + this.jodM(PPR.offlineFloorMinor) + '. Loading does not — Zaman will not take cash it cannot record on your pass in front of you.', 'يستمر اللعب حتى ' + this.jodM(PPR.offlineFloorMinor) + '. أما الشحن فلا — لن يأخذ زمان نقداً لا يستطيع تسجيله على بطاقتك أمامك.') },
+        { k: T('Leaving', 'المغادرة'), v: T('A pass with money on it cannot be removed. Empty it, or ask the counter for a refund — then it comes out of your wallet.', 'لا يمكن إزالة بطاقة عليها رصيد. أفرغيها أو اطلبي الاسترداد من الكاشير — عندها تخرج من محفظتك.') },
+        { k: T('Who runs what', 'من يدير ماذا'), v: T('Zaman Arcade holds your balance and pays the refunds. Wasla runs the pass and the receipts.', 'زمان أركيد يحتفظ برصيدك ويدفع الاسترداد. وواصلة تشغّل البطاقة والإيصالات.') }
+      ]
+    };
+    const onCardScene = st.scene === 'card';
+    const termsRows = (onCardScene && TERMS_BY_KIND[cd.kind]) || darajTerms;
+
+    /* ── THE PREPAID BEATS · the panel controls for a card type whose whole story is
+         arithmetic. Each one runs the real engine — bonus-first spending, tier
+         selection, read-time expiry — so what the pass shows afterwards is computed,
+         never staged. They open the card first, because a number changing on a screen
+         she is not looking at is not a demonstration. ── */
+    const ppGo = (fn) => () => {
+      this.userTouch();
+      if (!(onCardScene && cdId === 'zaman')) { this.go('card', { cardOpen: 'zaman' }); this.save(); }
+      fn();
+    };
+    const ppDrainTo = 3200;                 // lands just under lowBalanceAtMinor (5.000)
+    const prepaidBtns = [
+      { label: T('A visit — the till takes JOD\u00A06.50', 'زيارة — الكاشير يخصم JOD\u00A06.50'),
+        sub: T('Bonus first, soonest to expire · before and after, both shown', 'المكافأة أولاً، والأقرب انتهاءً · ويُعرض الرصيد قبل وبعد'),
+        go: ppGo(() => this.doSpend(6500)) },
+      { label: T('She loads JOD\u00A050 at the counter', 'تشحن JOD\u00A050 عند الكاشير'),
+        sub: T('Cash in, ' + this.jodM(this.bonusFor(50000, PPR)) + ' bonus on top — one function decides that number', 'نقد يدخل، ومعه ' + this.jodM(this.bonusFor(50000, PPR)) + ' مكافأة فوقه — دالة واحدة تحدد هذا الرقم'),
+        go: ppGo(() => this.doTopup(50000)) },
+      { label: T('She plays it down to the last dinars', 'تلعب حتى آخر الدنانير'),
+        sub: T('Crosses ' + this.jodM(PPR.lowBalanceAtMinor) + ' — a per-member nudge, not a broadcast', 'تنزل تحت ' + this.jodM(PPR.lowBalanceAtMinor) + ' — تنبيه شخصي لا رسالة جماعية'),
+        // read the balance at the moment of the tap, not at the render that drew the
+        // button — two taps in a row must not spend a number that has already moved
+        go: ppGo(() => { const live = this.ppModel(); this.doSpend(Math.max(1000, live.balanceMinor - ppDrainTo)); }) },
+      { label: T('Three weeks pass — the bonus expires', 'تمرّ ثلاثة أسابيع — تنتهي المكافأة'),
+        sub: T('Expiry is the clock, not a button · her own money is untouched', 'الانتهاء بفعل الوقت لا بضغطة زر · ومالها لا يُمس'),
+        go: ppGo(() => this.doSkip(25)) }
+    ].map((m) => ({ ...m, br: '#E7E0D5', fg: '#241C16', bg: '#FFFFFF' }));
+
+    /* ── THE WALLET STACK · built from WALLET_IDS() so the header count, the saved
+         selection clamp and the rendered rows can never disagree. Zaman's row reads
+         the SAME PP model the card face does. ── */
+    const walletBase = [
+      { id: 'daraj', name: 'Daraj Coffee', merchant: T('Tala Group · Rainbow St', 'مجموعة تالا · شارع الرينبو'), i: 'D', c: retired ? '#4A4E4B' : '#1E5C43', c2: retired ? '#2E312F' : '#123D2C',
+        tagLabel: retired ? T('STATUS', 'الحالة') : (paused ? T('PAUSED', 'موقوفة') : (full ? T('REWARD', 'المكافأة') : T('STAMPS', 'الأختام'))),
+        tagValue: retired ? T('EXPIRED', 'منتهية') : (full && !paused ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal),
+        hero: retired ? T('Programme ended', 'انتهى البرنامج') : (full ? T('Reward ready', 'المكافأة جاهزة') : T(st.stamps + ' of ' + st.goal, st.stamps + ' من ' + st.goal)),
+        line: retired ? T('Kept as a keepsake — the barcode stopped today.', 'محفوظة كذكرى — توقّف الباركود اليوم.')
+          : (paused ? T('Paused while Rainbow St is refitted — your stamps are safe.', 'موقوفة بينما يُجدَّد فرع الرينبو — أختامك محفوظة.')
+            : (full ? T('Your free drink waits at the till.', 'مشروبك المجاني ينتظر عند الكاشير.') : T((st.goal - st.stamps) + ' stamps to your free drink — the 8th is on us.', 'بقي ' + (st.goal - st.stamps) + ' أختام لمشروبك المجاني — الثامن علينا.'))),
+        memberCaption: 'MEMBER · 0114 2291',
+        // mini row: under 16px, so disc + ring + tilt with the glyph dropped
+        mini: this.stampRow(st.stamps, st.goal, { ...DARAJ, size: 11, next: false }) },
+      { id: 'nara', name: 'Nara Care', merchant: T('Nara Pharmacy · Swefieh', 'صيدلية نارا · الصويفية'), i: 'N', c: '#0F5B63', c2: '#093A40', tagLabel: T('BALANCE', 'الرصيد'), tagValue: NARA_BAL, hero: NARA_BAL, line: T('7% of every bill comes back — spend it like cash from JOD\u00A02.', '7% من كل فاتورة تعود لك — أنفقها كنقد ابتداءً من JOD\u00A02.'), memberCaption: 'MEMBER · 0452 7736' },
+      { id: 'marmar', name: 'Marmar Gold', merchant: T('Marmar Lounge · Abdali', 'صالة مرمر · العبدلي'), i: 'M', c: '#26262B', c2: '#141417', tagLabel: T('TIER', 'الفئة'), tagValue: 'GOLD ★', hero: T('Gold', 'ذهبية'), line: T('2 visits from Royal — skip the line, 15% off, the corner booth.', 'زيارتان من الفئة الملكية — بلا طابور، خصم 15%، وطاولة الزاوية.'), memberCaption: 'GOLD · 2290 8814' },
+      { id: 'qamar', name: 'Qamar Eid Coupon', merchant: T('Qamar Sweets · downtown', 'حلويات قمر · وسط البلد'), i: 'Q', c: '#B14A32', c2: '#7C3121', tagLabel: couponUsed ? T('USED', 'مستخدم') : T('EXPIRES', 'تنتهي'), tagValue: couponUsed ? T('TODAY', 'اليوم') : '15 AUG', hero: T('Free knafeh slice', 'قطعة كنافة مجانية'), line: couponUsed ? T('Spent today — kept a week as your receipt.', 'استُخدم اليوم — يبقى أسبوعاً كإيصال.') : T('One use, then it retires itself. The scanner asks twice.', 'استخدام واحد ثم تتقاعد وحدها. الماسح يسأل مرتين.'), memberCaption: 'COUPON · 7743 0091' },
+      /* Prepaid in the stack: the total, and IMMEDIATELY under it which part of the
+         total is hers and what comes back as cash. The same two numbers as the card
+         face, from the same model — a wallet row that rounded differently from the
+         pass it opens would be the first place a customer stops trusting either. */
+      { id: 'zaman', name: 'Zaman Arcade', merchant: T('Tala Group · Rainbow St', 'مجموعة تالا · شارع الرينبو'), i: 'Z', c: '#4B2E83', c2: '#2E1B55',
+        tagLabel: T('BALANCE', 'الرصيد'), tagValue: this.jodM(ppBalM), hero: this.jodM(ppBalM),
+        line: ppEmpty
+          ? T('Empty — load it at the counter and play it down.', 'فارغة — اشحنيها عند الكاشير وألعبي بها.')
+          : T(ppSplitLineRow + ' · ' + this.jodM(ppRefM) + ' back as cash.', ppSplitLineRow + ' · ويعود ' + this.jodM(ppRefM) + ' نقداً.'),
+        memberCaption: 'PREPAID · 0223 5514' }
+    ].filter((wc) => !(left && wc.id === 'daraj') && !(ppOut && wc.id === 'zaman'));
+    /* The selection is clamped to what is actually on screen: removing a pass must not
+       leave the highlight pointing past the end of the stack. */
+    const walletSelIdx = Math.max(0, Math.min(st.walletSel, walletBase.length - 1));
+    const walletCards = walletBase.map((wc, i) => ({ ...wc,
+      hasMini: !!wc.mini, mini: wc.mini || [],
+      open: walletSelIdx === i,
+      aria: wc.name + ' — ' + wc.tagLabel + ' ' + wc.tagValue,
+      mt: i === 0 ? '0' : (walletSelIdx === i - 1 ? '10px' : '-4px'),
+      anim: 'fanIn' + seq + ' .52s' + HOUSE + (0.05 + i * 0.07).toFixed(2) + 's both',
+      /* Second tap on an OPEN card opens it — for every card now, not just Daraj.
+         Daraj goes to its own pass; the others go to the generic card scene
+         in their own platform-faithful shape. */
+      pick: () => {
+        this.userTouch();
+        if (walletSelIdx === i) { if (wc.id === 'daraj') { this.go('pass'); return; } this.go('card', { cardOpen: wc.id }); this.save(); return; }
+        this.setState({ walletSel: i }); this.save();
+      } }));
     return {
       dir: EN ? 'ltr' : 'rtl', langLabel: EN ? 'عربي' : 'EN',
       toggleLang: () => { this.userTouch(); this.setState({ lang: EN ? 'ar' : 'en' }); this.save(); },
@@ -2425,7 +3337,7 @@ class Component extends DCLogic {
       scanAgain: () => { this.userTouch(); this.go('camera'); },
       scanAgainLabel: T('Scan again — as a returning member ↻', 'امسح مجدداً — كعضو عائد ↻'),
       suTitle: T('Join Daraj Coffee', 'انضم إلى قهوة الدرج'), suTitleAlt: 'انضم إلى قهوة الدرج — الثامن علينا',
-      suJoinLine: EN ? 'Buy 7, the 8th is on us.' : 'اشترِ ٧ والثامن علينا.',
+      suJoinLine: EN ? 'Buy 7, the 8th is on us.' : 'اشترِ 7 والثامن علينا.',
       fName: EN ? 'Full name' : 'الاسم الكامل', fPhone: EN ? 'Phone' : 'رقم الهاتف', fDrink: EN ? 'Favourite drink' : 'مشروبك المفضل', fDrinkHint: EN ? '· Daraj asks this one' : '· سؤال من الدرج',
       formName: st.form.name, setFormName: (e) => { this.userTouch(); this.setState({ form: { ...st.form, name: e.target.value } }); this.save(); },
       formPhone: st.form.phone, setFormPhone: (e) => { this.userTouch(); this.setState({ form: { ...st.form, phone: e.target.value } }); this.save(); },
@@ -2492,7 +3404,7 @@ class Component extends DCLogic {
       // ── the Google Wallet face · text-first, Details list, centred barcode ──
       gProgram: 'Daraj Coffee',
       gStampCard: T('Stamp card', 'بطاقة أختام'),
-      gHeroTitle: T('Buy 7, the 8th is on us', 'اشترِ ٧ والثامن علينا'),
+      gHeroTitle: T('Buy 7, the 8th is on us', 'اشترِ 7 والثامن علينا'),
       gHasHeroArt: !!heroArt, gHeroArt: heroArt || '',
       gDetailsK: T('Details', 'التفاصيل'),
       gDetails: [
@@ -2536,39 +3448,14 @@ class Component extends DCLogic {
       confetti: Array.from({ length: 14 }, (_, i) => ({ x: (6 + (i * 67) % 88) + '%', c: ['#E88024', '#2FAE66', '#F0C74A', '#7FA6C9'][i % 4], dur: (2.1 + (i % 5) * 0.25) + 's', delay: (0.08 * (i % 7)) + 's' })),
       isWallet: st.scene === 'wallet',
       walletWord: T('Wallet', 'المحفظة'),
-      walletCount: left ? T('3 CARDS · 0 APPS', '3 بطاقات · 0 تطبيقات') : T('4 CARDS · 0 APPS', '4 بطاقات · 0 تطبيقات'),
+      /* DERIVED, all three of them. These used to be the literal "4 CARDS" and "Four
+         shops" of a four-card wallet, so the day a fifth pass arrived the header
+         quietly started lying about what was underneath it. */
+      walletCount: T(walletCards.length + ' CARDS · 0 APPS', walletCards.length + ' بطاقات · 0 تطبيقات'),
       oneQrLine: T('One QR, every till.', 'رمز واحد، كل الكاشيرات.'),
-      walletStackCaption: T('Four shops · one wallet · صفّ واحد', 'أربعة محال · محفظة واحدة · صفّ واحد'),
+      walletStackCaption: T(walletCards.length + ' shops · one wallet · صفّ واحد', walletCards.length + ' محال · محفظة واحدة · صفّ واحد'),
       walletFootCaption: T('Rainbow St to Abdali — the whole high street, one swipe from the lock screen.', 'من الرينبو إلى العبدلي — الشارع كله، على بُعد سحبة من شاشة القفل.'),
-      walletCards: [
-        { id: 'daraj', name: 'Daraj Coffee', merchant: T('Tala Group · Rainbow St', 'مجموعة تالا · شارع الرينبو'), i: 'D', c: retired ? '#4A4E4B' : '#1E5C43', c2: retired ? '#2E312F' : '#123D2C',
-          tagLabel: retired ? T('STATUS', 'الحالة') : (paused ? T('PAUSED', 'موقوفة') : (full ? T('REWARD', 'المكافأة') : T('STAMPS', 'الأختام'))),
-          tagValue: retired ? T('EXPIRED', 'منتهية') : (full && !paused ? T('READY', 'جاهزة') : st.stamps + ' / ' + st.goal),
-          hero: retired ? T('Programme ended', 'انتهى البرنامج') : (full ? T('Reward ready', 'المكافأة جاهزة') : T(st.stamps + ' of ' + st.goal, st.stamps + ' من ' + st.goal)),
-          line: retired ? T('Kept as a keepsake — the barcode stopped today.', 'محفوظة كذكرى — توقّف الباركود اليوم.')
-            : (paused ? T('Paused while Rainbow St is refitted — your stamps are safe.', 'موقوفة بينما يُجدَّد فرع الرينبو — أختامك محفوظة.')
-              : (full ? T('Your free drink waits at the till.', 'مشروبك المجاني ينتظر عند الكاشير.') : T((st.goal - st.stamps) + ' stamps to your free drink — the 8th is on us.', 'بقي ' + (st.goal - st.stamps) + ' أختام لمشروبك المجاني — الثامن علينا.'))),
-          memberCaption: 'MEMBER · 0114 2291',
-          // mini row: under 16px, so disc + ring + tilt with the glyph dropped
-          mini: this.stampRow(st.stamps, st.goal, { ...DARAJ, size: 11, next: false }) },
-        { id: 'nara', name: 'Nara Care', merchant: T('Nara Pharmacy · Swefieh', 'صيدلية نارا · الصويفية'), i: 'N', c: '#0F5B63', c2: '#093A40', tagLabel: T('BALANCE', 'الرصيد'), tagValue: 'JOD 4.50', hero: 'JOD 4.50', line: T('7% of every bill comes back — spend it like cash from JOD 2.', '7% من كل فاتورة تعود لك — أنفقها كنقد ابتداءً من دينارين.'), memberCaption: 'MEMBER · 0452 7736' },
-        { id: 'marmar', name: 'Marmar Gold', merchant: T('Marmar Lounge · Abdali', 'صالة مرمر · العبدلي'), i: 'M', c: '#26262B', c2: '#141417', tagLabel: T('TIER', 'الفئة'), tagValue: 'GOLD ★', hero: T('Gold', 'ذهبية'), line: T('2 visits from Royal — skip the line, 15% off, the corner booth.', 'زيارتان من الفئة الملكية — بلا طابور، خصم 15%، وطاولة الزاوية.'), memberCaption: 'GOLD · 2290 8814' },
-        { id: 'qamar', name: 'Qamar Eid Coupon', merchant: T('Qamar Sweets · downtown', 'حلويات قمر · وسط البلد'), i: 'Q', c: '#B14A32', c2: '#7C3121', tagLabel: couponUsed ? T('USED', 'مستخدم') : T('EXPIRES', 'تنتهي'), tagValue: couponUsed ? T('TODAY', 'اليوم') : '15 AUG', hero: T('Free knafeh slice', 'قطعة كنافة مجانية'), line: couponUsed ? T('Spent today — kept a week as your receipt.', 'استُخدم اليوم — يبقى أسبوعاً كإيصال.') : T('One use, then it retires itself. The scanner asks twice.', 'استخدام واحد ثم تتقاعد وحدها. الماسح يسأل مرتين.'), memberCaption: 'COUPON · 7743 0091' }
-      ].filter((wc) => !(left && wc.id === 'daraj'))
-       .map((wc, i) => ({ ...wc,
-        hasMini: !!wc.mini, mini: wc.mini || [],
-        open: st.walletSel === i,
-        aria: wc.name + ' — ' + wc.tagLabel + ' ' + wc.tagValue,
-        mt: i === 0 ? '0' : (st.walletSel === i - 1 ? '10px' : '-4px'),
-        anim: 'fanIn' + seq + ' .52s' + HOUSE + (0.05 + i * 0.07).toFixed(2) + 's both',
-        /* Second tap on an OPEN card opens it — for every card now, not just Daraj.
-           Daraj goes to its own pass; the other three go to the generic card scene
-           in their own platform-faithful shape. */
-        pick: () => {
-          this.userTouch();
-          if (st.walletSel === i) { if (wc.id === 'daraj') { this.go('pass'); return; } this.go('card', { cardOpen: wc.id }); this.save(); return; }
-          this.setState({ walletSel: i }); this.save();
-        } })),
+      walletCards,
       // the two doors the wallet was missing
       walletExtras: [
         { k: T('My details', 'تفاصيلي'), v: T('Name, phone, birthday, notifications', 'الاسم والهاتف والميلاد والإشعارات'), badge: '', go: () => { this.userTouch(); this.go('details'); } },
@@ -2603,7 +3490,12 @@ class Component extends DCLogic {
       hasNotif: !!st.notif && !st.lock,
       notifAnim: st.notifOut ? 'notifExit .26s cubic-bezier(.4,0,1,1) both' : 'notifSpring .5s' + HOUSE + 'both',
       notifTitle: (st.notif || {}).title || '', notifBody: (st.notif || {}).body || '',
-      notifInitial: ((st.notif || {}).title || 'D')[0], notifColor: ((st.notif || {}).title || '').includes('Google') ? '#4285F4' : '#1E5C43',
+      notifInitial: ((st.notif || {}).title || 'D')[0],
+      /* Per-sender tint, with a fallback so an unlisted sender is Daraj green rather
+         than a crash or an empty swatch. A Zaman banner wearing Daraj's green would
+         put the coffee shop's colour on a message about arcade money. */
+      notifColor: ({ 'Zaman Arcade': '#4B2E83', 'Qamar Sweets': '#B14A32', 'Marmar Lounge': '#26262B', 'Nara Care': '#0F5B63', Wallet: '#3A3A3C', Wasla: '#E88024' }[(st.notif || {}).title || ''])
+        || (((st.notif || {}).title || '').includes('Google') ? '#4285F4' : '#1E5C43'),
       nowWord: T('now', 'الآن'),
       isLock: st.lock,
       /* The demo's one clock: Thursday 30 July 2026, shared with the Console and the
@@ -2618,7 +3510,10 @@ class Component extends DCLogic {
         ? T('The last message a programme ever sends · and it is kept in Messages', 'آخر رسالة يرسلها برنامج · وتُحفظ في الرسائل')
         : T('One message · every wallet · 10:00 sharp', 'رسالة واحدة · كل المحافظ · 10:00 تماماً'),
       lockTap: () => { this.userTouch(); this.lockTap(); },
-      sceneChips, momentBtns, lifeBtns,
+      sceneChips, momentBtns, lifeBtns, prepaidBtns,
+      prepaidK: T('The prepaid pass · Zaman Arcade', 'البطاقة المدفوعة مسبقاً · زمان أركيد'),
+      prepaidHint: T('The only card type where a mistake moves a customer’s money. Every number on that pass is the total of the rows underneath it — nothing is stored twice, and the two figures that matter, the balance and what comes back as cash, are never shown apart.',
+                     'النوع الوحيد الذي يُحرّك فيه الخطأ مال الزبون. كل رقم على تلك البطاقة هو مجموع الحركات تحته — لا شيء مخزَّن مرتين، والرقمان المهمان، الرصيد وما يعود نقداً، لا يُعرضان منفصلين أبداً.'),
       lifeK: T('Life of the card', 'عمر البطاقة'),
       lifeHint: T('Every card ends somehow. These are the three endings a wallet can actually show — and the shop has to say each of them out loud.', 'كل بطاقة تنتهي بطريقة ما. هذه هي النهايات الثلاث التي تستطيع المحفظة إظهارها فعلاً — وعلى المحل أن يقول كلاً منها بصوت مسموع.'),
 
@@ -2730,7 +3625,22 @@ class Component extends DCLogic {
       cdHasPerks: !!CD.perks, cdPerksK: CD.perksK || '', cdPerks: (CD.perks || []).map(p => ({ ...p, mark: p.off ? '·' : '✓', markBg: p.off ? 'rgba(255,255,255,.12)' : 'rgba(232,184,36,.22)', markFg: p.off ? 'rgba(255,255,255,.45)' : '#E8B824', op: p.off ? '.5' : '1' })),
       cdHasProgress: !!CD.progLabel, cdProgLabel: CD.progLabel || '', cdProgPct: CD.progPct || '0%', cdProgNote: CD.progNote || '',
       cdHasCredits: !!CD.credits, cdCreditsK: CD.creditsK || '',
-      cdCredits: (CD.credits || []).map(c => ({ ...c, amtFg: c.amt.charAt(0) === '−' ? '#F0A08A' : '#9FE7C4' })),
+      /* THE MINUS SIGN. The debit test keys off U+2212 MINUS SIGN — the character the
+         money helpers emit — and now also accepts an ASCII hyphen, because a row typed
+         by hand with "-2.00" used to render GREEN, as a credit, with no error anywhere.
+         A defaulted tag keeps every row the same shape whether or not its card type
+         has buckets, so the template never reads a key that is not there. */
+      cdCredits: (CD.credits || []).map(c => {
+        const ch = String(c.amt || '').charAt(0), debit = ch === '−' || ch === '-';
+        return { hasTag: false, tag: '', tagBg: 'transparent', tagFg: 'transparent', ...c, amtFg: debit ? '#F0A08A' : '#9FE7C4' };
+      }),
+      cdLedgerFootOn: !!CD.ledgerFoot, cdLedgerFoot: CD.ledgerFoot || '',
+      /* ── the prepaid split · hero is the TOTAL, this is what the total is made of ── */
+      cdHasSplit: !!CD.hasSplit,
+      cdSplitYoursK: CD.splitYoursK || '', cdSplitYoursV: CD.splitYoursV || '', cdSplitYoursSub: CD.splitYoursSub || '',
+      cdSplitBonusK: CD.splitBonusK || '', cdSplitBonusV: CD.splitBonusV || '', cdSplitBonusSub: CD.splitBonusSub || '',
+      cdRefundK: CD.refundK || '', cdRefundV: CD.refundV || '', cdRefundMath: CD.refundMath || '', cdRefundNote: CD.refundNote || '',
+      cdNoticeOn: !!CD.noticeOn, cdNoticeText: CD.noticeText || '', cdNoticeBg: CD.noticeBg || 'transparent', cdNoticeFg: CD.noticeFg || '#FFFFFF',
       cdBarcodeNo: CD.barcodeNo, cdBarcodeOn: !(cd.kind === 'coupon' && couponUsed),
       cdBarcodeOff: cd.kind === 'coupon' && couponUsed,
       cdBarcodeOffLabel: T('Redeemed — nothing left to scan', 'استُخدم — لا شيء ليُمسح'),
@@ -2742,6 +3652,21 @@ class Component extends DCLogic {
       cdDim: (cd.kind === 'coupon' && couponUsed) ? 'grayscale(.55)' : 'none',
       cdBackRows, cdBackTitle: cd.name,
       cdAria: cd.name + ' — ' + CD.tagLabel + ' ' + CD.tagValue,
+
+      /* ══ REMOVING A PREPAID PASS · a refusal, not a confirm ══════════════ */
+      ppLeaveOn: st.ppLeaveArm,
+      ppLeaveTitle: ppEmpty ? T('Remove the Zaman Arcade pass?', 'إزالة بطاقة زمان أركيد؟')
+                            : T('There is still money on this pass', 'ما زال على هذه البطاقة رصيد'),
+      ppLeaveBody: ppEmpty
+        ? T('Nothing is left on it, so nothing is lost. Your loading history stays with Zaman, and the same phone number puts the pass back whenever you want it.',
+            'لم يبقَ عليها شيء، فلا شيء يُفقد. يبقى سجل شحنك عند زمان، ونفس رقم الهاتف يعيد البطاقة متى شئتِ.')
+        : T(this.jodM(ppBalM) + ' is sitting on this pass — ' + this.jodM(ppPrinM) + ' of it your own money, and ' + this.jodM(ppRefM) + ' of that comes back as cash. Removing the pass would not refund it, so the wallet will not remove it. Ask the counter for a refund, or play it out — then this comes out with one tap.',
+            'على هذه البطاقة ' + this.jodM(ppBalM) + ' — منها ' + this.jodM(ppPrinM) + ' مالك، ويعود منها ' + this.jodM(ppRefM) + ' نقداً. الإزالة لا تعيد لك المبلغ، لذا لن تزيلها المحفظة. اطلبي الاسترداد من الكاشير أو ألعبي حتى ينتهي — عندها تُزال بضغطة واحدة.'),
+      ppLeaveNote: ppRefundSentence,
+      ppLeaveKeepLabel: ppEmpty ? T('Keep the card', 'أبقِ البطاقة') : T('Keep the card', 'أبقِ البطاقة'),
+      ppLeaveGoOn: ppEmpty, ppLeaveGoLabel: T('Remove it', 'أزلها'),
+      closePPLeave: () => { this.userTouch(); this.setState({ ppLeaveArm: false }); },
+      confirmPPLeave: () => { this.userTouch(); this.doPPRemove(); },
 
       /* ══ THE GIFT ══════════════════════════════════════════════════ */
       isGift: st.scene === 'gift',
@@ -2764,7 +3689,11 @@ class Component extends DCLogic {
       /* ══ TERMS ══════════════════════════════════════════════════════ */
       termsOn: st.termsOpen, termsRows,
       termsTitle: T('The short version', 'النسخة المختصرة'),
-      termsTitleAlt: T('Daraj Coffee · stamp card', 'قهوة الدرج · بطاقة أختام'),
+      // the sheet says which card it is speaking for — prepaid terms under a coffee
+      // card's name would be the sheet lying about whose money it is describing
+      termsTitleAlt: (onCardScene && TERMS_BY_KIND[cd.kind])
+        ? cd.name + T(' · prepaid card', ' · بطاقة مسبقة الدفع')
+        : T('Daraj Coffee · stamp card', 'قهوة الدرج · بطاقة أختام'),
       closeTerms: () => { this.userTouch(); this.setState({ termsOpen: false }); },
       termsDone: T('Done', 'تم'),
       termsFoot: T('Six lines, because six lines is all this actually is.', 'ستة سطور، لأن هذا كل ما في الأمر فعلاً.'),

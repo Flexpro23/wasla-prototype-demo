@@ -461,10 +461,15 @@
                 <div>
                   <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:7px;">Card types they liked</div>
                   <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                    <sc-for list="{{ afTypeChips }}" as="tc" hint-placeholder-count="8">
-                      <div onClick="{{ tc.pick }}" class="ws-chip" style="cursor:pointer;border:1.5px solid {{ tc.br }};background:{{ tc.bg }};color:{{ tc.fg }};border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;">{{ tc.mark }}{{ tc.label }}</div>
+                    <!-- one chip per card type in WASLA_DB.types. A type the rep is not allowed to
+                         SELL still renders — greyed, locked and unpickable — because a type that
+                         quietly vanished would read as "Wasla does not do that", and the whole
+                         point is that Wasla does, once the account is cleared for it. -->
+                    <sc-for list="{{ afTypeChips }}" as="tc" hint-placeholder-count="9">
+                      <div onClick="{{ tc.pick }}" class="{{ tc.cls }}" style="cursor:{{ tc.cur }};opacity:{{ tc.op }};border:1.5px solid {{ tc.br }};background:{{ tc.bg }};color:{{ tc.fg }};border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;">{{ tc.mark }}{{ tc.label }}</div>
                     </sc-for>
                   </div>
+                  <div style="font-size:10px;color:{{ afTypeNoteFg }};margin-top:7px;line-height:1.5;">{{ afTypeNote }}</div>
                 </div>
                 <div>
                   <div style="font-size:10.5px;font-weight:800;color:#5D5348;margin-bottom:7px;">Plan interest</div>
@@ -789,6 +794,38 @@ const dueToday = (f) => {
 /** The clock on a timed follow-up — 'Thursday 11:00' → '11:00'; null when the rep gave no time. */
 const dueAt = (f) => { const m = /\b([01]?\d|2[0-3]):([0-5]\d)\b/.exec(String(f == null ? '' : f)); return m ? m[0] : null; };
 
+// ── counting in words · the pitch copy spells the number of card types out, and a hand-typed
+//    "eight" went stale the day the ninth type shipped. Everything that says how many types there
+//    are now derives the word from typeNames().length, so the tenth type updates the sentence
+//    without anybody remembering to. Past the table it degrades to the digits — a wrong-looking
+//    "all 14 card types" is still a TRUE sentence, which a stale "eight" was not. ──
+const NUM_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+const numWord = (n) => NUM_WORDS[n] || String(n);
+
+// ── the prepaid copy · English and Arabic, written side by side so neither can be added without
+//    the other. This phone has no language switch — the rest of it is English with the Arabic
+//    carried inline after a "·" (see resetLabel, greetAr) — and this follows that. The Arabic is
+//    written as its own sentence, not as a gloss of the English: it says why, then what to do. ──
+const PREPAID_COPY = {
+  // shown under the chip row while the business is NOT cleared
+  lockedEn: 'Prepaid holds the customer’s own cash on her pass, so Wasla clears the business before anyone can sell it. Ask Wasla to enable prepaid — it unlocks here the moment they do.',
+  lockedAr: 'الدفع المسبق يعني أن نقود الزبون نفسها محفوظة على بطاقته، ولهذا تعتمد وصلة المحل قبل أن يُباع. اطلب من وصلة تفعيل الدفع المسبق — وسيُفتح هنا فور اعتماده.',
+  // shown under the chip row once it IS cleared
+  openEn: 'Prepaid is cleared for this account — stored value, the customer’s own money, refundable less what she has spent.',
+  openAr: 'الدفع المسبق معتمد لهذا الحساب — قيمة مخزَّنة، نقود الزبون نفسها، تُسترد ناقصًا ما أُنفق منها.',
+  // the toast on tapping the locked chip
+  tapEn: 'Prepaid needs Wasla’s sign-off on the account first — ask for it, and the chip unlocks here.',
+  tapAr: 'الدفع المسبق يحتاج اعتماد وصلة للحساب أولًا — اطلبه ويُفتح الخيار هنا.',
+  // the toast when a restored draft carried prepaid onto a business that is not cleared
+  dropEn: 'Prepaid was left off the list — this business is not cleared for stored value yet.',
+  dropAr: 'استُثني الدفع المسبق من القائمة — هذا المحل غير معتمد للقيمة المخزَّنة بعد.',
+  // the note when the draft still holds the tick but the business it now names cannot have it
+  stuckEn: 'You ticked prepaid on an earlier draft — under this name it will not go on the board.',
+  stuckAr: 'اخترت الدفع المسبق في مسودة سابقة — لكنه لن يُسجَّل على اللوح تحت هذا الاسم.'
+};
+/** EN · AR on one line — the house pattern for every bilingual string on this phone. */
+const bi = (en, ar) => en + ' · ' + ar;
+
 // ── the persona · WASLA_DB.console.team[1] ──
 const ME = { name: 'Lina Kassab', ar: 'لينا قسام', initials: 'LK', first: 'Lina', role: 'Sales' };
 const QUOTA = 8;
@@ -844,7 +881,57 @@ class Component extends DCLogic {
   };
 
   db() { const D = (window.WASLA_DB || {}).console || {}; return { leads: D.leads || [], team: D.team || [], leaderboard: D.leaderboard || [], accounts: D.accounts || [] }; }
-  typeNames() { const T = (window.WASLA_DB || {}).types || []; return T.length ? T.map(t => t.name) : ['Stamp Card', 'Cashback Card', 'Points Card', 'Discount Card', 'Coupon', 'VIP Tiers', 'Challenge Card', 'Membership Card']; }
+  /** Every card type Wasla sells, in WASLA_DB order. The fallback array is that same list in that
+      same order — if the two ever disagree the chip row and the pitch copy disagree with them, so
+      a new type must be appended to BOTH or to neither. */
+  typeNames() { const T = (window.WASLA_DB || {}).types || []; return T.length ? T.map(t => t.name) : ['Stamp Card', 'Cashback Card', 'Points Card', 'Discount Card', 'Coupon', 'VIP Tiers', 'Challenge Card', 'Membership Card', 'Prepaid Card']; }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  PREPAID · the one card type this phone may describe but must not promise
+  //
+  //  Prepaid is stored value: the customer hands the cashier real cash and it sits on the pass as
+  //  HER money. That is a financial liability, not a loyalty mechanic — it needs a float
+  //  agreement, a written refund policy and a named responsible owner before the first dinar can
+  //  be loaded, and Wasla underwrites that per ACCOUNT. A rep who ticks it on a Monday walk-in has
+  //  promised something the Wednesday review can refuse, and the person who eats that is the owner
+  //  who already told his customers they could load cards. So the chip is locked until Wasla has
+  //  cleared the business, and the rep is told who to ask instead of being told no.
+  //
+  //  Nothing here is hand-typed: both the type NAME and the cleared list are read off the shared
+  //  DB, and every read is wrapped so a DB without the ninth type simply clears nobody. This is a
+  //  per-type lookup on the render path, so it can never be allowed to throw — renderVals()
+  //  computes every screen on every render and a throw here would take the whole phone down.
+  // ────────────────────────────────────────────────────────────────────────────
+  /** The name prepaid goes by in WASLA_DB — afTypes stores type NAMES, so we match on the name. */
+  prepaidName() {
+    const T = (window.WASLA_DB || {}).types || [];
+    const p = (Array.isArray(T) ? T : []).filter(t => t && t.id === 'prepaid')[0];
+    return (p && p.name) || 'Prepaid Card';
+  }
+  /** Businesses Wasla has already underwritten for stored value, as a lowercased name → true map.
+      Two honest sources, both already in the shared DB and neither invented here:
+        · a business that ALREADY runs a prepaid card — the clearance exists, that card is proof;
+        · the ACCOUNT that owns one, read off the console's approval queue, because clearance is
+          granted to the account and every card under it inherits it.
+      Returns {} when neither source exists — an empty map locks the chip, which is the safe way
+      to be wrong. */
+  prepaidCleared() {
+    const D = window.WASLA_DB || {};
+    const out = {};
+    const add = (n) => { const s = String(n == null ? '' : n).trim(); if (s) out[s.toLowerCase()] = true; };
+    const arr = (x) => Array.isArray(x) ? x : [];
+    arr(D.cards).forEach(c => { if (c && c.type === 'prepaid') add(c.name); });
+    const C = D.console || {};
+    arr(C.approvals).forEach(a => { if (a && /prepaid/i.test(String((a && a.type) || ''))) add(a.account); });
+    if (D.account && arr(D.cards).some(c => c && c.type === 'prepaid')) add(D.account.company);
+    return out;
+  }
+  /** Is THIS business cleared to sell prepaid? Name match, trimmed and case-folded — the same
+      shape of match the console uses on lead names, so the two surfaces agree about who is who. */
+  prepaidOk(name) {
+    const k = String(name == null ? '' : name).trim().toLowerCase();
+    return !!k && !!(this.prepaidCleared() || {})[k];
+  }
 
   // ────────────────────────────────────────────────────────────────────────────
   //  storage · two keys, two different contracts
@@ -1446,6 +1533,15 @@ class Component extends DCLogic {
     const afTomb = afBizOk && leadGone.has(afBizV);
     const setAf = (k, v) => { this.setState({ [k]: v }); this.persist(); };
     const pickMulti = (k, list, v) => setAf(k, (list || []).includes(v) ? list.filter(x => x !== v) : [...(list || []), v]);
+    // ── prepaid clearance, resolved ONCE per render and read by the chip row, the note under it
+    //    and the submit. Deriving it three times is how the wizard's cashback maths ended up
+    //    showing one number and crediting another; one binding, three readers. ──
+    const afPrepaidName = this.prepaidName();
+    const afPrepaidOk = this.prepaidOk(afBizV);
+    // A draft restored under one business name can carry a prepaid tick onto another, so the tick
+    // is only HONOURED while the clearance holds. The chip renders un-ticked the moment the name
+    // stops matching, and addApply strips it again at submit — render must not write state.
+    const afPrepaidStuck = !afPrepaidOk && (st.afTypes || []).indexOf(afPrepaidName) >= 0;
     const addStep = Math.max(0, Math.min(2, Number(st.addStep) || 0));
     // the third gate is the WHOLE form's gate: a restored draft can land on step 3 with step 1
     // emptied, and the button must not pretend that is submittable
@@ -1469,10 +1565,15 @@ class Component extends DCLogic {
     const addApply = () => {
       if (!addReady || afDupe || afTomb) { this.say(afTomb ? (afBizV + ' was removed on the console — pick another name') : afDupe ? (afBizV + ' is already in the pipeline') : 'Business, owner and a full phone number are the three we will not guess'); return; }
       const locs = afLocs.map(x => String(x || '').trim()).filter(Boolean);
+      // ── the clearance is re-read HERE, against the name actually being submitted, not against
+      //    whatever it was when the chip was tapped. A draft can be restored, renamed and sent in
+      //    one session; the list that lands on Omar's board must be the list Wasla can approve. ──
+      const typesOut = [...(st.afTypes || [])].filter(t => t !== afPrepaidName || this.prepaidOk(afBizV));
+      const droppedPrepaid = typesOut.length !== (st.afTypes || []).length;
       const lead = { name: afBizV, ar: (st.afAr || '').trim(), stage: 'Cold', owner: afOwnerV, by: 'Lina',
         phone: (st.afPhone || '').trim(), email: (st.afEmail || '').trim() || '—',
         vertical: st.afVertical, city: (st.afCity || 'Amman').trim(), areas: [...(st.afAreas || [])],
-        locs: locs.length ? locs : [(st.afCity || 'Amman').trim()], types: [...(st.afTypes || [])],
+        locs: locs.length ? locs : [(st.afCity || 'Amman').trim()], types: typesOut,
         plan: st.afPlan, value: Number(st.afValue) || PLAN_PRICE[st.afPlan] || 25,
         source: st.afSource, follow: st.afFollow, touch: 0,
         note: (st.afNotes || '').trim() || 'Captured just now — no touch yet', seedTrail: [] };
@@ -1483,7 +1584,11 @@ class Component extends DCLogic {
         afVertical: 'Café', afPlan: 'Growth', afValue: '79', afSource: 'Referral', afFollow: 'Tomorrow'
       });
       this.go('lead', 'fwd');
-      this.say(lead.name + ' is on the board at Cold — JOD ' + lead.value + '/month, follow up ' + String(lead.follow).toLowerCase());
+      // the drop is said OUT LOUD — a type that vanished silently between the form and the board
+      // is exactly the promise the rep would go on repeating to the owner
+      this.say(droppedPrepaid
+        ? bi(lead.name + ' is on the board at Cold. ' + PREPAID_COPY.dropEn, PREPAID_COPY.dropAr)
+        : (lead.name + ' is on the board at Cold — JOD ' + lead.value + '/month, follow up ' + String(lead.follow).toLowerCase()));
     };
 
     // ── the invite ──
@@ -1839,7 +1944,33 @@ class Component extends DCLogic {
             : ('Not a full number yet — ' + afPhoneDigits + ' of 9 digits.'),
       afEmail: st.afEmail, setAfEmail: (e) => setAf('afEmail', e.target.value),
       afSourceChips: SOURCES.map(s => { const on = st.afSource === s; return { label: s, br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => setAf('afSource', s) }; }),
-      afTypeChips: this.typeNames().map(t => { const on = (st.afTypes || []).includes(t); return { label: t, mark: on ? '✓ ' : '', br: on ? '#2FAE66' : '#E7E0D5', bg: on ? '#E7F6EE' : '#FFFFFF', fg: on ? '#1E7D47' : '#5D5348', pick: () => pickMulti('afTypes', st.afTypes, t) }; }),
+      // one chip per type in WASLA_DB.types. Prepaid is the only one that can come back LOCKED —
+      // it is stored value, so Wasla underwrites the account before a rep may promise it. A locked
+      // chip is never "on", whatever a restored draft says, and tapping it explains rather than
+      // just refusing. `ws-off` is the disabled register — it kills the hover/press kit outright.
+      afTypeChips: this.typeNames().map(t => {
+        const lock = (t === afPrepaidName) && !afPrepaidOk;
+        const on = !lock && (st.afTypes || []).includes(t);
+        return {
+          label: t,
+          mark: lock ? '🔒 ' : on ? '✓ ' : '',
+          br: lock ? '#E7E0D5' : on ? '#2FAE66' : '#E7E0D5',
+          bg: lock ? '#F5F1E9' : on ? '#E7F6EE' : '#FFFFFF',
+          fg: lock ? '#93887A' : on ? '#1E7D47' : '#5D5348',
+          cls: lock ? 'ws-off' : 'ws-chip',
+          cur: lock ? 'not-allowed' : 'pointer',
+          op: lock ? '.62' : '1',
+          pick: () => { if (lock) { this.say(bi(PREPAID_COPY.tapEn, PREPAID_COPY.tapAr)); return; } pickMulti('afTypes', st.afTypes, t); }
+        };
+      }),
+      afTypeNote: afPrepaidOk
+        ? bi(PREPAID_COPY.openEn, PREPAID_COPY.openAr)
+        : afPrepaidStuck
+          // the draft still carries the tick, so say so out loud rather than let the rep read an
+          // un-ticked chip as "I never picked that" and re-promise it from memory
+          ? bi(PREPAID_COPY.stuckEn + ' ' + PREPAID_COPY.lockedEn, PREPAID_COPY.stuckAr + ' ' + PREPAID_COPY.lockedAr)
+          : bi(PREPAID_COPY.lockedEn, PREPAID_COPY.lockedAr),
+      afTypeNoteFg: afPrepaidOk ? '#1E7D47' : afPrepaidStuck ? '#9A6B12' : '#A79C8D',
       afPlanChips: ['Starter', 'Growth', 'Unlimited'].map(p => { const on = st.afPlan === p; return { label: p + ' · JOD ' + PLAN_PRICE[p], br: on ? '#E88024' : '#E7E0D5', bg: on ? '#FDF4EC' : '#FFFFFF', fg: on ? '#C96A14' : '#5D5348', pick: () => { this.setState({ afPlan: p, afValue: String(PLAN_PRICE[p]) }); this.persist(); } }; }),
       afValue: st.afValue, setAfValue: (e) => setAf('afValue', String(e.target.value).replace(/[^0-9]/g, '')),
       afValueNote: 'Picking a plan fills this in. Override it when the deal is not list price — the forecast reads this number, not the plan.',
@@ -1874,7 +2005,12 @@ class Component extends DCLogic {
       ivOwner: st.invOwner, setIvOwner: (e) => ivEdit('invOwner', e.target.value), ivOwnerBr: ivOwnerOk ? '#9AD3B4' : (ivOwnerV.length ? '#F0A92B' : '#D8D0C2'),
       ivPhone: st.invPhone, setIvPhone: (e) => ivEdit('invPhone', e.target.value), ivPhoneBr: ivPhoneOk ? '#9AD3B4' : (ivPhoneV.length ? '#F0A92B' : '#D8D0C2'),
       ivPlanChips: ['Starter', 'Growth', 'Unlimited'].map(p => ({ label: p + ' · JOD ' + PLAN_PRICE[p], br: st.invPlan === p ? '#E88024' : '#E7E0D5', bg: st.invPlan === p ? '#FDF4EC' : '#FFFFFF', fg: st.invPlan === p ? '#C96A14' : '#5D5348', pick: () => { this.setState({ invPlan: p }); this.persist(); } })),
-      ivPlanNote: st.invPlan + ' — JOD ' + (PLAN_PRICE[st.invPlan] || 0) + ' a month · ' + (PLAN_BLURB[st.invPlan] || '') + '. Quotas only — all eight card types are on every plan.',
+      // the count is DERIVED, never typed — it said "eight" until the ninth type shipped, and the
+      // plan sentence now carries prepaid's one honest exception so the two do not contradict
+      // each other on the same line: every type is on every plan, but stored value is underwritten
+      // per account, not sold by plan.
+      ivPlanNote: st.invPlan + ' — JOD ' + (PLAN_PRICE[st.invPlan] || 0) + ' a month · ' + (PLAN_BLURB[st.invPlan] || '')
+        + '. Quotas only — all ' + numWord(this.typeNames().length) + ' card types are on every plan. Prepaid is the one thing a plan does not buy: it holds customer cash, so Wasla clears the account first.',
       ivPreviewAnim: AN('fadeUp', '.45s', '.1s'),
       ivBubbleAnim: ((Number(st.invPulse) || 0) % 2) ? 'msgPulseB .45s' + HOUSE + 'both' : 'msgPulseA .45s' + HOUSE + 'both',
       ivFirst: ivFirst || 'there', ivBizShown: ivBizV || 'your business',
