@@ -412,8 +412,35 @@
               <div><div style="font-size:10px;letter-spacing:.06em;color:#93887A;">CARDS</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums;">{{ selCardsN }} / {{ selQuotaLabel }}</div></div>
               <div><div style="font-size:10px;letter-spacing:.06em;color:#93887A;">MEMBERS</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums;">{{ selMembers }}</div></div>
               <a class="wc-cta" href="{{ viewAsHref }}" onClick="{{ viewAsGo }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-weight:800;font-size:12px;border-radius:999px;padding:9px 18px;" style-hover="background:rgba(232,128,36,.08)">View as client</a>
+              <sc-if value="{{ selHasDash }}" hint-placeholder-val="{{ false }}">
+                <a class="wc-cta" href="{{ selDashHref }}" onClick="{{ selDashGo }}" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:12px;border-radius:999px;padding:9px 18px;">{{ selDashLabel }}</a>
+              </sc-if>
             </div>
           </div>
+          <!-- ── DAY ONE · the account that has just been activated ──────────────────────────
+                  Not an error state and not an empty panel: an account with nothing in it is the
+                  normal opening position of every business this platform ever signs, and this is
+                  the only screen at Wasla that ever sees it. Every number in it is read off the
+                  register row beside it. -->
+          <sc-if value="{{ selDayOne }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:14px;background:#FFFFFF;border:1.5px solid #9AD3B4;border-radius:20px;padding:20px 24px;animation:{{ popAnim }};">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span style="display:inline-flex;align-items:center;gap:6px;background:#E7F6EE;color:#1E7D47;font-size:10px;font-weight:800;letter-spacing:.06em;border-radius:999px;padding:4px 12px;"><span style="width:6px;height:6px;border-radius:50%;background:#2FAE66;animation:pulse 1.6s infinite;"></span>DAY ONE</span>
+                <span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;">{{ selDayOneTitle }}</span>
+              </div>
+              <div style="font-size:12.5px;color:#5D5348;line-height:1.7;margin-top:9px;max-width:760px;">{{ selDayOneLine }}</div>
+              <div dir="rtl" style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;color:#A79C8D;margin-top:6px;line-height:1.9;max-width:760px;">{{ selDayOneLineAr }}</div>
+              <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:15px;padding-top:14px;border-top:1px solid #F1EBE1;">
+                <sc-for list="{{ selDayOneStats }}" as="d1" hint-placeholder-count="3">
+                  <div style="animation:{{ d1.anim }};">
+                    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:21px;line-height:1;font-variant-numeric:tabular-nums;color:{{ d1.fg }};">{{ d1.v }}</div>
+                    <div style="font-size:9.5px;font-weight:800;letter-spacing:.06em;color:#93887A;text-transform:uppercase;margin-top:5px;">{{ d1.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:11px;color:#93887A;line-height:1.65;margin-top:13px;max-width:760px;">{{ selDayOneFoot }}</div>
+            </div>
+          </sc-if>
           <sc-if value="{{ selHasNote }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:14px;background:#FDF1DC;border:1px solid #F6DDB0;color:#9A6B12;border-radius:14px;padding:13px 18px;font-size:12.5px;font-weight:600;">{{ selAcc.note }}</div>
           </sc-if>
@@ -816,6 +843,10 @@
                 </sc-if>
                 <sc-if value="{{ finStepIsFlat }}" hint-placeholder-val="{{ false }}">
                   <div style="font-size:11.5px;color:#5D5348;line-height:1.65;background:#FAF6EF;border-radius:13px;padding:14px 16px;margin-top:13px;">{{ finStepFlat }}</div>
+                </sc-if>
+                <sc-if value="{{ finStepNoneShow }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:11.5px;color:#5D5348;line-height:1.65;background:#FAF6EF;border-radius:13px;padding:14px 16px;margin-top:13px;">{{ finStepNone }}</div>
+                  <div dir="rtl" style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10.5px;color:#A79C8D;margin-top:5px;line-height:1.85;">{{ finStepNoneAr }}</div>
                 </sc-if>
               </div>
 
@@ -1976,7 +2007,7 @@
               <div style="font-size:13px;color:#93887A;margin-top:5px;">{{ rv.account }} · submitted by {{ rv.by }} · {{ rv.submitted }}</div>
               <sc-if value="{{ rvIsNew }}" hint-placeholder-val="{{ true }}">
                 <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:18px 20px;margin-top:18px;">
-                  <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#C96A14;text-transform:uppercase;margin-bottom:10px;">The check — four things, thirty seconds</div>
+                  <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#C96A14;text-transform:uppercase;margin-bottom:10px;">{{ rvCheckTitle }}</div>
                   <sc-for list="{{ rvChecks }}" as="ck" hint-placeholder-count="4">
                     <div class="wc-press" onClick="{{ ck.toggle }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #F5F0E8;animation:{{ ck.anim }};">
                       <span style="width:20px;height:20px;border-radius:7px;border:2px solid {{ ck.br }};background:{{ ck.bg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .22s,background .22s;animation:{{ ck.boxAnim }};">
@@ -2072,7 +2103,7 @@
                         <div style="font-size:12px;font-weight:700;">{{ rv.card }}</div>
                         <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ rvHead0 }}</div><div style="font-size:13px;font-weight:700;">{{ rvHead1 }}</div></div>
                       </div>
-                      <div style="margin:16px 0 14px;text-align:center;"><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;">{{ rvHero }}</div></div>
+                      <div style="margin:16px 0 14px;text-align:center;"><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:{{ rvHeroSize }};line-height:1.15;">{{ rvHero }}</div></div>
                       <div style="display:flex;gap:14px;margin-bottom:13px;">
                         <div style="min-width:0;flex:1;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">REWARD</div><div style="font-size:11.5px;font-weight:600;line-height:1.35;">{{ rvReward }}</div></div>
                       </div>
@@ -2697,7 +2728,7 @@
                     <span style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;">Invite tracking</span>
                     <span style="margin-inline-start:auto;font-size:10px;font-weight:800;color:{{ invTrackFg }};white-space:nowrap;">{{ invTrackChip }}</span>
                   </div>
-                  <sc-for list="{{ invSteps }}" as="ivs" hint-placeholder-count="3">
+                  <sc-for list="{{ invSteps }}" as="ivs" hint-placeholder-count="4">
                     <div style="display:flex;gap:12px;animation:{{ ivs.anim }};">
                       <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:22px;">
                         <span style="width:22px;height:22px;border-radius:50%;background:{{ ivs.bg }};border:2px solid {{ ivs.br }};color:{{ ivs.markFg }};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0;transition:background .45s,border-color .45s,color .45s;animation:{{ ivs.dotAnim }};">{{ ivs.mark }}</span>
@@ -2758,6 +2789,15 @@
                 <span style="display:inline-flex;align-items:center;gap:6px;background:{{ av.stBg }};color:{{ av.stFg }};font-size:10.5px;font-weight:800;border-radius:999px;padding:5px 13px;white-space:nowrap;min-width:118px;"><span style="width:6px;height:6px;border-radius:50%;background:{{ av.stDot }};flex-shrink:0;animation:{{ av.stAnim }};"></span>{{ av.statusLabel }}</span>
                 <sc-if value="{{ av.hasResendLine }}" hint-placeholder-val="{{ false }}">
                   <span style="font-size:9.5px;font-weight:800;color:#9A6B12;white-space:nowrap;">{{ av.resendLine }}</span>
+                </sc-if>
+                <sc-if value="{{ av.canActivate }}" hint-placeholder-val="{{ false }}">
+                  <div class="wc-cta" onClick="{{ av.activate }}" style="cursor:pointer;background:#2FAE66;color:#FFFFFF;font-size:10.5px;font-weight:800;border-radius:999px;padding:7px 16px;white-space:nowrap;animation:{{ popAnim }};">{{ av.activateLabel }}</div>
+                </sc-if>
+                <sc-if value="{{ av.canOpenDash }}" hint-placeholder-val="{{ false }}">
+                  <a class="wc-cta" href="{{ av.dashHref }}" onClick="{{ av.openDash }}" style="cursor:pointer;border:1.5px solid #E88024;color:#C96A14;font-size:10.5px;font-weight:800;border-radius:999px;padding:6px 14px;white-space:nowrap;" style-hover="background:rgba(232,128,36,.08)">{{ av.dashLabel }}</a>
+                </sc-if>
+                <sc-if value="{{ av.canOpenAcct }}" hint-placeholder-val="{{ false }}">
+                  <div class="wc-press wc-chip" onClick="{{ av.openAcct }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:10.5px;font-weight:800;border-radius:999px;padding:6px 14px;white-space:nowrap;">Account →</div>
                 </sc-if>
                 <sc-if value="{{ av.canAct }}" hint-placeholder-val="{{ true }}">
                   <div class="wc-press wc-chip" onClick="{{ av.resend }}" style="cursor:pointer;border:1.5px solid #E7E0D5;color:#5D5348;font-size:10.5px;font-weight:800;border-radius:999px;padding:6px 14px;white-space:nowrap;">Resend</div>
@@ -3091,6 +3131,13 @@ class Component extends DCLogic {
     leadDeleted: [], leadEditOpen: false, leadEdit: null, lfBy: 'Omar',
     // 2 · the invite register — every invite ever sent, with a status of its own
     invites: [], inviteMods: {}, invJust: null,
+    // 2b · THE ACCOUNTS THIS CONSOLE CREATED · an invite that reached "password set" is a business
+    //      standing at a locked door; ACTIVATING it is what turns the key, and until this register
+    //      existed there was no key. Same '-Added array' shape leadsAdded / teamAdded / invites all
+    //      use: the seed (WASLA_DB.console.accounts) is never mutated, the rows added here are
+    //      unioned on top by name, and every consumer reads the union rather than the seed.
+    //      `actJust` is the row that just moved, so the activation has somewhere to land visually.
+    accountsAdded: [], actJust: null,
     // 3 · account notes and the manager handover
     acctNotes: {}, acctNoteDraft: '', mgrOpen: false, mgrPick: '', mgrNote: '',
     // 4 · the account's cards, and taking one down
@@ -3134,6 +3181,12 @@ class Component extends DCLogic {
     //      block above that method — and each row carries `reachedTill` saying whether it landed.
     windDowns: [], wdDays: WD_DEFAULT_DAYS, wdDisp: '' };
   // ── session persistence · ONE blob, deliberately separate from the Sukkar key ──
+  /** NOT namespaced by account, deliberately. This blob is the PLATFORM's session — eight
+      accounts' worth of approvals, billing, pipeline and support — and it is shared by name with
+      the sales rep's phone (Wasla Sales.dc.html), which read-modify-writes the pipeline keys
+      inside it. Appending WASLA_ACCT_SUFFIX here would shard the platform register by whichever
+      account happened to be in a URL and sever that sync. The keys that DO take the suffix are
+      the ones naming a single merchant's own data — see acctSuffix() below. */
   consoleKey() { return 'wasla_demo_console_state'; }
   _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   _lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -3153,6 +3206,9 @@ class Component extends DCLogic {
           // ── stage D · the new registers. leadDeleted rides in the same blob as leadsAdded so
           //    the field app's writer and this console's merge see one consistent pipeline. ──
           leadDeleted: s.leadDeleted, invites: s.invites, inviteMods: s.inviteMods,
+          // the 9th account (and any after it) is created at runtime, so this blob is the ONLY
+          // place it exists — WASLA_DB.console.accounts still ships exactly eight rows
+          accountsAdded: s.accountsAdded,
           acctNotes: s.acctNotes, cardMods: s.cardMods, takedowns: s.takedowns,
           asks: s.asks, askDone: s.askDone, billReversed: s.billReversed, privReqs: s.privReqs, decidedWhy: s.decidedWhy,
           // ── the two registers added in this pass — both are consumed on the way back in ──
@@ -3180,6 +3236,25 @@ class Component extends DCLogic {
     // ── stage D · the same defensive shape-check every other list gets ──
     if (arr(b.leadDeleted)) p.leadDeleted = b.leadDeleted.filter(x => typeof x === 'string' && x);
     if (arr(b.invites)) p.invites = b.invites.filter(i => i && typeof i === 'object' && typeof i.id === 'string' && typeof i.biz === 'string' && i.biz);
+    // ── the runtime accounts · NORMALISED, not merely filtered ────────────────────────────────
+    //    Every screen that reads an account row reads `.members`, `.cards`, `.quota` as numbers
+    //    and `.plan`, `.state`, `.initial`, `.color`, `.renewal` as strings, and renderVals
+    //    computes all of them on every render. A blob that lost a field would otherwise put an
+    //    `undefined` or a `NaN` on a screen nobody was looking at. Anything missing comes back as
+    //    the honest day-one value — zero, or empty — never as a hole.
+    if (arr(b.accountsAdded)) p.accountsAdded = b.accountsAdded
+      .filter(a => a && typeof a === 'object' && !Array.isArray(a) && typeof a.name === 'string' && a.name.trim())
+      .map(a => {
+        const s = (v, d) => (typeof v === 'string' && v.trim()) ? v.trim() : d;
+        const n = (v) => (typeof v === 'number' && isFinite(v) && v >= 0) ? Math.round(v) : 0;
+        const el = (a.eligible && typeof a.eligible === 'object' && !Array.isArray(a.eligible)) ? a.eligible : {};
+        return { name: a.name.trim(), ar: s(a.ar, ''), owner: s(a.owner, ''), plan: s(a.plan, 'Starter'),
+          cards: n(a.cards), quota: (typeof a.quota === 'number' && isFinite(a.quota) && a.quota > 0) ? Math.round(a.quota) : 3,
+          members: n(a.members), state: s(a.state, 'active'), manager: s(a.manager, ''),
+          initial: s(a.initial, a.name.trim().charAt(0).toUpperCase()), color: s(a.color, '#8C877F'),
+          renewal: s(a.renewal, ''), activatedOn: s(a.activatedOn, ''), activatedBy: s(a.activatedBy, ''),
+          eligible: { prepaid: el.prepaid === true } };
+      });
     if (arr(b.takedowns)) p.takedowns = b.takedowns.filter(t => t && typeof t === 'object' && typeof t.card === 'string' && t.card);
     if (arr(b.asks)) p.asks = b.asks.filter(a => a && typeof a === 'object' && typeof a.id === 'string' && typeof a.acct === 'string' && a.acct);
     if (arr(b.privReqs)) p.privReqs = b.privReqs.filter(r => r && typeof r === 'object' && typeof r.id === 'string' && typeof r.member === 'string' && r.member);
@@ -3277,6 +3352,9 @@ class Component extends DCLogic {
     try { localStorage.removeItem(this.consoleKey()); } catch (e) {}
     try { localStorage.removeItem(this.sukkarKey()); } catch (e) {}
     try { localStorage.removeItem(this.editVerdictKey()); } catch (e) {}
+    // the fourth published verdict: a card the merchant SUBMITTED goes back to waiting, rather
+    // than being deleted — it is their card, and only the decision was ours
+    try { this.clearSubmissionVerdicts(); } catch (e) {}
     this.setState({ accMods: {}, decided: {}, billPaid: {}, billJust: null, winbacks: {},
       escalOpen: null, escalVerdict: '', escalJust: null, invOpened: false, invPulse: 0,
       leadMods: {}, leadsAdded: [], leadTrail: {}, converted: {}, leadSel: null, leadMoved: null, leadFormOpen: false,
@@ -3288,6 +3366,9 @@ class Component extends DCLogic {
       // ── stage D · every new register goes back to how it ships, and nothing else on the machine moves ──
       leadDeleted: [], leadEditOpen: false, leadEdit: null, lfBy: 'Omar',
       invites: [], inviteMods: {}, invJust: null,
+      // an account this console created goes back with it — the invite it came from returns to
+      // "password set", which is exactly what a forgotten activation means
+      accountsAdded: [], actJust: null,
       acctNotes: {}, acctNoteDraft: '', mgrOpen: false, mgrPick: '', mgrNote: '',
       cardMods: {}, takedowns: [], tdOpen: null, tdReason: '',
       asks: [], askDone: {}, askDecline: null, askReason: '', askJust: null, planReqOpen: false,
@@ -3550,8 +3631,82 @@ class Component extends DCLogic {
       This console is the writer; the merchant dashboard is the reader. Deliberately NOT the
       dashboard's own blob (`wasla_demo_dashboard_state`), whose `edits` block this surface only
       ever reads — see writeTillRules below for the ONE exception and why it has to exist. */
-  editVerdictKey() { return 'wasla_demo_edit_verdicts'; }
-  dashboardKey() { return 'wasla_demo_dashboard_state'; }
+  /** ACCOUNT SUFFIX · every per-surface local-state key on this platform is now namespaced by the
+      account the surface was opened as, so an Al-Quds session cannot silently overwrite Tala's
+      staged work in the same browser. This console is opened with no ?acct= (it reaches an account
+      by drilling in, never by URL), so the suffix here is '' and both key strings below are
+      byte-for-byte the ones they have always been. Read defensively: the resolver publishes it,
+      but a surface must never assume a global exists. */
+  acctSuffix() { return (window.WASLA_ACCT_SUFFIX || ''); }
+  editVerdictKey() { return 'wasla_demo_edit_verdicts' + this.acctSuffix(); }
+  dashboardKey() { return 'wasla_demo_dashboard_state' + this.acctSuffix(); }
+  /* ══ wasla_demo_submissions · THE GENERIC CARD-SUBMISSION CHANNEL ═══════════════════════════
+     NOT SUFFIXED, and it must never be: one key holds every account's submissions and every
+     reader filters on the row's own `acct`. The live bus (wasla_demo_live_events) is un-suffixed
+     for the same reason. The shape is published in wasla-data.js beside the key name.
+     This console is a READER (the approvals queue merges `pending` rows in beside the static
+     seeds) and a WRITER of exactly five fields: state, reason, decidedBy, decidedAt — and nothing
+     else on the row is ever touched. */
+  submissionsKey() { return window.WASLA_SUBMISSIONS_KEY || 'wasla_demo_submissions'; }
+  /** Defensive to the point of rudeness, like every other shared key here: a bad blob, a bad row,
+      an unknown schema version or a row that is not an object all mean "nothing to merge", never
+      a thrown render. Unknown fields are carried, never stripped. */
+  readSubmissions() {
+    const out = [];
+    let b = null;
+    try { const raw = this._lsGet(this.submissionsKey()); if (!raw) return out; b = JSON.parse(raw); } catch (e) { return out; }
+    if (!b || typeof b !== 'object' || Array.isArray(b)) return out;
+    Object.keys(b).forEach(k => {
+      const r = b[k];
+      if (!r || typeof r !== 'object' || Array.isArray(r)) return;
+      if (r.v !== 1) return;
+      if (typeof r.acct !== 'string' || !r.acct) return;
+      if (typeof r.cardId !== 'string' || !r.cardId) return;
+      out.push({ ...r, __key: k });
+    });
+    return out;
+  }
+  /** Read-modify-write, byte for byte. Every other row is copied across exactly as it was found —
+      including shapes this console would not have accepted itself — and on the row being decided
+      only the four decision fields move. A row that is no longer there is not re-created: if the
+      merchant's wizard withdrew it, the verdict has nothing to attach to and saying so is honest.
+      Returns false when nothing was written, so the caller can stay quiet rather than claim. */
+  writeSubmissionVerdict(key, state, reason, by) {
+    if (!key || (state !== 'approved' && state !== 'rejected')) return false;
+    let cur = null;
+    try { const raw = this._lsGet(this.submissionsKey()); if (raw) cur = JSON.parse(raw); } catch (e) { return false; }
+    if (!cur || typeof cur !== 'object' || Array.isArray(cur)) return false;
+    const row = cur[key];
+    if (!row || typeof row !== 'object' || Array.isArray(row)) return false;
+    const next = { ...row, state: state, decidedBy: by || 'Omar Haddad' };
+    // Omar's VERBATIM words, or the field is absent. An approval carries no reason, and an
+    // invented one would be a sentence the merchant reads as ours.
+    if (state === 'rejected' && reason) next.reason = String(reason); else delete next.reason;
+    try { next.decidedAt = new Date().toISOString(); } catch (e) { next.decidedAt = ''; }
+    const blob = { ...cur, [key]: next };
+    try { this._lsSet(this.submissionsKey(), JSON.stringify(blob)); return true; } catch (e) { return false; }
+  }
+  /** A reset forgets the decisions this console took — which has to include the half it PUBLISHED,
+      or the two screens end up arguing (the same rule that makes reset clear the Sukkar hand-off
+      and the staged-edit verdicts). A submitted card is the CLIENT'S work and is never deleted:
+      the row goes back to `pending`, which is precisely what "this console has forgotten it
+      decided" means on the other side of the seam. */
+  clearSubmissionVerdicts() {
+    let cur = null;
+    try { const raw = this._lsGet(this.submissionsKey()); if (!raw) return; cur = JSON.parse(raw); } catch (e) { return; }
+    if (!cur || typeof cur !== 'object' || Array.isArray(cur)) return;
+    const next = {};
+    let moved = false;
+    Object.keys(cur).forEach(k => {
+      const r = cur[k];
+      if (!r || typeof r !== 'object' || Array.isArray(r) || r.v !== 1 || (r.state !== 'approved' && r.state !== 'rejected')) { next[k] = r; return; }
+      const back = { ...r, state: 'pending' };
+      delete back.reason; delete back.decidedBy; delete back.decidedAt;
+      next[k] = back; moved = true;
+    });
+    if (!moved) return;
+    try { this._lsSet(this.submissionsKey(), JSON.stringify(next)); } catch (e) {}
+  }
   /* ══ THE ONLY THING THIS CONSOLE WRITES INTO THE TILL'S PATH ═══════════════════════════════
      CROSS-SURFACE CONTRACT — read this before changing either side.
 
@@ -3624,9 +3779,103 @@ class Component extends DCLogic {
     this.armInviteOpen();
     this.armStorageSync();
     const C = this.db(), st = this.state, tick = st.tick;
+    // ── ONE BUSINESS, ONE NAME · the same comparison the lead↔account seam uses, hoisted to the
+    //    top because the accounts register itself now needs it. ──
+    const sameName = (a, b) => String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
+    /** A first name that survives a kunya. "Abu Shadi" is not "Abu": the teknonym IS the name,
+        and lopping off the second word turns a person into a fragment — which is exactly what
+        every "…split(' ')[0]" on this file was quietly doing to the one Arabic-named owner on
+        the platform. Latin two-part names are untouched, so nothing on the mature demo moves. */
+    const firstNameOf = (n) => {
+      const parts = String(n == null ? '' : n).trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) return '';
+      return (/^(abu|abou|abo|umm|um|ibn|bin|bint)$/i.test(parts[0]) && parts[1]) ? parts[0] + ' ' + parts[1] : parts[0];
+    };
+    /* ══ THE ACCOUNTS REGISTER · SEED + WHAT THIS CONSOLE ACTIVATED ═════════════════════════════
+       WASLA_DB.console.accounts ships eight rows and is never mutated. An account created by an
+       activation lives in `accountsAdded` (this console's own blob) and is unioned on top by
+       business name — the seed always wins a collision, because a shipped row is the register and
+       a runtime row is an addition to it.
+       EVERY consumer reads ACCTS, never C.accounts: the register list, the drill-in (`accIdx` is
+       an index INTO THIS ARRAY), accIdxByName, the billing jump-throughs and the log's
+       open-account hint. Reading the seed directly is how a 9th account exists on one screen and
+       not on the one beside it. */
+    const ACCTS = (() => {
+      const seed = Array.isArray(C.accounts) ? C.accounts : [];
+      const added = Array.isArray(st.accountsAdded) ? st.accountsAdded : [];
+      const extra = added.filter(a => a && typeof a === 'object' && a.name && !seed.some(x => sameName(x && x.name, a.name)));
+      // de-duped against itself too, so a blob that somehow carries the same business twice
+      // still produces one row rather than two identical ones the operator has to choose between
+      return seed.concat(extra.filter((a, i) => extra.findIndex(x => sameName(x.name, a.name)) === i));
+    })();
+    /** Was this account created here, in this session or a restored one? It is the difference
+        between "no invoice book yet" and "not wired into the demo's book", and between "quiet for
+        13 days" and "nothing has happened yet". Never guessed — the row is either in the seed or
+        it is not. */
+    const isNewAcct = (name) => !!name && !(Array.isArray(C.accounts) ? C.accounts : []).some(x => sameName(x && x.name, name));
+    /* ── WHOSE MERCHANT BLOB CAN THIS CONSOLE READ? ────────────────────────────────────────────
+       Two of this console's reads reach across into the merchant dashboard's own localStorage —
+       its staged card edits and its change requests — and both used to file whatever they found
+       under the literal string 'Tala Hospitality Group'. That was true only because there was
+       only ever one merchant. The dashboard's blob is now namespaced per account, so the one this
+       console can open is the one the resolver resolved to, and its NAME is published beside it.
+       On a bare Console URL — which is the only way this surface is ever opened; it reaches an
+       account by drilling in, never by ?acct= — both values are Tala's, so the shipped demo is
+       unchanged to the byte. */
+    const DASH_ACCT_SLUG = window.WASLA_ACCT || 'tala-hospitality-group';
+    const DASH_ACCT_NAME = window.WASLA_ACCT_NAME || 'Tala Hospitality Group';
     const AN = (n, du, dl) => st.settled ? 'none' : n + ' ' + du + ' cubic-bezier(.22,.61,.36,1) ' + (dl || '0s') + ' both';
     const admin = st.role === 'admin', sales = st.role === 'sales', supportRole = st.role === 'support';
-    const pending = C.approvals.filter(a => !st.decided[a.id]);
+    /* ══ THE QUEUE HAS TWO SOURCES NOW ═════════════════════════════════════════════════════════
+       C.approvals is the three shipped rows. `wasla_demo_submissions` is the generic channel a
+       merchant's own card wizard writes into — one key, every account, each row carrying its own
+       `acct` so a reader can tell whose card it is. Before this existed, a card a merchant
+       actually built could never reach a reviewer: only the one hardcoded 'sukkar' row could, and
+       only through a private hand-off named after it.
+       Merged, not replaced. The seeds keep their ids, their submitted times and their checklists;
+       a submitted row is shaped into the SAME row this file already knows how to render, so the
+       queue, the review screen, the decided ledger, the SLA clock and the sidebar badge all take
+       it without any of them learning a second vocabulary.
+       Its id is the channel's own entry key (`<slug>:<cardId>`), which is stable across reloads,
+       unique per account, and the exact string the verdict is written back under. */
+    const subRows = (() => { try { return this.readSubmissions(); } catch (e) { return []; } })();
+    /** The 9-type catalogue names a type; the queue prints a human label ("Points card") and
+        derives the type id back off it. Falling back to the raw id keeps a type this build has
+        never met readable rather than blank. */
+    const typeLabelOf = (id) => {
+      const T = ((window.WASLA_DB || {}).types) || [];
+      const row = T.find(t => t && t.id === id);
+      return row ? String(row.name || id) : String(id || '');
+    };
+    const subApprovals = subRows.map(r => ({
+      id: r.__key, kind: 'new',
+      account: String(r.acctName || ''), card: String(r.card || ''), ar: String(r.ar || ''),
+      type: typeLabelOf(r.type), color: String(r.color || '#7A5A2E'),
+      initial: String(r.initial || String(r.card || '?').charAt(0)).toUpperCase(),
+      submitted: String(r.submitted || 'Just now'),
+      head: Array.isArray(r.head) ? r.head.map(x => String(x)) : [],
+      reward: String(r.reward || ''), by: String(r.by || 'the client'),
+      checks: Array.isArray(r.checks) ? r.checks.filter(c => typeof c === 'string' && c) : [],
+      // marks the row as belonging to the channel, so approve/reject knows to write the verdict
+      // back into it — and so nothing else in this file has to test the id's shape
+      submissionKey: r.__key
+    }));
+    const apprAll = [...(Array.isArray(C.approvals) ? C.approvals : []), ...subApprovals];
+    /* THE VERDICT REGISTER · the channel is the truth and `st.decided` is the mirror that makes a
+       decision render the same second it is taken — the same two-layer arrangement the staged-edit
+       verdicts already use. A row decided in an earlier session comes back decided even if this
+       console's own blob was cleared, because the decision was published, not merely remembered.
+       The channel carries the rejection reason too, so a returned card quotes the words the client
+       actually received rather than a stand-in sentence. */
+    const subVerdicts = {}, subReasons = {};
+    subRows.forEach(r => {
+      if (r.state !== 'approved' && r.state !== 'rejected') return;
+      subVerdicts[r.__key] = r.state;
+      if (typeof r.reason === 'string' && r.reason) subReasons[r.__key] = r.reason;
+    });
+    const decidedMap = { ...subVerdicts, ...(st.decided || {}) };
+    const reasonMap = { ...subReasons, ...(st.decidedWhy || {}) };
+    const pending = apprAll.filter(a => !decidedMap[a.id]);
     const navDef = admin ? [['home', 'Home'], ['accounts', 'Accounts'], ['leads', 'Pipeline'], ['activations', 'Activations'], ['approvals', 'Approvals'], ['asks', 'Client asks'], ['billing', 'Billing'], ['support', 'Support'], ['health', 'Platform health'], ['log', 'Activity log'], ['team', 'Team'], ['settingsC', 'Settings'], ['identity', 'My security']]
       : sales ? [['home', 'Home'], ['leads', 'Pipeline'], ['activations', 'Activations'], ['accounts', 'My accounts'], ['asks', 'Client asks'], ['log', 'Activity log'], ['identity', 'My security']]
         : [['home', 'Home'], ['support', 'Support tools'], ['log', 'Activity log'], ['identity', 'My security']];
@@ -3705,7 +3954,7 @@ class Component extends DCLogic {
     //    field this reader reads. One field, one reader, a console overlay on top: not a second
     //    source sitting beside the first waiting to disagree with it.
     const eligSeedRow = (name) => {
-      const rows = Array.isArray(C.accounts) ? C.accounts : [];
+      const rows = Array.isArray(ACCTS) ? ACCTS : [];
       const k = String(name == null ? '' : name).trim().toLowerCase();
       if (!k) return null;
       for (let i = 0; i < rows.length; i++) {
@@ -3766,7 +4015,7 @@ class Component extends DCLogic {
     // ── the book is filtered AFTER the mods are applied, not before: reassigning a manager has to
     //    actually move the account between books, and filtering the seed would have left it in
     //    the old one forever. ──
-    const allAccounts = C.accounts.map(applyMod);
+    const allAccounts = ACCTS.map(applyMod);
     const myAccounts = (admin || supportRole) ? allAccounts : allAccounts.filter(a => a.manager === 'Omar');
     // ── dates · the book and the account rows both write them as "30 Jul 2026" and nothing else,
     //    so ONE parser serves the whole file. It lives up here rather than down in the billing
@@ -3787,8 +4036,10 @@ class Component extends DCLogic {
     const RD_ON_30_JUL = { 'Wared Flowers': 6, 'Tala Hospitality Group': 13, 'Petra Gym': 31, 'Qamar Sweets': 46, 'Nara Pharmacy': 54, 'Rawi Coffee House': 65, 'Marmar Lounge': 124 };
     if (!RD_CHECKED) {
       RD_CHECKED = true;
+      // the assertion is about the SHIPPED table, so an account this console activated at runtime
+      // is not drift — it is the feature. Only a seed row that moved is worth a warning.
       const rdDrift = Object.keys(RD_ON_30_JUL).filter(n => RD[n] !== RD_ON_30_JUL[n]).map(n => n + ': ' + RD_ON_30_JUL[n] + ' → ' + RD[n])
-        .concat(Object.keys(RD).filter(n => RD_ON_30_JUL[n] == null).map(n => n + ': new on the rail at ' + RD[n]));
+        .concat(Object.keys(RD).filter(n => RD_ON_30_JUL[n] == null && !isNewAcct(n)).map(n => n + ': new on the rail at ' + RD[n]));
       if (rdDrift.length && typeof console !== 'undefined' && console.warn) console.warn('[wasla] days-to-renewal no longer matches the 30 Jul 2026 table — the clock or a renewal date moved: ' + rdDrift.join(' · '));
     }
     const bookActive = myAccounts.filter(a => a.state === 'active').length;
@@ -3835,13 +4086,48 @@ class Component extends DCLogic {
       const noted = /no scans? in (\d+) day/i.exec(a.note || '');
       if (noted) return Number(noted[1]);
       if (SCAN_SEED[a.name] != null) return SCAN_SEED[a.name];
+      // ── AN ACCOUNT WITH NO CARD AND NO MEMBER HAS NOT GONE QUIET · it has not started ────────
+      //    The hash below invents a plausible "days since a scan" for any name it has not met,
+      //    which on a business activated ten seconds ago would print "quiet for 11 days" beside a
+      //    register that says zero cards and zero members — a sentence contradicting the number
+      //    next to it. Nothing could have been scanned, so there is nothing to count, and `null`
+      //    is the value every reader here already renders as "no scans to count".
+      //    No shipped account is in this branch: all eight carry members, and the only one with
+      //    zero cards (Bayt Books) is closed and returned above.
+      if (!(Number(a.cards) || 0) && !(Number(a.members) || 0)) return null;
       let h = 7; const n = String(a.name || ''); for (let i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) % 9973;
       return h % 13;
     };
+    /* ── THE SCAN GAP IS A COUNT, AND EVERY SENTENCE THAT SAYS IT OUT LOUD AGREES WITH IT ──────
+          quietOf returns a number of days, and seven different panels turn it into prose: the
+          rep's home task, the money screen's nudge, the account timeline, the win-back headline,
+          the note the win-back writes and the log line it leaves. Six of them said "1 days"; the
+          seventh, three lines from the win-back headline, got it right — which is how the
+          inconsistency was found. One helper, so a singular fixed in one panel is fixed in all of
+          them and no future panel can reintroduce it. Nothing is on screen today — the six live
+          behind an at-risk or drifting gate, and the only account past either is Wared Flowers at
+          19 days. Tala's own gap is exactly 1, so the first account that goes quiet a day after a
+          scan renders every one of them. */
+    const nDays = (n, adj) => n + ' ' + (adj ? adj + ' ' : '') + 'day' + (n === 1 ? '' : 's');
     // broadcast allowance per plan, and what this account has actually spent this month
     const bcPlan = (p) => p === 'Starter' ? { cap: 0 } : p === 'Growth' ? { cap: 10 } : { cap: null };
     const BC_USED = { 'Tala Hospitality Group': 6, 'Rawi Coffee House': 12, 'Nara Pharmacy': 3, 'Marmar Lounge': 5, 'Petra Gym': 0, 'Qamar Sweets': 1, 'Wared Flowers': 0 };
     const bcUsedOf = (a) => BC_USED[a.name] != null ? BC_USED[a.name] : Math.min(9, (Number(a.cards) || 0) * 2);
+    /* ── "THE FIRST PUSH IS THEIRS TO SEND" IS A CLAIM ABOUT THE PLAN ──────────────────────────
+          A Starter account cannot broadcast at all — bcPlan gives it cap 0, and the plan meter on
+          the same panel says so in words. Two sentences an inch below that meter told the owner
+          the first push was theirs to send: the account timeline's "No broadcast yet" row, and
+          the card list's push column on a freshly approved card. Both were written when every
+          demo account was Growth or better, and both became false the day a Starter merchant was
+          the one being onboarded — the sentence contradicting the number beside it, again.
+          Every such sentence now reads `bcCanSend`, which is bcPlan's own cap and nothing else,
+          so the meter and the prose cannot drift apart. BC_FIRST_PLAN is likewise derived from
+          bcPlan rather than typed, so "starts on Growth" cannot outlive a change to the ladder. */
+    const BC_LADDER = ['Starter', 'Growth', 'Unlimited'];
+    const BC_FIRST_PLAN = BC_LADDER.find(p => bcPlan(p).cap !== 0) || 'Growth';
+    const bcCanSend = (a) => bcPlan((a || {}).plan).cap !== 0;
+    // the tail of a "never pushed" card row — a promise on a plan that can push, a plain fact on one that cannot
+    const bcNeverTail = (a) => bcCanSend(a) ? ', the first push is theirs to send' : ', and broadcasts start on ' + BC_FIRST_PLAN;
     // ── THE ACCOUNT'S CARDS · the list the header's "CARDS 5 / 10" has always implied ──
     //    Every account's real card list, seeded so the count reconciles with `cards` on the account
     //    row: a RETIRED card does not occupy a slot (it stopped earning, its passes stayed
@@ -3852,7 +4138,11 @@ class Component extends DCLogic {
         ['Daraj Coffee', 'قهوة الدرج', 'Stamp Card', 'live', 1841, 'Today 10:00 · “Weekend special”'],
         ['Layl Lounge', 'ليل لاونج', 'VIP Tiers', 'live', 412, 'Tue 18:30 · “Gold nights are back”'],
         ['Zaytoun Kitchen', 'مطبخ زيتون', 'Cashback Card', 'paused', 1129, '12 days ago · “We’re renovating”'],
-        ['Sukkar Bakery', 'مخبز سكر', 'Points Card', 'review', 234, 'never — waiting on approval'],
+        /* 0, not 234 — Sukkar is in review and has never issued a pass. The merchant Dashboard
+           renders it as MEMBERS 0 for exactly that reason, and wasla-data.js counts it as 0 in
+           the account total (3,650). A figure here is the same card on a second surface, so it
+           has to be the same number. */
+        ['Sukkar Bakery', 'مخبز سكر', 'Points Card', 'review', 0, 'never — waiting on approval'],
         ['Ghaim Studio', 'استوديو غيم', 'Membership Card', 'draft', 0, 'never — still being configured'],
         // the sixth slot, and the only card on this platform holding customer cash. It has never
         // broadcast — `broadcasts[]` carries nothing for it, so this row does not borrow one.
@@ -3889,14 +4179,36 @@ class Component extends DCLogic {
       'Bayt Books': []
     };
     const cardKey = (acct, card) => String(acct || '') + '::' + String(card || '');
+    /** ── THE CARDS A MERCHANT ACTUALLY BUILT ──────────────────────────────────────────────────
+        CARD_SEED is the shipped list and it can only ever describe the eight shipped accounts. A
+        card born in a client's own wizard reaches this console on `wasla_demo_submissions`, and
+        until now the account screen would have gone on saying "No cards yet" while its own
+        approvals queue held the card — the sentence contradicting the row beside it, again.
+        Shaped into the exact same six-column tuple CARD_SEED uses, so everything downstream (the
+        lifecycle badge, the slot count, the takedown control, the timeline) takes it unchanged.
+        MEMBERS IS 0 AND SAYS SO: this console has no member count for a card it did not ship, and
+        an invented one would be worse than a zero that is true on the day it is read. */
+    const subCardsFor = (a) => {
+      const name = (a || {}).name;
+      if (!name) return [];
+      return subRows.filter(r => sameName(r.acctName, name)).map(r => {
+        const state = r.state === 'approved' ? 'live' : r.state === 'rejected' ? 'returned' : 'review';
+        const push = state === 'live' ? 'never — approved' + bcNeverTail(a)
+          : state === 'returned' ? 'never — sent back, theirs to resubmit'
+            : 'never — waiting on approval';
+        return [String(r.card || ''), String(r.ar || ''), typeLabelOf(r.type), state, 0, push];
+      });
+    };
     const cardsOf = (a) => {
-      const rows = CARD_SEED[(a || {}).name] || [];
+      const seedRows = CARD_SEED[(a || {}).name] || [];
+      const subs = subCardsFor(a).filter(row => !seedRows.some(x => x[0] === row[0]));
+      const rows = [...seedRows, ...subs];
       return rows.map(([name, ar, type, state, members, push]) => {
         const m = (st.cardMods || {})[cardKey(a.name, name)] || {};
         // the push column has to survive a verdict too: "never — waiting on approval" is a lie
         // the moment the approval happens, in either direction
         const pushLine = m.state === 'retired' ? ((m.when || 'Just now') + ' — taken down by Wasla')
-          : (m.decided === 'approved' && m.state === 'live') ? ('never — approved ' + String(m.when || 'just now').toLowerCase() + ', the first push is theirs to send')
+          : (m.decided === 'approved' && m.state === 'live') ? ('never — approved ' + String(m.when || 'just now').toLowerCase() + bcNeverTail(a))
           : (m.decided === 'rejected' && m.state === 'returned') ? ('never — sent back ' + String(m.when || 'just now').toLowerCase() + ', theirs to resubmit')
           : push;
         // ── PREPAID · a wound-down card is still LIVE to whoever is holding a balance, so the
@@ -4002,7 +4314,7 @@ class Component extends DCLogic {
     const accountRows = accSorted.map((a, i) => {
       const b = stBadge(a.state), lt = lifeTone(a.state), pt = planTone(a.plan), q = quietOf(a);
       const hot = q != null && q >= 19, warm = q != null && q >= 14;
-      return { ...a, open: () => goAccount(C.accounts.findIndex(x => x.name === a.name)),
+      return { ...a, open: () => goAccount(ACCTS.findIndex(x => x.name === a.name)),
         stLabel: b.l, stBg: b.bg, stFg: b.fg, op: a.state === 'closed' ? 0.5 : 1,
         // the slot count is the card LIST, not a loose number — a takedown moves both together
         cardsLine: cardSlots(a) + ' / ' + (a.quota === 99 ? '∞' : a.quota), members: a.members.toLocaleString('en-US'),
@@ -4017,7 +4329,7 @@ class Component extends DCLogic {
         quietAnim: a.state === 'at-risk' ? 'riskChipPulse 2.2s ease-out infinite' : 'none' };
     });
     const quietHot = myAccounts.filter(a => { const q = quietOf(a); return q != null && q >= 14; }).length;
-    const selAcc = applyMod(C.accounts[st.accIdx] || C.accounts[0] || {});
+    const selAcc = applyMod(ACCTS[st.accIdx] || ACCTS[0] || {});
     const selLife = lifeTone(selAcc.state);
     const selDays = RD[selAcc.name];
     const selClosed = selAcc.state === 'closed';
@@ -4033,7 +4345,7 @@ class Component extends DCLogic {
     const selPrice = planPrice[selAcc.plan] || 0;
     const selQuiet = quietOf(selAcc);
     const selWBSent = !!(st.winbacks || {})[selAcc.name];
-    const selOwnerFirst = (selAcc.owner || 'the owner').split(' ')[0];
+    const selOwnerFirst = firstNameOf(selAcc.owner) || 'the owner';
     const payFor = (name, price) => { this.setState({ billPaid: { ...st.billPaid, [name]: true }, billJust: name }); this.say(name + ' marked paid — JOD ' + price + ' received, quota re-armed'); this.slog('money', 'marked ' + name + ' renewal paid — JOD ' + price + ', quota re-armed'); };
     const M = (window.WASLA_DB || {}).members || [];
     const TY = (window.WASLA_DB || {}).types || [];
@@ -4227,7 +4539,9 @@ class Component extends DCLogic {
       return { days, iso: dt.getUTCFullYear() + '-' + two(dt.getUTCMonth() + 1) + '-' + two(dt.getUTCDate()) };
     };
     const selB = stBadge(selAcc.state);
-    const rv = C.approvals.find(a => a.id === st.apprId) || C.approvals[0] || {};
+    // the review screen resolves against the MERGED queue — a card the merchant submitted opens
+    // in exactly the same reviewer as a shipped one, with no second screen and no second path
+    const rv = apprAll.find(a => a.id === st.apprId) || apprAll[0] || {};
     const allChecked = (rv.checks || []).every((_, i) => st.checks[rv.id + i]);
     // ── PREPAID · THE SECOND GATE ─────────────────────────────────────────────────────────────
     //    Every other card type is approved on four things you can see: the reward is concrete, the
@@ -4240,6 +4554,35 @@ class Component extends DCLogic {
     const rvEligOk = !rvIsPrepaid || eligPrepaidOk(rv.account);
     const rvEligMissing = rvIsPrepaid ? eligMissingLabels(rv.account) : [];
     const canApprove = (rv.kind === 'edit' || allChecked) && rvEligOk;
+    /* ══ THE PASS FACE · READ OFF THE CARD UNDER REVIEW, NEVER TYPED ═══════════════════════════
+       "EXACTLY WHAT LANDS IN WALLETS" printed a 30px hero of the literal string '250' on every new
+       card and '7%' on every edit. Both were lifted off the rows that shipped, and both were
+       already wrong on the third: Zaman Arcade is a PREPAID edit whose approved value is a 12%
+       bonus tier, and it was previewed with a cashback rate. The first card a real merchant builds
+       is a stamp card, and it was previewed with a points figure across its face.
+       Nothing here is typed now:
+         · NEW  → the head the submission itself carries, shown large. A points card whose head
+                  says "POINTS 250" heroes 250; a stamp card whose head says "STAMPS 3 / 8" heroes
+                  3 / 8. The hero can no longer name a currency the card does not use, because it
+                  is the same figure the head above it is printing.
+         · EDIT → the figure being approved, pulled out of the diff this screen is already showing
+                  beside it — a percentage first, a JOD amount second, a bare number third, and the
+                  whole new value if it is short enough to read at 30px.
+       rvHeroSize drops the type size for a value that is a phrase rather than a figure, so a long
+       fallback reads instead of overflowing the pass. */
+    const rvFigureOf = (s) => {
+      const t = String(s == null ? '' : s).trim();
+      if (!t) return '';
+      let m;
+      if ((m = /(\d[\d,]*(?:\.\d+)?)\s*%/.exec(t))) return m[1] + '%';
+      if ((m = /JOD\s*(\d[\d,]*(?:\.\d+)?)/i.exec(t))) return 'JOD ' + m[1];
+      if ((m = /(\d[\d,]*(?:\.\d+)?\s*\/\s*\d[\d,]*)/.exec(t))) return m[1].replace(/\s*\/\s*/, ' / ');
+      if ((m = /(\d[\d,]*(?:\.\d+)?)/.exec(t))) return m[1];
+      return t.length <= 14 ? t : '';
+    };
+    const rvHero = rv.kind === 'edit'
+      ? (rvFigureOf((rv.diff || {}).to) || String((rv.diff || {}).to || ''))
+      : (String((rv.head || ['', ''])[1] || '') || rvFigureOf(rv.reward));
     // NOW_MIN reads off the single CLOCK anchor at the top of this script — every "how long has
     // this waited" line below (and the birthday-job retry countdown) shares it.
     const waitedMins = (s) => {
@@ -4283,6 +4626,19 @@ class Component extends DCLogic {
         anim: AN('fadeUp', '.45s', ((st.apprJust ? 0.14 : 0) + 0.07 * i) + 's') };
     });
     const H = C.health, T = H.totals || {};
+    /* ── THE PLATFORM'S OWN SIZE · SEED + WHAT THIS CONSOLE PUT ON IT ──────────────────────────
+       health.totals is the shared seed's claim about the whole platform (47 accounts, 45 of them
+       active). It is a fixture, not a live count — but it is not frozen either: activating an
+       invite creates a business that is genuinely on the platform, so it counts on BOTH sides of
+       "wired into this demo". `platNew` is those rows and nothing else — isNewAcct asks the seed,
+       so a row is either shipped or it was created here, never guessed. Closed is derived the way
+       the typed pair was (47 − 45 = 2), so a bare console prints the same three numbers it always
+       did and an activation moves the two that actually moved. */
+    const platNew = allAccounts.filter(a => isNewAcct(a.name));
+    const platNum = (v) => { const n = Number(v); return isFinite(n) ? Math.max(0, Math.round(n)) : 0; };
+    const platTotal = platNum(T.accounts) + platNew.length;
+    const platActive = platNum(T.active) + platNew.filter(a => a.state === 'active').length;
+    const platClosed = Math.max(0, platTotal - platActive);
     // ── SALES · pipeline board, rich capture, lead trail, escalations, team performance ──
     const stageStyle = { 'Invited': ['#F0E7DB', '#7A5A2E'], 'Demo booked': ['#FDF4EC', '#C96A14'], 'Won': ['#E7F6EE', '#1E7D47'], 'Negotiating': ['#EDE9F5', '#5B4A8A'], 'Cold': ['#EFEDE8', '#8C877F'] };
     const stageOrder = ['Cold', 'Invited', 'Demo booked', 'Negotiating', 'Won'];
@@ -4295,11 +4651,18 @@ class Component extends DCLogic {
     // the fallback list is only reached when the shared catalogue failed to load at all; it is
     // kept in step with it anyway, ninth type included, so a degraded boot is not a wrong boot
     const TYPE_NAMES = (TY.length ? TY.map(t => t.name) : ['Stamp Card', 'Cashback Card', 'Points Card', 'Discount Card', 'Coupon', 'VIP Tiers', 'Challenge Card', 'Membership Card', 'Prepaid Card']);
-    // seed detail for the five leads that ship in WASLA_DB — read-only enrichment, never written back
+    /* seed detail for the five leads that ship in WASLA_DB — read-only enrichment, never written back.
+       AL-QUDS'S TRAIL MAY NOT ASSERT WHAT HAS NOT HAPPENED. It shipped with "first card submitted
+       for review", which on a fresh browser was a sentence about an account that does not exist,
+       a card nobody has built and an empty approvals queue. Its own lead note says the opposite
+       ("Closed on the call — not converted yet, no invite sent"), and this wave exists so the
+       chain is real: the rep converts it, sends the invite, the prospect sets a password, Omar
+       activates, the merchant builds the card, and THAT is what puts a row in the queue. The trail
+       now stops at the win and the demo writes the rest. */
     const LEADX = {
       'Louma Chocolate': { phone: '+962 79 555 0433', email: 'reem@louma.jo', vertical: 'Retail', areas: ['Abdali'], locs: ['Abdali Boulevard'], types: ['Points Card', 'Coupon'], plan: 'Growth', value: 79, source: 'Referral', follow: 'Tomorrow', touch: 2, seedTrail: [['2d ago', 'invite opened — no password yet', 'ping'], ['4d ago', 'moved Cold → Invited', 'move']] },
       'Tuta Juice': { phone: '+962 78 555 0611', email: 'zain@tuta.jo', vertical: 'Café', areas: ['Swefieh', 'Rainbow St'], locs: ['Swefieh branch', 'Rainbow St kiosk'], types: ['Stamp Card'], plan: 'Starter', value: 25, source: 'Walk-in', follow: 'Thursday 11:00', touch: 1, seedTrail: [['Yesterday', 'demo booked for Thursday 11:00', 'move'], ['3d ago', 'walked in at the Swefieh branch — asked for the deck', 'note']] },
-      'Al-Quds Falafel': { phone: '+962 77 555 0290', email: 'abushadi@quds.jo', vertical: 'Restaurant', areas: ['Madina St'], locs: ['Madina St'], types: ['Stamp Card', 'Challenge Card'], plan: 'Starter', value: 25, source: 'Outbound', follow: 'Today', touch: 0, seedTrail: [['Today', 'first card submitted for review', 'won'], ['2d ago', 'moved Negotiating → Won', 'move']] },
+      'Al-Quds Falafel': { phone: '+962 77 555 0290', email: 'abushadi@quds.jo', vertical: 'Restaurant', areas: ['Madina St'], locs: ['Madina St'], types: ['Stamp Card', 'Challenge Card'], plan: 'Starter', value: 25, source: 'Outbound', follow: 'Today', touch: 0, seedTrail: [['Today', 'follow-up due — nothing sent yet', 'note'], ['2d ago', 'closed on the call · moved Negotiating → Won', 'won']] },
       'Baraka Style': { phone: '+962 79 555 0388', email: 'mona@baraka.jo', vertical: 'Salon', areas: ['Jabal Amman'], locs: ['Jabal Amman'], types: ['VIP Tiers'], plan: 'Starter', value: 25, source: 'Instagram', follow: 'After Eid', touch: 11, seedTrail: [['11d ago', 'asked to be called back after Eid', 'note']] },
       'Deema Nails': { phone: '+962 78 555 0417', email: 'deema@deemanails.jo', vertical: 'Salon', areas: ['Sweifieh Village'], locs: ['Sweifieh Village'], types: ['Cashback Card', 'VIP Tiers'], plan: 'Growth', value: 79, source: 'Event', follow: 'Thursday', touch: 6, seedTrail: [['6d ago', 'wants Growth at Starter price — needs an admin answer', 'escalate'], ['9d ago', 'met at the Swefieh beauty fair', 'note']] }
     };
@@ -4343,31 +4706,35 @@ class Component extends DCLogic {
       this.say('WhatsApp sent to ' + names.join(', ') + ' — in Arabic, from your number');
       this.slog('client', 'swept ' + stage + ' for stalls — pinged ' + names.join(', ') + ' after ' + STALE_DAYS + '+ quiet days');
     };
-    // ── THE LEADS THAT SHIPPED ALREADY CONVERTED ──────────────────────────────────────────────
-    //    Al-Quds Falafel sits on the Activations register as an invite Lina sent yesterday, and
-    //    the pipeline was, at the same moment, offering "Convert — send the invite" on the same
-    //    business. One business, one truth. Seeded here rather than folded into `converted` in
-    //    state, so a blob saved before today (which carries `converted: {}`) cannot restore over
-    //    the top of it and bring the contradiction back.
-    const CONV_SEED = { 'Al-Quds Falafel': true };
-    const isConv = (n) => !!(st.converted || {})[n] || !!CONV_SEED[n];
+    // ── NOTHING SHIPS ALREADY CONVERTED ───────────────────────────────────────────────────────
+    //    There used to be a CONV_SEED here marking Al-Quds Falafel converted, put in to stop this
+    //    console offering "Convert — send the invite" on a business its own Activations register
+    //    showed as already invited. It fixed the contradiction from the wrong end: the rep's own
+    //    phone (Wasla Sales) ships `converted: {}`, so on a fresh browser whichever surface you
+    //    opened FIRST decided whether the lead had been actioned, and the two told different
+    //    origin stories about the same business.
+    //    Both surfaces now start where the truth is — Won, not yet converted — and the conversion,
+    //    the invite, the password and the activation all happen in front of you, in that order.
+    //    `converted` in state is the only source, and it is empty until a rep does the work.
+    const isConv = (n) => !!(st.converted || {})[n];
     // ── the lead↔account seam · one business, two registers. Matching is by name, both ways:
     //    a converted card jumps to the account (or, honestly, to the invite that is all it is
     //    yet), and the account's timeline jumps back to the lead. ──
-    const sameName = (a, b) => String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
     // one slug rule for every URL this console hands out — the invite link and the view-as link
     const slugOf = (n) => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const accIdxByName = (n) => C.accounts.findIndex(x => sameName(x.name, n));
+    const accIdxByName = (n) => ACCTS.findIndex(x => sameName(x.name, n));
     const selLead = allLeads.find(l => sameName(l.name, selAcc.name) && (l.stage === 'Won' || isConv(l.name))) || null;
     /** A converted lead opens the thing that actually exists: the account if there is one, and
-        otherwise the invite — which is all Al-Quds Falafel is until somebody sets a password. */
+        otherwise the invite — which is all a business is until somebody sets a password AND this
+        console turns the key. Both branches are now reachable: the first one used to be dead,
+        because nothing in this file could ever put a converted lead into the accounts register. */
     const openConverted = (l, accIdx, sent) => {
       if (accIdx >= 0) { goAccount(accIdx); this.say(l.name + ' is a live account — this is its register entry'); return; }
-      if (sent) { this.setState({ screen: 'invite' }); this.say(l.name + ' is an invite, not an account yet — it is born the second they set a password'); return; }
+      if (sent) { this.setState({ screen: 'activations' }); this.say(l.name + ' is an invite, not an account yet — the Activations register is where it is, and where you activate it'); return; }
       this.disarmInvite();
       this.setState({ screen: 'invite', invBiz: l.name, invOwner: l.owner || '', invPhone: (l.phone && l.phone !== '—') ? l.phone : '+962 79 000 0000', invPlan: l.plan || 'Starter', invSent: false, invOpened: false });
       this.saveConsole();
-      this.say(l.name + ' has no account yet — the invite is prefilled, send it and the account is born on their phone');
+      this.say(l.name + ' has no account yet — the invite is prefilled. Send it, they set a password on their own phone, and you activate the account from the Activations register');
     };
     // escalations — session objects that surface on the ADMIN home under "Needs an eye"
     const escalSeed = [{ id: 'e-Deema Nails', lead: 'Deema Nails', rep: 'Lina', ask: 'wants Growth at Starter price' }];
@@ -4409,7 +4776,7 @@ class Component extends DCLogic {
     const myActivations = (((C.leaderboard || []).find(r => r && r[0] === 'Omar') || [null, 0])[1]) || 0;
     const boardMax = (C.leaderboard || []).reduce((n, r) => Math.max(n, (r && r[1]) || 0), 0);
     const openLead = (name) => this.setState({ screen: 'leads', leadSel: name, leadFormOpen: false, leadMoved: null, leadEditOpen: false, leadEdit: null });
-    const openMyAccount = (name) => { const i = C.accounts.findIndex(x => x.name === name); if (i >= 0) goAccount(i); else this.setState({ screen: 'accounts' }); };
+    const openMyAccount = (name) => { const i = ACCTS.findIndex(x => x.name === name); if (i >= 0) goAccount(i); else this.setState({ screen: 'accounts' }); };
     const salesHero = (() => {
       if (myDueToday.length) {
         const l = myDueToday[0];
@@ -4425,7 +4792,7 @@ class Component extends DCLogic {
       }
       if (myDrifting) {
         const a = myDrifting.a, q = myDrifting.q, d = myDrifting.d;
-        return { count: a.name + ' is going quiet' + (q == null ? '' : ' — ' + q + ' days'),
+        return { count: a.name + ' is going quiet' + (q == null ? '' : ' — ' + nDays(q)),
           preview: (a.owner || 'The owner') + ' has ' + (a.members || 0).toLocaleString('en-US') + ' members holding a pass nobody is scanning' + (d != null ? ', and JOD ' + (planPrice[a.plan] || 0) + ' renews in ' + d + ' days' : '') + '. One WhatsApp, in Arabic, usually settles which way this goes.',
           cta: 'Open the account →', go: () => openMyAccount(a.name) };
       }
@@ -4463,7 +4830,7 @@ class Component extends DCLogic {
     const invPhoneDigits = invPhoneV.replace(/\D/g, '').length;
     const invBizOk = invBizV.length >= 2, invOwnerOk = invOwnerV.length >= 2, invPhoneOk = invPhoneDigits >= 9;
     const invReady = invBizOk && invOwnerOk && invPhoneOk;
-    const invFirst = invOwnerV.split(' ')[0] || '';
+    const invFirst = firstNameOf(invOwnerV);
     const invGate = !invBizOk ? 'Name the business — it becomes the account name on every pass it ever issues.'
       : !invOwnerOk ? 'Add the owner’s name — the message opens with it, and one owner is the whole model.'
       : !invPhoneOk ? 'Add the owner’s WhatsApp number — ' + invPhoneDigits + ' of 9 digits so far.'
@@ -4502,8 +4869,8 @@ class Component extends DCLogic {
     // ── SUPPORT · which account a member's card belongs to ──
     const CARD_ACCOUNT = { 'Daraj Coffee': 'Tala Hospitality Group', 'Layl Lounge': 'Tala Hospitality Group', 'Zaytoun Kitchen': 'Tala Hospitality Group', 'Sukkar Bakery': 'Tala Hospitality Group', 'Ghaim Studio': 'Tala Hospitality Group', 'Zaman Arcade': 'Tala Hospitality Group' };
     const supAccName = CARD_ACCOUNT[supSelM.card] || null;
-    const supAccIdx = supAccName ? C.accounts.findIndex(x => x.name === supAccName) : -1;
-    const supAccOwner = ((C.accounts[supAccIdx] || {}).owner || '').split(' ')[0] || 'the owner';
+    const supAccIdx = supAccName ? ACCTS.findIndex(x => x.name === supAccName) : -1;
+    const supAccOwner = firstNameOf((ACCTS[supAccIdx] || {}).owner) || 'the owner';
     // seeded so the strip is never blank on the member the whole demo opens on
     const SUP_ACT_SEED = { 'Sara Al-Amin': [{ t: '09:58', kind: 'support', line: 're-issued her pass — old barcode voided, SMS sent' }, { t: 'Mar 2026', kind: 'client', line: 'joined on Daraj Coffee at the Rainbow St counter' }] };
     const supActsRaw = (() => {
@@ -4513,7 +4880,7 @@ class Component extends DCLogic {
       return hits.length ? hits : (SUP_ACT_SEED[nm] || []);
     })();
     // ── ACTIVITY LOG · a row opens the thing it names, when that thing exists and you may see it ──
-    const accByLen = C.accounts.map(a => a.name).sort((a, b) => b.length - a.length);
+    const accByLen = ACCTS.map(a => a.name).sort((a, b) => b.length - a.length);
     const memByLen = M.map(m => m.name).sort((a, b) => b.length - a.length);
     // a row may only open what this role may open. The Accounts screen already filters a rep down
     // to their own book (`myAccounts`); the log's row-jump did not, so a single click on a line
@@ -4522,7 +4889,7 @@ class Component extends DCLogic {
     const logOpenable = sales ? new Set(myAccounts.map(a => a.name)) : null;
     const logTarget = (line) => {
       const s = String(line || '');
-      if (!supportRole) { const a = accByLen.find(n => s.includes(n) && (!logOpenable || logOpenable.has(n))); if (a) { const i = C.accounts.findIndex(x => x.name === a); if (i >= 0) return { hint: 'open account →', go: () => goAccount(i) }; } }
+      if (!supportRole) { const a = accByLen.find(n => s.includes(n) && (!logOpenable || logOpenable.has(n))); if (a) { const i = ACCTS.findIndex(x => x.name === a); if (i >= 0) return { hint: 'open account →', go: () => goAccount(i) }; } }
       if (admin || supportRole) { const m2 = memByLen.find(n => s.includes(n)); if (m2) return { hint: 'open member →', go: () => this.setState({ screen: 'support', supQuery: m2, supIdx: 0, corrOpen: false, corrReason: '', supFixOpen: false }) }; }
       return null;
     };
@@ -4534,7 +4901,15 @@ class Component extends DCLogic {
     const RING = { '#2FAE66': 'rgba(47,174,102,.18)', '#E2563A': 'rgba(226,86,58,.18)', '#8C877F': 'rgba(140,135,127,.22)', '#B99A6B': 'rgba(185,154,107,.22)', '#C9BFAF': 'rgba(201,191,175,.22)', '#F0A92B': 'rgba(240,169,43,.20)' };
     const verdictTone = (v) => { const b = lifeBadge(verdictLife(v)); return { dot: b.dot, ring: RING[b.dot] || 'rgba(201,191,175,.2)', bg: b.bg, fg: b.fg, label: b.label, life: verdictLife(v) }; };
     const decidedList = [
-      ...Object.entries(st.decided || {}).map(([id, verdict]) => { const a = C.approvals.find(x => x.id === id) || {}; return { key: id, card: a.card || id, account: a.account || '—', verdict, when: 'Just now', by: 'Omar Haddad', reason: verdict === 'rejected' ? ((st.decidedWhy || {})[id] || 'Sent back with a note') : '', note: '', session: true, kind: a.kind || 'new' }; }),
+      // reads the merged verdict register, so a card decided in an EARLIER session — the verdict
+      // published on the shared channel, not merely remembered in this blob — still has a row
+      // here, with the account it belongs to and the words the client was actually sent
+      ...Object.entries(decidedMap).map(([id, verdict]) => { const a = apprAll.find(x => x.id === id) || {}; return { key: id, card: a.card || id, account: a.account || '—', verdict,
+        // a verdict this session took reads "Just now"; one that came back off the published
+        // channel was taken before this page was open, and saying "Just now" over it would be a
+        // clock that lies — the same rule the sent-notice receipts already keep
+        when: (st.decided || {})[id] ? 'Just now' : 'Earlier',
+        by: 'Omar Haddad', reason: verdict === 'rejected' ? (reasonMap[id] || 'Sent back with a note') : '', note: '', session: true, kind: a.kind || 'new' }; }),
       // a takedown is a decision like any other — it belongs in the same ledger, not a side list
       //    …and the sentence under it is forked by type, because "already earned" is a lie about a
       //    deposit. A prepaid retirement always arrives through a wind-down, so it says so.
@@ -4596,9 +4971,12 @@ class Component extends DCLogic {
     //    phone app sent — which now arrives as a first-class row in `invites` (the shared blob, in
     //    this register's own shape, tagged `origin: 'field'`), with the older leadTrail line of
     //    kind `invite` still read so an earlier phone build is not silently dropped.
+    //    AL-QUDS FALAFEL IS NOT SEEDED HERE. It used to ship as `iv-quds`, status `sent`, while
+    //    the rep's own phone had never sent it — the same fresh-browser contradiction CONV_SEED
+    //    was papering over further up. It arrives on this register the way every other invite
+    //    does: a rep converts the won lead, sends the WhatsApp, and the row appears.
     const INVITE_SEED = [
       { id: 'iv-louma', biz: 'Louma Chocolate', owner: 'Reem Louma', phone: '+962 79 555 0433', plan: 'Growth', by: 'Omar', when: '4 days ago', origin: 'console', seedStatus: 'opened' },
-      { id: 'iv-quds', biz: 'Al-Quds Falafel', owner: 'Abu Shadi', phone: '+962 77 555 0290', plan: 'Starter', by: 'Lina', when: 'Yesterday 15:20', origin: 'console', seedStatus: 'sent' },
       { id: 'iv-habibah', biz: 'Habibah Sweets', owner: 'Nadia Habib', phone: '+962 79 555 0502', plan: 'Starter', by: 'Sami', when: 'Mon 11:05', origin: 'console', seedStatus: 'password' }
     ];
     // invites the rep's phone app sent, read straight off the trail it wrote — no second channel
@@ -4688,12 +5066,110 @@ class Component extends DCLogic {
     const INV_LABEL = { sent: 'Sent', opened: 'Opened', password: 'Password set', live: 'Account live', cancelled: 'Cancelled' };
     const inviteRows0 = inviteRaw.map(v => ({ ...v, status: invStatusOf(v), resends: invModOf(v).resends }));
     /** "Has this business been invited?" — asked of the REGISTER, not of the one invite the
-        invite screen happens to be holding open. That narrower test is why Al-Quds Falafel read
-        "INVITE READY — NOT SENT" on the pipeline while the Activations screen, three clicks away,
-        showed the very same invite as sent yesterday by Lina. A cancelled invite is not a sent
-        one — cancelling kills the link, and the board has to say so. */
+        invite screen happens to be holding open. A cancelled invite is not a sent one —
+        cancelling kills the link, and the board has to say so. */
     const inviteSentFor = (name) => (st.invSent && sameName(st.invBiz, name)) || inviteRows0.some(v => sameName(v.biz, name) && v.status !== 'cancelled');
     const invLiveN = inviteRows0.filter(v => v.status !== 'live' && v.status !== 'cancelled').length;
+
+    /* ══ THE ACTIVATION · WHERE AN INVITE BECOMES AN ACCOUNT ═══════════════════════════════════
+       Everything upstream of this was real: the rep converts the won lead, sends the WhatsApp,
+       the prospect opens it and sets a password on their own phone. And then the chain stopped.
+       `invStatusOf` had a 'live' branch that tested `accIdxByName(v.biz) >= 0`, INV_LABEL carried
+       an 'Account live' string, and nothing in this file could ever put a business into the
+       accounts register — so that branch was unreachable and that label was a promise no code
+       path could keep. THIS is the missing click.
+
+       The row we push is built from what we already know, never typed:
+         · the invite carries the business, the owner, the plan and the rep who sent it
+         · the LEAD carries the Arabic name
+         · WASLA_ACCOUNTS — the shared per-account data every merchant surface reads — carries the
+           quota, the renewal date and the opening counts for a business the platform already
+           holds. Reading them from there is the only way the Console's "renews 3 Sep 2026" and
+           the merchant's own dashboard can be the same sentence.
+         · a business the platform has NOT met yet still activates: the quota comes from what the
+           plan means on the seed accounts, the renewal from this console's own clock, and the
+           counts open at zero, because zero is what a business that has done nothing has done. */
+    /** What a plan's card quota MEANS, read off the accounts that already run that plan rather
+        than typed a second time. Falls back to Starter's 3 for a plan nothing on the book uses. */
+    const quotaForPlan = (plan) => {
+      const row = ACCTS.find(a => a && a.plan === plan && typeof a.quota === 'number');
+      return row ? row.quota : 3;
+    };
+    /** The shared per-account record, if the platform holds one for this business. This is the
+        SAME object the merchant dashboard, the wallet and the till read, so anything taken from
+        here cannot drift away from what the client sees on their own screen. */
+    const sharedAcctFor = (name) => {
+      const ACC = window.WASLA_ACCOUNTS;
+      if (!ACC || typeof ACC !== 'object') return null;
+      const slug = slugOf(name);
+      const row = (slug && Object.prototype.hasOwnProperty.call(ACC, slug)) ? ACC[slug] : null;
+      return (row && row.account && typeof row.account === 'object') ? row.account : null;
+    };
+    /** Is there a real merchant session behind this business — a WASLA_ACCOUNTS entry the
+        dashboard, wallet and till can all open? Used to decide whether this console offers to open
+        it, and never to decide whether it may be activated. */
+    const hasSharedAcct = (name) => !!sharedAcctFor(name);
+    /** A renewal a month out, written in the one date format this whole console parses
+        ("30 Jul 2026"). Only reached for a business the platform holds no record for. */
+    const renewalFromClock = (() => {
+      const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const t = pDate(CLOCK.day);
+      if (t == null) return '';
+      const d = new Date(t + 30 * DAY_MS);
+      return d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+    })();
+    /** The account row an activation creates. Nothing in it is invented: every field is read from
+        the invite, the lead, the shared record or the plan — and the two that have no source
+        anywhere (the avatar letter and its colour) are DERIVED from the business name, so any
+        business a rep activates gets a stable identity rather than one this file happened to
+        hardcode for one falafel shop. */
+    const acctRowFor = (v) => {
+      const name = String((v || {}).biz || '').trim();
+      const lead = allLeads.find(l => sameName(l.name, name)) || {};
+      const shared = sharedAcctFor(name);
+      const plan = String((v || {}).plan || (shared && shared.plan) || lead.plan || 'Starter');
+      // a stable colour per business — same name, same colour, every session and every browser
+      const PAL = ['#5C6B2F', '#8E5A2B', '#3F6E8C', '#7A3B5E', '#2E6B5A', '#8A6A24'];
+      let h = 7; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 9973;
+      return {
+        name: name,
+        ar: String((shared && shared.companyAr) || lead.ar || ''),
+        owner: String((v || {}).owner || (shared && shared.owner) || lead.owner || ''),
+        plan: plan,
+        // an account is born with nothing on it — the first card is created in the client's own
+        // dashboard and reaches this console through the approvals queue
+        cards: Number((shared && shared.cardsUsed) || 0) || 0,
+        quota: Number((shared && shared.cardQuota) || 0) || quotaForPlan(plan),
+        members: Number((shared && shared.members) || 0) || 0,
+        state: 'active',
+        // the rep who sent the invite keeps the relationship — it does not silently become Omar's
+        manager: String((v || {}).by || 'Omar'),
+        initial: (name.charAt(0) || '?').toUpperCase(),
+        color: PAL[h % PAL.length],
+        renewal: String((shared && shared.renewal) || renewalFromClock),
+        // provenance, so every day-one screen can tell "activated this morning" apart from
+        // "not wired into the demo's books" without guessing
+        activatedOn: 'Just now', activatedBy: 'Omar Haddad',
+        // stored value is a fact about the business, recorded before it is granted — never a
+        // default a brand-new account inherits
+        eligible: { prepaid: false }
+      };
+    };
+    /** The click. Guarded three ways: the business must not already be an account, the invite must
+        actually have reached "password set" (there is no activating a link nobody opened), and the
+        row must carry a name. Anything else is a no-op with a sentence rather than a silent skip. */
+    const activateAcct = (v) => {
+      const name = String((v || {}).biz || '').trim();
+      if (!name) return;
+      if (accIdxByName(name) >= 0) { this.say(name + ' is already an account — open it from the register'); return; }
+      const row = acctRowFor(v);
+      const line = 'Account activated on ' + row.plan + ' — ' + (row.quota === 99 ? 'unlimited cards' : row.quota + ' card slots') + ', renews ' + (row.renewal || 'on the next cycle') + '. ' + (firstNameOf(row.owner) || 'The owner') + ' can sign in now; nothing exists inside it yet.';
+      this.setState({ accountsAdded: [...(Array.isArray(st.accountsAdded) ? st.accountsAdded : []), row],
+        actJust: name, acctNotes: withNote(name, line, 'Omar Haddad') });
+      this.saveConsole();
+      this.say(name + ' is live — an account with nothing in it yet, which is exactly what day one looks like');
+      this.slog('access', 'activated ' + name + ' — ' + row.plan + ' plan, ' + (row.quota === 99 ? 'unlimited' : row.quota) + ' card slots, owner ' + (row.owner || 'unnamed') + ', manager ' + row.manager);
+    };
 
     // ── CLIENT ASKS · the inbox the merchant dashboard has been writing into a void ─────────────
     //    Yara raises a change request on her dashboard (company details, branches, city) and until
@@ -4710,13 +5186,18 @@ class Component extends DCLogic {
         it does, this inbox receives them without a second change here. Never throws. */
     const dashAsks = (() => {
       try {
-        const raw = this._lsGet('wasla_demo_dashboard_state');
+        const raw = this._lsGet(this.dashboardKey());
         if (!raw) return [];
         const b = JSON.parse(raw);
         if (!b || !Array.isArray(b.changeReqs)) return [];
+        // whose blob this is is not a guess: the dashboard key is namespaced by account, and the
+        // resolver publishes both the slug and the company name it resolved to. Filing another
+        // account's change request under Tala's name is exactly the defect this wave exists to kill.
+        const owner = DASH_ACCT_NAME;
+        const whose = (allAccounts.find(x => sameName(x.name, owner)) || {}).owner || 'the owner';
         return b.changeReqs.filter(r => r && typeof r === 'object' && r.value).map((r, i) => ({
-          id: 'ask-dash-' + i, acct: 'Tala Hospitality Group', field: String(r.label || 'Company details'),
-          value: String(r.value), who: 'Yara Nassar', when: 'Earlier', source: 'client' }));
+          id: 'ask-dash-' + i, acct: owner, field: String(r.label || 'Company details'),
+          value: String(r.value), who: whose, when: 'Earlier', source: 'client' }));
       } catch (e) { return []; }
     })();
     const askRaw = [...ASK_SEED, ...dashAsks, ...(st.asks || [])].filter((v, i, a) => a.findIndex(x => x.id === v.id) === i);
@@ -4766,7 +5247,20 @@ class Component extends DCLogic {
     //    Write side · verdicts go into OUR OWN key, `wasla_demo_edit_verdicts`, never back into
     //    the dashboard's blob. Read-modify-write: entries this console did not write are copied
     //    across untouched, exactly as they were found, including shapes we do not understand.
-    const DASH_CARDS = ((window.WASLA_DB || {}).cards) || [];
+    //    WHOSE dashboard blob is this? · `wasla_demo_dashboard_state` is namespaced by account
+    //    now (dashboardKey() appends WASLA_ACCT_SUFFIX), so the blob this console can read is the
+    //    one belonging to the account the resolver resolved to — which, on a bare Console URL, is
+    //    Tala. The card register must be read from THAT account's slice of window.WASLA_ACCOUNTS,
+    //    never from the flat window.WASLA_DB.cards: the flat global is whatever the resolver last
+    //    copied, and reviewing one account's cards under another account's name is the same
+    //    "sentence contradicting the number beside it" defect this file keeps finding. On a bare
+    //    Console both readings are the same array, so nothing about the shipped demo moves.
+    const DASH_CARDS = (() => {
+      const ACC = window.WASLA_ACCOUNTS;
+      const row = (ACC && typeof ACC === 'object' && Object.prototype.hasOwnProperty.call(ACC, DASH_ACCT_SLUG)) ? ACC[DASH_ACCT_SLUG] : null;
+      if (row && Array.isArray(row.cards)) return row.cards;
+      return ((window.WASLA_DB || {}).cards) || [];
+    })();
     //
     //    Field coverage · a staged field this table does not name is a staged field the reviewer
     //    never sees, and it goes live unreviewed the moment the rest of the edit is approved. The
@@ -4888,7 +5382,7 @@ class Component extends DCLogic {
     };
     const readDashEdits = () => {
       try {
-        const raw = this._lsGet('wasla_demo_dashboard_state');
+        const raw = this._lsGet(this.dashboardKey());
         if (!raw) return [];
         const b = JSON.parse(raw);
         if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return [];
@@ -4941,7 +5435,7 @@ class Component extends DCLogic {
           walk(asObj(e.cfg), {}, EDIT_CFG_LABELS, 'Setting', (k) => !!shownKeys[CFG_TO_RULE[k] || k]);
           if (!changes.length) return;
           out.push({ id: cid, card: String(seed.name || cid), ar: String(seed.ar || ''),
-            account: 'Tala Hospitality Group', color: String(seed.color || '#7A5A2E'), prepaid: isPP,
+            account: DASH_ACCT_NAME, color: String(seed.color || '#7A5A2E'), prepaid: isPP,
             initial: String(seed.initial || String(seed.name || cid).charAt(0)).toUpperCase(), changes });
         });
         return out;
@@ -5275,7 +5769,7 @@ class Component extends DCLogic {
           takedowns: [...(st.takedowns || []), { card: nm, account: selAcc.name, reason: why, when: 'Just now', by: 'Omar Haddad' }],
           acctNotes: { ...(st.acctNotes || {}), [selAcc.name]: [{ t: 'Just now', by: 'Omar Haddad', line: 'Took ' + nm + ' down — “' + why + '”. Earning stopped; ' + mc.short + '.' }, ...notesOf(selAcc.name)] },
           tdOpen: null, tdReason: '' });
-        this.say(nm + ' is down — ' + (tdCard.members || 0).toLocaleString('en-US') + ' passes stopped earning, ' + mc.short + ' · ' + (selAcc.owner || 'the owner').split(' ')[0] + ' has the reason');
+        this.say(nm + ' is down — ' + (tdCard.members || 0).toLocaleString('en-US') + ' passes stopped earning, ' + mc.short + ' · ' + selOwnerFirst + ' has the reason');
         this.slog('approve', 'took down ' + nm + ' — ' + why + '; client notified with fix path, ' + mc.short);
       });
     };
@@ -5373,6 +5867,24 @@ class Component extends DCLogic {
     const selPrepaidOut = selHasPrepaid
       ? selCardList.filter(c => c.prepaid && c.state !== 'retired').reduce((acc, c) => { const o = outstandingOf(c.name); return { principalMinor: acc.principalMinor + o.principalMinor, balanceMinor: acc.balanceMinor + o.balanceMinor, refundableMinor: acc.refundableMinor + o.refundableMinor, holders: acc.holders + o.holders }; }, { principalMinor: 0, balanceMinor: 0, refundableMinor: 0, holders: 0 })
       : { principalMinor: 0, balanceMinor: 0, refundableMinor: 0, holders: 0 };
+
+    /* ══ THE BLAST RADIUS · ONE PHRASE, THREE PLACES, AND IT AGREES WITH ITSELF ════════════════
+       The danger zone's pause note, the pause confirm and the line the pause writes into the
+       append-only log each built "N cards grey in M wallets" out of the same two numbers by
+       hand. On the shipped eight that read fine until you looked: Petra Gym and Wared Flowers
+       both hold exactly one card and both said "1 cards". On a business activated this morning
+       it read "0 cards grey in 0 wallets tonight" — a threat with nothing behind it, printed in
+       the one place on this console where a threat has to be exact. A count is not a sentence:
+       zero states the absence, one agrees with itself, and everything above one is untouched,
+       to the byte, on every account that ships. */
+    const dzGreyPhrase = (() => {
+      const cN = Number(selCards) || 0, mN = Number(selAcc.members) || 0;
+      if (cN === 0) return 'there is no card on this account, and no wallet holding one';
+      const cards = cN + ' card' + (cN === 1 ? '' : 's');
+      if (mN === 0) return cards + ' on the account, and ' + (cN === 1 ? 'it is not in a wallet yet' : 'not one of them is in a wallet yet');
+      return cards + ' grey in ' + mN.toLocaleString('en-US') + ' wallet' + (mN === 1 ? '' : 's');
+    })();
+    const dzGreyIsNil = (Number(selCards) || 0) === 0 || (Number(selAcc.members) || 0) === 0;
 
     // ── MANAGER HANDOVER ───────────────────────────────────────────────────────────────────────
     const mgrReady = !!st.mgrPick && st.mgrPick !== selAcc.manager && (st.mgrNote || '').trim().length >= 6;
@@ -5579,7 +6091,7 @@ class Component extends DCLogic {
         fg: kind === 'new' || kind === 'expansion' ? '#1E7D47' : '#B23420',
         amt: (kind === 'new' || kind === 'expansion' ? '+' : '−') + JOD(amt),
         account: String(e.account || ''), on: String(e.on || ''), detail: String(e.detail || ''),
-        go: () => { const ix = C.accounts.findIndex(x => sameName(x.name, e.account)); if (ix >= 0) goAccountMoney(ix); },
+        go: () => { const ix = ACCTS.findIndex(x => sameName(x.name, e.account)); if (ix >= 0) goAccountMoney(ix); },
         anim: AN('fadeUp', '.42s', (0.05 * i) + 's')
       };
     });
@@ -5601,7 +6113,7 @@ class Component extends DCLogic {
     const byMoney = (an, av, bn, bv) => (nz(bv) - nz(av)) || String(an || '').localeCompare(String(bn || ''));
     const conRows = bLive.slice().sort((a, b) => byMoney(a.name, a.mrrJod, b.name, b.mrrJod)).map((a, i) => {
       const pc = mrrBook ? (nz(a.mrrJod) / mrrBook) * 100 : 0;
-      return { name: a.name, ar: String(a.ar || ''), plan: a.plan, v: JOD(a.mrrJod), pct: PC1(pc), w: R1(pc) + '%', ink: planInk(a.plan), top2: i < 2, anim: AN('growX', '.6s', (0.06 * i) + 's'), go: () => { const ix = C.accounts.findIndex(x => sameName(x.name, a.name)); if (ix >= 0) goAccountMoney(ix); } };
+      return { name: a.name, ar: String(a.ar || ''), plan: a.plan, v: JOD(a.mrrJod), pct: PC1(pc), w: R1(pc) + '%', ink: planInk(a.plan), top2: i < 2, anim: AN('growX', '.6s', (0.06 * i) + 's'), go: () => { const ix = ACCTS.findIndex(x => sameName(x.name, a.name)); if (ix >= 0) goAccountMoney(ix); } };
     });
     const conTop1 = conRows[0] || null, conTop2 = conRows[1] || null;
     const conMrrOf = (n) => nz((bLive.find(a => sameName(a.name, n)) || {}).mrrJod);
@@ -5709,14 +6221,14 @@ class Component extends DCLogic {
       amt: JOD(iv.amountJod), due: String(iv.dueOn || ''), late: nz(iv.daysLate) + ' days over',
       method: String(iv.method || ''), risk: iv.accState === 'at-risk',
       anim: AN('fadeUp', '.42s', (0.05 * i) + 's'),
-      go: () => { const ix = C.accounts.findIndex(x => sameName(x.name, iv.account)); if (ix >= 0) goAccountMoney(ix); }
+      go: () => { const ix = ACCTS.findIndex(x => sameName(x.name, iv.account)); if (ix >= 0) goAccountMoney(ix); }
     }));
 
     // ── the ledger · every account in the book, live and closed, sortable ─────────────────────
     const ledSort = ['mrr', 'name', 'billed', 'days', 'out'].indexOf(String(st.billSort || '')) >= 0 ? String(st.billSort) : 'mrr';
     const ledRaw = BA.map(a => {
       const t = (a.totals && typeof a.totals === 'object') ? a.totals : {};
-      const conAcc = C.accounts.find(x => sameName(x.name, a.name)) || {};
+      const conAcc = ACCTS.find(x => sameName(x.name, a.name)) || {};
       const live = String(a.state || '') !== 'closed';
       return {
         name: String(a.name || ''), ar: String(a.ar || ''), initial: String(a.initial || ''),
@@ -5766,7 +6278,7 @@ class Component extends DCLogic {
         wasReversed: !paid && !!(st.billReversed || {})[a.name], reversedNote: 'reversed — due again',
         quiet: !due && !(paid && admin), quietNote: !a.live ? 'closed' : paid ? (st.billJust === a.name ? 'just now' : 'settled') : 'nothing to settle',
         anim: AN('fadeUp', '.4s', (0.03 * i) + 's'),
-        go: () => { const ix = C.accounts.findIndex(x => sameName(x.name, a.name)); if (ix >= 0) goAccountMoney(ix); }
+        go: () => { const ix = ACCTS.findIndex(x => sameName(x.name, a.name)); if (ix >= 0) goAccountMoney(ix); }
       };
     });
     const ledFoot = ledRaw.reduce((o, a) => ({ mrr: o.mrr + (a.live ? a.mrr : 0), billed: o.billed + a.billed, collected: o.collected + a.collected, owed: o.owed + a.outstanding + a.writtenOff, inv: o.inv + a.invoices }), { mrr: 0, billed: 0, collected: 0, owed: 0, inv: 0 });
@@ -5906,7 +6418,7 @@ class Component extends DCLogic {
       const moIsNow = moPick === moLast;
       const evOf = (kind) => (mo.events || []).filter(e => String(e.kind || '') === kind);
       const evLine = (list) => list.map(e => String(e.account || '') + ' · ' + String(e.detail || '')).join(' · ');
-      const goTo = (name) => { const ix = C.accounts.findIndex(x => sameName(x.name, name)); if (ix >= 0) goAccountMoney(ix); };
+      const goTo = (name) => { const ix = ACCTS.findIndex(x => sameName(x.name, name)); if (ix >= 0) goAccountMoney(ix); };
       // ARREARS · how many months are actually open on that account, counted rather than assumed.
       // The old sentence was hand-written against a clock that has since moved on and said the
       // account was "carrying two months at once" while exactly one invoice was open.
@@ -5921,7 +6433,7 @@ class Component extends DCLogic {
       const rows = [
         { k: 'At-risk MRR', scope: 'today', v: JOD(sumv(BS.atRiskMrr)), tone: sumv(BS.atRiskMrr) ? 'warn' : 'ok',
           line: String(gv(BS.atRiskMrr, 'gloss', '')),
-          go: () => { const ix = C.accounts.findIndex(x => x.state === 'at-risk'); if (ix >= 0) goAccountMoney(ix); },
+          go: () => { const ix = ACCTS.findIndex(x => x.state === 'at-risk'); if (ix >= 0) goAccountMoney(ix); },
           goLabel: 'Open the account →' },
         { k: 'Overdue', scope: 'today', v: JOD(sumv(BS.overdueNow)), tone: sumv(BS.overdueNow) ? 'bad' : 'ok',
           line: ov ? joinSent([
@@ -5982,9 +6494,22 @@ class Component extends DCLogic {
       isActivations: st.screen === 'activations', isAsks: st.screen === 'asks', isIdentity: st.screen === 'identity',
       goIdentity: () => this.setState({ screen: 'identity' }),
       showRenewals: !supportRole, showFeed: admin || supportRole, showInviteBtn: !supportRole,
-      // honest about the sample: 47 accounts exist on the platform, eight of them are wired into
-      // this demo, and the search / filters / sort below work on those eight and say so
-      accHeading: admin ? ('47 on the platform · 45 active · 2 closed. Eight are wired into this demo — every number, invoice and card list below belongs to one of them, and the search works on those eight.') : bookLine,
+      // ── HOW BIG IS THE BOOK · DERIVED, IN A SENTENCE THAT SITS ON TOP OF THE COUNTERS ────────
+      //    This line used to read "47 on the platform · 45 active · 2 closed. Eight are wired into
+      //    this demo … and the search works on those eight." — five numbers, all typed. The tiles
+      //    directly beneath it (accStats), the filter chips and accCountLine are all derived from
+      //    myAccounts, so the second Omar activated an account the sentence said EIGHT above a
+      //    line reading "Showing all 9". A hardcoded count under a derived one is the house defect
+      //    in its purest form, and this wave's headline click is what fires it.
+      //    Now: the demo's own count is allAccounts.length — the same register accCountLine and
+      //    the tiles read, so the three cannot disagree. The platform figures come from
+      //    health.totals (the shared seed's own numbers, 47/45) PLUS whatever this console
+      //    created, because an activation puts a real business on the platform and not only in
+      //    this demo. Closed stays total-minus-active exactly as the typed pair did (47−45=2).
+      //    The trailing "the search works on those eight" is gone: the search reads the register,
+      //    whatever size it is, and there is no eighth-row ceiling for it to promise.
+      accHeading: admin ? (platTotal + ' on the platform · ' + platActive + ' active · ' + platClosed + ' closed. '
+        + cap(numWord(allAccounts.length)) + (allAccounts.length === 1 ? ' is' : ' are') + ' wired into this demo — every number, invoice and card list below belongs to one of them, and the search reads all of them.') : bookLine,
       // ── ACCOUNTS · search, filter, sort ──
       accQuery: st.accQuery, setAccQuery: (e) => this.setState({ accQuery: e.target.value }),
       accStateChips: [['all', 'All states'], ['active', 'Active'], ['at-risk', 'At risk'], ['paused', 'Paused'], ['closed', 'Closed']].map(([k, label]) => {
@@ -6044,11 +6569,11 @@ class Component extends DCLogic {
       renewRiskBg: renewRiskN ? '#FBE6E1' : '#E7F6EE', renewRiskFg: renewRiskN ? '#B23420' : '#1E7D47',
       railAnim: AN('railDraw', '.85s'),
       renewTicks: [['Now', 0], ['15d', 25], ['30d', 50], ['45d', 75], ['60d', 100]].map(([label, p], i) => ({ label, left: p + '%', anim: AN('tickIn', '.45s', (0.06 * i) + 's') })),
-      renewDots: renewList.map((a, i) => { const d = RD[a.name], risk = a.state === 'at-risk'; return { initial: a.initial, left: Math.min(98, Math.max(2, Math.round(d / 60 * 100))) + '%', bg: d <= 7 ? '#E2563A' : d <= 14 ? '#E08A1E' : a.color || '#8C877F', tip: a.name + ' · renews ' + a.renewal + ' · in ' + d + ' days', anim: (() => { const p = []; if (!st.settled) p.push('dotDrop .55s cubic-bezier(.22,.61,.36,1) ' + (0.18 + i * 0.09) + 's both'); if (risk) p.push('riskPulse 2.2s ease-out infinite'); return p.length ? p.join(', ') : 'none'; })(), open: () => goAccount(C.accounts.findIndex(x => x.name === a.name)) }; }),
+      renewDots: renewList.map((a, i) => { const d = RD[a.name], risk = a.state === 'at-risk'; return { initial: a.initial, left: Math.min(98, Math.max(2, Math.round(d / 60 * 100))) + '%', bg: d <= 7 ? '#E2563A' : d <= 14 ? '#E08A1E' : a.color || '#8C877F', tip: a.name + ' · renews ' + a.renewal + ' · in ' + d + ' days', anim: (() => { const p = []; if (!st.settled) p.push('dotDrop .55s cubic-bezier(.22,.61,.36,1) ' + (0.18 + i * 0.09) + 's both'); if (risk) p.push('riskPulse 2.2s ease-out infinite'); return p.length ? p.join(', ') : 'none'; })(), open: () => goAccount(ACCTS.findIndex(x => x.name === a.name)) }; }),
       renewRows: renewList.map((a, i) => { const d = RD[a.name], price = planPrice[a.plan] || 0, ps = payState(a); return { name: a.name, initial: a.initial, color: a.color || '#8C877F', plan: a.plan, renewal: a.renewal, stake: 'JOD ' + price, days: Math.round(d * tick), risk: a.state === 'at-risk', chipBg: d <= 7 ? '#FBE6E1' : d <= 14 ? '#FDF1DC' : '#EFEDE8', chipFg: d <= 7 ? '#B23420' : d <= 14 ? '#9A6B12' : '#6B6760', anim: AN('fadeUp', '.45s', (0.28 + i * 0.07) + 's'),
         // three states, not two — nothing offers to settle a renewal that is not due yet
         paid: ps === 'paid', canPay: ps === 'due', notYet: ps === 'notyet', notYetLabel: 'due ' + (a.renewal || '—'),
-        open: () => goAccount(C.accounts.findIndex(x => x.name === a.name)), pay: (e) => { stop(e); payFor(a.name, price); }, ping: (e) => { stop(e); this.say('WhatsApp sent to ' + ((a.owner || 'the owner').split(' ')[0]) + ' at ' + a.name + ' — renewal in ' + d + ' days, in Arabic'); this.slog('money', 'pinged ' + a.name + ' about the renewal in ' + d + ' days — WhatsApp to ' + (a.owner || 'the owner')); } }; }),
+        open: () => goAccount(ACCTS.findIndex(x => x.name === a.name)), pay: (e) => { stop(e); payFor(a.name, price); }, ping: (e) => { stop(e); this.say('WhatsApp sent to ' + ((a.owner || 'the owner').split(' ')[0]) + ' at ' + a.name + ' — renewal in ' + d + ' days, in Arabic'); this.slog('money', 'pinged ' + a.name + ' about the renewal in ' + d + ' days — WhatsApp to ' + (a.owner || 'the owner')); } }; }),
       renewFootLine: 'Marking paid re-arms the quota the same second and lands in the log. Anything more than 30 days out is not yet due — Billing and the account header say the same. A ping goes out in Arabic, from your number.',
       // ── HOME · the week, day by day ──
       weekTotal: WEEK.reduce((n, v) => n + v, 0).toLocaleString('en-US'),
@@ -6070,10 +6595,10 @@ class Component extends DCLogic {
       ] : sales ? [
         ['Invite a client', 'WhatsApp, one minute', '#E88024', () => this.setState({ screen: 'invite' })],
         ['My pipeline', myLeads.length + ' lead' + (myLeads.length === 1 ? '' : 's') + (myDemo ? (' · demo ' + (demoWhen || 'booked').toLowerCase()) : ' · no demo booked'), '#F0A92B', () => this.setState({ screen: 'leads' })],
-        ...(myDrifting ? [['Ping ' + myDrifting.a.name, (myDrifting.q == null ? 'gone quiet' : myDrifting.q + ' quiet days') + ' — send the nudge', '#E2563A', () => {
+        ...(myDrifting ? [['Ping ' + myDrifting.a.name, (myDrifting.q == null ? 'gone quiet' : nDays(myDrifting.q, 'quiet')) + ' — send the nudge', '#E2563A', () => {
           const a = myDrifting.a, q = myDrifting.q, d = myDrifting.d;
           this.say('WhatsApp nudge sent to ' + ((a.owner || 'the owner').split(' ')[0]) + ' — logged on the account');
-          this.slog('money', 'nudged ' + a.name + ' on WhatsApp — ' + (q == null ? 'gone quiet' : q + ' quiet days') + (d == null ? '' : ', renewal in ' + d));
+          this.slog('money', 'nudged ' + a.name + ' on WhatsApp — ' + (q == null ? 'gone quiet' : nDays(q, 'quiet')) + (d == null ? '' : ', renewal in ' + d));
         }]] : []),
         ['The demo kit', 'poster + script for ' + (myDemo ? (demoWhen || 'the next one').toLowerCase() : 'the next one'), '#26262B', () => this.say('Demo kit: counter poster, sample pass, 4-minute script — in your inbox')]
       ] : [
@@ -6180,14 +6705,25 @@ class Component extends DCLogic {
         //    four invented rows, identical on all eight accounts, one of which borrowed Tala's
         //    “Weekend special” broadcast and showed it on Rawi's timeline and Petra's. Nothing
         //    here now says anything the account has not itself supplied. ──
-        rows.push(['Invited', 'by ' + (selAcc.manager || '—') + ' — one WhatsApp, and the account was born on ' + selOwnerFirst + '’s phone.', '#2FAE66']);
+        /* ── "…and the account was born on their phone" is a claim this console contradicts three
+              screens away. actFoot says activating "is the only thing on this screen that creates
+              anything"; the activate confirm says "Activating creates the account"; and on an
+              account this console activated, the row directly ABOVE this one is Omar's own note
+              timestamped Just now saying he did it. A password set on somebody's phone is how far
+              an invite gets — the key is turned here. So an account we watched being born says
+              what actually happened, in the order it happened. A seeded account has no invite
+              record on this console at all: its line stays the synthesised history the block
+              comment above already declares it to be. ── */
+        rows.push(isNewAcct(selAcc.name)
+          ? ['Invited', 'by ' + (selAcc.manager || '—') + ' — one WhatsApp, and ' + selOwnerFirst + ' set a password on their own phone. Nothing existed on our side until it was activated.', '#2FAE66']
+          : ['Invited', 'by ' + (selAcc.manager || '—') + ' — one WhatsApp, and the account was born on ' + selOwnerFirst + '’s phone.', '#2FAE66']);
         const tlLive = selCardList.filter(c => c.state === 'live').length;
         const tlReview = selCardList.filter(c => c.state === 'review').length;
         const tlRetired = selCardList.filter(c => c.state === 'retired').length;
         if (!selClosed) {
           rows.push(tlLive
             ? ['Issuing passes', tlLive + ' card' + (tlLive === 1 ? '' : 's') + ' live of ' + selCardList.length + ' on the account' + (tlReview ? ' · ' + tlReview + ' waiting on review' : '') + (tlRetired ? ' · ' + tlRetired + ' retired' : '') + '.', '#2FAE66']
-            : ['Nothing live yet', selCardList.length ? (selCardList.length + ' card' + (selCardList.length === 1 ? '' : 's') + ' on the account and not one of them in a wallet' + (tlReview ? ' — ' + tlReview + ' waiting on review' : '') + '.') : 'No card has been built on this account yet — the first one is born in the client’s own dashboard.', '#8C877F']);
+            : ['Nothing live yet', selCardList.length ? (selCardList.length + ' card' + (selCardList.length === 1 ? ' on the account and it is not in a wallet' : 's on the account and not one of them is in a wallet') + (tlReview ? ' — ' + tlReview + ' waiting on review' : '') + '.') : 'No card has been built on this account yet — the first one is born in the client’s own dashboard.', '#8C877F']);
         }
         if (selClosed) {
           rows.push(['Closed', (selClosedWhen || 'earlier') + ' — every pass voided, the data exported inside the 30-day window.', '#8C877F']);
@@ -6195,12 +6731,29 @@ class Component extends DCLogic {
           const lp = lastPushOf(selAcc);
           rows.push(lp
             ? ['Last broadcast', (lp.title ? '“' + lp.title + '” on ' + lp.card : lp.card + ' — no title kept with it') + ' · ' + lp.when + ' · reached about ' + lp.reach.toLocaleString('en-US') + ' wallets.', '#C96A14']
-            : ['No broadcast yet', 'Nothing has ever gone out to these wallets — the first push is ' + selOwnerFirst + '’s to send, from their own dashboard.', '#8C877F']);
-          rows.push([selAcc.state === 'at-risk' ? 'Going quiet' : 'Healthy',
-            selAcc.state === 'at-risk'
-              ? ((selQuiet == null ? 'nobody has scanned a pass in a while' : selQuiet + ' days without a scan') + ' — win-back suggested.')
-              : (selQuiet == null ? 'no scan gap worth reporting.' : selQuiet === 0 ? 'a pass was scanned today.' : 'last scan ' + selQuiet + ' day' + (selQuiet === 1 ? '' : 's') + ' ago.'),
-            selAcc.state === 'at-risk' ? '#E2563A' : '#2FAE66']);
+            : ['No broadcast yet', bcCanSend(selAcc)
+              ? 'Nothing has ever gone out to these wallets — the first push is ' + selOwnerFirst + '’s to send, from their own dashboard.'
+              : 'Nothing has ever gone out to these wallets, and nothing can from here — broadcasts start on ' + BC_FIRST_PLAN + ', and this account is on ' + (selAcc.plan || 'Starter') + '. ' + selOwnerFirst + ' can still message a member one at a time.', '#8C877F']);
+          /* ── A HEALTH VERDICT NEEDS SOMETHING TO BE A VERDICT ABOUT ────────────────────────────
+                "Healthy — no scan gap worth reporting" closed the timeline of an account two rows
+                under "No card has been built on this account yet". A scan needs a pass in a
+                wallet, and a pass in a wallet needs BOTH a live card and somebody holding it —
+                so on a business that has neither, the absence of a scan gap is arithmetic, not
+                health, and reporting it as health is the sentence that contradicts the number
+                beside it. The test is exact rather than approximate, and it stays right through
+                the demo's own next two beats: it survives the first card going live (still no
+                holder) and clears itself the moment the first member joins. Every seeded account
+                carries live cards and thousands of members, so none of them reaches it. ── */
+          const tlHolders = tlLive === 0 ? 0 : (Number(selAcc.members) || 0);
+          rows.push(tlHolders === 0
+            ? ['No scan to report', (tlLive === 0
+              ? 'Not one pass has been scanned, because there is not one to scan yet. Health becomes a question the day the first card goes live.'
+              : 'Not one pass has been scanned: the card is live and nobody is holding it yet. Health becomes a question the day somebody is.'), '#8C877F']
+            : [selAcc.state === 'at-risk' ? 'Going quiet' : 'Healthy',
+              selAcc.state === 'at-risk'
+                ? ((selQuiet == null ? 'nobody has scanned a pass in a while' : nDays(selQuiet) + ' without a scan') + ' — win-back suggested.')
+                : (selQuiet == null ? 'no scan gap worth reporting.' : selQuiet === 0 ? 'a pass was scanned today.' : 'last scan ' + nDays(selQuiet) + ' ago.'),
+              selAcc.state === 'at-risk' ? '#E2563A' : '#2FAE66']);
         }
         const soft = { '#2FAE66': 'rgba(47,174,102,.16)', '#C96A14': 'rgba(232,128,36,.16)', '#E2563A': 'rgba(226,86,58,.16)', '#7B68AE': 'rgba(123,104,174,.18)', '#8C877F': 'rgba(140,135,127,.20)', '#E88024': 'rgba(232,128,36,.18)' };
         return rows.map(([a, b, dot, go, jump], i) => ({ a, b, dot, ring: soft[dot] || 'rgba(201,191,175,.2)', hasLine: i < rows.length - 1,
@@ -6433,7 +6986,7 @@ class Component extends DCLogic {
       goBilling: () => this.setState({ screen: 'billing' }), selShowBilling: admin,
       // ── ACCOUNT · the win-back, for a book that has gone quiet ──
       selAtRisk: selAcc.state === 'at-risk',
-      selWinbackTitle: selWBSent ? 'Win-back sent to ' + selOwnerFirst : (selQuiet == null ? 'This account has gone quiet' : selQuiet + ' days without a single scan'),
+      selWinbackTitle: selWBSent ? 'Win-back sent to ' + selOwnerFirst : (selQuiet == null ? 'This account has gone quiet' : nDays(selQuiet) + ' without a single scan'),
       selWinbackLine: selWBSent
         ? 'Sent on WhatsApp, in Arabic, from your number — and on the account timeline. Give ' + selOwnerFirst + ' a day before you call.'
         : (selOwnerFirst + ' has ' + (selAcc.members || 0).toLocaleString('en-US') + ' members holding a pass that nobody is scanning' + (selDays != null ? ', and JOD ' + selPrice + ' renews in ' + selDays + ' days' : '') + '. One WhatsApp, in Arabic, usually settles which way this goes.'),
@@ -6444,9 +6997,9 @@ class Component extends DCLogic {
         if (selWBSent) { this.say('Already nudged — ' + selOwnerFirst + ' has it on WhatsApp'); return; }
         // the copy has always promised "and on the account timeline" — now it actually lands there
         this.setState({ winbacks: { ...(st.winbacks || {}), [selAcc.name]: true },
-          acctNotes: { ...(st.acctNotes || {}), [selAcc.name]: [{ t: 'Just now', by: 'Omar Haddad', line: 'Win-back nudge sent to ' + selOwnerFirst + ' on WhatsApp, in Arabic — ' + (selQuiet == null ? 'the account had gone quiet' : selQuiet + ' days without a scan') + (selDays == null ? '' : ', renewal in ' + selDays + ' days') + '.' }, ...notesOf(selAcc.name)] } });
+          acctNotes: { ...(st.acctNotes || {}), [selAcc.name]: [{ t: 'Just now', by: 'Omar Haddad', line: 'Win-back nudge sent to ' + selOwnerFirst + ' on WhatsApp, in Arabic — ' + (selQuiet == null ? 'the account had gone quiet' : nDays(selQuiet) + ' without a scan') + (selDays == null ? '' : ', renewal in ' + selDays + ' days') + '.' }, ...notesOf(selAcc.name)] } });
         this.say('WhatsApp sent to ' + selOwnerFirst + ' at ' + selAcc.name + ' — a win-back, in Arabic, from your number');
-        this.slog('client', 'sent ' + selAcc.name + ' a win-back nudge — WhatsApp to ' + (selAcc.owner || 'the owner') + ', ' + (selQuiet == null ? 'quiet' : selQuiet + ' quiet days') + ', renewal ' + (selDays == null ? 'not near' : 'in ' + selDays + ' days'));
+        this.slog('client', 'sent ' + selAcc.name + ' a win-back nudge — WhatsApp to ' + (selAcc.owner || 'the owner') + ', ' + (selQuiet == null ? 'quiet' : nDays(selQuiet, 'quiet')) + ', renewal ' + (selDays == null ? 'not near' : 'in ' + selDays + ' days'));
       },
       // ── VIEW AS CLIENT · the link now carries WHICH account, and the toast stops pretending ──
       //    Every account used to open the same Tala dashboard and say nothing about it. The href
@@ -6454,13 +7007,47 @@ class Component extends DCLogic {
       //    toast says out loud that the demo dashboard models Tala.
       viewAsHref: 'Wasla Dashboard.dc.html?viewas=1&acct=' + slugOf(selAcc.name),
       viewAsGo: () => {
-        const isTala = sameName(selAcc.name, 'Tala Hospitality Group');
+        // the warning is now a LOOKUP, not a name check. The platform holds real data for some
+        // accounts and falls back to Tala's for the rest, so "are these numbers this client's?" is
+        // answerable rather than assumable — and it stops being wrong the day a third account
+        // ships, without anybody having to remember this line.
+        const real = hasSharedAcct(selAcc.name);
         this.slog('viewas', 'viewed ' + (selAcc.name || 'an account') + ' as client — read-only, every screen logged');
-        this.say(isTala
-          ? ('Opening ' + selAcc.name + ' read-only — every number matches what ' + ((selAcc.owner || '').split(' ')[0] || 'the owner') + ' sees · the whole visit lands in the view-as trail')
-          : ('Opening read-only as ' + selAcc.name + ' — heads up: the demo dashboard models Tala Hospitality Group, so the numbers you land on are Tala’s, not ' + ((selAcc.owner || 'the owner').split(' ')[0]) + '’s. The visit still lands in the view-as trail.'));
+        this.say(real
+          ? ('Opening ' + selAcc.name + ' read-only — every number matches what ' + selOwnerFirst + ' sees · the whole visit lands in the view-as trail')
+          : ('Opening read-only as ' + selAcc.name + ' — heads up: this demo carries merchant data for some accounts and not this one, so the numbers you land on are the default account’s, not ' + selOwnerFirst + '’s. The visit still lands in the view-as trail.'));
         window.location.href = 'Wasla Dashboard.dc.html?viewas=1&acct=' + slugOf(selAcc.name);
       },
+      // ── THE SECOND LINK, AND THE DIFFERENCE IS THE POINT ──────────────────────────────────
+      //    ?viewas=1 above is the read-only observer mode. This one carries the account and
+      //    nothing else: a full editable merchant session, which is what "open their dashboard"
+      //    has to mean if the demo is going to continue inside it — create the first card, submit
+      //    it back to this queue, and watch it go live. Offered only where a merchant session
+      //    genuinely exists behind the slug.
+      // ── DAY ONE ON THE ACCOUNT SCREEN ─────────────────────────────────────────────────────
+      //    Shown when the register says this account holds nothing at all — no card in any state,
+      //    no member. That is a real condition of a real business, not a missing-data case, and
+      //    every figure below is read off the same row the header above it reads. The card count
+      //    is the LIST (so a card the merchant submitted ten seconds ago takes this panel down on
+      //    the same render), and the awaiting-review count comes from the queue itself.
+      selDayOne: selCards === 0 && (Number(selAcc.members) || 0) === 0 && !selClosed,
+      selDayOneTitle: (selAcc.name || 'This account') + ' is live, and empty.',
+      selDayOneLine: 'Nothing has happened here yet — no card, no member, no scan — and that is exactly right for a business that was activated ' + (selAcc.activatedOn ? String(selAcc.activatedOn).toLowerCase() : 'recently') + '. '
+        + (firstNameOf(selAcc.owner) || 'The owner') + ' builds the first card in their own dashboard; it arrives in this console’s approvals queue, and the moment it is approved it is in wallets. '
+        + (selAcc.quota === 99 ? 'Unlimited card slots are waiting on ' + (selAcc.plan || 'their plan') + '.' : (selAcc.quota || 0) + ' card slots are waiting on ' + (selAcc.plan || 'their plan') + '.'),
+      selDayOneLineAr: 'لم يحدث شيء هنا بعد — لا بطاقة ولا عضو ولا مسحة — وهذا هو الوضع الصحيح تمامًا لنشاط فُعِّل للتوّ. '
+        + 'يبني صاحب النشاط أول بطاقة من لوحته، فتصل إلى قائمة المراجعة في هذا الكونسول، وما إن تُعتمد حتى تصبح في المحافظ. '
+        + (selAcc.quota === 99 ? 'عدد خانات البطاقات غير محدود على هذه الباقة.' : 'عدد خانات البطاقات المتاحة على هذه الباقة هو ' + (selAcc.quota || 0) + '.'),
+      selDayOneStats: [
+        ['Cards', String(selCards), '#8C877F'],
+        ['Members', '0', '#8C877F'],
+        ['Awaiting review', String(pending.filter(a => sameName(a.account, selAcc.name)).length), pending.some(a => sameName(a.account, selAcc.name)) ? '#C96A14' : '#8C877F']
+      ].map(([label, v, fg], i) => ({ label, v, fg, anim: AN('fadeUp', '.45s', (0.05 * i) + 's') })),
+      selDayOneFoot: 'No numbers are being withheld here and none are being invented: an account with no card cannot have a member, a member cannot have a scan, and a business with no invoice has no billing history. Every zero on this screen is a fact about this business, not a gap in this demo.',
+      selHasDash: hasSharedAcct(selAcc.name),
+      selDashHref: 'Wasla Dashboard.dc.html?acct=' + slugOf(selAcc.name),
+      selDashLabel: 'Open their dashboard →',
+      selDashGo: () => { this.slog('access', 'opened ' + (selAcc.name || 'an account') + '’s own dashboard — a full session, not the read-only view'); },
       apprRows, queueEmpty: apprTotal === 0,
       // ── STAGED CARD EDITS · the reviewable item the dashboard has been staging into a void ──
       editAny: editItems.length > 0,
@@ -6533,9 +7120,16 @@ class Component extends DCLogic {
       queueClearTick: st.settled ? 'none' : 'drawTick .55s cubic-bezier(.22,.61,.36,1) .22s both',
       queueClearLine: AN('fadeUp', '.45s', '.34s'), queueClearSub: AN('fadeUp', '.45s', '.42s'),
       rv, rvColor2: this.shade(rv.color || '#26262B'), rvIsNew: rv.kind === 'new', rvIsEdit: rv.kind === 'edit',
-      rvHead0: (rv.head || ['', ''])[0], rvHead1: (rv.head || ['', ''])[1], rvHero: rv.kind === 'edit' ? '7%' : '250', rvReward: rv.kind === 'edit' ? (rv.diff || {}).to : rv.reward,
+      rvHead0: (rv.head || ['', ''])[0], rvHead1: (rv.head || ['', ''])[1], rvHero,
+      rvHeroSize: (rvHero.length > 9 ? '18px' : rvHero.length > 6 ? '24px' : '30px'),
+      rvReward: rv.kind === 'edit' ? (rv.diff || {}).to : rv.reward,
       // ── REVIEW · the dual preview · hovering one lifts it and dims the other — the wizard's parallax, a quarter of the scale ──
-      rvPassHint: 'The same pass, rendered by both wallets — hover one to compare',
+      //    …and the hint no longer lets the panel title over-claim. A card in review has never
+      //    been issued, so the balance on the face is the client's own sample from the wizard,
+      //    not a wallet's holding: the panel is a rendering check, and it now says which.
+      rvPassHint: rv.kind === 'edit'
+        ? 'The same pass, rendered by both wallets — hover one to compare. It carries the new value, which reaches a wallet only if you approve.'
+        : 'The same pass, rendered by both wallets — hover one to compare. The figures are the client’s own sample from the wizard; every pass is issued empty.',
       rvPasses: [['APPLE WALLET', 'iPhone · Apple Wallet', '50%', 'Issued by Wasla · pass.jo.wasla'], ['GOOGLE WALLET', 'Android · Google Wallet', '9px', 'Issuer: Wasla · Google Wallet API']].map(([label, sub, avRadius, issuer], i) => {
         const on = st.rvHover === i, off = st.rvHover != null && !on;
         return { label, sub, avRadius, issuer, cells: this.qr(),
@@ -6552,6 +7146,12 @@ class Component extends DCLogic {
         boxAnim: on ? 'checkPop .3s cubic-bezier(.22,.61,.36,1) both' : 'none',
         anim: AN('fadeUp', '.4s', (0.05 * i) + 's'),
         toggle: () => this.setState({ checks: { ...st.checks, [rv.id + i]: !on } }) }; }),
+      // ── the header counted the checks out loud and got it from a template literal: "FOUR
+      //    THINGS, THIRTY SECONDS" sat directly above five rows and above rvCheckProgress saying
+      //    "5 still to read". The list is the only source now, so the heading and the counter under
+      //    it are the same number by construction. Thirty seconds is a promise about the reading,
+      //    not a count, and stays.
+      rvCheckTitle: (() => { const n = (rv.checks || []).length; return n ? ('The check — ' + numWord(n) + ' thing' + (n === 1 ? '' : 's') + ', thirty seconds') : 'The check'; })(),
       rvCheckProgress: (() => { const n = (rv.checks || []).length; if (!n) return ''; const done = (rv.checks || []).filter((_, i) => st.checks[rv.id + i]).length; return done === n ? ('All ' + numWord(n) + ' checked' + (rvIsPrepaid && !rvEligOk ? ' — and still blocked, because a card holding public money needs the stored-value record below as well.' : ' — the button below is live.')) : done + ' of ' + n + ' checked · ' + (n - done) + ' still to read before this can go live.'; })(),
       rvDiffField: (rv.diff || {}).field || '', rvDiffFrom: (rv.diff || {}).from || '', rvDiffTo: (rv.diff || {}).to || '', rvImpact: rv.impact || '',
       rvDiffFromAnim: AN('diffIn', '.45s', '.08s'),
@@ -6576,13 +7176,13 @@ class Component extends DCLogic {
       rvApproveLabel: (rvIsPrepaid && !rvEligOk)
         ? ('Blocked — ' + rvEligMissing.length + ' stored-value check' + (rvEligMissing.length === 1 ? '' : 's') + ' missing')
         : rv.kind === 'edit' ? 'Approve — new value goes live' : (allChecked ? 'Approve — it goes live now' : ('Tick the ' + numWord((rv.checks || []).length) + ' checks first')),
-      rvApprove: () => { if (rvIsPrepaid && !rvEligOk) { this.say('Blocked — ' + (rv.account || 'this account') + ' is missing ' + rvEligMissing.join(', ').toLowerCase() + '. Record it below; there is no override.'); return; } if (!canApprove) return; if (rv.id === 'sukkar') { this.sukkarHandoff('approved', '', 'Omar Haddad'); } this.setState({ ...cardVerdictPatch(rv, 'approved', ''), decided: { ...st.decided, [rv.id]: 'approved' }, screen: 'approvals', apprTab: 'queue', apprJust: rv.id, rvHover: null }); this.say((rv.card || '') + ' is LIVE — ' + (rv.by || '') + ' just got the WhatsApp' + (rv.id === 'sukkar' ? ' · open the dashboard, it\u2019s live there too' : '')); this.slog('approve', 'approved ' + (rv.card || '') + ' — live in wallets, ' + (rv.by || 'the client') + ' notified by WhatsApp'); },
+      rvApprove: () => { if (rvIsPrepaid && !rvEligOk) { this.say('Blocked — ' + (rv.account || 'this account') + ' is missing ' + rvEligMissing.join(', ').toLowerCase() + '. Record it below; there is no override.'); return; } if (!canApprove) return; if (rv.id === 'sukkar') { this.sukkarHandoff('approved', '', 'Omar Haddad'); } if (rv.submissionKey) { this.writeSubmissionVerdict(rv.submissionKey, 'approved', '', 'Omar Haddad'); } this.setState({ ...cardVerdictPatch(rv, 'approved', ''), decided: { ...st.decided, [rv.id]: 'approved' }, screen: 'approvals', apprTab: 'queue', apprJust: rv.id, rvHover: null }); this.say((rv.card || '') + ' is LIVE — ' + (rv.by || '') + ' just got the WhatsApp' + (rv.id === 'sukkar' ? ' · open the dashboard, it\u2019s live there too' : '')); this.slog('approve', 'approved ' + (rv.card || '') + ' — live in wallets, ' + (rv.by || 'the client') + ' notified by WhatsApp'); },
       rvRejectLabel: st.rejecting ? 'Send back… ✕' : 'Send back…',
       rvRejectOpen: () => this.setState({ rejecting: !st.rejecting }), rvRejecting: st.rejecting,
       rvRejectAnim: AN('slideDown', '.34s'),
       // a fourth chip, and only stored value gets it: the other three are about how the card
       // reads, and this one is about whether the business may hold the money at all
-      rvReasons: ['Reward text unclear', 'Logo unreadable at pass size', 'Terms missing'].concat(rvIsPrepaid ? ['Stored-value checks incomplete'] : []).map((label, i) => ({ label, anim: AN('fadeUp', '.34s', (0.05 + 0.05 * i) + 's'), send: () => { if (rv.id === 'sukkar') { this.sukkarHandoff('rejected', label, 'Omar Haddad'); } this.setState({ ...cardVerdictPatch(rv, 'rejected', label), decided: { ...st.decided, [rv.id]: 'rejected' }, decidedWhy: { ...(st.decidedWhy || {}), [rv.id]: label }, rvFree: '', screen: 'approvals', rejecting: false, apprTab: 'queue', apprJust: rv.id, rvHover: null }); this.say('Sent back with the note — nothing changed in wallets' + (rv.id === 'sukkar' ? ' · the dashboard shows it too' : '')); this.slog('approve', 'sent ' + (rv.card || '') + ' back — reason sent verbatim: ' + label.toLowerCase()); } })),
+      rvReasons: ['Reward text unclear', 'Logo unreadable at pass size', 'Terms missing'].concat(rvIsPrepaid ? ['Stored-value checks incomplete'] : []).map((label, i) => ({ label, anim: AN('fadeUp', '.34s', (0.05 + 0.05 * i) + 's'), send: () => { if (rv.id === 'sukkar') { this.sukkarHandoff('rejected', label, 'Omar Haddad'); } if (rv.submissionKey) { this.writeSubmissionVerdict(rv.submissionKey, 'rejected', label, 'Omar Haddad'); } this.setState({ ...cardVerdictPatch(rv, 'rejected', label), decided: { ...st.decided, [rv.id]: 'rejected' }, decidedWhy: { ...(st.decidedWhy || {}), [rv.id]: label }, rvFree: '', screen: 'approvals', rejecting: false, apprTab: 'queue', apprJust: rv.id, rvHover: null }); this.say('Sent back with the note — nothing changed in wallets' + (rv.id === 'sukkar' ? ' · the dashboard shows it too' : '')); this.slog('approve', 'sent ' + (rv.card || '') + ' back — reason sent verbatim: ' + label.toLowerCase()); } })),
       // ── the chips are shortcuts, not the vocabulary. The copy above them has always promised the
       //    reason goes to the client word for word; a card can be wrong in a way none of three
       //    canned sentences describes, and until now there was nowhere to say so. ──
@@ -6601,6 +7201,9 @@ class Component extends DCLogic {
         if (why.length < 8) return;
         // same path the chips take, down to the Sukkar hand-off — only the sentence differs
         if (rv.id === 'sukkar') { this.sukkarHandoff('rejected', why, 'Omar Haddad'); }
+        // the merchant's own submission channel takes the verdict AND the verbatim sentence — the
+        // dashboard polls it, and the wallet and the till only ever see 'approved' rows
+        if (rv.submissionKey) { this.writeSubmissionVerdict(rv.submissionKey, 'rejected', why, 'Omar Haddad'); }
         this.setState({ ...cardVerdictPatch(rv, 'rejected', why), decided: { ...st.decided, [rv.id]: 'rejected' }, decidedWhy: { ...(st.decidedWhy || {}), [rv.id]: why }, rvFree: '', screen: 'approvals', rejecting: false, apprTab: 'queue', apprJust: rv.id, rvHover: null });
         this.say('Sent back with your words — nothing changed in wallets' + (rv.id === 'sukkar' ? ' · the dashboard shows it too' : ''));
         this.slog('approve', 'sent ' + (rv.card || '') + ' back — reason sent verbatim: ' + why);
@@ -6667,7 +7270,7 @@ class Component extends DCLogic {
               actBr: canConv ? '#9AD3B4' : '#E7E0D5', actBg: canConv ? '#E7F6EE' : '#FFFFFF', actFg: canConv ? '#1E7D47' : '#93887A',
               act: (e) => { stop(e); if (canConv) { this.setState({ leadSel: l.name }); this.say('Open ' + l.name + ' below — “Convert” prefills the invite'); return; } if (next) leadStage(l, next); },
               convLabel: cAcc >= 0 ? '→ ACCOUNT' : convSent ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT',
-              convTip: cAcc >= 0 ? ('Open ' + l.name + '’s account') : convSent ? (l.name + ' is an invite, not an account — it is born the second they set a password') : ('The invite for ' + l.name + ' is prefilled but not sent yet'),
+              convTip: cAcc >= 0 ? ('Open ' + l.name + '’s account') : convSent ? (l.name + ' is an invite, not an account — track it on the Activations register, and activate it once they have set a password') : ('The invite for ' + l.name + ' is prefilled but not sent yet'),
               convBg: cAcc >= 0 ? '#E7F6EE' : '#FDF1DC', convFg: cAcc >= 0 ? '#1E7D47' : '#9A6B12', convBr: cAcc >= 0 ? '#9AD3B4' : '#F6DDB0',
               convGo: (e) => { stop(e); openConverted(l, cAcc, convSent); },
               // selecting a different lead closes the editor — a half-typed edit must never land on the wrong business
@@ -6682,7 +7285,7 @@ class Component extends DCLogic {
       leadIsConverted: !!leadSel && isConv(leadSel.name),
       // ── SALES · the same seam on the detail panel, saying the same honest thing ──
       leadConvLabel: (() => { if (!leadSel) return ''; const i = accIdxByName(leadSel.name); return i >= 0 ? '→ ACCOUNT' : inviteSentFor(leadSel.name) ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT'; })(),
-      leadConvTip: (() => { if (!leadSel) return ''; const i = accIdxByName(leadSel.name); return i >= 0 ? ('Open ' + leadSel.name + '’s account') : (inviteSentFor(leadSel.name) ? (leadSel.name + ' is an invite, not an account — it is born the second they set a password') : ('The invite for ' + leadSel.name + ' is prefilled but not sent yet')); })(),
+      leadConvTip: (() => { if (!leadSel) return ''; const i = accIdxByName(leadSel.name); return i >= 0 ? ('Open ' + leadSel.name + '’s account') : (inviteSentFor(leadSel.name) ? (leadSel.name + ' is an invite, not an account — track it on the Activations register, and activate it once they have set a password') : ('The invite for ' + leadSel.name + ' is prefilled but not sent yet')); })(),
       leadConvBg: (leadSel && accIdxByName(leadSel.name) >= 0) ? '#E7F6EE' : '#FDF1DC',
       leadConvFg: (leadSel && accIdxByName(leadSel.name) >= 0) ? '#1E7D47' : '#9A6B12',
       leadConvBr: (leadSel && accIdxByName(leadSel.name) >= 0) ? '#9AD3B4' : '#F6DDB0',
@@ -6695,7 +7298,7 @@ class Component extends DCLogic {
       ] : []).map(([title, rows], i) => ({ title, anim: AN('fadeUp', '.45s', (0.06 * i) + 's'), rows: rows.map(([k, v]) => ({ k, v })) })),
       leadTrailRows: (leadSel ? [...trailOf(leadSel.name), ...(leadSel.seedTrail || []).map(([t, line, kind]) => ({ t, line, kind }))] : []).slice(0, 7).map((e, i) => ({ line: e.line, t: e.t, dot: ({ move: '#E88024', ping: '#2FAE66', escalate: '#E2563A', won: '#1E7D47', note: '#C9BFAF' })[e.kind] || '#C9BFAF', anim: AN('fadeUp', '.4s', (0.05 * i) + 's') })),
       leadStages: stageOrder.map(s => { const cur = stageOrder.indexOf((leadSel || {}).stage); const i = stageOrder.indexOf(s); const on = i === cur, past = i < cur; const c = stageStyle[s] || ['#EFEDE8', '#6B6760']; return { label: s, br: on ? c[1] : '#E7E0D5', bg: on ? c[0] : '#FFFFFF', fg: on ? c[1] : past ? '#B5AB9C' : '#5D5348', op: past ? '.45' : '1', cursor: past || on ? 'default' : 'pointer', pick: () => { if (!leadSel || i <= cur) { if (past) this.say('Forward only — the pipeline never walks backwards'); return; } leadStage(leadSel, s); } }; }),
-      leadStageNote: leadSel ? (leadSel.stage === 'Won' ? (isConv(leadSel.name) ? 'Won and converted — the invite is on its way, the account is born the second they set a password.' : 'Won — convert it and the account is born on their phone.') : 'Now ' + leadSel.stage + ' · next step is ' + (stageOrder[stageOrder.indexOf(leadSel.stage) + 1] || '—') + '. Earlier stages are closed.') : '',
+      leadStageNote: leadSel ? (leadSel.stage === 'Won' ? (isConv(leadSel.name) ? 'Won and converted — the invite is on its way. They set a password on their own phone; Wasla activates the account after that.' : 'Won — convert it, send the invite, and activate the account once the password lands.') : 'Now ' + leadSel.stage + ' · next step is ' + (stageOrder[stageOrder.indexOf(leadSel.stage) + 1] || '—') + '. Earlier stages are closed.') : '',
       leadNote: (leadSel || {}).note || '',
       setLeadNote: (e) => { if (!leadSel) return; this.setState({ leadMods: { ...st.leadMods, [leadSel.name]: { ...(st.leadMods[leadSel.name] || {}), note: e.target.value } } }); this.saveConsole(); },
       leadNoteBg: leadNoteReady ? '#E88024' : '#EFEDE8', leadNoteFg: leadNoteReady ? '#FFFFFF' : '#93887A',
@@ -6868,7 +7471,7 @@ class Component extends DCLogic {
       }),
       // ── INVITE · the wizard ──
       invLede: st.invSent
-        ? 'Sent. Nothing exists on Wasla’s side yet — the account is born the second ' + (invFirst || 'the owner') + ' sets a password.'
+        ? 'Sent. Nothing exists on Wasla’s side yet — ' + (invFirst || 'the owner') + ' sets a password on their own phone, and the account is created here after that.'
         : 'Accounts are born on a phone — sales sends a WhatsApp, the client owns it a minute later.',
       invSections: [
         ['1', 'The business', 'The name on the account — and on every pass it ever issues.', [invField({ label: 'Business name', v: st.invBiz, ph: 'e.g. Louma Chocolate', num: 'normal', ok: invBizOk, hint: invBizOk ? 'good' : 'required', set: (e) => invEdit('invBiz', e.target.value) })], false, invBizOk],
@@ -6905,7 +7508,7 @@ class Component extends DCLogic {
           invites: already ? (st.invites || []) : [...(st.invites || []), { id, biz: invBizV, owner: invOwnerV, phone: invPhoneV, plan: st.invPlan, by: 'Omar', when: INVITE_STAMP, origin: 'console', seedStatus: 'sent' }],
           invJust: id });
         this.saveConsole();
-        this.say('Invite sent to ' + (invFirst || 'the owner') + ' — the account exists the moment they set a password · it is on the Activations register now');
+        this.say('Invite sent to ' + (invFirst || 'the owner') + ' — they set a password on their own phone, then you activate · it is on the Activations register now');
         this.slog('client', 'invited ' + invBizV + ' — WhatsApp to ' + invOwnerV + ' (' + invPhoneV + ') on ' + st.invPlan + ', password theirs alone');
       },
       invToActivations: () => this.setState({ screen: 'activations' }),
@@ -6916,25 +7519,58 @@ class Component extends DCLogic {
       invStamp: st.invSent ? (INVITE_STAMP + ' ✓✓') : 'draft · not sent',
       invPreviewNote: st.invSent ? 'Delivered. Arabic first in production — this is the English gloss of what landed.' : 'The draft, exactly as it will land. Arabic first in production; nothing is softened on the way out.',
       invTracking: st.invSent,
-      invTrackChip: st.invOpened ? 'opened · waiting on the password' : 'sent · waiting to be opened',
+      // ── the tracking rail reads the REGISTER, not four local booleans ──────────────────────
+      //    The third node used to be a hardcoded `done: false` under a label that ran two
+      //    different events together ("Password set — account live"), so it could never light and
+      //    it would have been wrong on both counts if it had. They are two events: the prospect
+      //    sets a password on their own phone, and afterwards somebody here activates the account.
+      //    Both are now read off the same Activations register this console renders three clicks
+      //    away, so the two screens cannot disagree about how far one invite got.
+      invTrackChip: (() => {
+        const row = inviteRows0.find(v => sameName(v.biz, invBizV));
+        const s = row ? row.status : (st.invOpened ? 'opened' : 'sent');
+        return s === 'live' ? 'activated · the account exists'
+          : s === 'password' ? 'password set · waiting to be activated'
+            : s === 'cancelled' ? 'cancelled · the link is dead'
+              : s === 'opened' ? 'opened · waiting on the password' : 'sent · waiting to be opened';
+      })(),
       invTrackFg: '#9A6B12',
       invSteps: (() => {
-        const opened = !!st.invOpened;
-        const rows = [
-          { label: 'Sent', done: true, note: 'WhatsApp delivered to ' + (invPhoneV || 'the owner') + ' at ' + INVITE_STAMP + '.' },
-          { label: 'Opened', done: opened, note: opened ? ((invFirst || 'The owner') + ' opened the link — no password on it yet.') : 'Waiting. The read receipt lands here the moment it happens, not before.' },
-          { label: 'Password set — account live', done: false, note: 'Still pending, and it will stay honest about that. Nobody at Wasla ever sees the password — this screen is the only place you will learn it happened.' }
-        ];
+        const row = inviteRows0.find(v => sameName(v.biz, invBizV)) || null;
+        const status = row ? row.status : (st.invOpened ? 'opened' : 'sent');
+        const at = INV_RANK(status);
+        const reached = (s) => at >= INV_RANK(s) && status !== 'cancelled';
+        const NOTES = {
+          sent: () => 'WhatsApp delivered to ' + (invPhoneV || 'the owner') + ' at ' + INVITE_STAMP + '.',
+          opened: () => reached('opened')
+            ? ((invFirst || 'The owner') + ' opened the link — no password on it yet.')
+            : 'Waiting. The read receipt lands here the moment it happens, not before.',
+          password: () => reached('password')
+            ? ((invFirst || 'The owner') + ' set it, on their own phone, and nobody here saw it. That is as far as an invite can get on its own.')
+            : 'Still pending, and it will stay honest about that. Nobody at Wasla ever sees the password — this screen is the only place you will learn it happened.',
+          live: () => reached('live')
+            ? ((invBizV || 'The business') + ' is in the accounts register now — an account with nothing inside it yet, which is exactly what day one looks like.'
+              + (hasSharedAcct(invBizV) ? ' Open it from the Activations register.' : ''))
+            : (reached('password')
+              ? 'Waiting on us, not on them. Activating on the Activations register is what creates the account.'
+              : 'Nothing exists on our side yet. An account is created here, after the password, and not one second before.')
+        };
+        // the four nodes ARE the register's four steps, read off the same array — a fifth status
+        // would appear here without anybody having to remember this screen
+        const rows = INV_STEPS.map(s => ({ label: INV_LABEL[s] || s, done: reached(s), note: NOTES[s]() }));
         return rows.map((r, i) => ({ label: r.label, note: r.note, mark: r.done ? '✓' : '·',
           bg: r.done ? '#2FAE66' : '#FFFFFF', br: r.done ? '#2FAE66' : '#E0D8CB', markFg: r.done ? '#FFFFFF' : '#B0A594',
           fg: r.done ? '#241C16' : '#93887A',
           hasLine: i < rows.length - 1,
           lineFrom: r.done ? '#2FAE66' : '#E7E0D5', lineTo: (rows[i + 1] && rows[i + 1].done) ? '#2FAE66' : '#EFE8DC',
-          dotAnim: (r.label === 'Opened' && opened) ? 'nodeGlow 1.4s ease-out both' : (!r.done && i === 2 ? 'waitPulse 1.9s ease-in-out infinite' : 'none'),
+          // the glow lands on the node that JUST became true, and the wait-pulse on the first one
+          // that has not — both derived from where the rail actually is, not from a fixed index
+          dotAnim: (r.done && !(rows[i + 1] && rows[i + 1].done)) ? 'nodeGlow 1.4s ease-out both'
+            : (!r.done && (i === 0 || rows[i - 1].done)) ? 'waitPulse 1.9s ease-in-out infinite' : 'none',
           lineAnim: AN('lineGrow', '.5s', (0.12 + 0.08 * i) + 's'),
           anim: AN('fadeUp', '.42s', (0.06 * i) + 's') }));
       })(),
-      invTrackFoot: 'There is no half-made account on our side: until that third node lights, nothing exists but a link. No credential anybody here could leak, and no login to hand over.',
+      invTrackFoot: 'There is no half-made account on our side: until the password node lights, nothing exists but a link — no credential anybody here could leak, and no login to hand over. The node after it is ours, not theirs: activating is what creates the account, and it happens on the Activations register.',
       // approvals tabs + decided
       apprTabs: [['queue', 'The queue' + (apprTotal ? ' · ' + apprTotal : '')], ['decided', 'Decided']].map(([k, label]) => ({ label, go: () => this.setState({ apprTab: k }), br: st.apprTab === k ? '#E88024' : '#E7E0D5', bg: st.apprTab === k ? '#E88024' : '#FFFFFF', fg: st.apprTab === k ? '#FFFFFF' : '#5D5348' })),
       apprQueueTab: st.apprTab === 'queue', apprDecidedTab: st.apprTab === 'decided',
@@ -6983,8 +7619,11 @@ class Component extends DCLogic {
       dzPauseLabel: selAcc.state === 'paused' ? 'Resume account' : 'Pause account…',
       // an account-level pause reaches every card on it, so the sentence has to be true of the
       // hardest one: if any card here holds customer cash, "already earned" is the wrong word
-      dzPauseNote: selAcc.state === 'paused' ? ('Signup pages are closed · ' + moneyCopy(selHasPrepaid).short + '.') : (selCards + ' cards grey in ' + (selAcc.members || 0).toLocaleString('en-US') + ' wallets tonight — ' + moneyCopy(selHasPrepaid).short + ', signup pages close.'),
-      dzPause: () => { if (selAcc.state === 'paused') { this.setState({ accMods: { ...st.accMods, [selAcc.name]: { ...(st.accMods[selAcc.name] || {}), state: 'active' } } }); this.say(selAcc.name + ' is live again'); this.slog('money', 'resumed ' + selAcc.name + ' — cards wake up tonight, signup pages reopen'); return; } const mc = moneyCopy(selHasPrepaid); this.ask('Pause ' + selAcc.name + '?', 'Blast radius: ' +  selCards + ' cards grey in ' + (selAcc.members || 0).toLocaleString('en-US') + ' wallets. Earning stops, ' + mc.stays + ', every signup page closes. Reversible anytime.' + (selHasPrepaid ? ' One card on this account holds stored value: ' + jodM(selPrepaidOut.principalMinor) + ' of customer cash is on ' + selPrepaidOut.holders + ' pass' + (selPrepaidOut.holders === 1 ? '' : 'es') + ' right now, spending and refunds keep working on it, and only its own wind-down can stop top-ups.' : ''), 'Pause it', '#E2563A', () => { this.setState({ accMods: { ...st.accMods, [selAcc.name]: { ...(st.accMods[selAcc.name] || {}), state: 'paused' } } }); this.say('Paused — the client sees why on their dashboard'); this.slog('money', 'paused ' + selAcc.name + ' — ' +  selCards + ' cards grey in ' + (selAcc.members || 0).toLocaleString('en-US') + ' wallets, ' + mc.short); }); },
+      dzPauseNote: selAcc.state === 'paused' ? ('Signup pages are closed · ' + moneyCopy(selHasPrepaid).short + '.')
+        : dzGreyIsNil
+          ? (cap(dzGreyPhrase) + ' — pausing closes the signup pages, and there is nothing live for it to grey.')
+          : (dzGreyPhrase + ' tonight — ' + moneyCopy(selHasPrepaid).short + ', signup pages close.'),
+      dzPause: () => { if (selAcc.state === 'paused') { this.setState({ accMods: { ...st.accMods, [selAcc.name]: { ...(st.accMods[selAcc.name] || {}), state: 'active' } } }); this.say(selAcc.name + ' is live again'); this.slog('money', 'resumed ' + selAcc.name + ' — cards wake up tonight, signup pages reopen'); return; } const mc = moneyCopy(selHasPrepaid); this.ask('Pause ' + selAcc.name + '?', 'Blast radius: ' + dzGreyPhrase + (dzGreyIsNil ? '. Nothing goes dark tonight; every signup page closes, and earning stops the day there is something to earn. Reversible anytime.' : '. Earning stops, ' + mc.stays + ', every signup page closes. Reversible anytime.') + (selHasPrepaid ? ' One card on this account holds stored value: ' + jodM(selPrepaidOut.principalMinor) + ' of customer cash is on ' + selPrepaidOut.holders + ' pass' + (selPrepaidOut.holders === 1 ? '' : 'es') + ' right now, spending and refunds keep working on it, and only its own wind-down can stop top-ups.' : ''), 'Pause it', '#E2563A', () => { this.setState({ accMods: { ...st.accMods, [selAcc.name]: { ...(st.accMods[selAcc.name] || {}), state: 'paused' } } }); this.say('Paused — the client sees why on their dashboard'); this.slog('money', 'paused ' + selAcc.name + ' — ' + dzGreyPhrase + ', ' + mc.short); }); },
       // ── ACCOUNT · reassigning the manager · the book filter has always run on this field and
       //    nothing could ever change it. A handover is a fact somebody has to be able to read
       //    later, so the note is required and lands on the timeline, not just in a toast. ──
@@ -7051,7 +7690,13 @@ class Component extends DCLogic {
       ownerBtnLabel: ownerReady ? 'Send the set-password link' : 'A name and a WhatsApp number — both',
       ownerCancel: () => this.setState({ ownerOpen: false, ownerName: '', ownerPhone: '' }),
       ownerApply: () => { if (!ownerReady) return; const nm = st.ownerName.trim(); this.setState({ accMods: { ...st.accMods, [selAcc.name]: { ...(st.accMods[selAcc.name] || {}), owner: nm } }, ownerOpen: false, ownerName: '', ownerPhone: '' }); this.say('Set-password link sent on WhatsApp — the old owner’s session ends at midnight.'); this.slog('money', 'handed ' + selAcc.name + ' to ' + nm + ' (' + st.ownerPhone.trim() + ') — set-password link sent, old login dies at midnight'); },
-      dzDeleteNote: 'Blast radius: every pass voids, every balance dies, ' + (selAcc.members || 0).toLocaleString('en-US') + ' members lose their cards. Export first.',
+      // ── the same rule as the pause note above it: a blast radius of nobody is not a blast
+      //    radius. "every pass voids, every balance dies, 0 members lose their cards" put a
+      //    catastrophe and a zero in one sentence. What deletion costs on a day-one account is
+      //    real and worth stating — it is just not measured in wallets.
+      dzDeleteNote: (Number(selAcc.members) || 0) === 0
+        ? 'Blast radius: nobody holds a pass here yet, so nothing voids in anyone’s wallet — the account, its cards and its whole record go, and there is no undo. Export first.'
+        : ('Blast radius: every pass voids, every balance dies, ' + (Number(selAcc.members) || 0).toLocaleString('en-US') + ' member' + ((Number(selAcc.members) || 0) === 1 ? ' loses their card' : 's lose their cards') + '. Export first.'),
       dzDelete: () => this.ask('Delete ' + selAcc.name + ' forever?', 'Every pass voids in wallets, balances and history are erased after a 30-day export window. In production this asks for your password again, then the word DELETE, typed.', 'This is blocked in the demo', '#E2563A', () => this.say('Blocked in the demo — the blast radius is the point')),
       // support
       supQuery: st.supQuery, setSupQuery: (e) => this.setState({ supQuery: e.target.value, supIdx: 0 }),
@@ -7059,11 +7704,19 @@ class Component extends DCLogic {
       supNoRows: supList.length === 0,
       supNoRowsLine: 'Nobody on file matches “' + (st.supQuery || '').trim() + '”. Try the first name, or the last four digits of the number.',
       // ── an honest empty state · no match means no record, not somebody else's record ──
+      // ── THREE DIFFERENT EMPTIES, AND THEY ARE NOT ONE SENTENCE ────────────────────────────
+      //    "Search found nothing" and "nobody is selected yet" were both covered. The third —
+      //    there is no roster to search at all, because this account has never had a member — was
+      //    not, and it is the one a merchant on their first morning is in. Telling somebody to
+      //    search a directory that is empty is an instruction that cannot be followed.
       supHasSel: supHasSelV, supNoSel: !supHasSelV,
-      supNoSelTitle: (st.supQuery || '').trim() ? 'No member called “' + (st.supQuery || '').trim() + '”.' : 'Nobody is selected.',
-      supNoSelLine: (st.supQuery || '').trim()
-        ? 'There is no record to show, so this panel is showing none. A member who cannot be found cannot be re-issued a pass, cannot have a contact detail fixed and certainly cannot have a balance corrected — every one of those needs a real person on the other end. Search the first name, or the last four digits of the mobile on the pass.'
-        : 'Search a name or a mobile number above and the record opens here. Nothing is assumed: this panel only ever shows a member the search actually found.',
+      supNoSelTitle: M.length === 0 ? 'Nobody has joined yet.'
+        : (st.supQuery || '').trim() ? 'No member called “' + (st.supQuery || '').trim() + '”.' : 'Nobody is selected.',
+      supNoSelLine: M.length === 0
+        ? 'There is no member directory to search — not one person has joined a card on this account yet. The first member arrives when somebody scans the join QR at the counter, and the moment they do, this desk can find them, re-issue their pass and fix a detail on their record.'
+        : (st.supQuery || '').trim()
+          ? 'There is no record to show, so this panel is showing none. A member who cannot be found cannot be re-issued a pass, cannot have a contact detail fixed and certainly cannot have a balance corrected — every one of those needs a real person on the other end. Search the first name, or the last four digits of the mobile on the pass.'
+          : 'Search a name or a mobile number above and the record opens here. Nothing is assumed: this panel only ever shows a member the search actually found.',
       supSel: supSelM,
       // ── SUPPORT · the card names its account, and the account is one tap away ──
       supHasAcc: supAccIdx >= 0, supAccName,
@@ -7083,7 +7736,7 @@ class Component extends DCLogic {
       supCanViewAs: supAccIdx >= 0 && !supportRole,
       supScopeShow: supAccIdx >= 0 && supportRole,
       supScopeLine: 'Support sees which account a card belongs to and stops there — no accounts register, and no read-only trip into the client’s own dashboard. That is the row this console prints on the Team screen, and it is the row this panel obeys. Escalate to an admin or to ' + supAccName + '’s account manager if the answer is on their side of that line.',
-      supViewAs: () => { if (supAccIdx < 0 || supportRole) return; this.slog('viewas', 'viewed ' + supAccName + ' as client from the support desk — read-only, every screen logged'); this.say('Opening ' + supAccName + ' read-only — every number matches what ' + supAccOwner + ' sees · the whole visit lands in the view-as trail' + (sameName(supAccName, 'Tala Hospitality Group') ? '' : ' · note: the demo dashboard models Tala')); window.location.href = 'Wasla Dashboard.dc.html?viewas=1&acct=' + slugOf(supAccName || ''); },
+      supViewAs: () => { if (supAccIdx < 0 || supportRole) return; this.slog('viewas', 'viewed ' + supAccName + ' as client from the support desk — read-only, every screen logged'); this.say('Opening ' + supAccName + ' read-only — every number matches what ' + supAccOwner + ' sees · the whole visit lands in the view-as trail' + (hasSharedAcct(supAccName) ? '' : ' · note: this demo carries no merchant data for that account, so you land on the default one’s')); window.location.href = 'Wasla Dashboard.dc.html?viewas=1&acct=' + slugOf(supAccName || ''); },
       // ── SUPPORT · what has already been done to this member ──
       supActs: supActsRaw.map((r, i) => { const k = kindTone(r.kind); return { line: r.line, t: r.t, dot: k[0], ring: k[1], anim: AN('fadeUp', '.38s', (0.05 * i) + 's') }; }),
       supActsEmpty: supActsRaw.length === 0,
@@ -7459,7 +8112,7 @@ class Component extends DCLogic {
       //    It now runs through the same payState() every other renewal control on this console
       //    uses, so a mark-paid and a reversal both land on this row on the render they happen.
       moRenewRows: (Array.isArray(BRN.list) ? BRN.list : []).map((r, i) => {
-        const acc = (C.accounts || []).find(x => sameName(x.name, r.name)) || null;
+        const acc = (ACCTS || []).find(x => sameName(x.name, r.name)) || null;
         const ps = acc ? payState(acc) : (String(r.verdict || '') === 'due' ? 'due' : 'notyet');
         const tone = ps === 'paid' ? ['PAID', '#E7F6EE', '#1E7D47'] : ps === 'due' ? ['DUE', '#FDF1DC', '#9A6B12'] : ['NOT YET DUE', '#EFEDE8', '#6B6760'];
         return {
@@ -7539,8 +8192,20 @@ class Component extends DCLogic {
       acctTabMoney: admin && String(st.acctTab || 'overview') === 'money',
       finHasBook: !!fin, finNoBookShow: !fin,
       // both counts are read, never typed: the book's own length, and the platform total minus it
-      finNoBook: 'There is no invoice book for ' + String(selAcc.name || 'this account') + ' in this demo. ' + cap(numWord(BA.length)) + ' accounts carry a full financial record; the other ' + Math.max(0, nz(gv(gv(C.health, 'totals', {}), 'accounts', 0)) - BA.length) + ' on the platform are not wired into it.',
-      finNoBookAr: 'لا يوجد دفتر فواتير لـ' + String(selAcc.ar || selAcc.name || 'هذا الحساب') + ' في هذا النموذج. ' + arAccounts(BA.length) + ' تحمل سجلًا ماليًا كاملًا، وبقية الحسابات على المنصّة (' + Math.max(0, nz(gv(gv(C.health, 'totals', {}), 'accounts', 0)) - BA.length) + ') غير موصولة به.',
+      // ── TWO DIFFERENT ABSENCES, AND THEY ARE NOT THE SAME SENTENCE ────────────────────────
+      //    "This demo does not wire that account into the financial book" is a fact about the
+      //    demo. "This business was activated a moment ago and has never been billed" is a fact
+      //    about the business, and it is the one every new account starts on. Telling a merchant
+      //    who signed this morning that they are "not wired into it" would be the same class of
+      //    defect as an invoice that does not exist: a sentence that has nothing to do with the
+      //    thing it sits under. Which one applies is read off the register, never guessed.
+      finNoBook: isNewAcct(selAcc.name)
+        ? (String(selAcc.name || 'This account') + ' was activated on this console, so there is no billing history to show — nothing has been invoiced and no money has moved. The book opens with the first billing run' + (selAcc.renewal ? ', and the ' + (selAcc.plan || 'Starter') + ' term re-commits ' + selAcc.renewal : '') + '.')
+        : ('There is no invoice book for ' + String(selAcc.name || 'this account') + ' in this demo. ' + cap(numWord(BA.length)) + ' accounts carry a full financial record; the other ' + Math.max(0, nz(gv(gv(C.health, 'totals', {}), 'accounts', 0)) - BA.length) + ' on the platform are not wired into it.'),
+      finNoBookAr: isNewAcct(selAcc.name)
+        ? ('فُعِّل حساب ' + String(selAcc.ar || selAcc.name || 'هذا النشاط') + ' من هذا الكونسول، فلا يوجد سجلّ مالي بعد — لم تُصدَر فاتورة ولم يتحرّك مال. يبدأ الدفتر مع أول دورة فوترة'
+          + (selAcc.renewal ? ('، ويُجدَّد الالتزام بمدة باقة ' + String(selAcc.plan || 'Starter') + ' في ' + String(selAcc.renewal)) : '') + '.')
+        : ('لا يوجد دفتر فواتير لـ' + String(selAcc.ar || selAcc.name || 'هذا الحساب') + ' في هذا النموذج. ' + arAccounts(BA.length) + ' تحمل سجلًا ماليًا كاملًا، وبقية الحسابات على المنصّة (' + Math.max(0, nz(gv(gv(C.health, 'totals', {}), 'accounts', 0)) - BA.length) + ') غير موصولة به.'),
       finTitle: 'Financial detail',
       finSub: fin ? ((finClosed
         ? ('Closed ' + String(fin.closedOn || '') + ' · was ' + String(fin.plan || '') + ' at ' + JOD(finInv.length ? finInv[finInv.length - 1].amountJod : 0) + ' a month')
@@ -7614,23 +8279,49 @@ class Component extends DCLogic {
       // ── their MRR as a step chart ────────────────────────────────────────────────────────────
       finStepTitle: 'What they pay, month by month',
       finStepTitleAr: 'ما يدفعونه شهرًا بشهر',
-      finStepSub: fin ? ('Read off the invoices, not the plan record — this is what ' + String(fin.name || '') + ' was actually charged. Each step carries the change in monthly revenue.') : '',
+      // the sub describes the chart, so on an empty book it describes the absence rather than
+      // narrating a chart that is not there
+      finStepSub: (fin && finInv.length) ? ('Read off the invoices, not the plan record — this is what ' + String(fin.name || '') + ' was actually charged. Each step carries the change in monthly revenue.')
+        : fin ? 'Read off the invoices, not the plan record. There are none yet.' : '',
       // the chart is built from iv.amountJod — what was BILLED. The Arabic used to say "collected",
       // which is false on the two accounts where the two books differ, and misleading on the rest.
-      finStepSubAr: fin ? ('مقروء من الفواتير لا من سجلّ الباقة — هذا ما طُولب به ' + String(fin.ar || fin.name || '') + ' فعلًا على مدى ' + arPeriods(finInv.length) + '، وكل درجة تحمل مقدار التغيّر في الإيراد الشهري.') : '',
+      finStepSubAr: (fin && finInv.length) ? ('مقروء من الفواتير لا من سجلّ الباقة — هذا ما طُولب به ' + String(fin.ar || fin.name || '') + ' فعلًا على مدى ' + arPeriods(finInv.length) + '، وكل درجة تحمل مقدار التغيّر في الإيراد الشهري.')
+        : fin ? 'مقروء من الفواتير لا من سجلّ الباقة، ولا توجد فواتير بعد.' : '',
       finStepBox: '0 0 ' + SW2 + ' ' + SH2,
       finStepD, finStepAreaD, finStepMarks, finStepTicks,
       finStepBaseY: ST2 + sIH, finStepLabelL: pctX(SL2 - 10, SW2), finStepTickT: pctY(ST2 + sIH + 8, SH2),
       finStepGridX1: SL2, finStepGridX2: SW2 - SR2,
       finStepGrid: [0, 0.5, 1].map(f => ({ y: R2(ST2 + sIH - f * sIH), t: pctY(ST2 + sIH - f * sIH, SH2), label: Math.round(finDom * f).toLocaleString('en-US') })),
       finStepHas: finSteps.length > 0,
-      finStepFlat: fin ? (String(fin.name || '') + ' has been on ' + JOD(finInv.length ? finInv[0].amountJod : 0) + ' a month since the first invoice. Nothing has moved, up or down.') : '',
-      finStepIsFlat: finSteps.length <= 1,
+      // ── "SINCE THE FIRST INVOICE" NEEDS A FIRST INVOICE ────────────────────────────────────
+      //    finSteps returns [] when there are no invoices, and `finSteps.length <= 1` was true in
+      //    that case too — so an account with a billing record and an empty invoice book rendered
+      //    "has been on JOD 0.000 a month since the first invoice", asserting an invoice that does
+      //    not exist and a price nobody was ever charged. That is the first weeks of every account
+      //    this platform ever signs. The guard is the one already standing three lines below, on
+      //    finPuncHas: gate the sentence on the data it describes.
+      finStepFlat: (fin && finInv.length) ? (String(fin.name || '') + ' has been on ' + JOD(finInv[0].amountJod) + ' a month since the first invoice. Nothing has moved, up or down.') : '',
+      finStepIsFlat: finInv.length > 0 && finSteps.length <= 1,
+      // …and the honest sentence for the case that used to produce the false one: a book that has
+      // been opened and not yet billed. Derived from the record's own start date and the account's
+      // own renewal, so it cannot claim a month that has not run.
+      finStepNoneShow: !!fin && finInv.length === 0,
+      finStepNone: fin
+        ? (String(fin.name || 'This account') + ' has not been invoiced yet — nothing has been billed, so there is nothing to chart. The first invoice is raised on the first billing run' + (selAcc.renewal ? ', and the term re-commits ' + selAcc.renewal : '') + '.')
+        : '',
+      finStepNoneAr: fin
+        ? ('لم تُصدَر أي فاتورة لـ' + String(fin.ar || fin.name || 'هذا الحساب') + ' بعد، فلا يوجد ما يُرسم. أول فاتورة تصدر في أول دورة فوترة'
+          + (selAcc.renewal ? ('، ويُجدَّد الالتزام بالمدة في ' + String(selAcc.renewal)) : '') + '.')
+        : '',
 
       // ── punctuality · the chart the whole screen is an argument for ──────────────────────────
       finPuncTitle: 'How they pay, over time',
+      // both halves of this subtitle describe the SAME chart, so both carry the same guard. The
+      // English one had it and the Arabic one did not — an asymmetry no shipped account reaches
+      // today (the panel lives inside sc-if finHasBook, and finHasBook IS !!fin), but the guard is
+      // the thing that keeps it unreachable, and a lone guard is a guard that gets deleted.
       finPuncSub: fin ? ('Days from invoice to payment, one point per invoice, with the ' + BTERM + '-day term drawn straight across. Above the line is late.') : '',
-      finPuncSubAr: 'عدد الأيام بين إصدار الفاتورة وسدادها — والخط الأفقي هو مهلة ' + BTERM + ' يومًا. ما فوق الخط متأخّر.',
+      finPuncSubAr: fin ? ('عدد الأيام بين إصدار الفاتورة وسدادها — والخط الأفقي هو مهلة ' + BTERM + ' يومًا. ما فوق الخط متأخّر.') : '',
       finPuncBox: '0 0 ' + PW + ' ' + PH,
       puncLineD, puncDots, puncTermY, puncTermT: pctY(puncTermY, PH), puncTermR: pctX(PW - PR - 4, PW), puncGrid,
       finPuncBaseY: PT + pIH, finPuncLabelL: pctX(PL - 10, PW), finPuncTickT: pctY(PT + pIH + 8, PH),
@@ -7790,15 +8481,23 @@ class Component extends DCLogic {
         push(Object.keys(st.teamMods || {}).length + (st.teamAdded || []).length + (st.teamRemoved || []).length, 'team edit');
         push((st.noticesSent || []).length, 'notice sent', 'notices sent');
         push(Object.keys(st.winbacks || {}).length, 'win-back');
+        push((st.accountsAdded || []).length, 'account activated', 'accounts activated');
         push((st.sessionLog || []).length, 'log line');
         return bits.length ? 'Held on this machine right now: ' + bits.join(' · ') + '.' : 'Nothing held yet — this console is exactly as it ships.';
       })(),
-      resetFoot: 'A reset clears the three things this console WROTE: this session, the card verdict it handed to the client dashboard, and any verdict it published on a staged edit. It used to keep the hand-off and clear the session, which left the two screens openly contradicting each other — this console with Sukkar Bakery back in the queue, the client dashboard still showing it live in wallets. Forgetting a decision means forgetting the half of it you published, too. What is never touched is the client’s own saved work: their staged edits and change requests are their record, not ours to delete.',
-      resetConsoleGo: () => this.ask('Reset the demo data?', 'Everything you changed in this console demo goes back to the start — approvals you decided, balance corrections, plan changes and pauses, pipeline moves, payments you marked, team edits, the privacy decision and the session log. The two verdicts this console publishes outward go with them: the card hand-off the client dashboard reads, and any staged-edit verdict you gave. That is deliberate — forgetting a decision has to include forgetting what you told the client about it, or the two screens end up arguing. The client’s own saved work is not touched, and nothing else on this machine is either.', 'Reset', '#E2563A', () => { this.resetConsole(); this.say('Demo data cleared — back to a fresh start, on both sides of the hand-off'); }),
+      resetFoot: 'A reset clears the four things this console WROTE: this session, the card verdict it handed to the client dashboard, any verdict it published on a staged edit, and any verdict it published on a card a merchant submitted. It used to keep the hand-off and clear the session, which left the two screens openly contradicting each other — this console with Sukkar Bakery back in the queue, the client dashboard still showing it live in wallets. Forgetting a decision means forgetting the half of it you published, too. What is never touched is the client’s own saved work: their submitted cards go back to waiting rather than being deleted, and their staged edits and change requests are their record, not ours to remove. An account this console activated goes back with the session, and the invite it came from returns to “Password set”, which is what a forgotten activation actually means.',
+      resetConsoleGo: () => this.ask('Reset the demo data?', 'Everything you changed in this console demo goes back to the start — approvals you decided, accounts you activated, balance corrections, plan changes and pauses, pipeline moves, payments you marked, team edits, the privacy decision and the session log. The verdicts this console publishes outward go with them: the card hand-off the client dashboard reads, any staged-edit verdict you gave, and any card a merchant submitted, which returns to waiting rather than being deleted. That is deliberate — forgetting a decision has to include forgetting what you told the client about it, or the two screens end up arguing. The client’s own saved work is not touched, and nothing else on this machine is either.', 'Reset', '#E2563A', () => { this.resetConsole(); this.say('Demo data cleared — back to a fresh start, on both sides of the hand-off'); }),
       // ══ ACTIVATIONS · the invite register ═════════════════════════════════════════════════════
-      actLede: invLiveN
-        ? (invLiveN + ' invite' + (invLiveN === 1 ? '' : 's') + ' in flight — sent, and not yet an account. This is the gap the pipeline’s Invited column has always pointed at, and it lives here.')
-        : 'Nothing in flight. Every invite this console or the field app has sent has either landed as an account or been cancelled.',
+      // the lede counts what is actually on the register, and calls out the rows that are waiting
+      // on THIS console rather than on the prospect — those are the ones somebody here can move
+      actLede: (() => {
+        const waiting = inviteRows0.filter(v => v.status === 'password').length;
+        if (!invLiveN) return 'Nothing in flight. Every invite this console or the field app has sent has either landed as an account or been cancelled.';
+        const head = invLiveN + ' invite' + (invLiveN === 1 ? '' : 's') + ' in flight — sent, and not yet an account. This is the gap the pipeline’s Invited column has always pointed at, and it lives here.';
+        return waiting
+          ? (head + ' ' + (waiting === 1 ? 'One of them has a password on it and is waiting on you' : waiting + ' of them have a password on them and are waiting on you') + ' — activating is the last thing between a prospect and an empty dashboard of their own.')
+          : head;
+      })(),
       actStats: (() => {
         const c = (s) => inviteRows0.filter(v => v.status === s).length;
         return [['Sent, unopened', c('sent'), c('sent') ? '#7A5A2E' : '#8C877F'], ['Opened', c('opened'), c('opened') ? '#9A6B12' : '#8C877F'], ['Password set', c('password'), c('password') ? '#5B4A8A' : '#8C877F'], ['Account live', c('live'), c('live') ? '#1E7D47' : '#8C877F']];
@@ -7820,8 +8519,33 @@ class Component extends DCLogic {
             bg: (v.status !== 'cancelled' && si <= step) ? t[2] : '#EFE8DC' })),
           resendLine: v.resends ? ('resent ' + v.resends + '×') : '',
           hasResendLine: v.resends > 0,
+          // ── THE ONE CLICK THE CHAIN WAS MISSING ────────────────────────────────────────────
+          //    A password is set on somebody else's phone and nobody at Wasla ever sees it. What
+          //    Wasla does is turn the key afterwards, and that only ever happened in the copy.
+          //    Offered on a row that has genuinely reached "Password set", to an admin, and never
+          //    on a business that is already an account.
+          canActivate: admin && v.status === 'password',
+          activateLabel: 'Activate the account',
+          activate: () => {
+            if (!admin) { this.say('An admin turns this key — the account is created platform-side, not from a rep’s book'); return; }
+            if (v.status !== 'password') { this.say(v.biz + ' is at “' + (INV_LABEL[v.status] || 'sent').toLowerCase() + '” — there is nothing to activate until they set a password on their own phone'); return; }
+            this.ask('Activate ' + v.biz + '?', (v.owner || 'The owner') + ' set a password on their own phone, which is as far as an invite can get. Activating creates the account on ' + (v.plan || 'Starter') + ': a register entry, the card slots that plan carries, and a renewal date. It is EMPTY — no card, no member, no scan — because everything inside it is theirs to build, and the first card they build comes back to this console for review.', 'Activate the account', '#2FAE66', () => activateAcct(v));
+          },
           canAct: mine && !done, cantAct: !(mine && !done),
           cantActLine: done ? (v.status === 'live' ? 'landed — it is an account now' : 'cancelled — a new invite is a new link') : (v.by + ' sent this one'),
+          // ── the two links, and the difference between them kept sharp ───────────────────────
+          //    ?acct=<slug> alone is a full editable merchant session — this is the one to open
+          //    on a business that has just been activated, because the demo continues inside it.
+          //    ?viewas=1&acct=<slug> (on the account screen) is the read-only observer mode.
+          //    Offered only where a merchant session genuinely exists behind the slug: a link to
+          //    an account this platform holds no data for would land on somebody else's numbers.
+          canOpenDash: v.status === 'live' && hasSharedAcct(v.biz),
+          dashHref: 'Wasla Dashboard.dc.html?acct=' + slugOf(v.biz),
+          dashLabel: 'Open their dashboard →',
+          openDash: () => { this.slog('access', 'opened ' + v.biz + '’s own dashboard from the activation row — full session, not read-only'); },
+          // an account row to jump to, for anything activated that has no merchant session behind it
+          canOpenAcct: v.status === 'live',
+          openAcct: () => { const ix = accIdxByName(v.biz); if (ix >= 0) goAccount(ix); },
           resend: () => {
             if (!mine || done) { this.say(done ? 'Nothing to resend — this invite is ' + (INV_LABEL[v.status] || '').toLowerCase() : v.by + ' sent this invite — ask them, or open it as an admin'); return; }
             const m = (st.inviteMods || {})[v.id] || {};
@@ -7839,12 +8563,12 @@ class Component extends DCLogic {
               this.slog('client', 'cancelled the ' + v.biz + ' invite to ' + v.owner + ' — link killed, no account was ever created');
             });
           },
-          anim: st.invJust === v.id ? AN('popIn', '.45s') : AN('fadeUp', '.45s', (0.05 * i) + 's') };
+          anim: (st.invJust === v.id || sameName(st.actJust, v.biz)) ? AN('popIn', '.45s') : AN('fadeUp', '.45s', (0.05 * i) + 's') };
       }),
       actEmpty: inviteRows0.length === 0,
       actEmptyLine: 'No invite has ever been sent from this machine, and none is in flight. Send one from “+ Invite a client” and its receipt lands here — with a status that tells the truth about how far it got.',
       actNewGo: () => this.setState({ screen: 'invite' }),
-      actFoot: 'Status is derived, never typed: a business that appears in the accounts register reads “Account live”, the invite this console is holding open reports its own tracking, and everything else says exactly what it last knew. Nobody at Wasla ever sees the password — “Password set” is the furthest we can honestly claim to know.',
+      actFoot: 'Status is derived, never typed: a business that appears in the accounts register reads “Account live”, the invite this console is holding open reports its own tracking, and everything else says exactly what it last knew. Nobody at Wasla ever sees the password — “Password set” is the furthest we can honestly claim to know about their side, and it is where our side picks the story up. Activating is what puts the business in the register, and it is the only thing on this screen that creates anything.',
       // ══ CLIENT ASKS · the inbox the merchant dashboard was writing into a void ═════════════════
       asksLede: admin
         ? 'Owners raise these on their own dashboard, and reps raise plan changes they cannot make themselves. Granting applies the change and tells them; declining sends your reason, word for word.'

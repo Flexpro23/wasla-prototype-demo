@@ -242,7 +242,7 @@
                   </sc-if>
                 </div>
                 <sc-if value="{{ pr.converted }}" hint-placeholder-val="{{ false }}">
-                  <div style="margin-top:8px;background:#FDF1DC;color:#9A6B12;border:1px solid #F6DDB0;font-size:8.5px;font-weight:800;border-radius:999px;padding:3px 9px;text-align:center;letter-spacing:.05em;">{{ pr.convLabel }}</div>
+                  <div style="margin-top:8px;background:{{ pr.convBg }};color:{{ pr.convFg }};border:1px solid {{ pr.convBr }};font-size:8.5px;font-weight:800;border-radius:999px;padding:3px 9px;text-align:center;letter-spacing:.05em;">{{ pr.convLabel }}</div>
                 </sc-if>
               </div>
             </sc-for>
@@ -268,7 +268,7 @@
             </div>
             <div style="font-size:11px;color:#5D5348;margin-top:8px;line-height:1.55;">{{ ldSubLine }}</div>
             <sc-if value="{{ ldIsConverted }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:10px;background:#FDF1DC;color:#9A6B12;border:1px solid #F6DDB0;font-size:9.5px;font-weight:800;border-radius:999px;padding:4px 10px;text-align:center;letter-spacing:.04em;">{{ ldConvChip }}</div>
+              <div style="margin-top:10px;background:{{ ldConvBg }};color:{{ ldConvFg }};border:1px solid {{ ldConvBr }};font-size:9.5px;font-weight:800;border-radius:999px;padding:4px 10px;text-align:center;letter-spacing:.04em;">{{ ldConvChip }}</div>
             </sc-if>
           </div>
 
@@ -566,10 +566,24 @@
             <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:20px;padding:16px 15px;animation:{{ ivTrackAnim }};">
               <div style="display:flex;align-items:baseline;gap:9px;margin-bottom:14px;">
                 <span style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:#6E6960;text-transform:uppercase;">Invite tracking</span>
-                <span style="margin-inline-start:auto;font-size:9.5px;font-weight:800;color:#9A6B12;white-space:nowrap;">{{ ivTrackChip }}</span>
+                <span style="margin-inline-start:auto;font-size:9.5px;font-weight:800;color:{{ ivTrackChipFg }};white-space:nowrap;">{{ ivTrackChip }}</span>
+              </div>
+              <!-- ── THE ONE SIMULATED LINK IN THE CHAIN, SAID OUT LOUD ─────────────────────
+                      Two beats below happen on somebody else's phone: the link being opened and
+                      the password being set. In this demo they are played back on a timer. An
+                      unlabelled fiction inside an otherwise-real chain is worse than no chain at
+                      all, because a prospect who spots one stops trusting the rest — so it is
+                      labelled, in both languages, above the rail it drives. -->
+              <div style="background:#F7F5F0;border:1px dashed #D8D0C2;border-radius:13px;padding:11px 13px;margin-bottom:13px;">
+                <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+                  <span style="background:#EDE9F5;color:#5B4A8A;font-size:8.5px;font-weight:800;letter-spacing:.07em;border-radius:999px;padding:3px 9px;white-space:nowrap;">{{ ivSimChip }}</span>
+                  <span style="font-size:10.5px;font-weight:800;color:#5D5348;">{{ ivSimTitle }}</span>
+                </div>
+                <div style="font-size:10px;color:#8C877F;line-height:1.6;margin-top:6px;">{{ ivSimLine }}</div>
+                <div dir="rtl" style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:9.5px;color:#A79C8D;line-height:1.85;margin-top:4px;">{{ ivSimLineAr }}</div>
               </div>
               <div style="display:flex;flex-direction:column;">
-                <sc-for list="{{ ivSteps }}" as="iv" hint-placeholder-count="3">
+                <sc-for list="{{ ivSteps }}" as="iv" hint-placeholder-count="4">
                   <div style="display:flex;gap:11px;animation:{{ iv.anim }};">
                     <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
                       <div style="width:22px;height:22px;border-radius:50%;background:{{ iv.bg }};border:2px solid {{ iv.br }};color:{{ iv.markFg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;line-height:1;transition:background .35s,border-color .35s,color .35s;animation:{{ iv.dotAnim }};">{{ iv.mark }}</div>
@@ -846,7 +860,15 @@ const TRAIL_DOT = { move: '#E88024', ping: '#2FAE66', escalate: '#E2563A', won: 
 const LEADX = {
   'Louma Chocolate': { phone: '+962 79 555 0433', email: 'reem@louma.jo', vertical: 'Retail', areas: ['Abdali'], locs: ['Abdali Boulevard'], types: ['Points Card', 'Coupon'], plan: 'Growth', value: 79, source: 'Referral', follow: 'Tomorrow', touch: 2, seedTrail: [['2d ago', 'invite opened — no password yet', 'ping'], ['4d ago', 'moved Cold → Invited', 'move']] },
   'Tuta Juice': { phone: '+962 78 555 0611', email: 'zain@tuta.jo', vertical: 'Café', areas: ['Swefieh', 'Rainbow St'], locs: ['Swefieh branch', 'Rainbow St kiosk'], types: ['Stamp Card'], plan: 'Starter', value: 25, source: 'Walk-in', follow: 'Thursday 11:00', touch: 1, seedTrail: [['Yesterday', 'demo booked for Thursday 11:00', 'move'], ['3d ago', 'walked in at the Swefieh branch — asked for the deck', 'note']] },
-  'Al-Quds Falafel': { phone: '+962 77 555 0290', email: 'abushadi@quds.jo', vertical: 'Restaurant', areas: ['Madina St'], locs: ['Madina St'], types: ['Stamp Card', 'Challenge Card'], plan: 'Starter', value: 25, source: 'Outbound', follow: 'Today', touch: 0, seedTrail: [['Today', 'first card submitted for review', 'won'], ['2d ago', 'moved Negotiating → Won', 'move']] },
+  // ── AL-QUDS SHIPS AT WON AND ASSERTS NOTHING FURTHER ──────────────────────────────────────
+  //    This trail used to open with "first card submitted for review". On a fresh browser there
+  //    is no account, no card and nothing in Omar's approvals queue — the lead is Won and not yet
+  //    converted, and the phone's own chip, its stage note and the console's registers all say so
+  //    two inches away. It was the seed telling the end of the story on the first screen of it.
+  //    Every line below is a thing that has actually happened by the time you open this app: a
+  //    call, a stage move, a walk-in. The invite, the password, the account and the card are the
+  //    demo's to produce, in that order, and none of them is claimed here.
+  'Al-Quds Falafel': { phone: '+962 77 555 0290', email: 'abushadi@quds.jo', vertical: 'Restaurant', areas: ['Madina St'], locs: ['Madina St'], types: ['Stamp Card', 'Challenge Card'], plan: 'Starter', value: 25, source: 'Outbound', follow: 'Today', touch: 0, seedTrail: [['Today', 'agreed on Starter — one branch, a stamp card first', 'note'], ['2d ago', 'moved Negotiating → Won — closed on the call', 'won']] },
   'Baraka Style': { phone: '+962 79 555 0388', email: 'mona@baraka.jo', vertical: 'Salon', areas: ['Jabal Amman'], locs: ['Jabal Amman'], types: ['VIP Tiers'], plan: 'Starter', value: 25, source: 'Instagram', follow: 'After Eid', touch: 11, seedTrail: [['11d ago', 'asked to be called back after Eid', 'note']] },
   'Deema Nails': { phone: '+962 78 555 0417', email: 'deema@deemanails.jo', vertical: 'Salon', areas: ['Sweifieh Village'], locs: ['Sweifieh Village'], types: ['Cashback Card', 'VIP Tiers'], plan: 'Growth', value: 79, source: 'Event', follow: 'Thursday', touch: 6, seedTrail: [['6d ago', 'wants Growth at Starter price — needs an admin answer', 'escalate'], ['9d ago', 'met at the Swefieh beauty fair', 'note']] }
 };
@@ -943,6 +965,14 @@ class Component extends DCLogic {
   //  There is deliberately NO liveKey() here. `wasla_demo_live_events` is a per-account till
   //  wire — its only reader is a merchant's own dashboard — and a prospect this rep just
   //  WhatsApped is not an account and has no tenant to file under. See sendInvite().
+  //
+  //  NEITHER KEY BELOW TAKES window.WASLA_ACCT_SUFFIX, and that is a decision, not an oversight.
+  //  The suffix namespaces a MERCHANT's own state so two merchants demoed in one browser cannot
+  //  overwrite each other. This is a REP's phone: Lina's pipeline is platform-wide and belongs to
+  //  no account, and `wasla_demo_console_state` is shared with the admin console by name —
+  //  suffixing either would either shard one rep's book by whichever account happened to be in
+  //  the URL, or sever the pipeline sync outright, which is the same class of error as suffixing
+  //  the live bus. This surface holds nothing that is per-merchant, so it namespaces nothing.
   // ────────────────────────────────────────────────────────────────────────────
   salesKey() { return 'wasla_demo_sales_state'; }
   consoleKey() { return 'wasla_demo_console_state'; }
@@ -963,6 +993,45 @@ class Component extends DCLogic {
     if (!val || bucket === 'mods') return r;
     const a = r[bucket] || [];
     return { ...r, [bucket]: a.indexOf(val) >= 0 ? a : [...a, val] };
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────
+  //  WHO IS ACTUALLY AN ACCOUNT — the one derivation every "live" claim on this phone reads
+  //
+  //  A password is not an account. The console's own definition of live is a ROW IN ITS
+  //  REGISTER, and there are exactly two places one can be:
+  //    · WASLA_DB.console.accounts   — the accounts that shipped with the demo;
+  //    · accountsAdded               — the runtime register Omar's Activate click writes into
+  //                                    the shared console blob, and the ONLY place an account
+  //                                    born during this session exists.
+  //  This phone READS both and WRITES neither — the same read-only contract leadDeleted and
+  //  escalDone have. mergeConsole() hands accountsAdded back byte-for-byte inside {...blob};
+  //  nothing here changes that.
+  //
+  //  It is read off the BLOB on every render rather than folded into state at boot, because the
+  //  activation happens in ANOTHER TAB while this screen is open. A value captured at boot would
+  //  leave the rep's chip saying "with Wasla" about a business Omar turned on two minutes ago —
+  //  which is the same defect as claiming it live too early, pointing the other way.
+  //
+  //  Wrapped end to end and it never throws: renderVals() computes every screen on every render,
+  //  so an exception raised here would take the whole phone down rather than one chip. A blob we
+  //  cannot parse, or one whose `v` we do not recognise, yields the seeded accounts alone — which
+  //  is "not live yet", the safe way to be wrong.
+  // ────────────────────────────────────────────────────────────────────────────
+  liveAcctNames() {
+    const out = {};
+    const add = (n) => { const s = String(n == null ? '' : n).trim().toLowerCase(); if (s) out[s] = true; };
+    try { ((this.db() || {}).accounts || []).forEach(a => { if (a && typeof a === 'object') add(a.name); }); } catch (e) {}
+    try {
+      const raw = this._lsGet(this.consoleKey());
+      if (raw) {
+        const b = JSON.parse(raw);
+        if (b && typeof b === 'object' && !Array.isArray(b) && b.v === 1 && Array.isArray(b.accountsAdded)) {
+          b.accountsAdded.forEach(a => { if (a && typeof a === 'object' && typeof a.name === 'string') add(a.name); });
+        }
+      }
+    } catch (e) {}
+    return out;
   }
 
   /** Debounced — every mutating action calls persist(); a burst of taps costs one write. */
@@ -1292,11 +1361,11 @@ class Component extends DCLogic {
       invites: (s.invites || []).map(v => (v && v.biz === biz) ? { ...v, seedStatus: 'password' } : v) };
     if (known) {
       const t = s.leadTrail || {};
-      patch.leadTrail = { ...t, [biz]: [{ t: 'Just now', line: 'password set — the account is live', kind: 'won', src: 'phone' }, ...(t[biz] || [])] };
+      patch.leadTrail = { ...t, [biz]: [{ t: 'Just now', line: 'password set — waiting on Wasla to activate the account', kind: 'won', src: 'phone' }, ...(t[biz] || [])] };
       patch.mine = this.mineAdd(s.mine, 'trail', biz);
     }
     this.setState(patch);
-    this.say(biz + ' set a password — that is the activation, and the ring just moved');
+    this.say(biz + ' set a password — that is the activation, and the ring just moved · Wasla activates the account from the Activations register');
     this.persist();
   }
   /** Cancels BOTH invite timers and clears their host latches, so a fresh invite can arm fresh
@@ -1393,6 +1462,23 @@ class Component extends DCLogic {
     const isStale = (l) => touchOf(l) >= STALE_DAYS;
     const isConv = (n) => !!(st.converted || {})[n];
     const isLivePw = (n) => (st.livePw || []).indexOf(n) >= 0;
+    // ── THE FOUR-BEAT LADDER, DERIVED ONCE ────────────────────────────────────────────────────
+    //    invite ready → invite sent → password set → ACCOUNT LIVE. The last rung is not this
+    //    phone's to declare: `isLivePw` is a password, and a password is a beat on the prospect's
+    //    handset. Only Omar's register says an account exists, so `isAcctLive` reads that register
+    //    and nothing else. Every "live" sentence on this surface — the pipeline chip, the lead
+    //    chip, the stage note, the invite stepper's fourth node, its status chip, its button and
+    //    its footnote — comes out of THESE TWO tests and this ONE label function, so no two of
+    //    them can ever disagree about where the business is.
+    const liveAcct = this.liveAcctNames();
+    const isAcctLive = (n) => !!liveAcct[String(n == null ? '' : n).trim().toLowerCase()];
+    const convChip = (n) => isAcctLive(n) ? 'ACCOUNT LIVE — ACTIVATED BY WASLA'
+      : isLivePw(n) ? 'PASSWORD SET — WITH WASLA TO ACTIVATE'
+        : (st.sentInvites || []).indexOf(n) >= 0 ? 'INVITE SENT — ACCOUNT PENDING'
+          : 'INVITE READY — NOT SENT';
+    // green only on the rung that is actually finished; every earlier rung is a wait, and a wait
+    // is amber. A permanently amber "ACCOUNT LIVE" would contradict its own words with its colour.
+    const convTone = (n) => isAcctLive(n) ? ['#E7F6EE', '#1E7D47', '#9AD3B4'] : ['#FDF1DC', '#9A6B12', '#F6DDB0'];
     const trailOf = (n) => [...(((st.leadTrail) || {})[n] || [])];
     const addTrail = (n, line, kind) => ({ ...(st.leadTrail || {}), [n]: [{ t: 'Just now', line, kind: kind || 'note', src: 'phone' }, ...trailOf(n)] });
 
@@ -1596,7 +1682,25 @@ class Component extends DCLogic {
     const ivPhoneDigits = ivPhoneV.replace(/\D/g, '').length;
     const ivBizOk = ivBizV.length >= 2, ivOwnerOk = ivOwnerV.length >= 2, ivPhoneOk = ivPhoneDigits >= 9;
     const ivReady = ivBizOk && ivOwnerOk && ivPhoneOk;
-    const ivFirst = ivOwnerV.split(' ')[0] || '';
+    /** A first name that survives a kunya — "Abu Shadi" is not "Abu". Same rule as the admin
+        console's, so the two surfaces cannot address the same owner by two different names. */
+    const firstNameOf = (n) => {
+      const parts = String(n == null ? '' : n).trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) return '';
+      return (/^(abu|abou|abo|umm|um|ibn|bin|bint)$/i.test(parts[0]) && parts[1]) ? parts[0] + ' ' + parts[1] : parts[0];
+    };
+    const ivFirst = firstNameOf(ivOwnerV);
+    // ── the fourth rung, for the business currently in the composer ───────────────────────────
+    //    Same register the pipeline chip reads — `isAcctLive` is character-for-character the
+    //    console's own definition of live (Wasla Console.dc.html invStatusOf: an invite whose
+    //    business is in the account register IS an account), so the two surfaces cannot label the
+    //    same business differently.
+    //    The `st.invPw` conjunct is what keeps this rail MONOTONIC. The business field is free
+    //    text: a rep who types the name of a business that is already an account would otherwise
+    //    tick node four above three unticked ones the moment the invite went out. A rail is an
+    //    order, so a rung may not light before the one under it — and in the real chain the guard
+    //    costs nothing, because Omar cannot activate an invite that never reached a password.
+    const ivLive = !!st.invPw && isAcctLive(ivBizV);
     const ivSlug = (ivBizV || 'client').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const ivGate = !ivBizOk ? 'Name the business — it becomes the account name on every pass it ever issues.'
       : !ivOwnerOk ? 'Add the owner’s name — the message opens with it.'
@@ -1667,8 +1771,15 @@ class Component extends DCLogic {
         this.setState({ addStep: 0, afBiz: 'Habibah Sweets', afAr: 'حلويات حبيبة', afOwner: 'Nadia Habib', afPhone: '+962 79 555 0742', afEmail: 'nadia@habibah.jo', afVertical: 'Retail', afCity: 'Amman', afAreas: ['Rainbow St'], afLocs: ['Rainbow St'], afTypes: ['Stamp Card'], afPlan: 'Growth', afValue: '79', afSource: 'Walk-in', afFollow: 'Today', afNotes: 'Owner wants the 8th-free card before Eid.' });
         this.go('add', 'fwd');
       }],
-      ['Convert a won lead', 'Al-Quds Falafel · ready to invite', '#2FAE66', '✓', () => openLead('Al-Quds Falafel')],
-      ['Send the invite', 'The WhatsApp, then the tracking', '#1D6FB8', '→', () => { const l = allLeads.find(x => x.name === 'Al-Quds Falafel'); toInvite('Al-Quds Falafel', (l && l.owner) || 'Abu Shadi', (l && l.phone) || '+962 77 555 0290', (l && l.plan) || 'Starter'); }]
+      // ── THE CHAIN STARTS HERE ─────────────────────────────────────────────────────────────
+      //    These last two are step one and step two of one business going from a won lead to a
+      //    live account with a card in a wallet. Nothing on this phone ships pre-converted any
+      //    more, so the walk really does start at "Won, not yet converted" — the honest beginning
+      //    the rest of the chain needs. What follows the send is on the prospect's phone (the
+      //    labelled beats on the tracking rail) and then at Wasla, where an admin activates the
+      //    account from the Activations register.
+      ['Convert a won lead', 'Al-Quds Falafel · won, not yet converted', '#2FAE66', '✓', () => openLead('Al-Quds Falafel')],
+      ['Send the invite', 'The WhatsApp, then the tracking — one business, all the way to a live account', '#1D6FB8', '→', () => { const l = allLeads.find(x => x.name === 'Al-Quds Falafel'); toInvite('Al-Quds Falafel', (l && l.owner) || 'Abu Shadi', (l && l.phone) || '+962 77 555 0290', (l && l.plan) || 'Starter'); }]
     ];
     const tint = (hex, a) => { const n = parseInt(String(hex).slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; };
 
@@ -1735,10 +1846,15 @@ class Component extends DCLogic {
       qLabel: Math.round(activations * tick) + '/' + QUOTA,
       qHead: activations >= QUOTA ? 'Quota cleared — ' + activations + ' this month'
         : (QUOTA - activations) + ' more to clear the month',
-      // an activation is a password, not a WhatsApp — so an invite in flight is named as what it
-      // is, counted nowhere, and the ring stays a count of accounts that actually exist
+      // ── THE DEFINITION HAS TO MATCH THE ARITHMETIC ──────────────────────────────────────
+      //    This ring counts `livePw` — businesses where a password has landed — and it said out
+      //    loud that an activation was "an invite accepted AND a first card live". It has never
+      //    counted a card. A rep reading it would have believed their number was gated on
+      //    something happening at Wasla days later, which is a sentence contradicting the number
+      //    beside it. What is counted is the password. The first card is the beat AFTER, it is
+      //    reviewed at Wasla before it reaches anyone's wallet, and it is named as its own thing.
       qNote: (activations >= QUOTA ? 'Everything past eight is upside. Keep the board moving anyway.'
-        : 'An activation is an invite accepted and a first card live — a password, not a send. ' + activations + ' are live, ' + (QUOTA - activations) + ' to go.')
+        : 'An activation is an invite accepted — a password set on their own phone, not a send. ' + activations + ' are counted, ' + (QUOTA - activations) + ' to go.')
         + (pending ? (' ' + pending + ' invite' + (pending === 1 ? ' is' : 's are') + ' out and unopened; ' + (pending === 1 ? 'it counts' : 'they count') + ' for nothing until the password lands.') : ''),
       todayTiles: [
         ['Pipeline', 'JOD ' + Math.round(weighted * tick), 'JOD ' + raw + ' raw', '#2C2C2C'],
@@ -1801,11 +1917,16 @@ class Component extends DCLogic {
           age: t === 0 ? 'touched today' : t + 'd since last touch',
           ageFg: stale ? '#9A6B12' : '#A79C8D', ageFw: stale ? 800 : 600,
           br: conv ? '#9AD3B4' : (st.leadSel === l.name ? '#E88024' : '#EDE6DA'), op: conv ? '.88' : '1',
-          converted: conv, convLabel: isLivePw(l.name) ? 'PASSWORD SET — ACCOUNT LIVE' : (st.sentInvites || []).indexOf(l.name) >= 0 ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT',
+          converted: conv, convLabel: convChip(l.name),
+          convBg: convTone(l.name)[0], convFg: convTone(l.name)[1], convBr: convTone(l.name)[2],
           anim: moved ? SEED(seq, 'rowInA', 'rowInB', '.5s') : AN('fadeUp', '.42s', (0.03 * i) + 's'),
           hasAct: !!next || canConv,
           actLabel: canConv ? 'Convert →' : '▸ advance', actFs: canConv ? '9.5px' : '9.5px',
-          actTip: canConv ? 'Convert — prefill the invite' : ('Move to ' + next),
+          // `next` is undefined on the last rung of the ladder, and a Won lead that has already
+          // been converted is exactly there — so this tooltip read "Move to undefined" the moment
+          // the chain's own first step was taken. A sibling gate happens to hide the control, but
+          // a string is not made safe by the thing that hides it. Guard the string.
+          actTip: canConv ? 'Convert — prefill the invite' : (next ? ('Move to ' + next) : 'Already at the end of the ladder'),
           actBr: canConv ? '#9AD3B4' : '#E7E0D5', actBg: canConv ? '#E7F6EE' : '#FFFFFF', actFg: canConv ? '#1E7D47' : '#6E6960',
           act: (e) => { stop(e); if (canConv) { convertLead(l); return; } if (next) leadStage(l, next); },
           open: () => openLead(l.name)
@@ -1819,7 +1940,10 @@ class Component extends DCLogic {
       ldStFg: (STAGE_STYLE[(leadSel || {}).stage] || ['', '#6B6760'])[1],
       ldSubLine: leadSel ? [leadSel.owner, leadSel.phone, leadSel.vertical, 'owned by ' + (leadSel.by === 'Lina' ? 'you' : (leadSel.by || '—')), 'follow-up ' + (leadSel.follow || '—')].filter(Boolean).join(' · ') : '',
       ldIsConverted: !!leadSel && isConv(leadSel.name),
-      ldConvChip: leadSel && isLivePw(leadSel.name) ? 'PASSWORD SET — ACCOUNT LIVE' : (leadSel && (st.sentInvites || []).indexOf(leadSel.name) >= 0) ? 'INVITE SENT — ACCOUNT PENDING' : 'INVITE READY — NOT SENT',
+      ldConvChip: leadSel ? convChip(leadSel.name) : '',
+      ldConvBg: convTone(leadSel ? leadSel.name : '')[0],
+      ldConvFg: convTone(leadSel ? leadSel.name : '')[1],
+      ldConvBr: convTone(leadSel ? leadSel.name : '')[2],
       ldHeadAnim: AN('fadeUp', '.42s'),
       ldStagesAnim: AN('fadeUp', '.42s', '.05s'),
       ldStages: STAGES.map(s => {
@@ -1835,8 +1959,9 @@ class Component extends DCLogic {
       }),
       ldStageNote: leadSel
         ? (leadSel.stage === 'Won'
-          ? (isLivePw(leadSel.name) ? 'Won, converted, password set — that one is a live account and it is the activation your ring counted.'
-            : isConv(leadSel.name) ? 'Won and converted — the invite is out; the account is born the second they set a password.' : 'Won — convert it and the account is born on their phone.')
+          ? (isAcctLive(leadSel.name) ? 'Won, converted, password set — and Wasla has activated the account. ' + (firstNameOf(leadSel.owner) || 'The owner') + ' can sign in now, to a dashboard with nothing in it yet. The first card is theirs to build, and Wasla reviews it before it reaches a wallet.'
+            : isLivePw(leadSel.name) ? 'Won, converted, password set — that is the activation your ring counted, and it is the last beat that is yours. The account itself is with Wasla now: an admin turns the key from the Activations register.'
+              : isConv(leadSel.name) ? 'Won and converted — the invite is out; the password is theirs to set, and Wasla activates the account after it lands.' : 'Won — convert it, send the invite, and the password is the beat that counts.')
           : ('Now ' + leadSel.stage + ' · next is ' + (STAGES[STAGES.indexOf(leadSel.stage) + 1] || '—') + '. Earlier stages are closed.'))
         : '',
       ldGroups: (leadSel ? [
@@ -1995,11 +2120,19 @@ class Component extends DCLogic {
       },
 
       // ── INVITE ──
-      ivLede: st.invPw
-        ? ((ivFirst || 'The owner') + ' set a password — that is the account, and it is the one thing this month’s quota counts.')
-        : st.invSent
-          ? ('Sent. Nothing exists on Wasla’s side yet — the account is born the second ' + (ivFirst || 'the owner') + ' sets a password, and not before.')
-          : 'Accounts are born on a phone. You send one WhatsApp; they own the account a minute later.',
+      //    Four ledes for the four rungs, and not one of them may run ahead of the rail below it.
+      //    The old copy read "that is the account" at the password and "they own the account a
+      //    minute later" before a word had been sent — while the stepper eighteen lines down said
+      //    the account is created at Wasla, after. Same screen, opposite claims. What the password
+      //    is, is the ACTIVATION; the account is the beat after, and it is Omar's.
+      ivLive: ivLive,
+      ivLede: ivLive
+        ? ('Wasla activated ' + (ivBizV || 'the business') + ' — the account exists and ' + (ivFirst || 'the owner') + ' can sign in. Nothing is in it yet: the first card is theirs to build, and Wasla reviews it before it reaches a wallet.')
+        : st.invPw
+          ? ((ivFirst || 'The owner') + ' set a password — that is the activation, and it is the one thing this month’s quota counts. Creating the account is the step after, and it is Wasla’s.')
+          : st.invSent
+            ? ('Sent. Nothing exists on Wasla’s side yet — the account is born the second ' + (ivFirst || 'the owner') + ' sets a password, and not before.')
+            : 'Accounts start on a phone. You send one WhatsApp; they set a password on their own handset, and Wasla turns that into an account the same morning.',
       ivFormAnim: AN('fadeUp', '.42s', '.03s'),
       ivBiz: st.invBiz, setIvBiz: (e) => ivEdit('invBiz', e.target.value), ivBizBr: ivBizOk ? '#9AD3B4' : (ivBizV.length ? '#F0A92B' : '#D8D0C2'),
       ivOwner: st.invOwner, setIvOwner: (e) => ivEdit('invOwner', e.target.value), ivOwnerBr: ivOwnerOk ? '#9AD3B4' : (ivOwnerV.length ? '#F0A92B' : '#D8D0C2'),
@@ -2021,34 +2154,70 @@ class Component extends DCLogic {
       ivGateDot: (st.invSent || ivReady) ? '#2FAE66' : '#F0A92B',
       ivGateFg: (st.invSent || ivReady) ? '#1E7D47' : '#9A6B12',
       ivSendAnim: AN('fadeUp', '.45s', '.2s'),
-      ivBtnLabel: st.invPw ? 'Account live ✓ — activation counted' : st.invSent ? 'Sent ✓ — tracking below' : ivReady ? 'Send the WhatsApp invite' : 'Three fields, then it sends',
+      ivBtnLabel: ivLive ? 'Account live ✓ — activated by Wasla' : st.invPw ? 'Password set ✓ — activation counted' : st.invSent ? 'Sent ✓ — tracking below' : ivReady ? 'Send the WhatsApp invite' : 'Three fields, then it sends',
       ivBtnBg: st.invSent ? '#2FAE66' : ivReady ? '#E88024' : '#EFEDE8',
       ivBtnFg: (st.invSent || ivReady) ? '#FFFFFF' : '#93887A',
       ivBtnCls: (ivReady && !st.invSent) ? 'ws-cta' : 'ws-off',
       ivBtnCur: (ivReady && !st.invSent) ? 'pointer' : 'not-allowed',
       sendInvite,
       ivTracking: st.invSent,
+      // ── THE SIMULATED HALF, NAMED ─────────────────────────────────────────────────────────
+      //    "Opened" and "Password set" are events on the PROSPECT's phone. This app cannot make
+      //    them happen and, in a demo with nobody on the other end, it plays them back on a timer
+      //    (armInviteOpen and armInvitePw). Everything else in this chain is real — the lead, the
+      //    conversion, the WhatsApp draft, the register the admin console reads. So the two that
+      //    are not get a label, in both languages, rather than being passed off as observed.
+      ivSimChip: 'SIMULATED',
+      ivSimTitle: 'The next two beats happen on ' + (ivFirst ? ivFirst + '’s' : 'their') + ' phone',
+      ivSimLine: 'Opening the link and setting a password are ' + (ivFirst || 'the owner') + '’s to do, on ' + (ivPhoneV || 'their own number') + '. In this demo they are played back on a short timer so you can watch the sequence. In production this rail waits for the real read receipt and the real password, and shows nothing until they land — Wasla never sees the password either way.',
+      ivSimLineAr: 'فتح الرابط وتعيين كلمة السر يقوم بهما صاحب النشاط على هاتفه هو. في هذا العرض التوضيحي تُعاد هاتان الخطوتان بمؤقّت قصير لتتمكّن من متابعة التسلسل، أمّا في الاستخدام الفعلي فينتظر هذا المسار إشعار القراءة الحقيقي وكلمة السر الحقيقية ولا يعرض شيئًا قبل وصولهما — ولا ترى واصل كلمة السر في الحالتين.',
       ivTrackAnim: AN('popIn', '.45s'),
-      ivTrackChip: st.invPw ? 'password set · the account is live' : st.invOpened ? 'opened · waiting on the password' : 'sent · waiting to be opened',
+      ivTrackChip: ivLive ? 'account live · activated by Wasla' : st.invPw ? 'password set · waiting on Wasla to activate' : st.invOpened ? 'opened · waiting on the password' : 'sent · waiting to be opened',
+      ivTrackChipFg: ivLive ? '#1E7D47' : '#9A6B12',
       ivSteps: (() => {
-        const opened = !!st.invOpened, pw = !!st.invPw;
+        // ── A RAIL IS AN ORDER, AND IT IS DERIVED, NOT STORED ────────────────────────────────
+        //    `invOpened` is the only flag on this screen that is NOT persisted (saveSales writes
+        //    invSent / invPw / invStamp and never invOpened), so a reload after the password beat
+        //    — which is exactly what this demo does while Omar activates in the other tab — used
+        //    to redraw the rail as ✓ Sent · Opened ✓ Password set: node two reading "Waiting. The
+        //    read receipt lands here the moment it happens" directly above node three saying he
+        //    set the password. Nobody sets a password on a link they never opened, so "opened" is
+        //    IMPLIED BY the password rather than remembered separately, and the rail cannot come
+        //    back from storage out of order.
+        const pw = !!st.invPw, opened = !!st.invOpened || pw;
         const rows = [
           { label: 'Sent', done: true, note: 'WhatsApp delivered to ' + (ivPhoneV || 'the owner') + ' at ' + (st.invStamp || stampNow()) + '.' },
-          { label: 'Opened', done: opened, note: opened ? ((ivFirst || 'The owner') + ' opened the link — no password on it yet.') : 'Waiting. The read receipt lands here the moment it happens, not before.' },
-          { label: 'Password set — account live', done: pw, note: pw ? ((ivFirst || 'The owner') + ' set it, on their own phone, and nobody here saw it. THIS is the beat your activation ring counted — not the send.') : 'Still pending, and it will stay honest about that. Nobody at Wasla ever sees the password.' }
+          { label: 'Opened', done: opened, note: pw ? ((ivFirst || 'The owner') + ' opened the link on their own phone — that is how the password below came to be set.') : opened ? ((ivFirst || 'The owner') + ' opened the link — no password on it yet.') : 'Waiting. The read receipt lands here the moment it happens, not before.' },
+          { label: 'Password set', done: pw, note: pw ? ((ivFirst || 'The owner') + ' set it, on their own phone, and nobody here saw it. THIS is the beat your activation ring counted — not the send.') : 'Still pending, and it will stay honest about that. Nobody at Wasla ever sees the password.' },
+          // ── THE FOURTH NODE IS NOT A CONSTANT ─────────────────────────────────────────────
+          //    It shipped hardcoded `done: false`, which made this rail wrong in both directions
+          //    at once: the chip above it announced the account live at the password, and this
+          //    node went on saying "waiting on Wasla" long after Omar had turned the key. It is
+          //    the register that decides, and `ivLive` is that register — the same value the
+          //    pipeline chip and the lead chip read.
+          { label: 'Account activated by Wasla', done: ivLive,
+            note: ivLive ? ('Done — an admin turned the key, and ' + (ivBizV || 'the business') + ' has a dashboard of its own. It is empty, and that is exactly what day one looks like: the first card is ' + (ivFirst || 'the owner') + '’s to build, and Wasla reviews it before it reaches a wallet.')
+              : pw ? ('Waiting on Wasla, not on ' + (ivFirst || 'them') + '. An admin turns the key from the Activations register, and ' + (ivBizV || 'the business') + ' gets a dashboard of its own — empty, and theirs to fill.')
+                : 'Nothing exists on our side until the password lands. The account is created after that, at Wasla, and never before.' }
         ];
         return rows.map((r, i) => ({ label: r.label, note: r.note, mark: r.done ? '✓' : '·',
           bg: r.done ? '#2FAE66' : '#FFFFFF', br: r.done ? '#2FAE66' : '#E0D8CB',
           markFg: r.done ? '#FFFFFF' : '#B0A594', fg: r.done ? '#2C2C2C' : '#93887A',
           hasLine: i < rows.length - 1,
           lineFrom: r.done ? '#2FAE66' : '#E7E0D5', lineTo: (rows[i + 1] && rows[i + 1].done) ? '#2FAE66' : '#EFE8DC',
-          dotAnim: (i === 1 && opened && !pw) || (i === 2 && pw) ? 'nodeGlow 1.4s ease-out both' : (!r.done && i === 2 ? 'waitPulse 1.9s ease-in-out infinite' : 'none'),
+          // the glow lands on the node that just became true, the wait-pulse on the first one that
+          // has not — both derived from where the rail is, so a fourth node did not need a fourth
+          // hand-written index
+          dotAnim: (r.done && !(rows[i + 1] && rows[i + 1].done)) ? 'nodeGlow 1.4s ease-out both'
+            : (!r.done && (i === 0 || rows[i - 1].done)) ? 'waitPulse 1.9s ease-in-out infinite' : 'none',
           lineAnim: AN('lineGrow', '.5s', (0.1 + 0.08 * i) + 's'),
           anim: AN('fadeUp', '.4s', (0.05 * i) + 's') }));
       })(),
-      ivTrackFoot: st.invPw
-        ? 'The account exists now, and it was born on their phone — Wasla never held that password and cannot hand it over. One activation, counted at this node and no earlier one.'
-        : 'There is no half-made account on our side: until that third node lights, nothing exists but a link — and nothing has been counted. No credential anybody here could leak, and no login to hand over.',
+      ivTrackFoot: ivLive
+        ? 'All four nodes are done. The password was set on their phone — Wasla never held it and cannot hand it over — and the account was created here, after it, by a named admin. One activation, counted at the third node and no earlier one; the fourth is ours and is not on your ring.'
+        : st.invPw
+          ? 'The password was set on their phone — Wasla never held it and cannot hand it over. One activation, counted at that node and no earlier one. Creating the account is the step after, and it is ours.'
+          : 'There is no half-made account on our side: until the password node lights, nothing exists but a link — and nothing has been counted. No credential anybody here could leak, and no login to hand over.',
 
       // ── ME ──
       meCardAnim: AN('fadeUp', '.45s'),
@@ -2056,7 +2225,7 @@ class Component extends DCLogic {
       mqRingAnim: st.settled ? 'none' : 'ringDraw 1.15s' + HOUSE + '.18s both',
       mqNum: String(Math.round(activations * tick)), mqGoal: String(QUOTA),
       mqNote: (activations >= QUOTA ? 'The month is cleared. Everything after this is upside.' : ((QUOTA - activations) + ' activations left in the month — and ' + inPlay + ' leads still in play to find them in.'))
-        + ' An activation is an invite accepted and a first card live' + (pending ? ('; ' + pending + ' invite' + (pending === 1 ? '' : 's') + ' still out there ' + (pending === 1 ? 'counts' : 'count') + ' for nothing yet.') : '.'),
+        + ' An activation is an invite accepted — a password set on their own phone' + (pending ? ('; ' + pending + ' invite' + (pending === 1 ? '' : 's') + ' still out there ' + (pending === 1 ? 'counts' : 'count') + ' for nothing yet.') : '.') + ' The first card comes after that, and Wasla reviews it before it reaches a wallet — that beat is not on this ring.',
       mDelta: (delta > 0 ? '+' : delta < 0 ? '−' : '±') + Math.abs(delta) + ' vs last month',
       mDeltaBg: delta > 0 ? '#E7F6EE' : delta < 0 ? '#FDF1DC' : '#EFEDE8',
       mDeltaFg: delta > 0 ? '#1E7D47' : delta < 0 ? '#9A6B12' : '#6B6760',
@@ -2082,7 +2251,7 @@ class Component extends DCLogic {
         tip: v + ' activation' + (v === 1 ? '' : 's'),
         anim: AN('barRise', '.5s', (0.2 + 0.045 * i) + 's')
       })),
-      sparkNote: 'Eight weeks of activations. The last bar is this week — it moves when an invite is accepted and the first card goes live, not when the invite is sent.',
+      sparkNote: 'Eight weeks of activations. The last bar is this week — it moves when an invite is accepted and a password lands, not when the invite is sent.',
       mtCardAnim: AN('fadeUp', '.45s', '.2s'),
       meTrail: meTrailRaw.slice(0, 7).map((e, i) => ({
         line: e.line, t: e.t, dot: TRAIL_DOT[e.kind] || '#C9BFAF',

@@ -1,109 +1,395 @@
 /* Wasla V2 demo database — replace with API later. All numbers reconcile. */
-window.WASLA_DB = {
-  demoFlags: { sukkarKey: "wasla_demo_sukkar_state" },
-  account: {
-    company: "Tala Hospitality Group", companyAr: "مجموعة تالا للضيافة",
-    owner: "Yara Nassar", ownerAr: "يارا نصار", initials: "YN",
-    plan: "Growth", cardQuota: 10, cardsUsed: 6,
-    broadcastQuota: 10, broadcastsUsed: 6,
-    members: 3884, passes: 3259, stampsToday: 146, redeemedWeek: 41,
-    memberDelta: "+128 this week", renewal: "12 Aug 2026",
-    branches: ["Rainbow St", "Swefieh", "Abdali Mall"],
-    /* account defaults — a card inherits any link it doesn't set itself.
-       On a card: a value = override, "" = hidden on this card, key absent = inherit. */
-    links: { ig: "@talahospitality", wa: "+962 79 555 0100",
-             loc: "Amman, Jordan", web: "talagroup.jo" }
-  },
-  cardExtras: {
-    daraj: {
-      funnel: { scans: 402, stamps: 388, ready: 23, redeemed: 41 },
-      retention: [100, 74, 58, 49],
-      branches: [["Rainbow St", 61], ["Swefieh", 24], ["Abdali Mall", 15]],
-      hours: [4, 9, 18, 26, 22, 14, 9, 6, 8, 12, 19, 27, 31, 24, 12],
-      top: ["Dima Arafat", "Sara Al-Amin", "Noor Shami"],
-      insight: "Fridays after the double-stamp broadcast are the busiest hours of the week — 61% of scans happen on Rainbow St."
+
+/* ══ TWO ACCOUNTS, ONE FILE ══════════════════════════════════════════════════
+   This file used to be one merchant. It is now two, because every prospect the
+   founder demos to is DAY ONE and the mature account cannot show them that.
+
+   THE SPLIT. Nine fields are PER-ACCOUNT and live in window.WASLA_ACCOUNTS below:
+       account · cardExtras · memberTimelines · signup · cards · members ·
+       activity · staff · broadcasts
+   Three things are SHARED and stay on window.WASLA_DB: demoFlags, `types` (the
+   nine-type catalogue is the product, not a tenant's data), and console.* (the
+   Wasla-side book — accounts, approvals, leads, billing — which is ABOUT the
+   accounts and is not one of them).
+
+   HOW AN ACCOUNT IS CHOSEN. The resolver at the bottom of this file reads ?acct=
+   from the URL and copies that account's nine fields onto window.WASLA_DB before
+   any component code runs. That works because this script is a plain synchronous
+   <script src> at line 12 of every surface, and the earliest x-dc component script
+   is line 759 (Sales) — so window.WASLA_DB is already the right account by the
+   time anything reads it, and the ~23 scattered WASLA_DB reads across Customer and
+   Scanner needed no edits at all.
+   TWO STANDING INVARIANTS FALL OUT OF THAT, and both are load-bearing:
+     · never move the wasla-data.js <script> tag later in any surface;
+     · never capture window.WASLA_DB (or any of the nine fields) at module scope in
+       a file that loads BEFORE it — the reference would go stale at the swap.
+
+   THE DEFAULT IS TALA. An absent ?acct=, and an ?acct= naming an account we do not
+   have, both resolve to tala-hospitality-group. So every bare URL is byte-for-byte
+   the demo that existed before this file was split — verified by deep-compare.
+   An unknown slug is reported honestly rather than swallowed: WASLA_ACCT_KNOWN goes
+   false and WASLA_ACCT_REQUESTED carries what was asked for, so a surface can say
+   "we do not have that account" instead of printing a foreign name over Tala's
+   numbers — which is exactly the sentence-contradicts-the-number-beside-it defect
+   this codebase keeps finding. ══════════════════════════════════════════════ */
+window.WASLA_ACCOUNTS = {
+  "tala-hospitality-group": {
+    account: {
+      company: "Tala Hospitality Group", companyAr: "مجموعة تالا للضيافة",
+      owner: "Yara Nassar", ownerAr: "يارا نصار", initials: "YN",
+      /* THE OWNER'S TITLE IS THIS ACCOUNT'S DATA, NOT A CONSTANT. Yara Nassar is a
+         woman, so every Arabic screen that labels her says المالكة. Abu Shadi is a
+         man and his account says المالك. A single hardcoded Arabic title in a
+         surface's string table mislabels one of them on every screen it appears on,
+         and no amount of care keeps two hardcoded copies in step — so the title
+         travels with the person it names.
+         `ownerGender` is here because a title alone is not enough: Arabic sentences
+         ABOUT the owner have to agree with her too ("المالكة، وهي الكاشيرة" against
+         "المالك، وهو الكاشير"). Surfaces pick the pronoun/adjective from this flag
+         rather than guessing from the name. 'f' = feminine, 'm' = masculine.
+         English needs no variant — `ownerTitle` is carried anyway so no surface has
+         to hardcode half the pair and read the other half from here. */
+      ownerTitle: "Owner", ownerTitleAr: "المالكة", ownerGender: "f",
+      plan: "Growth", cardQuota: 10, cardsUsed: 6,
+      broadcastQuota: 10, broadcastsUsed: 6,
+      /* THE ACCOUNT TOTAL IS THE SUM OF WHAT THE CARD PAGES SHOW, AND NOTHING ELSE.
+         1,841 + 412 + 1,129 + 0 (Sukkar, in review) + 0 (Ghaim, draft) + 268 = 3,650.
+         Passes: 1,702 + 398 + 918 + 0 + 0 + 241 = 3,259. It used to be 3,884, which
+         was the same sum plus Sukkar's phantom 234 — a card that has never been in a
+         wallet — so the header claimed 234 members the six card pages could not
+         account for. If a card's members change, change this in the same edit: this
+         number and those six are one fact, and a reader one click away checks it. */
+      members: 3650, passes: 3259, stampsToday: 146, redeemedWeek: 41,
+      memberDelta: "+128 this week", renewal: "12 Aug 2026",
+      branches: ["Rainbow St", "Swefieh", "Abdali Mall"],
+      /* account defaults — a card inherits any link it doesn't set itself.
+         On a card: a value = override, "" = hidden on this card, key absent = inherit. */
+      links: { ig: "@talahospitality", wa: "+962 79 555 0100",
+               loc: "Amman, Jordan", web: "talagroup.jo" }
     },
-    layl: { funnel: { scans: 113, stamps: 0, ready: 9, redeemed: 6 }, retention: [100, 81, 70, 66], branches: [["Abdali Mall", 100]], hours: [0, 0, 0, 0, 0, 0, 2, 4, 6, 9, 14, 22, 26, 19, 11], top: ["Zaid Barakat", "Lina Haddad", "Rania Qasem"], insight: "Royal members visit 3.4× more than Silver — the tier ladder is working." },
-    zaman: { funnel: { scans: 214, stamps: 0, ready: 0, redeemed: 96 }, retention: [100, 79, 66, 58], branches: [["Rainbow St", 100]], hours: [2, 3, 4, 6, 8, 11, 14, 19, 24, 31, 38, 44, 41, 29, 16], top: ["Rakan Al-Tell", "Jude Barghouti", "Nadeen Fakhoury"], insight: "Stored value comes back as visits — a loaded pass returns 2.4× more often, and JOD 3,180 is still sitting on the passes waiting to be played." },
-    zaytoun: { funnel: { scans: 85, stamps: 0, ready: 0, redeemed: 12 }, retention: [100, 68, 51, 40], branches: [["Swefieh", 100]], hours: [2, 5, 9, 16, 21, 14, 8, 5, 7, 11, 18, 24, 17, 9, 4], top: ["Khaled Mansour", "Dana Tahboub", "Lama Saadeh"], insight: "Paused 12 days — JOD 412 of balances stay redeemable, and 9 members asked when you reopen." }
-  },
-  memberTimelines: {
-    "Sara Al-Amin": [
-      ["Today 08:41", "Stamp 6 of 8 · Rainbow St · by Ahmad", "earn"],
-      ["Tue 08:37", "Stamp 5 of 8 · Rainbow St", "earn"],
-      ["Jul 18", "Redeemed: free flat white — card reset", "reward"],
-      ["Jul 02", "Birthday gift landed — free dessert, used same day", "gift"],
-      ["Mar 04", "Joined from the counter QR · Rainbow St", "join"]
+    cardExtras: {
+      daraj: {
+        funnel: { scans: 402, stamps: 388, ready: 23, redeemed: 41 },
+        retention: [100, 74, 58, 49],
+        branches: [["Rainbow St", 61], ["Swefieh", 24], ["Abdali Mall", 15]],
+        hours: [4, 9, 18, 26, 22, 14, 9, 6, 8, 12, 19, 27, 31, 24, 12],
+        top: ["Dima Arafat", "Sara Al-Amin", "Noor Shami"],
+        insight: "Fridays after the double-stamp broadcast are the busiest hours of the week — 61% of scans happen on Rainbow St."
+      },
+      layl: { funnel: { scans: 113, stamps: 0, ready: 9, redeemed: 6 }, retention: [100, 81, 70, 66], branches: [["Abdali Mall", 100]], hours: [0, 0, 0, 0, 0, 0, 2, 4, 6, 9, 14, 22, 26, 19, 11], top: ["Zaid Barakat", "Lina Haddad", "Rania Qasem"], insight: "Royal members visit 3.4× more than Silver — the tier ladder is working." },
+      zaman: { funnel: { scans: 214, stamps: 0, ready: 0, redeemed: 96 }, retention: [100, 79, 66, 58], branches: [["Rainbow St", 100]], hours: [2, 3, 4, 6, 8, 11, 14, 19, 24, 31, 38, 44, 41, 29, 16], top: ["Rakan Al-Tell", "Jude Barghouti", "Nadeen Fakhoury"], insight: "Stored value comes back as visits — a loaded pass returns 2.4× more often, and JOD 3,180 is still sitting on the passes waiting to be played." },
+      zaytoun: { funnel: { scans: 85, stamps: 0, ready: 0, redeemed: 12 }, retention: [100, 68, 51, 40], branches: [["Swefieh", 100]], hours: [2, 5, 9, 16, 21, 14, 8, 5, 7, 11, 18, 24, 17, 9, 4], top: ["Khaled Mansour", "Dana Tahboub", "Lama Saadeh"], insight: "Paused 12 days — JOD 412 of balances stay redeemable, and 9 members asked when you reopen." }
+    },
+    memberTimelines: {
+      "Sara Al-Amin": [
+        ["Today 08:41", "Stamp 6 of 8 · Rainbow St · by Ahmad", "earn"],
+        ["Tue 08:37", "Stamp 5 of 8 · Rainbow St", "earn"],
+        ["Jul 18", "Redeemed: free flat white — card reset", "reward"],
+        ["Jul 02", "Birthday gift landed — free dessert, used same day", "gift"],
+        ["Mar 04", "Joined from the counter QR · Rainbow St", "join"]
+      ],
+      "Noor Shami": [
+        ["Today 09:12", "Card full — 8 of 8, reward ready", "reward"],
+        ["Mon 17:20", "Stamp 7 of 8 · Swefieh", "earn"],
+        ["Feb 11", "Joined from a friend's referral link", "join"]
+      ]
+    },
+    signup: {
+      url: "wasla.app/j/daraj",
+      poster: { line: "Your 8th coffee is free.", lineAr: "قهوتك الثامنة علينا", sub: "Scan, tap, done — the card lives in your wallet. No app.", subAr: "امسح الرمز وخلاص — البطاقة بمحفظتك. بدون تطبيق" },
+      joins: { counter: 68, poster: 24, link: 8 },
+      /* THE PERSON THIS ACCOUNT'S DEMO JOINS AS — the one field added to Tala by the
+         two-account split, so Customer no longer has to hardcode a persona that only
+         makes sense on one merchant. Sara is already members[0]; her phone and
+         birthday are the same values that row carries, not a second copy of them.
+         `drink` is the join form's favourite-item field, whatever the shop sells. */
+      defaultMember: { name: "Sara Al-Amin", ar: "سارة الأمين", phone: "+962 79 555 0114",
+                       drink: "Flat white", drinkAr: "فلات وايت", birthday: "14 Sep" }
+    },
+    cards: [
+      { id:"daraj", name:"Daraj Coffee", ar:"قهوة الدرج", type:"stamps", state:"live",
+        color:"#1E5C43", color2:"#154232", initial:"D", stampStyle:"coffee",
+        tagline:"Buy 7, the 8th is on us", taglineAr:"اشترِ 7 والثامن علينا",
+        members:1841, passes:1702, weekActivity:[38,52,44,61,58,72,66],
+        stat1:{label:"Stamps today",v:"146"}, stat2:{label:"Rewards ready",v:"23"},
+        links: { ig: "@darajcoffee", wa: "+962 79 555 0114", loc: "Rainbow St, Amman", web: "darajcoffee.jo" },
+        rules: { guard: "1 / visit", guardNote: "One stamp per customer per day · resets at midnight", redeemCap: 2 },
+        goal:8, reward:"Free drink of your choice", branch:"Rainbow St" },
+      { id:"layl", name:"Layl Lounge", ar:"ليل لاونج", type:"vip", state:"live",
+        color:"#1B2440", color2:"#111730", initial:"L", gold:"#E8B824",
+        tagline:"Three tiers, real perks", taglineAr:"ثلاث فئات ومزايا حقيقية",
+        members:412, passes:398, weekActivity:[12,9,14,11,19,26,22],
+        stat1:{label:"Gold members",v:"57"}, stat2:{label:"Visits this week",v:"113"},
+        links: { ig: "@layllounge", wa: "+962 78 555 0180", loc: "Abdali Mall, Amman", web: "" },
+        rules: { redeemCap: 2, tiers: [{ name: "Silver", at: 0 }, { name: "Gold", at: 12 }, { name: "Royal", at: 20 }] },
+        goal:0, reward:"Gold: skip the line + 15%", branch:"Abdali Mall" },
+      { id:"zaytoun", name:"Zaytoun Kitchen", ar:"مطبخ زيتون", type:"cashback", state:"paused",
+        color:"#5C6B2F", color2:"#454f24", initial:"Z",
+        tagline:"5% back on every bill", taglineAr:"5٪ كاش باك على كل فاتورة",
+        members:1129, passes:918, weekActivity:[41,44,0,0,0,0,0],
+        stat1:{label:"Wallet balance out",v:"JOD 412"}, stat2:{label:"Paused",v:"12 days"},
+        links: { ig: "@zaytounkitchen", loc: "Swefieh, Amman", web: "zaytoun.jo" },
+        rules: { minRedeem: 2, redeemCap: 2 },
+        goal:0, reward:"5% back, redeem from JOD 2", branch:"Swefieh",
+        note:"Paused for renovation — balances stay redeemable." },
+      { id:"sukkar", name:"Sukkar Bakery", ar:"مخبز سكر", type:"points", state:"review",
+        color:"#B14A32", color2:"#8f3a27", initial:"S",
+        tagline:"Every JOD = 10 points", taglineAr:"كل JOD = 10 نقاط",
+        /* ZERO MEMBERS, AND IT HAS TO BE ZERO. This card was submitted yesterday and
+           has never been approved, so no wallet has ever held it — which is why
+           `passes` was already 0 and why the members[] directory below carries not a
+           single Sukkar row. It nevertheless read `members:234`, and account.members
+           was the sum INCLUDING that 234. Every surface that asks "has this card ever
+           been live?" before printing a member count therefore rendered MEMBERS 0 on
+           the card page while the account header claimed 3,884 — the six card pages
+           summing to 3,650 against it. The seeded 234 was the falsehood, not the gate:
+           a card nobody can join cannot have members. Keep this at 0. When Omar
+           approves it in the Console the card goes live with nobody on it, which is
+           what a just-approved card is, and the count grows from the live bus. */
+        members:0, passes:0, weekActivity:[0,0,0,0,0,0,0],
+        stat1:{label:"Submitted",v:"Yesterday"}, stat2:{label:"Reviewer",v:"Wasla · Omar"},
+        links: { ig: "@sukkarbakery", loc: "Rainbow St, Amman" },
+        rules: { redeemCap: 2 },
+        goal:0, reward:"500 pts → dozen ka'ak", branch:"Rainbow St" },
+      { id:"ghaim", name:"Ghaim Studio", ar:"استوديو غيم", type:"membership", state:"draft",
+        color:"#4E6E8E", color2:"#3a5570", initial:"G",
+        tagline:"Monthly access pass", taglineAr:"اشتراك شهري",
+        members:0, passes:0, weekActivity:[0,0,0,0,0,0,0],
+        stat1:{label:"Last edited",v:"2 days ago"}, stat2:{label:"Step",v:"Configure"},
+        links: { ig: "@ghaimstudio", web: "ghaimstudio.jo" },
+        rules: { graceDays: 14 },
+        goal:0, reward:"Unlimited classes", branch:"Swefieh" },
+      { id:"zaman", name:"Zaman Arcade", ar:"زمان أركيد", type:"prepaid", state:"live",
+        color:"#4B2E83", color2:"#382263", initial:"Z", stampStyle:"star", gold:"#F2B705",
+        tagline:"Load it once, play all week", taglineAr:"اشحنها مرة، وتلعب طول الأسبوع",
+        members:268, passes:241, weekActivity:[22,18,26,31,24,39,35],
+        stat1:{label:"Loaded this week",v:"JOD 1,240"}, stat2:{label:"Stored value out",v:"JOD 3,180"},
+        links: { ig: "@zamanarcade", wa: "+962 78 555 0193", loc: "Rainbow St, Amman", web: "" },
+        /* Prepaid = stored value. The customer hands over cash; it sits on the pass as HER money.
+           minRedeem/redeemCap are pinned to 0 on purpose so prepaid can never inherit cashback rules. */
+        rules: { topupsMinor: [10000, 25000, 50000, 100000],
+                 bonusTiers: [{ atMinor: 50000, pct: 5 }, { atMinor: 100000, pct: 10 }],
+                 maxPrincipalMinor: 300000, bonusExpiryDays: 180,
+                 refundable: true, allowPartial: true,
+                 offlineFloorMinor: 10000, spendPinAboveMinor: 20000, lowBalanceAtMinor: 5000,
+                 minRedeem: 0, redeemCap: 0 },
+        goal:0, reward:"Load JOD 100, play with JOD 110", branch:"Rainbow St" }
     ],
-    "Noor Shami": [
-      ["Today 09:12", "Card full — 8 of 8, reward ready", "reward"],
-      ["Mon 17:20", "Stamp 7 of 8 · Swefieh", "earn"],
-      ["Feb 11", "Joined from a friend's referral link", "join"]
+    members: [
+      { name:"Sara Al-Amin", ar:"سارة الأمين", initials:"SA", phone:"+962 79 555 0114", card:"Daraj Coffee", progress:"6 / 8 stamps", joined:"Mar 2026", last:0, visits:34, birthday:"14 Sep", top:true },
+      { name:"Omar Khalidi", ar:"عمر الخالدي", initials:"OK", phone:"+962 77 555 0132", card:"Daraj Coffee", progress:"2 / 8 stamps", joined:"Jul 2026", last:21, visits:4 },
+      { name:"Lina Haddad", ar:"لينا حداد", initials:"LH", phone:"+962 79 555 0187", card:"Layl Lounge", progress:"Gold", joined:"Jan 2026", last:1, visits:14 },
+      { name:"Noor Shami", ar:"نور الشامي", initials:"NS", phone:"+962 78 555 0121", card:"Daraj Coffee", progress:"8 / 8 — reward ready", joined:"Feb 2026", last:0, visits:29 },
+      { name:"Khaled Mansour", ar:"خالد منصور", initials:"KM", phone:"+962 79 555 0166", card:"Zaytoun Kitchen", progress:"JOD 3.20 balance", joined:"Apr 2026", last:1, visits:17 },
+      { name:"Rania Qasem", ar:"رانيا قاسم", initials:"RQ", phone:"+962 77 555 0143", card:"Layl Lounge", progress:"Silver", joined:"May 2026", last:9, visits:11 },
+      { name:"Fadi Nabulsi", ar:"فادي النابلسي", initials:"FN", phone:"+962 78 555 0177", card:"Daraj Coffee", progress:"5 / 8 stamps", joined:"Jun 2026", last:1, visits:14 },
+      { name:"Dana Tahboub", ar:"دانا طهبوب", initials:"DT", phone:"+962 79 555 0192", card:"Zaytoun Kitchen", progress:"JOD 3.40 balance", joined:"Mar 2026", last:18, visits:9 },
+      { name:"Hala Odeh", ar:"هلا عودة", initials:"HO", phone:"+962 77 555 0155", card:"Daraj Coffee", progress:"1 / 8 stamps", joined:"Jul 2026", last:0, visits:1 },
+      { name:"Zaid Barakat", ar:"زيد بركات", initials:"ZB", phone:"+962 78 555 0139", card:"Layl Lounge", progress:"Royal", joined:"Dec 2025", last:0, visits:58 },
+      { name:"Maya Sabbagh", ar:"مايا صباغ", initials:"MS", phone:"+962 79 555 0128", card:"Daraj Coffee", progress:"3 / 8 stamps", joined:"Jun 2026", last:0, visits:7 },
+      { name:"Lama Saadeh", ar:"لمى سعادة", initials:"LS", phone:"+962 77 555 0161", card:"Zaytoun Kitchen", progress:"JOD 0.90 balance", joined:"May 2026", last:27, visits:5 },
+      { name:"Rami Khoury", ar:"رامي خوري", initials:"RK", phone:"+962 79 555 0201", card:"Daraj Coffee", progress:"4 / 8 stamps", joined:"Jan 2026", last:61, visits:11 },
+      { name:"Dima Arafat", ar:"ديما عرفات", initials:"DA", phone:"+962 78 555 0219", card:"Daraj Coffee", progress:"7 / 8 stamps", joined:"Nov 2025", last:92, visits:44 },
+      { name:"Yousef Hijazi", ar:"يوسف حجازي", initials:"YH", phone:"+962 77 555 0208", card:"Daraj Coffee", progress:"2 / 8 stamps", joined:"Apr 2026", last:17, visits:6 },
+      /* ── Prepaid / stored value (Zaman Arcade) ────────────────────────────────
+         All money is INTEGER FILS; 1000 fils = 1 JOD. Every field ends in "Minor".
+         balanceMinor    = principalMinor + sum(bonus[].remainingMinor)
+         refundableMinor = max(0, depositedMinor - spentMinor - refundedMinor)
+         Those are TWO DIFFERENT NUMBERS and both must always be shown together.
+         deposited/spent/refunded are LIFETIME counters — never reset, never reduced.
+         Fully-consumed and expired bonus lots are dropped from bonus[]; the ledger keeps them.
+         Ledger before/after are TOTAL BALANCE (principal + live bonus), so a row reads as a
+         running balance; deltaMinor is the movement of that row's bucket only. ts = epoch ms. */
+      { name:"Rakan Al-Tell", ar:"راكان التل", initials:"RT", phone:"+962 79 555 0223", card:"Zaman Arcade",
+        progress:"JOD 140.25 prepaid", joined:"May 2026", last:0, visits:22, birthday:"2 Mar", top:true,
+        prepaid: {
+          principalMinor: 137750,
+          bonus: [ { id:"rk-b2", grantedMinor:2500, remainingMinor:2500, grantedAt:"2026-08-03",
+                     expiresAt:"2027-01-30", campaign:"summer-5" } ],
+          depositedMinor: 175000, spentMinor: 47250, refundedMinor: 0,
+          syncedAt: 1785750720000,
+          ledger: [
+            { id:"rk-1", ts:1778336400000, kind:"topup", bucket:"principal", deltaMinor:25000, beforeMinor:0, afterMinor:25000, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1041" },
+            { id:"rk-2", ts:1780157100000, kind:"spend", bucket:"principal", deltaMinor:-6500, beforeMinor:25000, afterMinor:18500, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1188" },
+            { id:"rk-3", ts:1781977200000, kind:"topup", bucket:"principal", deltaMinor:100000, beforeMinor:18500, afterMinor:118500, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1362" },
+            { id:"rk-4", ts:1781977200000, kind:"bonus", bucket:"bonus", deltaMinor:10000, beforeMinor:118500, afterMinor:128500, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1362" },
+            { id:"rk-5", ts:1783782900000, kind:"spend", bucket:"bonus", deltaMinor:-7250, beforeMinor:128500, afterMinor:121250, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1547" },
+            { id:"rk-6", ts:1785435000000, kind:"spend", bucket:"bonus", deltaMinor:-2750, beforeMinor:121250, afterMinor:118500, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1719" },
+            { id:"rk-7", ts:1785435000000, kind:"spend", bucket:"principal", deltaMinor:-30750, beforeMinor:118500, afterMinor:87750, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1719" },
+            { id:"rk-8", ts:1785750720000, kind:"topup", bucket:"principal", deltaMinor:50000, beforeMinor:87750, afterMinor:137750, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1806" },
+            { id:"rk-9", ts:1785750720000, kind:"bonus", bucket:"bonus", deltaMinor:2500, beforeMinor:137750, afterMinor:140250, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1806" }
+          ] } },
+      /* Jude: principal 0, bonus 8.00 left — balance JOD 8.00, refundable JOD 0.00.
+         She spent her whole deposit (and 2.000 of the first bonus), then the Eid campaign
+         granted a fresh 8.000 lot against no cash. This is the state a cashier must be able
+         to explain at the counter: "the bonus is not cash." */
+      { name:"Jude Barghouti", ar:"جود البرغوثي", initials:"JB", phone:"+962 78 555 0231", card:"Zaman Arcade",
+        progress:"JOD 8.00 prepaid", joined:"May 2026", last:1, visits:31,
+        prepaid: {
+          principalMinor: 0,
+          bonus: [ { id:"jb-b2", grantedMinor:8000, remainingMinor:8000, grantedAt:"2026-08-02",
+                     expiresAt:"2027-01-29", campaign:"eid-gift" } ],
+          depositedMinor: 100000, spentMinor: 110000, refundedMinor: 0,
+          syncedAt: 1785665100000,
+          ledger: [
+            { id:"jb-1", ts:1779024600000, kind:"topup", bucket:"principal", deltaMinor:100000, beforeMinor:0, afterMinor:100000, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1102" },
+            { id:"jb-2", ts:1779024600000, kind:"bonus", bucket:"bonus", deltaMinor:10000, beforeMinor:100000, afterMinor:110000, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1102" },
+            { id:"jb-3", ts:1782060300000, kind:"spend", bucket:"bonus", deltaMinor:-10000, beforeMinor:110000, afterMinor:100000, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1401" },
+            { id:"jb-4", ts:1782060300000, kind:"spend", bucket:"principal", deltaMinor:-32000, beforeMinor:100000, afterMinor:68000, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1401" },
+            { id:"jb-5", ts:1784481600000, kind:"spend", bucket:"principal", deltaMinor:-68000, beforeMinor:68000, afterMinor:0, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1633" },
+            { id:"jb-6", ts:1785665100000, kind:"bonus", bucket:"bonus", deltaMinor:8000, beforeMinor:0, afterMinor:8000, by:"Yara Nassar", branch:"Rainbow St", ref:"ZA-EID-08" }
+          ] } },
+      /* Nadeen: fils-precision balance (JOD 4.125) and an EXPIRED bonus lot.
+         Note refundable (2.625) < principal (4.125): spending bonus reduces what is refundable,
+         exactly as the worked proof in the contract requires. */
+      { name:"Nadeen Fakhoury", ar:"نادين الفاخوري", initials:"NF", phone:"+962 77 555 0247", card:"Zaman Arcade",
+        progress:"JOD 4.125 prepaid", joined:"Jan 2026", last:10, visits:16,
+        prepaid: {
+          principalMinor: 4125,
+          bonus: [],
+          depositedMinor: 50000, spentMinor: 47375, refundedMinor: 0,
+          syncedAt: 1784911800000,
+          ledger: [
+            { id:"nf-1", ts:1768740000000, kind:"topup", bucket:"principal", deltaMinor:50000, beforeMinor:0, afterMinor:50000, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-0817" },
+            { id:"nf-2", ts:1768740000000, kind:"bonus", bucket:"bonus", deltaMinor:2500, beforeMinor:50000, afterMinor:52500, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-0817" },
+            { id:"nf-3", ts:1772724300000, kind:"spend", bucket:"bonus", deltaMinor:-1500, beforeMinor:52500, afterMinor:51000, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-0954" },
+            { id:"nf-4", ts:1784235900000, kind:"expire", bucket:"bonus", deltaMinor:-1000, beforeMinor:51000, afterMinor:50000, by:"system", branch:"—", ref:"ZA-EXP-0817" },
+            { id:"nf-5", ts:1784911800000, kind:"spend", bucket:"principal", deltaMinor:-45875, beforeMinor:50000, afterMinor:4125, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1671" }
+          ] } }
+    ],
+    activity: [
+      { t:"2 min ago", who:"Sara Al-Amin", what:"earned a stamp", card:"Daraj Coffee", kind:"earn" },
+      { t:"6 min ago", who:"Rakan Al-Tell", what:"loaded JOD 50.00 — JOD 2.50 bonus on top", card:"Zaman Arcade", kind:"topup" },
+      { t:"9 min ago", who:"Noor Shami", what:"reached a full card — reward ready", card:"Daraj Coffee", kind:"reward" },
+      { t:"24 min ago", who:"Zaid Barakat", what:"checked in — Royal", card:"Layl Lounge", kind:"earn" },
+      { t:"1 h ago", who:"New member", what:"Hala Odeh joined from the counter QR", card:"Daraj Coffee", kind:"join" },
+      { t:"2 h ago", who:"Broadcast", what:"“Weekend special” delivered to 1,684 wallets", card:"Daraj Coffee", kind:"broadcast" },
+      { t:"3 h ago", who:"Maya Sabbagh", what:"earned a stamp", card:"Daraj Coffee", kind:"earn" },
+      { t:"Yesterday", who:"Wasla review", what:"Sukkar Bakery submitted for approval", card:"Sukkar Bakery", kind:"review" },
+      { t:"Yesterday", who:"Lina Haddad", what:"tier-up: Silver → Gold", card:"Layl Lounge", kind:"reward" },
+      { t:"Yesterday", who:"Khaled Mansour", what:"redeemed JOD 1.50 of balance", card:"Zaytoun Kitchen", kind:"reward" },
+      { t:"Yesterday", who:"Broadcast", what:"“Gold nights are back” delivered to 396 wallets", card:"Layl Lounge", kind:"broadcast" },
+      { t:"Yesterday", who:"Fadi Nabulsi", what:"earned a stamp", card:"Daraj Coffee", kind:"earn" },
+      { t:"Yesterday", who:"New member", what:"Maya Sabbagh joined from the poster QR", card:"Daraj Coffee", kind:"join" },
+      { t:"Yesterday", who:"Rasha Kilani", what:"corrected a mis-scan (−1 stamp)", card:"Daraj Coffee", kind:"earn" },
+      { t:"Yesterday", who:"Jude Barghouti", what:"received a JOD 8.00 Eid credit — bonus, not cash", card:"Zaman Arcade", kind:"topup" }
+    ],
+    staff: [
+      { name:"Ahmad Zoubi", ar:"أحمد الزعبي", initials:"AZ", branch:"Rainbow St", cards:["Daraj Coffee","Layl Lounge","Zaman Arcade"], scansToday:61 },
+      { name:"Rasha Kilani", ar:"رشا الكيلاني", initials:"RK", branch:"Rainbow St", cards:["Daraj Coffee","Zaman Arcade"], scansToday:47 },
+      { name:"Samir Awad", ar:"سمير عوض", initials:"SW", branch:"Abdali Mall", cards:["Layl Lounge"], scansToday:22 },
+      { name:"Tareq Majali", ar:"طارق المجالي", initials:"TM", branch:"Swefieh", cards:["Zaytoun Kitchen","Ghaim Studio"], scansToday:0 },
+      { name:"Farah Amari", ar:"فرح العمري", initials:"FA", branch:"Abdali Mall", cards:["Layl Lounge"], scansToday:18 }
+    ],
+    broadcasts: [
+      { title:"Eid morning surprise", body:"Eid Mubarak — a gift stamp waits with your coffee.", bodyAr:"عيدكم مبارك", card:"Daraj Coffee", sent:"Fri · 09:30", reach:"1,702 wallets", state:"scheduled" },
+      { title:"Late-night flash", body:"Free cookie with any drink till midnight.", bodyAr:"كوكيز مجاني", card:"Daraj Coffee", sent:"Waits for 10:00", reach:"1,702 wallets", state:"held" },
+      { title:"Weekend special", body:"Double stamps all Friday ☕ — see you on the stairs.", bodyAr:"أختام مضاعفة يوم الجمعة", card:"Daraj Coffee", sent:"Today · 10:00", reach:"1,684 wallets", state:"sent" },
+      { title:"Gold nights are back", body:"Gold & Royal: the rooftop opens Thursday.", bodyAr:"ليالي الذهب رجعت", card:"Layl Lounge", sent:"Tue · 18:30", reach:"396 wallets", state:"sent" },
+      /* The sixth send, and the reason account.broadcastsUsed reads 6: this list is the whole
+         month, not a sample of it, so the counter is the length of this array and nothing else. */
+      { title:"Your top-up goes further", body:"Load JOD 50 or more and 5% lands on the pass with it — JOD 100 makes it 10%.", bodyAr:"اشحن JOD 50 وخذ 5٪ فوقها", card:"Zaman Arcade", sent:"9 days ago", reach:"236 wallets", state:"sent" },
+      { title:"We're renovating", body:"Zaytoun pauses this week — your balance is safe.", bodyAr:"رصيدك محفوظ", card:"Zaytoun Kitchen", sent:"12 days ago", reach:"918 wallets", state:"sent" }
     ]
   },
-  signup: {
-    url: "wasla.app/j/daraj",
-    poster: { line: "Your 8th coffee is free.", lineAr: "قهوتك الثامنة علينا", sub: "Scan, tap, done — the card lives in your wallet. No app.", subAr: "امسح الرمز وخلاص — البطاقة بمحفظتك. بدون تطبيق" },
-    joins: { counter: 68, poster: 24, link: 8 }
-  },
-  cards: [
-    { id:"daraj", name:"Daraj Coffee", ar:"قهوة الدرج", type:"stamps", state:"live",
-      color:"#1E5C43", color2:"#154232", initial:"D", stampStyle:"coffee",
-      tagline:"Buy 7, the 8th is on us", taglineAr:"اشترِ 7 والثامن علينا",
-      members:1841, passes:1702, weekActivity:[38,52,44,61,58,72,66],
-      stat1:{label:"Stamps today",v:"146"}, stat2:{label:"Rewards ready",v:"23"},
-      links: { ig: "@darajcoffee", wa: "+962 79 555 0114", loc: "Rainbow St, Amman", web: "darajcoffee.jo" },
-      rules: { guard: "1 / visit", guardNote: "One stamp per customer per day · resets at midnight", redeemCap: 2 },
-      goal:8, reward:"Free drink of your choice", branch:"Rainbow St" },
-    { id:"layl", name:"Layl Lounge", ar:"ليل لاونج", type:"vip", state:"live",
-      color:"#1B2440", color2:"#111730", initial:"L", gold:"#E8B824",
-      tagline:"Three tiers, real perks", taglineAr:"ثلاث فئات ومزايا حقيقية",
-      members:412, passes:398, weekActivity:[12,9,14,11,19,26,22],
-      stat1:{label:"Gold members",v:"57"}, stat2:{label:"Visits this week",v:"113"},
-      links: { ig: "@layllounge", wa: "+962 78 555 0180", loc: "Abdali Mall, Amman", web: "" },
-      rules: { redeemCap: 2, tiers: [{ name: "Silver", at: 0 }, { name: "Gold", at: 12 }, { name: "Royal", at: 20 }] },
-      goal:0, reward:"Gold: skip the line + 15%", branch:"Abdali Mall" },
-    { id:"zaytoun", name:"Zaytoun Kitchen", ar:"مطبخ زيتون", type:"cashback", state:"paused",
-      color:"#5C6B2F", color2:"#454f24", initial:"Z",
-      tagline:"5% back on every bill", taglineAr:"5٪ كاش باك على كل فاتورة",
-      members:1129, passes:918, weekActivity:[41,44,0,0,0,0,0],
-      stat1:{label:"Wallet balance out",v:"JOD 412"}, stat2:{label:"Paused",v:"12 days"},
-      links: { ig: "@zaytounkitchen", loc: "Swefieh, Amman", web: "zaytoun.jo" },
-      rules: { minRedeem: 2, redeemCap: 2 },
-      goal:0, reward:"5% back, redeem from JOD 2", branch:"Swefieh",
-      note:"Paused for renovation — balances stay redeemable." },
-    { id:"sukkar", name:"Sukkar Bakery", ar:"مخبز سكر", type:"points", state:"review",
-      color:"#B14A32", color2:"#8f3a27", initial:"S",
-      tagline:"Every JOD = 10 points", taglineAr:"كل JOD = 10 نقاط",
-      members:234, passes:0, weekActivity:[0,0,0,0,0,0,0],
-      stat1:{label:"Submitted",v:"Yesterday"}, stat2:{label:"Reviewer",v:"Wasla · Omar"},
-      links: { ig: "@sukkarbakery", loc: "Rainbow St, Amman" },
-      rules: { redeemCap: 2 },
-      goal:0, reward:"500 pts → dozen ka'ak", branch:"Rainbow St" },
-    { id:"ghaim", name:"Ghaim Studio", ar:"استوديو غيم", type:"membership", state:"draft",
-      color:"#4E6E8E", color2:"#3a5570", initial:"G",
-      tagline:"Monthly access pass", taglineAr:"اشتراك شهري",
-      members:0, passes:0, weekActivity:[0,0,0,0,0,0,0],
-      stat1:{label:"Last edited",v:"2 days ago"}, stat2:{label:"Step",v:"Configure"},
-      links: { ig: "@ghaimstudio", web: "ghaimstudio.jo" },
-      rules: { graceDays: 14 },
-      goal:0, reward:"Unlimited classes", branch:"Swefieh" },
-    { id:"zaman", name:"Zaman Arcade", ar:"زمان أركيد", type:"prepaid", state:"live",
-      color:"#4B2E83", color2:"#382263", initial:"Z", stampStyle:"star", gold:"#F2B705",
-      tagline:"Load it once, play all week", taglineAr:"اشحنها مرة، وتلعب طول الأسبوع",
-      members:268, passes:241, weekActivity:[22,18,26,31,24,39,35],
-      stat1:{label:"Loaded this week",v:"JOD 1,240"}, stat2:{label:"Stored value out",v:"JOD 3,180"},
-      links: { ig: "@zamanarcade", wa: "+962 78 555 0193", loc: "Rainbow St, Amman", web: "" },
-      /* Prepaid = stored value. The customer hands over cash; it sits on the pass as HER money.
-         minRedeem/redeemCap are pinned to 0 on purpose so prepaid can never inherit cashback rules. */
-      rules: { topupsMinor: [10000, 25000, 50000, 100000],
-               bonusTiers: [{ atMinor: 50000, pct: 5 }, { atMinor: 100000, pct: 10 }],
-               maxPrincipalMinor: 300000, bonusExpiryDays: 180,
-               refundable: true, allowPartial: true,
-               offlineFloorMinor: 10000, spendPinAboveMinor: 20000, lowBalanceAtMinor: 5000,
-               minRedeem: 0, redeemCap: 0 },
-      goal:0, reward:"Load JOD 100, play with JOD 110", branch:"Rainbow St" }
-  ],
+
+  /* ── AL-QUDS FALAFEL · day one ────────────────────────────────────────────
+     Jabal Al-Weibdeh. One shop, one man, one morning old.
+
+     This is NOT "an empty Tala". It is the state an account is in the second
+     after Omar clicks Activate: the business exists, the owner can sign in, and
+     nothing has happened yet. Every empty array below is the truth of that
+     morning — not a gap waiting for sample data.
+
+     ZERO CARDS is a decision, not an oversight. The first card gets built live
+     in the wizard in front of the prospect, so `cards` is [], `cardsUsed` is 0,
+     and `cardExtras` / `memberTimelines` are {} because there is no card yet for
+     either of them to be keyed by.
+
+     memberDelta IS THE EMPTY STRING, and that is the whole point of it. "+0 this
+     week" is a broken zero — it claims a week of measurement that has not
+     happened. An empty string is a designed one: render no delta at all, because
+     there is nothing yet to compare against. */
+  "al-quds-falafel": {
+    account: {
+      company: "Al-Quds Falafel", companyAr: "فلافل القدس",
+      owner: "Abu Shadi", ownerAr: "أبو شادي", initials: "AS",
+      /* Same contract as Tala's, stated per account so neither can drift. Abu Shadi
+         is a man: المالك, masculine agreement. See the note on Tala's record. */
+      ownerTitle: "Owner", ownerTitleAr: "المالك", ownerGender: "m",
+      plan: "Starter", cardQuota: 3, cardsUsed: 0,
+      /* STARTER HAS NO BROADCASTS — and this is the field that says so. The plan
+         table, the console's account drill-in and the sales invite copy all state
+         it; a quota of 3 here made the product contradict itself in three places
+         and offered the day-one merchant three sends their own plan row denies.
+         Zero is the DESIGNED number, not a broken one: render the absence — no
+         "0 left" chip, no 0 / 0 meter, no composer offering a send that cannot be
+         made. The honest thing to show in that space is where broadcasts start.
+         `broadcastsUsed` is 0 because nothing was ever sent, which is a different
+         zero from the quota and both are true.
+         ONE TRAP, AND IT IS THE ONLY REASON THIS COMMENT IS LONG: 0 is falsy, so
+         `(account.broadcastQuota || 10)` reads this as TEN. Every account here
+         declares the field, so that fallback can never legitimately fire — a reader
+         that needs a default must use `??`, not `||`, or Starter silently gets
+         Growth's allowance. Executed against this seed: `|| 10` → 10, `?? 10` → 0. */
+      broadcastQuota: 0, broadcastsUsed: 0,
+      members: 0, passes: 0, stampsToday: 0, redeemedWeek: 0,
+      memberDelta: "", renewal: "3 Sep 2026",
+      branches: ["Jabal Al-Weibdeh"],
+      /* Account defaults, same contract as Tala's: a value = the card inherits it,
+         "" = hidden on this card, key ABSENT = there is nothing to inherit.
+         `ig` and `web` are absent on purpose. A falafel shop on its first morning
+         has a WhatsApp number and a corner — it does not have an Instagram or a
+         website. Render that absence as nothing: no empty row, no placeholder
+         dash, no "not set". */
+      links: { wa: "+962 79 555 0188", loc: "Jabal Al-Weibdeh, Amman" }
+    },
+    /* No card exists, so there is nothing to hold analytics for. This is a
+       different zero from "a card that has been scanned zero times". */
+    cardExtras: {},
+    memberTimelines: {},
+    signup: {
+      /* A join URL is minted per card. With `cards` empty there is no card and so
+         no URL — this is the empty string, not a placeholder path that 404s. */
+      url: "",
+      /* Day-one poster copy. It names no reward and no card, because neither
+         exists yet; the moment the first card is approved the poster takes ITS
+         name and ITS reward. Anything here promising "your 8th falafel" would be
+         a sentence contradicting the zero standing next to it. */
+      poster: { line: "Join from your phone.", lineAr: "انضم من هاتفك",
+                sub: "The card lives in your wallet — no app, nothing to carry.", subAr: "البطاقة بمحفظتك — بدون تطبيق ولا شي تحمله" },
+      joins: { counter: 0, poster: 0, link: 0 },
+      /* THE PERSON THIS ACCOUNT'S DEMO JOINS AS. Both accounts carry one, so no
+         surface has to hardcode a persona. `drink` is the join form's
+         favourite-item field, whatever the shop happens to sell. */
+      defaultMember: { name: "Rami Haddad", ar: "رامي حداد", phone: "+962 79 555 0231",
+                       drink: "Falafel sandwich", drinkAr: "سندويشة فلافل", birthday: "9 Mar" }
+    },
+    cards: [],
+    members: [],
+    activity: [],
+    /* One person, who is the owner AND the till AND the entire roster. Nothing
+       here restates that: derive it by comparing this row's `name` against
+       account.owner, so the two can never drift apart.
+       `cards: []` means there is no card to be assigned to yet — not "assigned to
+       none of them". `pin` wins over the scanner's demo table (see pinForStaff in
+       Wasla Scanner.dc.html), which only knows Tala's five people. */
+    staff: [
+      { name: "Abu Shadi", ar: "أبو شادي", initials: "AS", branch: "Jabal Al-Weibdeh", cards: [], scansToday: 0, pin: "1188" }
+    ],
+    broadcasts: []
+  }
+};
+
+/* window.WASLA_DB — what every surface actually reads.
+   The nine per-account slots are declared here as null and filled by the resolver
+   at the bottom of this file, in this order, so the shape of the object is visible
+   in one place and the key order is exactly what it was before the split. If you
+   ever see a null survive to a render, the resolver did not run — that is the bug,
+   not the null. */
+window.WASLA_DB = {
+  demoFlags: { sukkarKey: "wasla_demo_sukkar_state" },
+  account: null, cardExtras: null, memberTimelines: null, signup: null, cards: null,
   types: [
     { id:"stamps", name:"Stamp Card", ar:"بطاقة الأختام", hero:"stamps",
       one:"Buy X, get one free — the classic.",
@@ -151,126 +437,15 @@ window.WASLA_DB = {
       how:"Staff take the cash and load it. Later visits deduct the bill from the balance — before and after are shown every time.",
       good:"Arcades, coffee shops, canteens — places customers pre-pay to visit often." }
   ],
-  members: [
-    { name:"Sara Al-Amin", ar:"سارة الأمين", initials:"SA", phone:"+962 79 555 0114", card:"Daraj Coffee", progress:"6 / 8 stamps", joined:"Mar 2026", last:0, visits:34, birthday:"14 Sep", top:true },
-    { name:"Omar Khalidi", ar:"عمر الخالدي", initials:"OK", phone:"+962 77 555 0132", card:"Daraj Coffee", progress:"2 / 8 stamps", joined:"Jul 2026", last:21, visits:4 },
-    { name:"Lina Haddad", ar:"لينا حداد", initials:"LH", phone:"+962 79 555 0187", card:"Layl Lounge", progress:"Gold", joined:"Jan 2026", last:1, visits:14 },
-    { name:"Noor Shami", ar:"نور الشامي", initials:"NS", phone:"+962 78 555 0121", card:"Daraj Coffee", progress:"8 / 8 — reward ready", joined:"Feb 2026", last:0, visits:29 },
-    { name:"Khaled Mansour", ar:"خالد منصور", initials:"KM", phone:"+962 79 555 0166", card:"Zaytoun Kitchen", progress:"JOD 3.20 balance", joined:"Apr 2026", last:1, visits:17 },
-    { name:"Rania Qasem", ar:"رانيا قاسم", initials:"RQ", phone:"+962 77 555 0143", card:"Layl Lounge", progress:"Silver", joined:"May 2026", last:9, visits:11 },
-    { name:"Fadi Nabulsi", ar:"فادي النابلسي", initials:"FN", phone:"+962 78 555 0177", card:"Daraj Coffee", progress:"5 / 8 stamps", joined:"Jun 2026", last:1, visits:14 },
-    { name:"Dana Tahboub", ar:"دانا طهبوب", initials:"DT", phone:"+962 79 555 0192", card:"Zaytoun Kitchen", progress:"JOD 3.40 balance", joined:"Mar 2026", last:18, visits:9 },
-    { name:"Hala Odeh", ar:"هلا عودة", initials:"HO", phone:"+962 77 555 0155", card:"Daraj Coffee", progress:"1 / 8 stamps", joined:"Jul 2026", last:0, visits:1 },
-    { name:"Zaid Barakat", ar:"زيد بركات", initials:"ZB", phone:"+962 78 555 0139", card:"Layl Lounge", progress:"Royal", joined:"Dec 2025", last:0, visits:58 },
-    { name:"Maya Sabbagh", ar:"مايا صباغ", initials:"MS", phone:"+962 79 555 0128", card:"Daraj Coffee", progress:"3 / 8 stamps", joined:"Jun 2026", last:0, visits:7 },
-    { name:"Lama Saadeh", ar:"لمى سعادة", initials:"LS", phone:"+962 77 555 0161", card:"Zaytoun Kitchen", progress:"JOD 0.90 balance", joined:"May 2026", last:27, visits:5 },
-    { name:"Rami Khoury", ar:"رامي خوري", initials:"RK", phone:"+962 79 555 0201", card:"Daraj Coffee", progress:"4 / 8 stamps", joined:"Jan 2026", last:61, visits:11 },
-    { name:"Dima Arafat", ar:"ديما عرفات", initials:"DA", phone:"+962 78 555 0219", card:"Daraj Coffee", progress:"7 / 8 stamps", joined:"Nov 2025", last:92, visits:44 },
-    { name:"Yousef Hijazi", ar:"يوسف حجازي", initials:"YH", phone:"+962 77 555 0208", card:"Daraj Coffee", progress:"2 / 8 stamps", joined:"Apr 2026", last:17, visits:6 },
-    /* ── Prepaid / stored value (Zaman Arcade) ────────────────────────────────
-       All money is INTEGER FILS; 1000 fils = 1 JOD. Every field ends in "Minor".
-       balanceMinor    = principalMinor + sum(bonus[].remainingMinor)
-       refundableMinor = max(0, depositedMinor - spentMinor - refundedMinor)
-       Those are TWO DIFFERENT NUMBERS and both must always be shown together.
-       deposited/spent/refunded are LIFETIME counters — never reset, never reduced.
-       Fully-consumed and expired bonus lots are dropped from bonus[]; the ledger keeps them.
-       Ledger before/after are TOTAL BALANCE (principal + live bonus), so a row reads as a
-       running balance; deltaMinor is the movement of that row's bucket only. ts = epoch ms. */
-    { name:"Rakan Al-Tell", ar:"راكان التل", initials:"RT", phone:"+962 79 555 0223", card:"Zaman Arcade",
-      progress:"JOD 140.25 prepaid", joined:"May 2026", last:0, visits:22, birthday:"2 Mar", top:true,
-      prepaid: {
-        principalMinor: 137750,
-        bonus: [ { id:"rk-b2", grantedMinor:2500, remainingMinor:2500, grantedAt:"2026-08-03",
-                   expiresAt:"2027-01-30", campaign:"summer-5" } ],
-        depositedMinor: 175000, spentMinor: 47250, refundedMinor: 0,
-        syncedAt: 1785750720000,
-        ledger: [
-          { id:"rk-1", ts:1778336400000, kind:"topup", bucket:"principal", deltaMinor:25000, beforeMinor:0, afterMinor:25000, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1041" },
-          { id:"rk-2", ts:1780157100000, kind:"spend", bucket:"principal", deltaMinor:-6500, beforeMinor:25000, afterMinor:18500, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1188" },
-          { id:"rk-3", ts:1781977200000, kind:"topup", bucket:"principal", deltaMinor:100000, beforeMinor:18500, afterMinor:118500, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1362" },
-          { id:"rk-4", ts:1781977200000, kind:"bonus", bucket:"bonus", deltaMinor:10000, beforeMinor:118500, afterMinor:128500, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1362" },
-          { id:"rk-5", ts:1783782900000, kind:"spend", bucket:"bonus", deltaMinor:-7250, beforeMinor:128500, afterMinor:121250, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1547" },
-          { id:"rk-6", ts:1785435000000, kind:"spend", bucket:"bonus", deltaMinor:-2750, beforeMinor:121250, afterMinor:118500, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1719" },
-          { id:"rk-7", ts:1785435000000, kind:"spend", bucket:"principal", deltaMinor:-30750, beforeMinor:118500, afterMinor:87750, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1719" },
-          { id:"rk-8", ts:1785750720000, kind:"topup", bucket:"principal", deltaMinor:50000, beforeMinor:87750, afterMinor:137750, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1806" },
-          { id:"rk-9", ts:1785750720000, kind:"bonus", bucket:"bonus", deltaMinor:2500, beforeMinor:137750, afterMinor:140250, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1806" }
-        ] } },
-    /* Jude: principal 0, bonus 8.00 left — balance JOD 8.00, refundable JOD 0.00.
-       She spent her whole deposit (and 2.000 of the first bonus), then the Eid campaign
-       granted a fresh 8.000 lot against no cash. This is the state a cashier must be able
-       to explain at the counter: "the bonus is not cash." */
-    { name:"Jude Barghouti", ar:"جود البرغوثي", initials:"JB", phone:"+962 78 555 0231", card:"Zaman Arcade",
-      progress:"JOD 8.00 prepaid", joined:"May 2026", last:1, visits:31,
-      prepaid: {
-        principalMinor: 0,
-        bonus: [ { id:"jb-b2", grantedMinor:8000, remainingMinor:8000, grantedAt:"2026-08-02",
-                   expiresAt:"2027-01-29", campaign:"eid-gift" } ],
-        depositedMinor: 100000, spentMinor: 110000, refundedMinor: 0,
-        syncedAt: 1785665100000,
-        ledger: [
-          { id:"jb-1", ts:1779024600000, kind:"topup", bucket:"principal", deltaMinor:100000, beforeMinor:0, afterMinor:100000, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1102" },
-          { id:"jb-2", ts:1779024600000, kind:"bonus", bucket:"bonus", deltaMinor:10000, beforeMinor:100000, afterMinor:110000, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1102" },
-          { id:"jb-3", ts:1782060300000, kind:"spend", bucket:"bonus", deltaMinor:-10000, beforeMinor:110000, afterMinor:100000, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1401" },
-          { id:"jb-4", ts:1782060300000, kind:"spend", bucket:"principal", deltaMinor:-32000, beforeMinor:100000, afterMinor:68000, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1401" },
-          { id:"jb-5", ts:1784481600000, kind:"spend", bucket:"principal", deltaMinor:-68000, beforeMinor:68000, afterMinor:0, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-1633" },
-          { id:"jb-6", ts:1785665100000, kind:"bonus", bucket:"bonus", deltaMinor:8000, beforeMinor:0, afterMinor:8000, by:"Yara Nassar", branch:"Rainbow St", ref:"ZA-EID-08" }
-        ] } },
-    /* Nadeen: fils-precision balance (JOD 4.125) and an EXPIRED bonus lot.
-       Note refundable (2.625) < principal (4.125): spending bonus reduces what is refundable,
-       exactly as the worked proof in the contract requires. */
-    { name:"Nadeen Fakhoury", ar:"نادين الفاخوري", initials:"NF", phone:"+962 77 555 0247", card:"Zaman Arcade",
-      progress:"JOD 4.125 prepaid", joined:"Jan 2026", last:10, visits:16,
-      prepaid: {
-        principalMinor: 4125,
-        bonus: [],
-        depositedMinor: 50000, spentMinor: 47375, refundedMinor: 0,
-        syncedAt: 1784911800000,
-        ledger: [
-          { id:"nf-1", ts:1768740000000, kind:"topup", bucket:"principal", deltaMinor:50000, beforeMinor:0, afterMinor:50000, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-0817" },
-          { id:"nf-2", ts:1768740000000, kind:"bonus", bucket:"bonus", deltaMinor:2500, beforeMinor:50000, afterMinor:52500, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-0817" },
-          { id:"nf-3", ts:1772724300000, kind:"spend", bucket:"bonus", deltaMinor:-1500, beforeMinor:52500, afterMinor:51000, by:"Ahmad Zoubi", branch:"Rainbow St", ref:"ZA-0954" },
-          { id:"nf-4", ts:1784235900000, kind:"expire", bucket:"bonus", deltaMinor:-1000, beforeMinor:51000, afterMinor:50000, by:"system", branch:"—", ref:"ZA-EXP-0817" },
-          { id:"nf-5", ts:1784911800000, kind:"spend", bucket:"principal", deltaMinor:-45875, beforeMinor:50000, afterMinor:4125, by:"Rasha Kilani", branch:"Rainbow St", ref:"ZA-1671" }
-        ] } }
-  ],
-  activity: [
-    { t:"2 min ago", who:"Sara Al-Amin", what:"earned a stamp", card:"Daraj Coffee", kind:"earn" },
-    { t:"6 min ago", who:"Rakan Al-Tell", what:"loaded JOD 50.00 — JOD 2.50 bonus on top", card:"Zaman Arcade", kind:"topup" },
-    { t:"9 min ago", who:"Noor Shami", what:"reached a full card — reward ready", card:"Daraj Coffee", kind:"reward" },
-    { t:"24 min ago", who:"Zaid Barakat", what:"checked in — Royal", card:"Layl Lounge", kind:"earn" },
-    { t:"1 h ago", who:"New member", what:"Hala Odeh joined from the counter QR", card:"Daraj Coffee", kind:"join" },
-    { t:"2 h ago", who:"Broadcast", what:"“Weekend special” delivered to 1,684 wallets", card:"Daraj Coffee", kind:"broadcast" },
-    { t:"3 h ago", who:"Maya Sabbagh", what:"earned a stamp", card:"Daraj Coffee", kind:"earn" },
-    { t:"Yesterday", who:"Wasla review", what:"Sukkar Bakery submitted for approval", card:"Sukkar Bakery", kind:"review" },
-    { t:"Yesterday", who:"Lina Haddad", what:"tier-up: Silver → Gold", card:"Layl Lounge", kind:"reward" },
-    { t:"Yesterday", who:"Khaled Mansour", what:"redeemed JOD 1.50 of balance", card:"Zaytoun Kitchen", kind:"reward" },
-    { t:"Yesterday", who:"Broadcast", what:"“Gold nights are back” delivered to 396 wallets", card:"Layl Lounge", kind:"broadcast" },
-    { t:"Yesterday", who:"Fadi Nabulsi", what:"earned a stamp", card:"Daraj Coffee", kind:"earn" },
-    { t:"Yesterday", who:"New member", what:"Maya Sabbagh joined from the poster QR", card:"Daraj Coffee", kind:"join" },
-    { t:"Yesterday", who:"Rasha Kilani", what:"corrected a mis-scan (−1 stamp)", card:"Daraj Coffee", kind:"earn" },
-    { t:"Yesterday", who:"Jude Barghouti", what:"received a JOD 8.00 Eid credit — bonus, not cash", card:"Zaman Arcade", kind:"topup" }
-  ],
-  staff: [
-    { name:"Ahmad Zoubi", ar:"أحمد الزعبي", initials:"AZ", branch:"Rainbow St", cards:["Daraj Coffee","Layl Lounge","Zaman Arcade"], scansToday:61 },
-    { name:"Rasha Kilani", ar:"رشا الكيلاني", initials:"RK", branch:"Rainbow St", cards:["Daraj Coffee","Zaman Arcade"], scansToday:47 },
-    { name:"Samir Awad", ar:"سمير عوض", initials:"SW", branch:"Abdali Mall", cards:["Layl Lounge"], scansToday:22 },
-    { name:"Tareq Majali", ar:"طارق المجالي", initials:"TM", branch:"Swefieh", cards:["Zaytoun Kitchen","Ghaim Studio"], scansToday:0 },
-    { name:"Farah Amari", ar:"فرح العمري", initials:"FA", branch:"Abdali Mall", cards:["Layl Lounge"], scansToday:18 }
-  ],
-  broadcasts: [
-    { title:"Eid morning surprise", body:"Eid Mubarak — a gift stamp waits with your coffee.", bodyAr:"عيدكم مبارك", card:"Daraj Coffee", sent:"Fri · 09:30", reach:"1,702 wallets", state:"scheduled" },
-    { title:"Late-night flash", body:"Free cookie with any drink till midnight.", bodyAr:"كوكيز مجاني", card:"Daraj Coffee", sent:"Waits for 10:00", reach:"1,702 wallets", state:"held" },
-    { title:"Weekend special", body:"Double stamps all Friday ☕ — see you on the stairs.", bodyAr:"أختام مضاعفة يوم الجمعة", card:"Daraj Coffee", sent:"Today · 10:00", reach:"1,684 wallets", state:"sent" },
-    { title:"Gold nights are back", body:"Gold & Royal: the rooftop opens Thursday.", bodyAr:"ليالي الذهب رجعت", card:"Layl Lounge", sent:"Tue · 18:30", reach:"396 wallets", state:"sent" },
-    /* The sixth send, and the reason account.broadcastsUsed reads 6: this list is the whole
-       month, not a sample of it, so the counter is the length of this array and nothing else. */
-    { title:"Your top-up goes further", body:"Load JOD 50 or more and 5% lands on the pass with it — JOD 100 makes it 10%.", bodyAr:"اشحن JOD 50 وخذ 5٪ فوقها", card:"Zaman Arcade", sent:"9 days ago", reach:"236 wallets", state:"sent" },
-    { title:"We're renovating", body:"Zaytoun pauses this week — your balance is safe.", bodyAr:"رصيدك محفوظ", card:"Zaytoun Kitchen", sent:"12 days ago", reach:"918 wallets", state:"sent" }
-  ]
+  members: null, activity: null, staff: null, broadcasts: null
 };
 window.WASLA_DB.console = {
   accounts: [
-    { name:"Tala Hospitality Group", ar:"مجموعة تالا", owner:"Yara Nassar", plan:"Growth", cards:6, quota:10, members:3884, state:"active", manager:"Omar", initial:"T", color:"#E88024", renewal:"12 Aug 2026", eligible:{ prepaid:true } },
+    /* `members` on a console row is the SAME number the merchant's own dashboard
+       header shows — Omar and Yara must never read two different totals for one
+       business. Tala's is WASLA_ACCOUNTS['tala-hospitality-group'].account.members,
+       which is the sum of its six card pages; change one and change the other. */
+    { name:"Tala Hospitality Group", ar:"مجموعة تالا", owner:"Yara Nassar", plan:"Growth", cards:6, quota:10, members:3650, state:"active", manager:"Omar", initial:"T", color:"#E88024", renewal:"12 Aug 2026", eligible:{ prepaid:true } },
     { name:"Rawi Coffee House", ar:"بيت راوي", owner:"Samer Rawi", plan:"Unlimited", cards:8, quota:99, members:5204, state:"active", manager:"Lina", initial:"R", color:"#1E6F4D", renewal:"3 Oct 2026", eligible:{ prepaid:true } },
     { name:"Nara Pharmacy", ar:"صيدلية نارة", owner:"Reem Nasser", plan:"Growth", cards:3, quota:10, members:1892, state:"active", manager:"Omar", initial:"N", color:"#0F5B63", renewal:"22 Sep 2026", eligible:{ prepaid:false } },
     { name:"Marmar Lounge", ar:"مرمر لاونج", owner:"Hani Malas", plan:"Unlimited", cards:4, quota:99, members:2311, state:"active", manager:"Lina", initial:"M", color:"#7A3348", renewal:"1 Dec 2026", note:"Dedicated Apple certificate — the only one.", eligible:{ prepaid:true } },
@@ -290,7 +465,14 @@ window.WASLA_DB.console = {
   leads: [
     { name:"Louma Chocolate", ar:"لوما", stage:"Invited", note:"WhatsApp opened yesterday — no password yet", owner:"Reem Louma", by:"Omar" },
     { name:"Tuta Juice", ar:"توتة", stage:"Demo booked", note:"Thursday 11:00 · Swefieh branch", owner:"Zain Tuta", by:"Omar" },
-    { name:"Al-Quds Falafel", ar:"فلافل القدس", stage:"Won", note:"Activating — first card in review", owner:"Abu Shadi", by:"Lina" },
+    /* SEEDED AT WON, AND NOT ONE STEP FURTHER. This lead is the head of the chain
+       the demo walks: convert → invite → password → activate → first card → review.
+       Every one of those happens live, in front of the prospect, on a fresh browser.
+       A note that says the card is already in review asserts an event no code path
+       has run — there is no account, no card and nothing in Omar's queue when this
+       file loads — so it is a sentence contradicting the empty screen beside it.
+       What is true at Won: Lina closed it, and nothing has been sent yet. */
+    { name:"Al-Quds Falafel", ar:"فلافل القدس", stage:"Won", note:"Closed on the call — not converted yet, no invite sent", owner:"Abu Shadi", by:"Lina" },
     { name:"Baraka Style", ar:"بركة", stage:"Cold", note:"Asked to call back after Eid", owner:"Mona Baraka", by:"Sami" },
     { name:"Deema Nails", ar:"ديما", stage:"Negotiating", note:"Wants Growth at Starter price — escalate", owner:"Deema K.", by:"Lina" }
   ],
@@ -443,19 +625,33 @@ window.WASLA_DB.console = {
     newBusiness: {
       lastSigning: { account: "Petra Gym", on: "17 Feb 2026" },
       daysSince: 163,
-      reason: "Ramadan ran 18 Feb – 19 Mar 2026 and shut the top of the funnel: no demos were booked, nothing was signed, and the two weeks of Eid after it were no better. The pipeline restarted in April and the next name is already won — Al-Quds Falafel, closed by Lina, first card in review.",
+      reason: "Ramadan ran 18 Feb – 19 Mar 2026 and shut the top of the funnel: no demos were booked, nothing was signed, and the two weeks of Eid after it were no better. The pipeline restarted in April and the next name is already won — Al-Quds Falafel, closed by Lina, not yet billed.",
+      /* Says only what a signature makes true. The activation, the first card and the
+         approval all happen at runtime, so nothing here may claim them — and nothing
+         here needs to: the point of this block is that a won deal is not revenue, and
+         that is as true after activation as before it. */
       wonNotBilled: [
-        { name: "Al-Quds Falafel", ar: "فلافل القدس", stage: "Won — activating", by: "Lina",
-          note: "Closed-won and activating; the first card is in the approval queue. No invoice has been raised, so it is not in MRR and will not be until one is. A won deal is not revenue." }
+        { name: "Al-Quds Falafel", ar: "فلافل القدس", stage: "Won", by: "Lina",
+          note: "Closed-won by Lina. No invoice has been raised, so it is not in MRR and will not be until one is — activating an account does not raise one. A won deal is not revenue." }
       ],
-      note: "This is a gap in THIS book, which is the eight accounts the console lists — not in the platform, which carries 47. See salesReconciliation."
+      /* SCOPED ON INVOICES, NOT ON WHAT THE REGISTER SHOWS. This said "the eight
+         accounts the console lists", and the console stops listing eight the moment
+         Omar activates one — the register beside it reads "Showing all 9". The book
+         is still eight, because an activation raises no invoice; so say the thing
+         the activation cannot falsify.
+         The 47 is ATTRIBUTED for the same reason. It is health.totals.accounts, a
+         seed fixture, and the accounts screen adds this console's own activations to
+         it — so after Omar's click that heading reads 48. A bare "the platform carries
+         47" would be a frozen count contradicting a derived one two screens away;
+         naming where the 47 comes from makes it a quotation instead of a claim. */
+      note: "This is a gap in THIS book, which is the eight accounts that have ever been invoiced — not in the platform, which the console's health block puts at 47. Activating an account adds a row to the console register and none here; an account joins this book on its first invoice. See salesReconciliation."
     },
 
     /* The leaderboard and this file count different things and both are right. Written here because
        they sit in the same console under the same login, and a founder is entitled to know why
        Sami has three wins on one screen and none on the other. */
     salesReconciliation: {
-      bookScope: "These eight accounts are the sample this console lists. The platform runs 47 (console.health.totals.accounts).",
+      bookScope: "These eight accounts are the ones this book has ever invoiced — the console register lists more as soon as an account is activated, because activation raises no invoice. The platform runs 47 (console.health.totals.accounts).",
       signedByInThisBook: { Omar: 3, Lina: 5, Sami: 0 },
       signedByInThisBookTrailing12mo: { Omar: 2, Lina: 3, Sami: 0 },
       leaderboardCounts: "Activations this month, platform-wide — 13 across all 47 accounts, against a quota of 8 a rep. Omar 6, Lina 4, Sami 3.",
@@ -755,7 +951,7 @@ window.WASLA_DB.console = {
           { kind:"churn", account:"Bayt Books", on:"22 May 2026", amountJod:25, detail:"closed on Starter" }
         ] },
       { m:"Jun 2026", accounts:7, mrr:585, newMrr:0, expansionMrr:0, contractionMrr:0, churnedMrr:0,
-        note:"No new business in this book since Feb. Al-Quds Falafel is won and activating but has no invoice, so it is not here.",
+        note:"No new business in this book since Feb. Al-Quds Falafel is won but has no invoice, so it is not here.",
         events: [] },
       { m:"Jul 2026", accounts:7, mrr:585, newMrr:0, expansionMrr:0, contractionMrr:0, churnedMrr:0,
         note:"Last month with cash behind it. Collected JOD 585 between 1 and 30 July.",
@@ -836,7 +1032,15 @@ window.WASLA_DB.console = {
       /* [days from 30 Jul, cumulative JOD expected by then], keyed on due dates. */
       cumulative: [ [0, 25], [16, 556], [47, 1087], [77, 1618] ],
       riskNote: "JOD 100 of the 1,618 is Wared Flowers — one overdue invoice and three months it may not pay. The forecast states it rather than trimming it.",
-      notInHere: "Al-Quds Falafel is closed-won and activating. No invoice has been scheduled, so no cash is forecast from it."
+      /* WHY THIS SENTENCE CARRIES NO STATE. It used to say Al-Quds was "closed-won and
+         activating", which was true of the seed and false the moment Omar clicked
+         Activate — at which point the Activations register said "Account live" and the
+         account drill-in said "live, and empty", and one console disagreed with itself
+         about one business. The clause that goes stale is the STATE clause, so it is
+         gone. What is left is a billing fact this forecast owns and no activation can
+         falsify: activating an account raises no invoice, and this window forecasts
+         invoices. It reads the same before the click and after it. */
+      notInHere: "Al-Quds Falafel is not in this window. No invoice has been scheduled against it — and activating an account does not schedule one — so there is no cash to forecast from it yet."
     },
 
     /* CALENDAR, NOT CASH. The annual term date for each live account: when the contract re-commits
@@ -862,3 +1066,83 @@ window.WASLA_DB.console = {
     }
   }
 };
+
+/* ══ THE SUBMISSION CHANNEL · one key, four readers, two writers ══════════════
+   Published here — not in any one surface — because five files share it and a
+   drifting payload is invisible until a card turns up in the till with no rules.
+   It is a plain localStorage key, defensively parsed like every other shared key
+   in this prototype (try/catch, shape-check, tolerant of unknown fields).
+
+   KEY      wasla_demo_submissions
+   VALUE    a flat object, one entry per submitted card, keyed  acctSlug + ':' + cardId
+   ROW      { v:1, acct, acctName, cardId, card, ar, type, color, color2, initial,
+              tagline, goal, reward, branches, stampStyle, fields, customFields,
+              cfg, rules, by, submitted, head, checks,
+              state:'pending'|'approved'|'rejected', reason?, decidedBy?, decidedAt? }
+
+   WRITERS  the Dashboard wizard writes the row at state 'pending';
+            the Console's approve/reject writes state (+ reason/decidedBy/decidedAt)
+            back into the SAME row and changes nothing else on it.
+   READERS  the Console approvals queue, the Dashboard verdict poll, and — the part
+            that makes a wizard-born card real — Customer and Scanner, each merging
+            the rows whose `state` is 'approved' AND whose `acct` equals
+            window.WASLA_ACCT into its own card list. Neither of them ever learns
+            what the Dashboard's private state blob is.
+
+   THIS KEY IS NOT SUFFIXED. It is keyed BY account inside the value, so one key
+   holds every account's submissions and each reader filters on `acct`. The live
+   bus (wasla_demo_live_events) is un-suffixed for the same reason and must stay
+   that way. Everything else — every per-surface local-state blob — DOES take
+   window.WASLA_ACCT_SUFFIX, or an Al-Quds session silently overwrites Tala's. */
+window.WASLA_SUBMISSIONS_KEY = "wasla_demo_submissions";
+
+/* ══ THE RESOLVER ════════════════════════════════════════════════════════════
+   Runs at load time, before a single line of component code. Picks the account,
+   fills the nine slots on window.WASLA_DB, and publishes who we ended up as.
+
+   Slugification is character-for-character the rule the Console and the Dashboard
+   already use for the links they hand out (lowercase → non-alphanumerics to dashes
+   → trim leading/trailing dashes), so a link minted anywhere resolves here.
+
+   PUBLISHED, and all five surfaces may rely on them:
+     window.WASLA_ACCT            resolved slug — always a key of WASLA_ACCOUNTS
+     window.WASLA_ACCT_NAME       resolved account.company
+     window.WASLA_ACCT_SUFFIX     '' for Tala, '_<slug>' otherwise. Append to every
+                                  per-surface localStorage key. Never to the live bus.
+     window.WASLA_ACCT_REQUESTED  the slugified ?acct= as asked for; '' when absent
+     window.WASLA_ACCT_KNOWN      false ONLY when ?acct= named an account we do not
+                                  have. Absent ?acct= is true — that is not a miss,
+                                  that is the default. A surface that echoes the
+                                  requested name MUST check this first: on a miss the
+                                  data below is Tala's, and printing a foreign name
+                                  over it is the defect, not the fallback. */
+(function () {
+  var ACC = window.WASLA_ACCOUNTS, DEF = "tala-hospitality-group";
+  var FIELDS = ["account", "cardExtras", "memberTimelines", "signup", "cards",
+                "members", "activity", "staff", "broadcasts"];
+  var slugOf = function (n) {
+    return String(n == null ? "" : n).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  };
+  var asked = "";
+  try {
+    var q = (window.location && window.location.search) || "";
+    var m = q.match(/[?&]acct=([^&]*)/);
+    if (m) asked = slugOf(decodeURIComponent(m[1]));
+  } catch (e) { asked = ""; }
+  var has = !!asked && Object.prototype.hasOwnProperty.call(ACC, asked);
+  var slug = has ? asked : DEF;
+  var src = ACC[slug] || ACC[DEF];
+  /* Copy the nine BY NAME rather than Object.assign'ing the whole entry: the field
+     list is the contract, and a tenth key added to an account entry later must not
+     silently become a top-level WASLA_DB field nobody declared. */
+  for (var i = 0; i < FIELDS.length; i++) window.WASLA_DB[FIELDS[i]] = src[FIELDS[i]];
+  window.WASLA_ACCT = slug;
+  window.WASLA_ACCT_NAME = (src.account && src.account.company) || "";
+  window.WASLA_ACCT_SUFFIX = (slug === DEF) ? "" : ("_" + slug);
+  window.WASLA_ACCT_REQUESTED = asked;
+  window.WASLA_ACCT_KNOWN = asked ? has : true;
+  /* The Sukkar hand-off is Tala's own channel and predates all of this. Suffixing it
+     keeps a second account's review verdict out of Tala's saved demo — and on Tala
+     the suffix is '', so the key is the same string it has always been. */
+  window.WASLA_DB.demoFlags.sukkarKey = window.WASLA_DB.demoFlags.sukkarKey + window.WASLA_ACCT_SUFFIX;
+})();

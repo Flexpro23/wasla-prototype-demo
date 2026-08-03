@@ -170,8 +170,8 @@
           <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
             <div onClick="{{ scanDefault }}" class="ws-scan" style="cursor:pointer;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #2A2A30, #1B1B1F);border:2.5px solid rgba(232,128,36,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;flex-shrink:0;">
               <div style="width:44px;height:44px;border:3px solid #E88024;border-radius:11px;position:relative;"><div style="position:absolute;left:6px;right:6px;top:50%;height:2.5px;background:#E88024;"></div></div>
-              <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:16px;">{{ t.ready }}</div>
-              <div style="font-size:11.5px;color:#9B99A3;">{{ t.readyAlt }}</div>
+              <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:16px;">{{ readyLine }}</div>
+              <div style="font-size:11.5px;color:#9B99A3;">{{ readyAltLine }}</div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:304px;">
               <sc-for list="{{ idleActions }}" as="ia" hint-placeholder-count="4">
@@ -184,11 +184,16 @@
           <div style="padding-top:14px;">
             <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;margin-bottom:9px;">{{ t.yourCards }}</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <!-- NO CARDS IS A STATE, NOT AN ABSENCE OF ONE. A row of nothing reads as broken; a
+                   dashed chip that says which empty this is reads as a shop on its first morning. -->
+              <sc-if value="{{ noCardsChip }}" hint-placeholder-val="{{ false }}">
+                <span style="display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px dashed rgba(240,169,43,.45);color:#F0A92B;font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;animation:fadeUp .34s cubic-bezier(.22,.61,.36,1) .14s both;"><span style="width:7px;height:7px;border-radius:50%;background:#F0A92B;"></span>{{ noCardsLine }}</span>
+              </sc-if>
               <sc-for list="{{ myCards }}" as="mycd" hint-placeholder-count="2">
                 <span style="display:inline-flex;align-items:center;gap:7px;background:{{ mycd.bg }};border:1px solid {{ mycd.br }};color:{{ mycd.fg }};font-size:11.5px;font-weight:700;border-radius:999px;padding:7px 14px;animation:{{ mycd.anim }};"><span style="width:7px;height:7px;border-radius:50%;background:{{ mycd.dot }};"></span>{{ mycd.name }}</span>
               </sc-for>
             </div>
-            <div style="font-size:10.5px;color:#8E8C96;margin-top:9px;line-height:1.55;">{{ t.onlyYours }}</div>
+            <div style="font-size:10.5px;color:#8E8C96;margin-top:9px;line-height:1.55;">{{ onlyYoursLine }}</div>
           </div>
         </div>
       </sc-if>
@@ -289,7 +294,7 @@
                 <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;">
                   <sc-if value="{{ stampsReady }}" hint-placeholder-val="{{ true }}">
                     <div style="position:relative;width:64px;height:64px;border-radius:50%;background:rgba(232,128,36,.15);border:2px solid #E88024;display:flex;align-items:center;justify-content:center;box-shadow:0 0 26px rgba(232,128,36,.22);animation:{{ popAnim }};">{{ stampHeroMark }}</div>
-                    <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:20px;">{{ t.freeDrink }}</div>
+                    <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:20px;">{{ rewardTitle }}</div>
                     <div style="font-size:12px;color:#9B99A3;max-width:260px;line-height:1.5;">{{ stampsResetLine }}</div>
                   </sc-if>
                   <sc-if value="{{ stampsNotReady }}" hint-placeholder-val="{{ false }}">
@@ -759,7 +764,7 @@
             <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#9B99A3;text-transform:uppercase;margin-bottom:8px;">{{ t.lastActions }}</div>
             <div style="display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto;">
               <sc-if value="{{ shiftLogEmpty }}" hint-placeholder-val="{{ true }}">
-                <div style="text-align:center;color:#8E8C96;font-size:11.5px;padding:14px 4px;">{{ t.noActionsYet }}</div>
+                <div style="text-align:center;color:#8E8C96;font-size:11.5px;padding:14px 4px;">{{ shiftEmptyLine }}</div>
               </sc-if>
               <sc-for list="{{ shiftLog }}" as="sl" hint-placeholder-count="6">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1B1B1F;border:1px solid rgba(244,242,238,.08);border-radius:10px;padding:8px 11px;animation:{{ sl.anim }};">
@@ -769,12 +774,12 @@
               </sc-for>
             </div>
           </div>
-          <div style="font-size:12px;color:#9B99A3;max-width:250px;line-height:1.6;flex-shrink:0;">{{ t.shiftNote }}</div>
-          <div onClick="{{ startHandover }}" class="ws-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 26px;flex-shrink:0;">{{ t.handOver }}</div>
+          <div style="font-size:12px;color:#9B99A3;max-width:250px;line-height:1.6;flex-shrink:0;">{{ shiftNoteLine }}</div>
+          <div onClick="{{ startHandover }}" class="ws-cta" style="cursor:pointer;background:#E88024;color:#FFFFFF;font-weight:800;font-size:13.5px;border-radius:999px;padding:12px 26px;flex-shrink:0;">{{ handOverLabel }}</div>
         </sc-if>
         <sc-if value="{{ showHandoverPicker }}" hint-placeholder-val="{{ false }}">
-          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;flex-shrink:0;">{{ t.handoverPickTitle }}</div>
-          <div style="font-size:11.5px;color:#9B99A3;max-width:250px;flex-shrink:0;line-height:1.55;">{{ t.handoverPickSub }}</div>
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;flex-shrink:0;">{{ handoverTitle }}</div>
+          <div style="font-size:11.5px;color:#9B99A3;max-width:250px;flex-shrink:0;line-height:1.55;">{{ handoverSub }}</div>
           <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:260px;margin-top:6px;flex-shrink:0;">
             <sc-for list="{{ staffChoices }}" as="sf" hint-placeholder-count="2">
               <div onClick="{{ sf.pick }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:#1B1B1F;border:1px solid {{ sf.br }};border-radius:14px;padding:12px 14px;animation:{{ sf.anim }};">
@@ -937,7 +942,7 @@
       <div style="position:absolute;inset:0;z-index:92;background:rgba(16,16,19,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px 22px 22px;text-align:center;animation:flashIn .3s both;">
         <div onClick="{{ closeJoin }}" class="ws-x" style="position:absolute;top:18px;inset-inline-end:20px;z-index:2;cursor:pointer;color:#8E8C96;font-size:19px;padding:6px 8px;line-height:1;">✕</div>
         <sc-if value="{{ joinPick }}" hint-placeholder-val="{{ false }}">
-          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ t.joinPickTitle }}</div>
+          <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:19px;">{{ joinPickTitle }}</div>
           <div style="font-size:11.5px;color:#9B99A3;max-width:250px;line-height:1.55;">{{ t.joinPickSub }}</div>
           <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:265px;margin-top:4px;">
             <sc-for list="{{ joinCards }}" as="jc" hint-placeholder-count="2">
@@ -960,7 +965,7 @@
             <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:11.5px;color:#93887A;margin-top:10px;letter-spacing:.02em;">{{ joinUrl }}</div>
           </div>
           <div style="font-size:11.5px;color:#9B99A3;max-width:262px;line-height:1.55;flex-shrink:0;">{{ joinHint }}</div>
-          <div onClick="{{ joinScanning }}" class="ws-cta" style="cursor:pointer;width:100%;max-width:290px;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:14px;padding:14px 0;text-align:center;flex-shrink:0;animation:{{ ctaAnim }};">{{ t.joinScanBtn }}</div>
+          <div onClick="{{ joinScanning }}" class="ws-cta" style="cursor:pointer;width:100%;max-width:290px;background:#E88024;color:#FFFFFF;font-weight:800;font-size:14px;border-radius:14px;padding:14px 0;text-align:center;flex-shrink:0;animation:{{ ctaAnim }};">{{ joinScanBtn }}</div>
         </sc-if>
         <sc-if value="{{ joinWaiting }}" hint-placeholder-val="{{ false }}">
           <div style="position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -998,7 +1003,7 @@
           <div style="display:flex;flex-direction:column;align-items:center;gap:13px;width:100%;animation:{{ lockPickAnim }};">
             <div style="width:58px;height:58px;border-radius:50%;background:rgba(232,128,36,.13);border:2px solid rgba(232,128,36,.55);display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;">🔒</div>
             <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:21px;">{{ t.lockWho }}</div>
-            <div style="font-size:11.5px;color:#9B99A3;max-width:252px;line-height:1.55;">{{ t.lockWhoSub }}</div>
+            <div style="font-size:11.5px;color:#9B99A3;max-width:252px;line-height:1.55;">{{ lockPickSub }}</div>
             <sc-if value="{{ lockPickErr }}" hint-placeholder-val="{{ false }}">
               <div style="color:#E2563A;font-size:11.5px;font-weight:800;max-width:250px;line-height:1.5;animation:fadeUp .28s cubic-bezier(.22,.61,.36,1) both;">{{ lockErrLine }}</div>
             </sc-if>
@@ -1013,7 +1018,7 @@
                 </div>
               </sc-for>
             </div>
-            <div style="font-size:10.5px;color:#6E6C77;max-width:250px;line-height:1.5;margin-top:2px;">{{ t.lockBranchRule }}</div>
+            <div style="font-size:10.5px;color:#6E6C77;max-width:250px;line-height:1.5;margin-top:2px;">{{ lockBranchRule }}</div>
           </div>
         </sc-if>
         <sc-if value="{{ lockPinOpen }}" hint-placeholder-val="{{ false }}">
@@ -1056,6 +1061,15 @@
     <div style="background:#FFFFFF;border:1px solid #E7E0D5;border-radius:16px;padding:16px;">
       <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:10px;">{{ railTypesLabel }}</div>
       <div style="display:flex;flex-direction:column;gap:7px;">
+        <!-- THE WINDOW BETWEEN GOING LIVE AND THE FIRST APPROVAL. An empty rail here is the honest
+             picture of a shop that activated this morning — it says which empty it is and what
+             closes it, rather than leaving a white card with nothing in it. -->
+        <sc-if value="{{ railEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1.5px dashed #DCD3C4;background:#FBF8F3;border-radius:11px;padding:13px 12px;">
+            <div style="font-size:12.5px;font-weight:800;color:#241C16;">{{ railEmptyTitle }}</div>
+            <div style="font-size:10.5px;color:#93887A;line-height:1.55;margin-top:4px;">{{ railEmptyLine }}</div>
+          </div>
+        </sc-if>
         <sc-for list="{{ demoScans }}" as="dsc" hint-placeholder-count="9">
           <div onClick="{{ dsc.go }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ dsc.br }};background:{{ dsc.bg }};border-radius:11px;padding:9px 11px;animation:{{ dsc.anim }};">
             <span style="width:28px;height:28px;border-radius:9px;background:{{ dsc.discBg }};border:1px solid {{ dsc.discBr }};color:{{ dsc.dot }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:{{ dsc.glyphSize }};letter-spacing:-.02em;flex-shrink:0;">{{ dsc.glyph }}</span>
@@ -1068,6 +1082,9 @@
       <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#93887A;text-transform:uppercase;margin-bottom:4px;">{{ railEdgeLabel }}</div>
       <div style="font-size:10.5px;color:#93887A;margin-bottom:10px;line-height:1.5;">{{ railEdgeSub }}</div>
       <div style="display:flex;flex-direction:column;gap:7px;">
+        <sc-if value="{{ edgeEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1.5px dashed #DCD3C4;background:#FBF8F3;border-radius:11px;padding:13px 12px;font-size:10.5px;color:#93887A;line-height:1.55;">{{ edgeEmptyLine }}</div>
+        </sc-if>
         <sc-for list="{{ edgeScans }}" as="edg" hint-placeholder-count="7">
           <div onClick="{{ edg.go }}" class="ws-tile" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1.5px solid {{ edg.br }};background:{{ edg.bg }};border-radius:11px;padding:9px 11px;animation:{{ edg.anim }};">
             <span style="width:28px;height:28px;border-radius:9px;background:{{ edg.discBg }};border:1px solid {{ edg.discBr }};color:{{ edg.dot }};display:flex;align-items:center;justify-content:center;font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:{{ edg.glyphSize }};letter-spacing:-.02em;flex-shrink:0;">{{ edg.glyph }}</span>
@@ -1089,10 +1106,13 @@
         <div onClick="{{ setLangAr }}" class="ws-press" style="cursor:pointer;border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:800;background:{{ arBg }};color:{{ arFg }};border:1px solid {{ arBr }};font-family:'IBM Plex Sans Arabic',sans-serif;">عربي</div>
       </div>
     </div>
+    <!-- THE ACCOUNT TRAVELS WITH THE LINK. Leaving this till by any of these used to land the
+         viewer on the mature merchant mid-demo, whichever shop they were standing in. The hub is
+         the deliberate exception: it is the chooser, and it offers each account by name. -->
     <div style="display:flex;gap:8px;">
-      <a href="Wasla Dashboard.dc.html" class="ws-tile" style="flex:1;display:block;background:#26262B;color:#F4F2EE;border:1.5px solid #26262B;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">← Dashboard</a>
-      <a href="Wasla Demo.dc.html" class="ws-tile" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#241C16;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">Demo hub →</a>
-      <a href="Wasla Customer.dc.html" class="ws-tile" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#241C16;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">Customer →</a>
+      <a href="{{ dashHref }}" class="ws-tile" style="flex:1;display:block;background:#26262B;color:#F4F2EE;border:1.5px solid #26262B;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">← Dashboard</a>
+      <a href="{{ hubHref }}" class="ws-tile" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#241C16;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">Demo hub →</a>
+      <a href="{{ custHref }}" class="ws-tile" style="flex:1;display:block;background:#FFFFFF;border:1.5px solid #E7E0D5;color:#241C16;border-radius:14px;padding:12px 6px;font-size:11px;font-weight:700;text-align:center;">Customer →</a>
     </div>
     <div onClick="{{ resetDemo }}" class="ws-link" style="cursor:pointer;text-align:center;border:1px dashed {{ resetBr }};color:{{ resetFg }};border-radius:12px;padding:9px 10px;font-size:11px;font-weight:700;">{{ resetLabel }}</div>
   </div>
@@ -1165,7 +1185,8 @@ class Component extends DCLogic {
       // ── sign-in · the shift has a beginning now ──
       lockWho: { en: 'Who’s on the till?', ar: 'من على الصندوق؟' },
       lockWhoSub: { en: 'Pick your name, then your PIN. The shift starts when you sign in.', ar: 'اختر اسمك ثم أدخل رمزك. تبدأ المناوبة عند تسجيل الدخول.' },
-      lockBranchRule: { en: 'Only Rainbow St staff can open this till.', ar: 'موظفو شارع الرينبو وحدهم يفتحون هذا الصندوق.' },
+      // (`lockBranchRule` used to sit here as a literal naming one shop's street. It is now built in
+      //  renderVals from tillBranch() and the roster, so there is nothing left to keep in step.)
       otherBranch: { en: 'Other branch', ar: 'فرع آخر' },
       lockStartPin: { en: 'Enter your PIN to start the shift', ar: 'أدخل رمزك لبدء المناوبة' },
       lockResumePin: { en: 'The shift is still open — your PIN carries on where you left it.', ar: 'المناوبة ما زالت مفتوحة — رمزك يكمل من حيث توقفت.' },
@@ -1311,7 +1332,22 @@ class Component extends DCLogic {
   // ────────────────────────────────────────────────────────────────────────────
   //  session persistence · ONE blob under ONE key, cleared only by "Reset demo"
   // ────────────────────────────────────────────────────────────────────────────
-  scanKey() { return 'wasla_demo_scanner_state'; }
+  /** ONE TILL PER ACCOUNT. The suffix is published by wasla-data.js after it resolves ?acct= —
+      '' for the account this file's literals were written about, '_<slug>' for any other. Every
+      key this surface OWNS carries it, or a second merchant's session in the same browser
+      silently overwrites the first one's staged shift, and nobody finds out until mid-pitch.
+      Read defensively: on the default account the suffix is '' and every key string below is
+      byte-for-byte the one it has always been, so no saved demo is orphaned. */
+  sfx() { try { return (typeof window !== 'undefined' && window.WASLA_ACCT_SUFFIX) || ''; } catch (e) { return ''; } }
+  scanKey() { return 'wasla_demo_scanner_state' + this.sfx(); }
+  /** THE MERCHANT'S KEY, NOT OURS — and it is suffixed for exactly the same reason ours is.
+      This till reads the dashboard's overlay to learn the rules it must enforce (dashBlob /
+      dashRules below). The dashboard writes that overlay under ITS account's key, so reading the
+      un-suffixed literal here made an Al-Quds till enforce TALA's rules while the Al-Quds
+      merchant's own rules could never reach their own till. One name, used by every reader, so
+      the two halves of the contract cannot drift apart again. Customer's dashKey() is the same
+      string built the same way. */
+  dashKey() { return 'wasla_demo_dashboard_state' + this.sfx(); }
   // ── the live wire · one shared key every Wasla surface writes to and the dashboard reads ──
   //    { at, kind: 'earn'|'reward'|'join'|'redeem'|'renew'|'referral', who, what, card }
   //    newest-first, capped at 20. Written in ENGLISH regardless of the till's language: this is a
@@ -1330,15 +1366,140 @@ class Component extends DCLogic {
     } catch (e) {}
     return 'Tala Hospitality Group';
   }
+
+  // ── WHICH MERCHANT THIS TILL BELONGS TO ─────────────────────────────────────
+  /** wasla-data.js resolves ?acct= and copies that account's nine fields onto window.WASLA_DB
+      before a single line of this file runs, so every WASLA_DB read here is already the right
+      merchant's. These few helpers are all this file needs on top of that.
+
+      `isSeedAcct` is the one that matters. The literal tables further down — five named people,
+      six named cards, eighteen hand-built scannable states, a manager code — are STORIES about
+      ONE account. They cannot be derived and they must never be shown under another shop's name.
+      The test is the suffix, which is '' for exactly that account: no slug is hardcoded, and an
+      account added tomorrow takes the derived path automatically instead of inheriting a stranger's
+      customers. Every branch keyed on it therefore leaves the seeded demo byte-for-byte alone. */
+  acctRec() {
+    try { const A = ((typeof window !== 'undefined' && window.WASLA_DB) || {}).account; if (A && typeof A === 'object' && !Array.isArray(A)) return A; } catch (e) {}
+    return {};
+  }
+  isSeedAcct() { return !this.sfx(); }
+  /** THE OWNER'S GENDER IS THE ACCOUNT'S DATA, not this file's guess. wasla-data.js carries
+      `ownerGender` on every account record precisely because an Arabic sentence ABOUT the owner has
+      to agree with them: Yara Nassar is صاحبة المحل and Abu Shadi is صاحب المحل, and a hardcoded
+      Arabic word here mislabels one of them on every screen it reaches. Default 'm' only when the
+      record says nothing at all — both shipped accounts declare it. */
+  ownerFem() { return String(this.acctRec().ownerGender || 'm').toLowerCase() === 'f'; }
+  /** The owner, first name only — the person a cashier would actually name out loud. */
+  ownerFirst() { const o = String(this.acctRec().owner || ''); return o ? this.shortName(o) : this.L('the owner', this.ownerFem() ? 'صاحبة المحل' : 'صاحب المحل'); }
+  ownerFirstAr() { const o = String(this.acctRec().ownerAr || this.acctRec().owner || ''); return o ? this.shortNameAr(o) : (this.ownerFem() ? 'صاحبة المحل' : 'صاحب المحل'); }
+  /** A stable 8-digit printed code from any seed string, so a derived card can be typed in by
+      hand exactly like a seeded one. Same hash the PIN fallback uses. */
+  demoCode(seed) {
+    let h = 2166136261;
+    const s = String(seed || '');
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return String(10000000 + ((h >>> 0) % 90000000));
+  }
+  slugOf(s) { return String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+  // ── THE SUBMISSION CHANNEL · this till READS it and never writes it ──────────
+  /** A card born in the merchant's own wizard and approved by Wasla has to be scannable here, or
+      the chain stops one step short of the counter. wasla-data.js publishes the key and the row
+      shape; the dashboard writes the row, the console writes the verdict, and this file merges the
+      approved rows for THIS account into its card list and nothing else.
+
+      NOT SUFFIXED, on purpose: the key is keyed by account INSIDE the value, so one key holds every
+      account's submissions and each reader filters on `acct`. Parsed the way every shared key in
+      this file is parsed — try/catch, shape-checked, version-checked, tolerant of fields we have
+      never heard of — and cached for the same 500ms window the dashboard blob is, so a render that
+      resolves six cards costs one parse rather than six. */
+  subsKey() { try { return (typeof window !== 'undefined' && window.WASLA_SUBMISSIONS_KEY) || 'wasla_demo_submissions'; } catch (e) { return 'wasla_demo_submissions'; } }
+  subRows() {
+    const now = Date.now();
+    if (this._subAt && (now - this._subAt) < 500) return this._subC;
+    this._subAt = now; this._subC = [];
+    let acct = '';
+    try { acct = (typeof window !== 'undefined' && window.WASLA_ACCT) || ''; } catch (e) { acct = ''; }
+    let blob = null;
+    try { const raw = this._lsGet(this.subsKey()); blob = raw ? JSON.parse(raw) : null; } catch (e) { blob = null; }
+    if (!blob || typeof blob !== 'object' || Array.isArray(blob)) return this._subC;
+    const out = [];
+    Object.keys(blob).slice(0, 40).forEach(k => {
+      const r = blob[k];
+      if (!r || typeof r !== 'object' || Array.isArray(r)) return;      // not a row
+      if (r.v !== 1) return;                                            // a schema we have never met
+      if (String(r.acct || '') !== acct) return;                        // somebody else's merchant
+      const st = String(r.state || '');
+      if (st !== 'pending' && st !== 'approved' && st !== 'rejected') return;
+      const c = this.cardFromSub(r);
+      if (c) { c.subState = st; out.push(c); }
+    });
+    this._subC = out;
+    return out;
+  }
+  approvedSubs() { return this.subRows().filter(c => c.subState === 'approved'); }
+  /** A card the merchant has submitted and Wasla has not answered yet. It is NOT scannable — but it
+      is the difference between "nothing here" and "it is coming", and a till that knows which one it
+      is in can say so instead of showing an empty shelf. */
+  pendingSubs() { return this.subRows().filter(c => c.subState === 'pending'); }
+  /** One submission row, narrowed to the card shape this till understands. A row missing the two
+      things a card cannot exist without — an id and a name — is dropped rather than half-drawn. */
+  cardFromSub(r) {
+    const str = (x, n, d) => (typeof x === 'string' && x.trim()) ? x.trim().slice(0, n) : d;
+    const hex = (x, d) => (typeof x === 'string' && /^#[0-9a-fA-F]{6}$/.test(x.trim())) ? x.trim() : d;
+    const id = str(r.cardId, 24, ''), name = str(r.card, 40, '');
+    if (!id || !name) return null;
+    const col = hex(r.color, '#1E5C43');
+    return {
+      id, name, ar: str(r.ar, 40, name), type: str(r.type, 16, 'stamps'),
+      color: col, color2: hex(r.color2, col),
+      initial: str(r.initial, 1, name.slice(0, 1).toUpperCase()),
+      tagline: str(r.tagline, 80, ''), taglineAr: '',
+      stampStyle: str(r.stampStyle, 24, ''),
+      goal: (typeof r.goal === 'number' && isFinite(r.goal)) ? Math.max(1, Math.min(30, Math.round(r.goal))) : 8,
+      reward: str(r.reward, 80, ''),
+      rules: this.narrowRules(r.rules), state: 'live', fromWizard: true
+    };
+  }
+  /** EVERY CARD THIS ACCOUNT CAN SCAN TODAY: the shared data's, plus every approved submission.
+      Merged by id with the shared row winning, because that one is the reviewed original. This is
+      the single list `cardIdsByName`, `cardDefs`, the rules layer and the scenario table all read,
+      so a wizard-born card cannot be visible to one of them and invisible to another. */
+  acctCards() {
+    const now = Date.now();
+    if (this._acAt && (now - this._acAt) < 500) return this._acC;
+    this._acAt = now;
+    let base = [];
+    try {
+      const DB = (typeof window !== 'undefined' && window.WASLA_DB) || null;
+      base = (DB && Array.isArray(DB.cards)) ? DB.cards.filter(c => c && typeof c === 'object' && typeof c.id === 'string' && c.id) : [];
+    } catch (e) { base = []; }
+    const out = base.slice(0, 24), seen = {};
+    out.forEach(c => { seen[c.id] = 1; });
+    this.approvedSubs().forEach(c => { if (!seen[c.id]) { seen[c.id] = 1; out.push(c); } });
+    this._acC = out;
+    return out;
+  }
+  cardRecOf(id) { const L = this.acctCards(); for (let i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
+  cardTypeOf(id) { const c = this.cardRecOf(id); return c ? String(c.type || '') : ''; }
   /** Reset's half of the append-only contract: drop the rows THIS till wrote and
       leave every other row exactly where it was. The bus is shared — the merchant
       dashboard and the customer's phone both write to it — so wiping the key
       wholesale would throw away their history to clear ours. Rows from a build
-      that predates the `src` tag are left alone: untagged is not ours to claim. */
+      that predates the `src` tag are left alone: untagged is not ours to claim.
+
+      AND NEITHER IS ANOTHER MERCHANT'S. The bus is deliberately un-suffixed, so
+      once a second account exists this key holds two shops' rows at once, and
+      `src === 'till'` alone stopped meaning "ours" — a wipe on one shop's till
+      would silently take the other shop's scan history with it. Every row this
+      till writes carries its account (see pushLive), so the pair is the test.
+      A till row with no account is treated exactly like an untagged one: not
+      provably ours, therefore left where it is. */
   dropOwnLive() {
     let arr = [];
     try { const raw = this._lsGet(this.liveKey()); const a = raw ? JSON.parse(raw) : null; arr = Array.isArray(a) ? a : []; } catch (e) { return; }
-    const keep = arr.filter(e => !(e && typeof e === 'object' && e.src === 'till'));
+    const me = this.acctName();
+    const keep = arr.filter(e => !(e && typeof e === 'object' && e.src === 'till' && e.acct === me));
     if (keep.length === arr.length) return;
     try { this._lsSet(this.liveKey(), JSON.stringify(keep)); } catch (e) {}
   }
@@ -1353,7 +1514,35 @@ class Component extends DCLogic {
     } catch (e) {}
   }
   /** The till's signature on every event — who served it and where. */
-  liveBy() { return ' · by ' + String(this.state.staffName || '').split(' ')[0] + ' — Rainbow St'; }
+  liveBy() { return ' · by ' + this.shortName(this.state.staffName) + ' — ' + this.tillBranch(); }
+  /** SHARED CONTRACT · `card` ON THE WIRE IS THE CARD'S NAME, EXACTLY AS `cards[].name` SPELLS IT.
+      Not a label, not a heading, not "name · type" — the join key, and only the join key.
+
+      This till used to send the same decorated string it prints on its own screen
+      ("Daraj Coffee · Stamp card"), and every reader on the other side joins on the bare name:
+      the dashboard's card analytics (`e.card === ac.name`), its activity-screen card chips
+      (`a.card === st.actFilter`), and the override queue's card link (`x.name === o.card`).
+      None of those comparisons could ever be true, so a real scan at a real counter reached the
+      feed and then vanished from every screen that counts by card — including the day-one
+      merchant's own analytics page, which kept saying nothing had been counted while they
+      watched the scans happen. The decoration belongs to THIS surface's UI, where scenInfo().card
+      still carries it; the wire carries the name.
+
+      Derived from the card record, not from the display table: `cardIdFor` already resolves a
+      scannable state to the card it is a state OF (a refusal is a state, not a card), and
+      `cardRecOf` is the same merged list — shared data plus approved submissions — that the
+      dashboard builds its roster from. A wizard-born card therefore joins by construction rather
+      than by two files agreeing to spell a label the same way. Falls through to cardDefs so a
+      missing database degrades to this file's own floor instead of an empty key, and returns ''
+      only when the shop genuinely has no card — the one state in which nothing can be scanned
+      at all. */
+  liveCardName(scen) {
+    const id = this.cardIdFor(scen);
+    const c = this.cardRecOf(id);
+    if (c && typeof c.name === 'string' && c.name) return c.name;
+    const d = this.cardDefOf(id);
+    return (d && typeof d.name === 'string') ? d.name : '';
+  }
   /** Builds the event for an action but does NOT write it. Online actions push immediately; an
       offline action rides in the queue and is pushed when the sync actually reaches the server —
       a till with no connection cannot put anything on a live feed. */
@@ -1363,7 +1552,7 @@ class Component extends DCLogic {
   liveForWho(scen, kind, phrase, who) {
     const S = this.scenInfo(scen);
     const n = (typeof who === 'string' && who) ? who : S.m[0];
-    return { kind, who: n, what: n + ' ' + phrase + this.liveBy(), card: S.card };
+    return { kind, who: n, what: n + ' ' + phrase + this.liveBy(), card: this.liveCardName(scen) };
   }
   emitLive(e) { if (e) this.pushLive(e.kind, e.who, e.what, e.card); }
   _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -1494,6 +1683,40 @@ class Component extends DCLogic {
     this.state = { ...this.state, ...p };
     return true;
   }
+  /** DAY ONE IS A DIFFERENT NUMBER, NOT A DIFFERENT SCREEN. The counters in `state` above are the
+      seeded account's afternoon — 61 scans taken, 44 stamps landed, JOD 3.20 sitting on a wallet.
+      A shop that went live this morning has none of it, and "61 scans today" printed over a ledger
+      with nothing in it is exactly the sentence-contradicts-the-number defect this build exists to
+      remove. Every account-dependent default is resolved HERE, in one place, so the boot path and
+      the reset path can never seed two different tills. Returns {} for the seeded account, so its
+      demo is byte-for-byte the one it has always been. */
+  acctBaseState() {
+    if (this.isSeedAcct()) return {};
+    const p = this.staffList()[0] || null;
+    // the stamp goal is the card's, not the state's — a 10-stamp card must not draw eight cups
+    let g = 8;
+    const L = this.acctCards();
+    for (let i = 0; i < L.length; i++) {
+      if (String(L[i].type || '') === 'stamps' && typeof L[i].goal === 'number' && L[i].goal > 0) { g = Math.max(1, Math.min(30, Math.round(L[i].goal))); break; }
+    }
+    return {
+      scansToday: 0, sStamps: 0, sRewards: 0, stamps: 0, xStamps: {},
+      cbBal: 0, pausedBal: 0, pts: 0, rVisits: 0, chVisits: 0, goal: g,
+      earnsToday: 0, redeemsToday: {},
+      staffName: p ? p.name : '', staffAr: p ? p.ar : '', staffInitials: p ? p.initials : '',
+      joinCard: this.defaultCardId()
+    };
+  }
+  /** Applied at CONSTRUCTION for the same reason bootRestore is: componentDidMount is conditional
+      in this runtime and can be skipped entirely. It runs BEFORE the saved blob is folded in, so a
+      session already in progress still wins — that is a later fact about the same till. */
+  applyAcctSeed() {
+    const p = this.acctBaseState();
+    if (!p || !Object.keys(p).length) return false;
+    this.state = { ...this.state, ...p };
+    return true;
+  }
+  __acctSeed = this.applyAcctSeed();
   __restored = this.bootRestore();
   /** Clears ONLY what this till authored: its own blob outright, and its own rows
       out of the two shared registers (the live bus and the override queue). No
@@ -1529,7 +1752,10 @@ class Component extends DCLogic {
       ovReq: null, ovGrant: null, ovDecline: null, ovSeen: [], earnsToday: 0, redeemsToday: {},
       joinOpen: false, joinStage: 'qr', joinCard: 'daraj',
       redeemLocks: {}, renewedExpiring: false, pausedBal: 3.40, logSeq: 0,
-      ramp: 1, stampSeq: 0, amtSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false });
+      ramp: 1, stampSeq: 0, amtSeq: 0, vipClimb: false, vipFromPct: '0%', resetArm: false,
+      // ── and the account's own beginning on top, so a wipe returns THIS shop to ITS first
+      //    morning rather than to the seeded account's afternoon. {} for the seeded account. ──
+      ...this.acctBaseState() });
   }
   /** The welcome-back beat, armed from the ONE path this runtime guarantees: render. Latched on the
       HOST so it survives a logic hot-swap and fires exactly once, not once per render. */
@@ -1609,7 +1835,8 @@ class Component extends DCLogic {
       English only, so the Arabic side lives here — and an unknown branch travels as typed rather
       than being dropped. */
   branchAr(b) {
-    return { 'Rainbow St': 'شارع الرينبو', 'Abdali Mall': 'مول العبدلي', 'Swefieh': 'الصويفية' }[String(b || '')] || String(b || '');
+    return { 'Rainbow St': 'شارع الرينبو', 'Abdali Mall': 'مول العبدلي', 'Swefieh': 'الصويفية',
+      'Jabal Al-Weibdeh': 'جبل اللويبدة' }[String(b || '')] || String(b || '');
   }
   /** Card display NAME → this file's card id. The shared roster lists a person's cards by name
       (it has no notion of an id), so that is the only join available — same join the dashboard
@@ -1618,9 +1845,7 @@ class Component extends DCLogic {
   cardIdsByName() {
     const m = {};
     try {
-      const DB = (typeof window !== 'undefined' && window.WASLA_DB) || null;
-      const cards = (DB && Array.isArray(DB.cards)) ? DB.cards : [];
-      cards.forEach(c => { if (c && typeof c.id === 'string' && typeof c.name === 'string') m[c.name] = c.id; });
+      this.acctCards().forEach(c => { if (c && typeof c.id === 'string' && typeof c.name === 'string') m[c.name] = c.id; });
     } catch (e) {}
     const D = this.cardDefs();
     Object.keys(D).forEach(id => { if (D[id] && D[id].name) m[D[id].name] = id; });
@@ -1651,6 +1876,11 @@ class Component extends DCLogic {
             ar: (typeof p.ar === 'string' && p.ar.trim()) ? p.ar.trim().slice(0, 40) : nm,
             initials: (typeof p.initials === 'string' && p.initials.trim()) ? p.initials.trim().slice(0, 3) : nm.slice(0, 1).toUpperCase(),
             branch: br, branchAr: this.branchAr(br),
+            // A ROSTER ROW MAY CARRY ITS OWN CODE, and `pinForStaff` says that code wins over this
+            // file's demo table. Narrowing the row away without it silently threw that promise away
+            // and every person outside the demo table fell through to the name hash instead — a
+            // four-digit code nobody printed anywhere, on the one screen that has to be typed into.
+            pin: /^\d{4}$/.test(String(p.pin || '')) ? String(p.pin) : undefined,
             cards: (Array.isArray(p.cards) ? p.cards : []).slice(0, 8)
               .map(n => byName[String(n)]).filter(id => !!id)
           };
@@ -1664,11 +1894,93 @@ class Component extends DCLogic {
     this._staff = out;
     return out;
   }
-  tillBranch() { return 'Rainbow St'; }
-  /** Every card in this account, so a roster entry always resolves to a real chip. Only the two
-      Rainbow St cards can be handed out here, but the other three have to exist or a teammate from
-      another branch would show up wearing Daraj's colours. */
+  /** WHERE THIS TILL STANDS. The account's own first branch — which for the seeded account is the
+      same 'Rainbow St' this line used to hardcode, and for a one-branch shop is its only address.
+      It decides who may sign in (`staffByPin`), so getting it from the data rather than from a
+      literal is what lets a shop that is not Tala open its till at all. */
+  tillBranch() {
+    const B = this.acctRec().branches;
+    if (Array.isArray(B) && typeof B[0] === 'string' && B[0].trim()) return B[0].trim().slice(0, 40);
+    return 'Rainbow St';
+  }
+  /** A shop with one address has nothing to pick between — no branch column, no "other branch"
+      chip, no rule to explain. */
+  oneBranch() { const B = this.acctRec().branches; return !Array.isArray(B) || B.length <= 1; }
+  /** Every card in this account, so a roster entry always resolves to a real chip.
+
+      The six literals are the SEEDED account's, hand-tuned down to the tint of each chip; only its
+      two Rainbow St cards can be handed out at that till, but the other four have to exist or a
+      teammate from another branch shows up wearing Daraj's colours. They are its own, so they are
+      only laid down for it. Every account — including that one — then gets a derived entry for any
+      card the literals do not already cover, which is how a card the merchant created in the wizard
+      ten minutes ago turns up here at all. */
   cardDefs() {
+    const out = this.isSeedAcct() ? this.seedCardDefs() : {};
+    this.acctCards().forEach(c => { if (!out[c.id]) out[c.id] = this.cardDefFrom(c); });
+    return out;
+  }
+  /** A card record rendered into the shape this till draws. Every colour is DERIVED from the card's
+      own brand colour, so a card nobody hand-tuned still belongs on the same counter. */
+  cardDefFrom(c) {
+    const col = /^#[0-9a-fA-F]{6}$/.test(String(c.color || '')) ? String(c.color) : '#1E5C43';
+    const n = parseInt(col.slice(1), 16), R = (n >> 16) & 255, G = (n >> 8) & 255, B = n & 255;
+    const name = String(c.name || '').slice(0, 40) || 'Card';
+    return {
+      name, ar: String(c.ar || name).slice(0, 40),
+      initial: String(c.initial || name.slice(0, 1)).slice(0, 1).toUpperCase(),
+      color: col, dot: this.lift(col, .30), fg: this.lift(col, .62),
+      bg: 'rgba(' + R + ',' + G + ',' + B + ',.28)', br: 'rgba(' + R + ',' + G + ',' + B + ',.42)',
+      slug: this.slugOf(c.id || name),
+      // A wizard card ships an English tagline and no Arabic one. Rather than leak the English onto
+      // an Arabic till, the Arabic side is GENERATED from the card's own type and goal — a real
+      // sentence about the real card, in the language the cashier is reading.
+      line: String(c.tagline || '').slice(0, 80) || this.promiseEn(c),
+      lineAr: String(c.taglineAr || '').slice(0, 80) || this.promiseAr(c)
+    };
+  }
+  /** What a card of this type promises, said in one line, from the card's own numbers. */
+  promiseEn(c) {
+    const t = String(c.type || ''), g = (typeof c.goal === 'number' && c.goal > 0) ? c.goal : 0;
+    if (t === 'stamps') return g ? 'Collect ' + g + ', the reward is on us' : 'A stamp every visit';
+    if (t === 'cashback') return 'A share of every bill comes back';
+    if (t === 'points') return 'Points on every basket';
+    if (t === 'discount') return 'A standing discount for members';
+    if (t === 'coupon') return 'One offer, one use';
+    if (t === 'vip') return 'Tiers, and real perks';
+    if (t === 'challenge') return g ? g + ' visits inside the window' : 'A goal with a clock';
+    if (t === 'membership') return 'Membership, with a renewal date';
+    if (t === 'prepaid') return 'Load it once, spend it down';
+    return 'A loyalty card in the wallet';
+  }
+  promiseAr(c) {
+    const t = String(c.type || ''), g = (typeof c.goal === 'number' && c.goal > 0) ? c.goal : 0;
+    if (t === 'stamps') return g ? 'اجمع ' + this.arStamps(g) + ' والمكافأة علينا' : 'ختم مع كل زيارة';
+    if (t === 'cashback') return 'جزء من كل فاتورة يرجع لك';
+    if (t === 'points') return 'نقاط على كل طلب';
+    if (t === 'discount') return 'خصم دائم لحاملي البطاقة';
+    if (t === 'coupon') return 'عرض واحد لمرة واحدة';
+    if (t === 'vip') return 'فئات ومزايا حقيقية';
+    if (t === 'challenge') return g ? this.arVisits(g) + ' ضمن المهلة' : 'هدف بمهلة محددة';
+    if (t === 'membership') return 'عضوية بتاريخ تجديد';
+    if (t === 'prepaid') return 'اشحنها مرة، واصرف منها';
+    return 'بطاقة ولاء في المحفظة';
+  }
+  /** The card a screen falls back to when it was handed an id nobody has. Never undefined: a
+      chip with no name is a chip that renders "undefined" at a counter. */
+  defaultCardId() {
+    if (this.isSeedAcct()) return 'daraj';
+    const L = this.acctCards();
+    return L.length ? L[0].id : '';
+  }
+  cardDefOf(id) {
+    const D = this.cardDefs();
+    if (id && D[id]) return D[id];
+    const d = this.defaultCardId();
+    if (d && D[d]) return D[d];
+    return { name: '', ar: '', initial: '·', color: '#26262B', dot: '#8E8C96', fg: '#9B99A3',
+      bg: 'rgba(38,38,43,.6)', br: 'rgba(244,242,238,.14)', slug: '', line: '', lineAr: '' };
+  }
+  seedCardDefs() {
     return {
       daraj: { name: 'Daraj Coffee', ar: 'مقهى درج', initial: 'D', color: '#1E5C43', dot: '#2FAE66', fg: '#7BD8A5', bg: 'rgba(30,92,67,.25)', br: 'rgba(47,174,102,.35)', slug: 'daraj', line: 'Buy 7, the 8th is on us', lineAr: 'اشترِ سبعة والثامن علينا' },
       layl: { name: 'Layl Lounge', ar: 'صالة ليل', initial: 'L', color: '#1B2440', dot: '#6E82C4', fg: '#A9B6E0', bg: 'rgba(27,36,64,.4)', br: 'rgba(120,140,200,.3)', slug: 'layl', line: 'Three tiers, real perks', lineAr: 'ثلاث فئات ومزايا حقيقية' },
@@ -1682,7 +1994,21 @@ class Component extends DCLogic {
   /** The person on shift, resolved back to the roster so their cards and branch travel with them. */
   meStaff() { const n = this.state.staffName; return this.staffList().filter(p => p.name === n)[0] || this.staffList()[0]; }
   meIdx() { const n = this.state.staffName, L = this.staffList(); for (let i = 0; i < L.length; i++) if (L[i].name === n) return i; return 0; }
-  myCardIds() { return this.meStaff().cards; }
+  /** THE CARDS THIS PERSON IS CLEARED FOR. Normally exactly what the roster says.
+
+      An EMPTY assignment list is the one case that needs reading rather than obeying. On a roster
+      of one — the owner, who is also the cashier — there is nobody else a card could have been
+      assigned to, and the account's roster was written before its first card existed. Obeying the
+      literal empty there gives a shop a till that refuses to scan its own only card, which is not
+      what "nobody has been assigned this yet" means. On any roster with somebody else on it, an
+      empty list still means exactly what it says. */
+  myCardIds() {
+    const me = this.meStaff(), ids = (me && me.cards) || [];
+    if (ids.length) return ids;
+    const owner = String(this.acctRec().owner || '');
+    if (this.staffList().length <= 1 || (me && owner && me.name === owner)) return this.acctCards().map(c => c.id);
+    return ids;
+  }
   /** A demo tile tapped through the lock: the lock card bumps rather than pretending nothing
       happened — the PIN is printed right there on it. */
   lockNudge() { this.setState(s => ({ lockSeq: s.lockSeq + 1 })); }
@@ -1722,7 +2048,25 @@ class Component extends DCLogic {
   }
   /** The person on shift's own code — the hint on the lock screen, and nothing else. */
   staffPin() { return this.pinForStaff(this.meStaff()); }
-  managerPin() { return '4680'; }
+  /** THE MANAGER'S CODE. On the seeded account the manager is a person off-roster and the code is
+      the demo's own four digits. On a shop whose whole roster is the owner, there is no separate
+      manager to fetch — the owner IS the manager, and the code that authorises an override is the
+      code they already typed to open the till. Derived by matching the roster against
+      `account.owner`, so the two can never drift apart, and never a second literal to keep in sync
+      with the sheet that prints it. */
+  managerPin() {
+    if (this.isSeedAcct()) return '4680';
+    const L = this.staffList(), owner = String(this.acctRec().owner || '');
+    for (let i = 0; i < L.length; i++) if (L[i].name === owner) return this.pinForStaff(L[i]);
+    if (L.length === 1) return this.pinForStaff(L[0]);
+    return '4680';
+  }
+  /** Is the manager standing at this till rather than being called over? True when the person
+      signed in is the owner — the one-person shop, where "ask the manager" is "decide". */
+  mgrIsMe() {
+    const owner = String(this.acctRec().owner || '');
+    return !!owner && String(this.state.staffName || '') === owner;
+  }
   /** Locks the phone WITHOUT ending the shift — the between-customers gesture. Everything
       transient goes with it: an open PIN pad, a half-typed bill, a live undo. */
   lockTill(auto) {
@@ -1828,7 +2172,15 @@ class Component extends DCLogic {
         earnsToday: 0, redeemsToday: {}, ovReq: null, ovGrant: null, ovDecline: null }));
       h.__wsRampKey = null;   // a new shift counts its own totals up from zero
       this.logAction(null, 'shiftStart', p.name);
-      this.flashNow('✓', '#2FAE66', this.L('Shift started', 'بدأت المناوبة'), this.L(p.name.split(' ')[0] + ' is on the till · Rainbow St · counters at zero.', p.ar.split(' ')[0] + ' على الصندوق · شارع الرينبو · العدّادات من الصفر.'));
+      // THE FIRST SHIFT A TILL EVER OPENS is not "counters at zero" — the counters were always
+      // going to be zero. It is the moment the shop starts counting at all, and it happens once.
+      const br = this.tillBranch(), brA = this.branchAr(br), f = this.shortName(p.name), fA = this.shortNameAr(p.ar);
+      if (this.firstShiftEver()) {
+        this.flashNow('✓', '#2FAE66', this.L('The till is open', 'الصندوق صار جاهز'),
+          this.L(f + ' is on the till · ' + br + ' · this shop’s first shift.', fA + ' على الصندوق · ' + brA + ' · أول مناوبة في هذا المحل.'));
+      } else {
+        this.flashNow('✓', '#2FAE66', this.L('Shift started', 'بدأت المناوبة'), this.L(f + ' is on the till · ' + br + ' · counters at zero.', fA + ' على الصندوق · ' + brA + ' · العدّادات من الصفر.'));
+      }
     } else {
       this.setState({ locked: false, lockDigits: '', lockTries: 0, lockErr: false, lockStaff: null, lockWarn: false, lockAuto: false });
     }
@@ -1976,7 +2328,7 @@ class Component extends DCLogic {
     const sig = ovr ? { by, ovr } : { by };
     const ovPhrase = ovr ? ' — manager override by ' + ovr : '';
     // the card that resets is the one that was full — hers, not whoever else's count `stamps` holds
-    if (tag === 'stamps') { this.setState(s => ({ ...this.stampPatch(s, scen, 0), sRewards: s.sRewards + 1, mode: 'collect', stampSeq: 0 })); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L('Free drink — a fresh card is already counting.', 'مشروب مجاني — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward', undefined, sig); this.emitLive(this.liveFor(scen, 'reward', 'redeemed a free drink' + ovPhrase)); }
+    if (tag === 'stamps') { this.setState(s => ({ ...this.stampPatch(s, scen, 0), sRewards: s.sRewards + 1, mode: 'collect', stampSeq: 0 })); const RWr = this.rw(scen); this.flashNow('stamp', '#2FAE66', this.L('Reward redeemed', 'تم استبدال المكافأة'), this.L(RWr.cap + ' — a fresh card is already counting.', RWr.ar + ' — وبطاقة جديدة بدأت العدّ فوراً.')); this.logAction(scen, 'redReward', undefined, sig); this.emitLive(this.liveFor(scen, 'reward', 'redeemed ' + RWr.a + ovPhrase)); }
     if (tag === 'cash') {
       // ONE wallet key, resolved by the one function — see walletKeyFor
       const K = this.walletKeyFor(scen), bal = st[K];
@@ -2065,7 +2417,7 @@ class Component extends DCLogic {
       case 'chVisit': return { patch: s => ({ chVisits: Math.max(0, s.chVisits - 1), chDone: false, chFrom: s.chVisits, chSeq: s.chSeq + 1 }),
         effect: this.L('Takes the visit back off the challenge clock.', 'يُزيل الزيارة من عدّاد التحدي.'), phrase: 'had a challenge visit corrected off' };
       case 'redReward': return { patch: s => ({ ...this.stampPatch(s, l.scen, s.goal), sRewards: Math.max(0, s.sRewards - 1), stampSeq: 0, ...this.unCount(s, l) }),
-        effect: this.L('Puts the full card back — the free drink is un-spent.', 'يُعيد البطاقة مكتملة — والمشروب المجاني لم يُصرف.'), phrase: 'had a redeemed reward credited back' };
+        effect: this.L('Puts the full card back — ' + this.rw(l.scen).the + ' is un-spent.', 'يُعيد البطاقة مكتملة — ' + this.rw(l.scen).arUnspent), phrase: 'had a redeemed reward credited back' };
       case 'redCash': return { patch: s => ({ [K]: +(s[K] + n(l.v)).toFixed(2), ...this.unCount(s, l) }),
         effect: this.L('Credits JOD ' + n(l.v).toFixed(2) + ' back to the wallet.', 'يُعيد JOD ' + n(l.v).toFixed(2) + ' إلى المحفظة.'), phrase: 'had JOD ' + n(l.v).toFixed(2) + ' credited back' };
       case 'redPts': { const r = this.rungs()[l.v] || { cost: 0, en: '' }; return { patch: s => ({ pts: s.pts + r.cost, ...this.unCount(s, l) }),
@@ -2191,7 +2543,7 @@ class Component extends DCLogic {
       tillLog: s.tillLog.map(r => r.id === l.id ? { ...r, corrected: true } : r),
       priorFixed: l.prior ? [l.id, ...(s.priorFixed || []).filter(x => x !== l.id)].slice(0, 40) : (s.priorFixed || []) }));
     this.logAction(l.scen, l.prior ? 'priorCorrection' : 'correction', l.k, { by, who: l.who, whoAr: l.whoAr, day: l.prior ? this.rowAgeDays(l) : undefined });
-    this.flashNow('↺', '#F0A92B', this.L('Corrected', 'تم التصحيح'), c.effect + this.L(' Authorised by ' + String(by).split(' ')[0] + '.', ' بموافقة ' + String(this.state.staffAr).split(' ')[0] + '.'));
+    this.flashNow('↺', '#F0A92B', this.L('Corrected', 'تم التصحيح'), c.effect + this.L(' Authorised by ' + this.shortName(by) + '.', ' بموافقة ' + this.shortNameAr(this.state.staffAr) + '.'));
     const ev = this.liveForWho(l.scen, 'earn', c.phrase + (l.prior ? ' (' + this.dayWordEn(this.rowAgeDays(l)) + ')' : ''), l.who);
     if (st.offline) this.pushQueue(l.scen, 'qCorrection', l.k, ev, { who: l.who, whoAr: l.whoAr }); else this.emitLive(ev);
     this.saveScan();
@@ -2204,8 +2556,17 @@ class Component extends DCLogic {
       a card without one cannot be typed in (the foreign pass keeps its code so the refusal can be
       reached by hand too; the guard and the tier refusal are STATES of a card that already has a
       code, not separate cards, so they carry none). `phone` is what the counter asks for when the
-      customer forgot the pass entirely. */
+      customer forgot the pass entirely.
+
+      THE TABLE BELOW IS ONE ACCOUNT'S. Five named people, six named cards, and thirteen refusals
+      and edge states that are each a STORY somebody wrote — a paused card, a member twelve days
+      lapsed, a bonus balance that is not cash. None of that can be derived, and showing any of it
+      under another shop's name would be a Daraj Coffee customer walking up to a falafel counter.
+      So the literals are the seeded account's, and every other account gets `scenDerived()`: its
+      own cards, its own first member, and nothing invented. A shop whose first card is still in
+      review derives NOTHING, and the till says so — which is the honest answer on day one. */
   scenAll() {
+    if (!this.isSeedAcct()) return this.scenDerived();
     return {
       stamps: { m: ['Sara Al-Amin', 'سارة الأمين', 'SA'], card: 'Daraj Coffee · Stamp card', cardAr: 'مقهى درج · بطاقة أختام', color: '#1E5C43', art: 'coffee', phone: '+962 79 555 0114', code: '01142201' },
       cashback: { m: ['Khaled Mansour', 'خالد منصور', 'KM'], card: 'Zaytoun Kitchen · Cashback', cardAr: 'مطبخ زيتون · استرداد نقدي', color: '#5C6B2F', phone: '+962 79 555 0166', code: '01775533' },
@@ -2239,6 +2600,207 @@ class Component extends DCLogic {
       // the counter enrolment writes its own rows into the log and the queue
       join: { m: ['New member', 'عضو جديد', '+'], card: 'Counter QR', cardAr: 'رمز الصندوق', color: '#E88024' }
     };
+  }
+  /** THE PERSON THIS ACCOUNT'S TILL SCANS. Its own first member when it has one; otherwise the
+      person its join form is pre-filled with — the SAME record the customer surface joins as, so
+      the stamp this till lands and the stamp that phone shows belong to one human being rather
+      than to two demos that happen to run at the same time. Null when the shop has neither, which
+      is a real day-one state and not a bug: nobody has joined yet. */
+  demoMember() {
+    let M = [], S = {};
+    try {
+      const DB = (typeof window !== 'undefined' && window.WASLA_DB) || {};
+      M = Array.isArray(DB.members) ? DB.members : [];
+      S = (DB.signup && typeof DB.signup === 'object' && !Array.isArray(DB.signup)) ? DB.signup : {};
+    } catch (e) {}
+    const first = M.filter(m => m && typeof m.name === 'string' && m.name.trim())[0] || null;
+    const d = (S.defaultMember && typeof S.defaultMember === 'object' && !Array.isArray(S.defaultMember)) ? S.defaultMember : {};
+    const name = first ? String(first.name).trim().slice(0, 40) : (typeof d.name === 'string' ? d.name.trim().slice(0, 40) : '');
+    if (!name) return null;
+    const ar = first ? String(first.ar || first.name).trim().slice(0, 40) : (typeof d.ar === 'string' && d.ar.trim() ? d.ar.trim().slice(0, 40) : name);
+    const phone = first ? String(first.phone || '').slice(0, 24) : String(d.phone || '').slice(0, 24);
+    const ini = name.split(/\s+/).slice(0, 2).map(w => w.slice(0, 1).toUpperCase()).join('');
+    return { name, ar, initials: ini || name.slice(0, 1).toUpperCase(), phone, seeded: !!first };
+  }
+  /** Card type → the scannable state that knows how to draw it. The keys are the archetypes every
+      screen in this file already branches on, so a derived card runs the same machinery a seeded
+      one does — nothing here is a second code path. */
+  scenKeyForType(t) {
+    return { stamps: 'stamps', cashback: 'cashback', points: 'points', discount: 'discount',
+      coupon: 'coupon', vip: 'vip', challenge: 'challenge', membership: 'membership',
+      prepaid: 'prepaid' }[String(t || '')] || '';
+  }
+  /** The type's own name, from the shared 9-type catalogue both languages already ship. */
+  typeLabel(t) {
+    try {
+      const T = ((typeof window !== 'undefined' && window.WASLA_DB) || {}).types;
+      if (Array.isArray(T)) for (let i = 0; i < T.length; i++) if (T[i] && T[i].id === t) return { en: String(T[i].name || ''), ar: String(T[i].ar || '') };
+    } catch (e) {}
+    return { en: 'Card', ar: 'بطاقة' };
+  }
+  /** ONE SCANNABLE STATE PER CARD THIS SHOP ACTUALLY HAS. No refusal is invented here: a paused
+      card, a lapsed membership and an over-cap redemption are things that HAPPEN to an account, and
+      a shop on its first week has not had them happen yet. The one exception is the earning guard,
+      which is not a story but a rule — it is a state of the stamp card itself and is reachable the
+      second time the same customer is scanned on the same day, so it is derived alongside it.
+      Cached for the same 500ms window the card list is: a card approved in another tab has to
+      appear here within a beat, and a table that moved under a tap would scan the wrong person. */
+  scenDerived() {
+    const now = Date.now();
+    if (this._sdAt && (now - this._sdAt) < 500) return this._sdC;
+    this._sdAt = now;
+    const out = {}, used = {}, P = this.demoMember(), cards = this.acctCards();
+    const who = P ? [P.name, P.ar, P.initials] : ['', '', ''];
+    for (let i = 0; i < cards.length; i++) {
+      const c = cards[i], k = this.scenKeyForType(c.type);
+      if (!k || used[k]) continue;
+      // stored value is a plan feature before it is a card — a shop that is not on it never sees it
+      if (k === 'prepaid' && !this.ppAllowed()) continue;
+      used[k] = 1;
+      const TL = this.typeLabel(c.type);
+      const col = /^#[0-9a-fA-F]{6}$/.test(String(c.color || '')) ? String(c.color) : '#26262B';
+      const nm = String(c.name || '').slice(0, 40), nmAr = String(c.ar || c.name || '').slice(0, 40);
+      out[k] = {
+        m: who,
+        card: nm + (TL.en ? ' · ' + TL.en : ''), cardAr: nmAr + (TL.ar ? ' · ' + TL.ar : ''),
+        color: col,
+        art: String(c.stampStyle || '') === 'coffee' ? 'coffee' : undefined,
+        phone: (P && P.phone) || '',
+        code: this.demoCode(c.id + '|' + ((P && P.phone) || '')),
+        cardId: c.id
+      };
+      // the guard is a STATE of the stamp card, so it carries no printed code of its own
+      if (k === 'stamps') out.guard = { ...out.stamps, code: undefined };
+    }
+    // A pass from another Wasla account is the one refusal every till can meet on its first day,
+    // and it is the same refusal everywhere: not ours, politely.
+    out.foreign = { m: ['Unknown pass', 'بطاقة غير معروفة', '؟'], card: 'Another Wasla account — not yours', cardAr: 'حساب واسلة آخر — ليس حسابك', color: '#6B6760', code: '01890021' };
+    out.join = { m: ['New member', 'عضو جديد', '+'], card: 'Counter QR', cardAr: 'رمز الصندوق', color: '#E88024' };
+    this._sdC = out;
+    return out;
+  }
+  /** Is there anything at all to scan? False is a designed state, not an error: the window between
+      the account going live and its first card being approved is real, and it is exactly where a
+      cafe owner meets this screen. */
+  scanScens() {
+    const S = this.scenAll(), out = [];
+    Object.keys(S).forEach(k => { if (k !== 'join' && k !== 'foreign' && k !== 'guard' && S[k] && S[k].m && S[k].m[0]) out.push(k); });
+    return out;
+  }
+  hasLiveCard() { return this.scanScens().length > 0; }
+  /** The state the big scan circle resolves to — the first real card this shop has. */
+  firstScen() { const L = this.scanScens(); return L.length ? L[0] : ''; }
+
+  // ── DAY ONE · the three moments that only ever happen once ──────────────────
+  /** Nothing has EVER been rung up on this till. The ledger is the source, not a flag: it survives
+      the lock, the reload and the handover, so this cannot claim a first over a till that already
+      has rows in it. Never true on the seeded account, whose till has a whole afternoon behind it. */
+  firstShiftEver() {
+    if (this.isSeedAcct()) return false;
+    return (this.state.tillLog || []).filter(r => r && r.k !== 'shiftStart').length === 0;
+  }
+  /** No stamp has ever landed here. The first one is the moment the product becomes real in front
+      of the owner — it deserves its own sentence, once, and the ordinary one every time after.
+
+      THE LEDGER, NOT THE COUNTER. `sStamps` is a SHIFT total and openTill resets it to zero, so
+      reading it would let the second shift of the week claim the first stamp of the shop's life.
+      The till ledger survives the lock, the reload and the handover, and it is the only thing here
+      that can answer "has this ever happened". (It is a day's record by contract, so a session
+      resumed on a later calendar day starts a fresh ledger — a real limit of the ledger, stated
+      rather than papered over.) */
+  firstStampEver() {
+    if (this.isSeedAcct()) return false;
+    return (this.state.tillLog || []).filter(r => r && r.k === 'stamp').length === 0;
+  }
+  /** Nobody has joined this shop yet. Two ways that stops being true: the shared data grows a member
+      row, or this till hands a pass over the counter — and the second one is why the ledger is read
+      as well. Without it the counter would announce a first member every single time. */
+  noMembersYet() {
+    if (this.isSeedAcct()) return false;
+    const P = this.demoMember();
+    if (P && P.seeded) return false;
+    return (this.state.tillLog || []).filter(r => r && r.k === 'join').length === 0;
+  }
+  /** A PERSON'S SHORT NAME. Splitting on the first space is right for "Sara Al-Amin" and wrong for
+      "Abu Shadi": a kunya is two words and one name, and a till that greets the owner as "Abu" has
+      mangled his name in front of his own counter. No seeded name begins with one of these
+      particles, so this is a no-op on the demo everybody has already seen. */
+  shortName(n) {
+    const p = String(n || '').trim().split(/\s+/);
+    if (!p[0]) return '';
+    const k = { abu: 1, abo: 1, abou: 1, umm: 1, um: 1, abd: 1, abdel: 1, abdul: 1, ibn: 1, bin: 1 };
+    return (p.length > 1 && k[p[0].toLowerCase()]) ? p[0] + ' ' + p[1] : p[0];
+  }
+  shortNameAr(n) {
+    const p = String(n || '').trim().split(/\s+/);
+    if (!p[0]) return '';
+    return (p.length > 1 && ['أبو', 'أبا', 'أبي', 'أم', 'عبد', 'ابن', 'بن'].indexOf(p[0]) >= 0) ? p[0] + ' ' + p[1] : p[0];
+  }
+  /** THE REWARD A STAMP CARD PROMISES, in the four shapes the copy needs. The seeded card's are
+      written and stay written. A card the merchant built in the wizard carries ONE English line and
+      no Arabic one, so the Arabic side names the reward generically rather than dropping an English
+      phrase into an Arabic sentence at a counter. */
+  rw(scen) {
+    // `ar` is the indefinite spelling and `arThe` the definite one — Arabic marks the difference
+    // with the article, and "استبدال مشروب مجاني" is not the sentence "استبدال المشروب المجاني" is.
+    if (this.isSeedAcct()) return { a: 'a free drink', the: 'the free drink', cap: 'Free drink', ar: 'مشروب مجاني', arThe: 'المشروب المجاني', arUnspent: 'والمشروب المجاني لم يُصرف.' };
+    const c = this.cardRecOf(this.cardIdFor(scen));
+    const raw = (c && String(c.reward || '').trim().slice(0, 60)) || '';
+    const low = raw ? (raw.charAt(0).toLowerCase() + raw.slice(1)) : 'the reward';
+    return { a: low, the: low, cap: raw || 'The reward', ar: 'المكافأة', arThe: 'المكافأة', arUnspent: 'والمكافأة لم تُصرف.' };
+  }
+  /** The one thing a till with no live card can say, said the same way everywhere it is asked. */
+  noCardFlash() {
+    const pend = this.pendingSubs().length > 0;
+    this.flashNow('◇', '#F0A92B', this.L('No card is live yet', 'ما في بطاقة شغّالة بعد'),
+      pend ? this.L('The first card is with Wasla for review. The moment it is approved this till can scan it.', 'أول بطاقة عند واسلة للمراجعة. لحظة ما تُعتمد يقدر هذا الصندوق يمسحها.')
+        : this.L('Create the first card from the dashboard. It lands here the moment Wasla approves it.', 'أنشئ أول بطاقة من لوحة التحكم. توصل هنا لحظة ما تعتمدها واسلة.'));
+  }
+
+  // ── THE DEMO RAIL, DERIVED ──────────────────────────────────────────────────
+  /** The rail is the demo's own English index of what can be tapped. For the seeded account it is
+      a hand-written list of eighteen stories; for any other account it is this — one row per card
+      the shop actually has, labelled with the shop's own member and the card's own state. Nothing
+      here is typed: the glyph is the card's initial, the colour is the card's colour, and the
+      sentence is read off the same numbers the phone beside it is reading. */
+  derivedRail() {
+    const st = this.state, S = this.scenAll(), out = [];
+    this.scanScens().forEach(k => {
+      const I = S[k], c = this.cardRecOf(I.cardId) || {};
+      const who = this.shortName(I.m[0]);
+      let sub = '';
+      if (k === 'stamps') {
+        const n = this.stampsFor(k), g = st.goal;
+        sub = n <= 0 ? 'an empty card · ' + g + ' to the reward' : n + '/' + g + ' · ' + Math.max(0, g - n) + ' to the reward';
+      } else if (k === 'cashback') sub = 'JOD ' + (Number(st.cbBal) || 0).toFixed(2) + ' balance · min JOD ' + this.minRedeemFor(k).toFixed(2);
+      else if (k === 'points') sub = (st.pts | 0) + ' points · nothing preselected';
+      else if (k === 'coupon') sub = 'one use · the till asks twice';
+      else if (k === 'vip') sub = (st.rVisits | 0) + ' visits on the ladder';
+      else if (k === 'discount') sub = 'a verdict, not a transaction';
+      else if (k === 'membership') sub = 'a verdict · active';
+      else if (k === 'challenge') sub = (st.chVisits | 0) + '/' + (st.chGoal | 0) + ' inside the window';
+      else if (k === 'prepaid') sub = this.jodM(this.ppBalance(this.ppSeedFor(k))) + ' on the card';
+      out.push([k, who + ' — ' + String(c.name || I.card), sub, I.color, String(c.initial || '·').slice(0, 1), '13px']);
+    });
+    return out;
+  }
+  /** The states where the answer is no. A shop on its first week has not had a card paused or a
+      membership lapse, so nothing is invented here: what is left is the earning guard (a RULE, live
+      from the first scan), a stranger's pass, and — when the plan does not carry stored value — the
+      one row that says so out loud instead of leaving a hole where a card type used to be. */
+  derivedEdgeRail() {
+    const out = [];
+    if (this.scenAll().guard) {
+      const g = this.guardPerDay(this.rulesForScen('stamps'));
+      out.push(['guard', 'The earning guard', (g === Infinity ? 'off — no limit' : g + ' per customer per day') + ' · scan the same customer twice', '#F0A92B', '⏱', '12px']);
+    }
+    out.push(['foreign', 'A stranger’s card', 'another Wasla account · polite refusal', '#E2563A', '⚠', '13px']);
+    if (!this.ppAllowed() && this.ppOffMode() === 'locked') {
+      out.push(['', 'Stored value', 'not on the ' + (String(this.acctRec().plan || 'Starter')) + ' plan · this till never takes cash', '#6B6760', 'JOD', '9px',
+        this.L('Taking a customer’s cash onto a pass is an account permission, not a card setting. It is off on this plan, so the till never offers it.',
+          'استلام نقد الزبون على البطاقة صلاحية حساب لا إعداد بطاقة. وهي مغلقة على هذه الباقة، فالصندوق لا يعرضها أصلاً.')]);
+    }
+    return out;
   }
   scenInfo(scen) { return this.scenAll()[scen] || { m: ['', '', ''], card: '', cardAr: '', color: '#26262B' }; }
   memberName(scen) { const m = this.scenInfo(scen).m; return this.L(m[0], m[1]); }
@@ -2539,7 +3101,7 @@ class Component extends DCLogic {
   joinQrEl(text, px) {
     const R = (typeof React !== 'undefined' && React) ? React : null;
     if (!R) return null;
-    const n = 25, d = this.joinQrPath(text, n), c = this.cardDefs()[this.state.joinCard] || this.cardDefs().daraj;
+    const n = 25, d = this.joinQrPath(text, n), c = this.cardDefOf(this.state.joinCard);
     const mid = n / 2;
     return R.createElement('svg', { viewBox: '-1 -1 ' + (n + 2) + ' ' + (n + 2), width: px, height: px, style: { display: 'block', margin: '0 auto', shapeRendering: 'crispEdges' } },
       R.createElement('rect', { key: 'bg', x: -1, y: -1, width: n + 2, height: n + 2, fill: '#FFFFFF' }),
@@ -2551,15 +3113,26 @@ class Component extends DCLogic {
   /** Who walks away with a pass. The counter join is the acquisition moment the account's own
       numbers put at 68% — the till has to be able to hand a card over, not just read one. */
   joinPerson(cardId) {
+    // Every account joins the person ITS OWN data says joins — the same record the customer surface
+    // signs up as, so the pass this counter hands over and the pass that phone shows are one pass.
+    if (!this.isSeedAcct()) {
+      const P = this.demoMember();
+      return P ? { en: P.name, ar: P.ar, initials: P.initials } : { en: 'New member', ar: 'عضو جديد', initials: '+' };
+    }
     return cardId === 'layl'
       ? { en: 'Nadeen Sultan', ar: 'نادين سلطان', initials: 'NS' }
       : { en: 'Hala Odeh', ar: 'هلا عودة', initials: 'HO' };
   }
-  joinUrlFor(cardId) { return 'wasla.app/j/' + ((this.cardDefs()[cardId] || this.cardDefs().daraj).slug); }
+  /** A join URL is minted PER CARD. With no card there is no URL — the empty string, not a path
+      ending in a slash that would 404 in a customer's hand. */
+  joinUrlFor(cardId) { const s = this.cardDefOf(cardId).slug; return s ? 'wasla.app/j/' + s : ''; }
   openJoin() {
     const ids = this.myCardIds();
+    // NOTHING TO HAND OVER. A QR for a card that does not exist would 404 in the customer's hand —
+    // the till says why instead, and the sheet never opens empty.
+    if (!ids.length) { this.noCardFlash(); return; }
     clearTimeout(this._jt);
-    this.setState(s => ({ joinOpen: true, joinStage: ids.length > 1 ? 'pick' : 'qr', joinCard: ids[0] || 'daraj', historyOpen: false, lookupOpen: false }));
+    this.setState(s => ({ joinOpen: true, joinStage: ids.length > 1 ? 'pick' : 'qr', joinCard: ids[0], historyOpen: false, lookupOpen: false }));
   }
   closeJoin() { clearTimeout(this._jt); this.setState({ joinOpen: false, joinStage: 'qr' }); }
   /** The customer is pointing a camera at the phone: a beat of waiting, then the pass exists. */
@@ -2569,11 +3142,20 @@ class Component extends DCLogic {
     this._jt = setTimeout(() => { const A = (this.__host && this.__host.logic) || this; A.finishJoin(); }, 1500);
   }
   finishJoin() {
-    const st = this.state, p = this.joinPerson(st.joinCard), cd = this.cardDefs()[st.joinCard] || this.cardDefs().daraj;
+    const st = this.state, p = this.joinPerson(st.joinCard), cd = this.cardDefOf(st.joinCard);
+    const firstMember = this.noMembersYet();
     this.setState({ joinStage: 'done' });
     this.logAction('join', 'join', p.en, { who: p.en, whoAr: p.ar });
-    const ev = { kind: 'join', who: p.en, what: p.en + ' joined from the counter QR' + this.liveBy(), card: cd.name };
+    // THE FIRST MEMBER IS AN EVENT, and the wire carries that fact so the dashboard can celebrate it
+    // rather than watching a number go from 0 to 1. It is a phrase on the same row, not a new kind.
+    const ev = { kind: 'join', who: p.en, what: p.en + (firstMember ? ' is the first member — joined from the counter QR' : ' joined from the counter QR') + this.liveBy(), card: cd.name };
     if (st.offline) this.pushQueue('join', 'qJoin', p.en, ev, { who: p.en, whoAr: p.ar }); else this.emitLive(ev);
+    // and on the till too, where the owner is actually standing
+    if (firstMember && !st.offline) {
+      this.flashNow('＋', '#E88024', this.L('The first member', 'أول عضو'),
+        this.L(this.shortName(p.en) + ' is member number one at ' + this.acctName() + '. The card is in the wallet already.',
+          this.shortNameAr(p.ar) + ' أول عضو في ' + String(this.acctRec().companyAr || this.acctName()) + '. والبطاقة صارت في المحفظة.'));
+    }
     this.saveScan();
   }
 
@@ -2624,7 +3206,7 @@ class Component extends DCLogic {
   // ────────────────────────────────────────────────────────────────────────────
   //  THE RULES ARE THE MERCHANT'S, NOT THE TILL'S
   //  Three layers, highest first:
-  //    1  the merchant dashboard's own overlay in `wasla_demo_dashboard_state`
+  //    1  the merchant dashboard's own overlay, under dashKey() — one key PER ACCOUNT
   //    2  the shared card data in wasla-data.js  (WASLA_DB.cards[id].rules)
   //    3  this file's own constants — the floor, so a missing DB breaks nothing
   //  Nothing below this line invents a number. Enforcement AND copy both read
@@ -2632,6 +3214,8 @@ class Component extends DCLogic {
   // ────────────────────────────────────────────────────────────────────────────
   /** Which merchant card a scannable state belongs to. Refusals are STATES of a card, not cards. */
   cardIdFor(scen) {
+    // a derived state carries its own card id, so the join is the data's rather than a second map
+    if (!this.isSeedAcct()) { const S = this.scenAll()[scen]; return (S && S.cardId) || this.defaultCardId(); }
     return { stamps: 'daraj', guard: 'daraj', overcap: 'daraj', coupon: 'daraj', challenge: 'daraj',
       vip: 'layl', tierlock: 'layl',
       cashback: 'zaytoun', paused: 'zaytoun', discount: 'zaytoun',
@@ -2730,7 +3314,7 @@ class Component extends DCLogic {
     if (this._dashAt && (now - this._dashAt) < 500) return this._dashB;
     this._dashAt = now; this._dashB = null;
     try {
-      const raw = this._lsGet('wasla_demo_dashboard_state');
+      const raw = this._lsGet(this.dashKey());
       if (!raw) return null;
       const b = JSON.parse(raw);
       if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return null;   // a schema we have never met
@@ -2754,12 +3338,15 @@ class Component extends DCLogic {
     const cm = obj(b.cardMods), mine = obj(cm && cm[cardId]);
     return this.narrowRules(mine && mine.rules);
   }
-  /** LAYER 2 — the shared card data every Wasla surface reads. */
+  /** LAYER 2 — the shared card data every Wasla surface reads, PLUS the approved submissions, which
+      are the same thing for a card that was born in the wizard rather than in the seed file. The
+      submission row carries `rules`, so a wizard card arrives at the till with its guard, its cap
+      and its minimum already on it. A card here with no rules is the failure this route exists to
+      prevent. */
   dbRules(cardId) {
     try {
-      const DB = (typeof window !== 'undefined' && window.WASLA_DB) || null;
-      const cards = (DB && Array.isArray(DB.cards)) ? DB.cards : [];
-      for (let i = 0; i < cards.length; i++) if (cards[i] && cards[i].id === cardId) return this.narrowRules(cards[i].rules);
+      const c = this.cardRecOf(cardId);
+      if (c) return this.narrowRules(c.rules);
     } catch (e) {}
     return {};
   }
@@ -2785,6 +3372,31 @@ class Component extends DCLogic {
   arStamps(n) { return n === 1 ? 'ختم واحد' : n === 2 ? 'ختمان' : (n <= 10 ? n + ' أختام' : n + ' ختماً'); }
   arRedeems(n) { return n === 1 ? 'استبدال واحد' : n === 2 ? 'استبدالان' : (n <= 10 ? n + ' استبدالات' : n + ' استبدالاً'); }
   arVisits(n) { return n === 1 ? 'زيارة واحدة' : n === 2 ? 'زيارتان' : (n <= 10 ? n + ' زيارات' : n + ' زيارة'); }
+  /** Scans, counted the way Arabic counts: 1 singular, 2 dual, 3-10 plural, 11+ singular tamyiz.
+      The seeded till starts its day at 146 and only ever passes through the low numbers for a few
+      frames of the count-up ramp, so it has never needed this; a shop on its first morning LIVES
+      there, and "1 عملية مسح" is the wrong sentence to greet it with. */
+  arScans(n) { return n === 0 ? 'لا عمليات مسح' : n === 1 ? 'عملية مسح واحدة' : n === 2 ? 'عمليتا مسح' : (n <= 10 ? n + ' عمليات مسح' : n + ' عملية مسح'); }
+  /** The same agreement, for the history header's count of actions: 1 singular, 2 dual, 3-10
+      plural, 11+ singular tamyiz. A day-one till counts 1, 2, 3 in front of the prospect, which is
+      exactly the range where "3 عملية" reads as broken Arabic. */
+  arActions(n) { return n === 0 ? 'لا عمليات' : n === 1 ? 'عملية واحدة' : n === 2 ? 'عمليتان' : (n <= 10 ? n + ' عمليات' : n + ' عملية'); }
+  /** THE SAME AGREEMENT, WITHOUT THE NUMERAL — for the shift tiles, which draw the count and its
+      noun as two separate elements: a big number above, a small word below. The helpers above
+      carry their digits with them, so a tile built from one would print the number twice; these
+      return the NOUN ALONE, in the form the number ABOVE IT requires. Same rule, same four cases:
+      1 singular, 2 dual, 3-10 plural, 11-99 singular tamyiz.
+
+      English is here for one reason and it is the reason all three exist: a till that has taken
+      exactly one scan is a real state now — it is the state a merchant's very first shift ends in
+      — and "1 scans" under a correct 1 is this codebase's house defect, a sentence contradicting
+      the number beside it. The seeded till closes on 61 / 44 / 9 and only passes through the low
+      numbers during the count-up ramp, which is precisely why nobody caught it. The label is
+      derived from the RENDERED value, ramp included, so it agrees frame by frame rather than
+      agreeing only once the animation settles. */
+  wordScans(n) { return this.L(n === 1 ? 'scan' : 'scans', n === 1 ? 'عملية مسح' : n === 2 ? 'عمليتا مسح' : (n <= 10 ? 'عمليات مسح' : 'عملية مسح')); }
+  wordStamps(n) { return this.L(n === 1 ? 'stamp' : 'stamps', n === 1 ? 'ختم' : n === 2 ? 'ختمان' : (n <= 10 ? 'أختام' : 'ختماً')); }
+  wordRewards(n) { return this.L(n === 1 ? 'reward' : 'rewards', n === 1 ? 'مكافأة' : n === 2 ? 'مكافأتان' : (n <= 10 ? 'مكافآت' : 'مكافأة')); }
 
   // ── the earning guard ───────────────────────────────────────────────────────
   /** How many earns the merchant allows per customer per day. `Infinity` means they turned it off. */
@@ -2905,7 +3517,7 @@ class Component extends DCLogic {
   //  Read-modify-write in try/catch. Foreign entries and unknown keys are
   //  carried through untouched — this till only ever edits its own rows.
   // ────────────────────────────────────────────────────────────────────────────
-  ovKey() { return 'wasla_demo_overrides'; }
+  ovKey() { return 'wasla_demo_overrides' + this.sfx(); }
   readOverrides() {
     try {
       const raw = this._lsGet(this.ovKey());
@@ -2978,8 +3590,13 @@ class Component extends DCLogic {
     if (!kind || st.ovReq) return;
     if (st.offline) { this.askOffline(kind); return; }
     const S = this.scenInfo(scen), t = this.labels();
+    /* `card` is the same join key the live bus carries, for the same reason: the dashboard prints
+       this row in its activity log, filters that log by card chip (`a.card === st.actFilter`) and
+       resolves the row's "open this card" link by name when the id misses
+       (`allCards.find(x => x.name === o.card)`). A decorated heading matched none of the three, so
+       an override the manager granted was un-filterable and its card link was dead. */
     const row = { id: this.ovNewId(), at: Date.now(), kind,
-      card: S.card, cardId: this.cardIdFor(scen), member: S.m[0],
+      card: this.liveCardName(scen), cardId: this.cardIdFor(scen), member: S.m[0],
       staff: st.staffName, branch: this.tillBranch(),
       detail: this.ovDetailFor(kind, scen), state: 'pending', by: '', note: '' };
     const ok = this.writeOverrides(arr => [row, ...arr.filter(e => e.id !== row.id)]);
@@ -3055,7 +3672,7 @@ class Component extends DCLogic {
   /** The answer arrived for somebody who is no longer at the counter. It is held, named, and
       announced — never applied to whoever happens to be on screen. */
   parkGrant(req, by) {
-    const who = this.memberName(req.scen), mgr = this.ovName(by).split(' ')[0];
+    const who = this.memberName(req.scen), mgr = this.shortName(this.ovName(by));
     this.setState({ ovGrant: { kind: req.kind, scen: req.scen, by, at: Date.now() } });
     this.flashNow('🔓', '#2FAE66', this.L('The manager said yes', 'وافق المدير'),
       this.L(mgr + ' lifted it for ' + who + '. Nothing has changed on her card — scan her again to use it.',
@@ -3092,7 +3709,7 @@ class Component extends DCLogic {
     if (kind === 'overcap') {
       this.setState({ ovGrant: { kind: 'overcap', scen, by, at: Date.now() }, ovDecline: null, mode: 'redeem' });
       this.flashNow('🔓', '#2FAE66', this.L('Cap lifted — for this one', 'رُفع الحد — لهذه المرة'),
-        this.L(this.ovName(by).split(' ')[0] + ' allowed one more redemption. It still asks for a PIN.', this.ovName(by).split(' ')[0] + ' سمح باستبدال إضافي واحد. وما زال يطلب رمزاً.'));
+        this.L(this.shortName(this.ovName(by)) + ' allowed one more redemption. It still asks for a PIN.', this.shortName(this.ovName(by)) + ' سمح باستبدال إضافي واحد. وما زال يطلب رمزاً.'));
       this.saveScan();
     }
   }
@@ -3122,7 +3739,7 @@ class Component extends DCLogic {
     const n = Math.min(st.goal, cur + 1);
     this.setState(s => ({ ...this.stampPatch(s, scen, n), sStamps: s.sStamps + 1, stampSeq: s.stampSeq + 1, earnsToday: (s.earnsToday || 0) + 1 }));
     this.armUndo('stamp', 1, st.offline);
-    const who = this.ovName(by).split(' ')[0];
+    const who = this.shortName(this.ovName(by));
     this.flashNow('stamp', '#2FAE66', this.L('Stamp ' + n + ' of ' + st.goal, 'الختم ' + n + ' من ' + st.goal),
       this.L('Added on ' + who + '’s call — the override is in the log.', 'أُضيف بقرار ' + who + ' — والاستثناء مسجَّل في السجل.'));
     this.logAction(scen, 'stamp', undefined, { ovr: by });
@@ -3132,7 +3749,7 @@ class Component extends DCLogic {
   }
   /** The perk the ladder refused, applied on the manager's call. */
   applyPerkNow(by) {
-    const T = this.tierState('vip'), who = this.ovName(by).split(' ')[0];
+    const T = this.tierState('vip'), who = this.shortName(this.ovName(by));
     this.flashNow('★', '#E8B824', this.L('15% off — applied', 'خصم 15% — طُبّق'),
       this.L(T.perk.name + ' perk, ' + T.left + ' visits early, on ' + who + '’s call.', 'ميزة ' + this.tierWord(T.perk.name) + ' قبل ' + this.arVisits(T.left) + ' بقرار ' + who + '.'));
     this.logAction('vip', 'perk', T.perk.name, { ovr: by });
@@ -3209,8 +3826,16 @@ class Component extends DCLogic {
   /** Six prior days of this branch's real work — Ahmad's and Rasha's, on the two cards Rainbow St
       actually serves. Two rows are planted disputes: Sara stamped TWICE ninety seconds apart (the
       guard should have caught it), and Noor scanned with nothing after it — the stamp that never
-      landed. Built once per session and cached, so a row can never move under a confirm sheet. */
+      landed. Built once per session and cached, so a row can never move under a confirm sheet.
+
+      AND IT IS ONE ACCOUNT'S STORY, so it stops at that account's edge. This table names five of
+      Tala's customers, two of Tala's cashiers and four of Tala's cards. Handed to a shop that
+      opened this morning it printed sixteen actions into a history sheet whose own header calls
+      this the first shift on this till — and let that shop's owner open a correction sheet on
+      another merchant's customer. A till with no history is not a broken screen: it is the till
+      the whole day-one demo is about, and `t.noActionsYet` was written for it. */
   priorSeed() {
+    if (!this.isSeedAcct()) return [];
     if (this._prior) return this._prior;
     const t0 = new Date(); t0.setHours(0, 0, 0, 0);
     const DAY = 86400000;
@@ -3326,12 +3951,24 @@ class Component extends DCLogic {
             'ما العمل: أنت تخدم ' + mine + '. وجّهها إلى صندوق يحمل ' + shopAr + '، أو اطلب من يارا إسناد البطاقة إليك.')
         };
       }
-      return {
+      // MARMAR IS A REAL SHOP ON THE SEEDED ACCOUNT'S SCREEN and stays named there. On any other
+      // account naming it would be this till asserting something it cannot know about a stranger's
+      // pass, so the second spelling names no shop and asks the account's OWN owner.
+      if (this.isSeedAcct()) return {
         mark: '✕', tone: '#E2563A',
         title: this.L('Not your card to scan', 'ليست بطاقتك لتمسحها'),
         why: this.L('This pass belongs to Marmar Lounge — a different Wasla account. Nothing was charged, nothing was stamped.', 'هذه البطاقة تخص صالة مرمر — حساب آخر في وصلة. لم يُخصم شيء ولم يُختم شيء.'),
         rule: this.L('Account rule · a till reads only the cards assigned to it', 'قاعدة الحساب · الصندوق يقرأ البطاقات المسندة إليه فقط'),
         doLine: this.L('What to do: send the customer to Marmar staff — or ask Yara to assign you the card if this is a mistake.', 'ما العمل: وجّه الزبون إلى فريق مرمر — أو اطلب من يارا إسناد البطاقة إليك إن كان هذا خطأً.')
+      };
+      return {
+        mark: '✕', tone: '#E2563A',
+        title: this.L('Not your card to scan', 'ليست بطاقتك لتمسحها'),
+        why: this.L('This pass belongs to a different Wasla account, not to ' + this.acctName() + '. Nothing was charged, nothing was stamped.',
+          'هذه البطاقة تخص حساباً آخر في وصلة، وليست ضمن ' + String(this.acctRec().companyAr || this.acctName()) + '. لم يُخصم شيء ولم يُختم شيء.'),
+        rule: this.L('Account rule · a till reads only the cards assigned to it', 'قاعدة الحساب · الصندوق يقرأ البطاقات المسندة إليه فقط'),
+        doLine: this.L('What to do: say it is a card from another shop and hand it back. If that is wrong, ' + this.ownerFirst() + ' can assign the card from the dashboard.',
+          'ما العمل: قل إنها بطاقة من محل آخر وأعدها. وإن كان هذا خطأً، يقدر ' + this.ownerFirstAr() + ' يسند البطاقة من لوحة التحكم.')
       };
     }
     if (scen === 'paused') return {
@@ -3347,7 +3984,7 @@ class Component extends DCLogic {
     if (scen === 'guard') {
       const per = this.guardPerDay(this.rulesForScen('stamps'));
       const one = per === 1;
-      const first = this.L(SI.m[0].split(' ')[0], SI.m[1].split(' ')[0]);
+      const first = this.L(this.shortName(SI.m[0]), this.shortNameAr(SI.m[1]));
       // the merchant turned the guard OFF. Nothing refuses, so nothing is refused — and there is
       // nothing to ask a manager for either. (Unreachable by scanning; the demo rail can still
       // point at it, and a screen that quoted a limit of "∞" would be nonsense.)
@@ -3361,9 +3998,31 @@ class Component extends DCLogic {
         altBr: 'rgba(47,174,102,.45)', altFg: '#7BD8A5',
         altGo: () => this.scanTo('stamps')
       };
+      // THE SAME RULE, SAID WITHOUT A GENDER. The seeded card belongs to Sara and its copy says so;
+      // another account's first member may be a man, and a till that calls him "her" in front of him
+      // is the same class of wrongness as a number that contradicts the sentence beside it.
+      if (!this.isSeedAcct()) return {
+        mark: '⏱', tone: '#F0A92B',
+        title: this.L(first + ' already earned today', first + ' جمع اليوم'),
+        why: this.L(one
+          ? 'That stamp landed earlier today. A second scan of the same card on the same day adds nothing — the pass already shows ' + st.stamps + ' of ' + st.goal + '.'
+          : 'All ' + per + ' of today’s stamps are already on this card — another scan today adds nothing; the pass shows ' + st.stamps + ' of ' + st.goal + '.',
+          one
+            ? 'الختم وصل في وقت سابق اليوم. ومسح البطاقة نفسها مرة ثانية في اليوم نفسه لا يضيف شيئاً — البطاقة تُظهر ' + st.stamps + ' من ' + st.goal + ' أصلاً.'
+            : 'أختام اليوم كلها (' + this.arStamps(per) + ') على البطاقة أصلاً — ومسحها اليوم لا يضيف شيئاً؛ فهي تُظهر ' + st.stamps + ' من ' + st.goal + ' أصلاً.'),
+        rule: this.guardRuleLine(),
+        doLine: this.L('What to do: say the stamp is already on the pass. If there really was a second purchase, ' + this.ownerFirst() + ' can lift the guard for this one from the dashboard.',
+          'ما العمل: قل إن الختم على البطاقة أصلاً. وإن كان في شراء ثانٍ فعلاً، يقدر ' + this.ownerFirstAr() + ' يرفع الحارس لهذه المرة من لوحة التحكم.'),
+        ask: 'guard',
+        askDetail: this.L('One more stamp for ' + first + ' — over the ' + (one ? 'one' : per) + ' the guard allows today.',
+          'ختم إضافي لـ' + first + ' — فوق ما يسمح به الحارس اليوم (' + this.arStamps(per) + ').'),
+        altLabel: this.L('Show the card anyway', 'اعرض البطاقة على أي حال'),
+        altBr: 'rgba(244,242,238,.24)', altFg: '#F4F2EE',
+        altGo: () => this.scanTo('stamps')
+      };
       return {
         mark: '⏱', tone: '#F0A92B',
-        title: this.L(SI.m[0].split(' ')[0] + ' already earned today', SI.m[1].split(' ')[0] + ' جمعت اليوم'),
+        title: this.L(this.shortName(SI.m[0]) + ' already earned today', this.shortNameAr(SI.m[1]) + ' جمعت اليوم'),
         why: this.L(one
           ? 'Her stamp landed at 08:41 this morning. A second scan of the same card on the same day adds nothing — the pass already shows ' + st.stamps + ' of ' + st.goal + '.'
           : 'She has taken all ' + per + ' of today’s stamps — the last at 08:41. Another scan of the same card today adds nothing; the pass already shows ' + st.stamps + ' of ' + st.goal + '.',
@@ -3391,7 +4050,7 @@ class Component extends DCLogic {
     }
     if (scen === 'tierlock') {
       const T = this.tierState('tierlock');
-      const first = this.L(SI.m[0].split(' ')[0], SI.m[1].split(' ')[0]);
+      const first = this.L(this.shortName(SI.m[0]), this.shortNameAr(SI.m[1]));
       const tgt = T.top ? T.cur : T.nxt;
       const perkEn = T.perkIdx > 0 && tgt.name === T.perk.name ? '15% off and the queue skip' : 'The ' + tgt.name + ' table';
       const perkAr = T.perkIdx > 0 && tgt.name === T.perk.name ? 'خصم 15% وتجاوز الطابور' : 'طاولة ' + this.tierWord(tgt.name);
@@ -3419,7 +4078,7 @@ class Component extends DCLogic {
   capRefusal(scen, cap) {
     const S = this.scenInfo(scen);
     const taken = scen === 'overcap' && !this.redeemsFor(scen) ? cap : this.redeemsFor(scen);
-    const first = this.L(S.m[0].split(' ')[0], S.m[1].split(' ')[0]);
+    const first = this.L(this.shortName(S.m[0]), this.shortNameAr(S.m[1]));
     const shop = this.L(String(S.card).split(' · ')[0], String(S.cardAr).split(' · ')[0]);
     // the merchant switched the cap OFF. Nothing is being refused — and a screen that pretends
     // otherwise would be the till inventing a rule. It says so, and it offers nothing to ask for.
@@ -3478,8 +4137,33 @@ class Component extends DCLogic {
   /** The three scannable states of the prepaid card, and the member each one is. An explicit map —
       never a lookup with no fallback — so `isPrepaid(anything)` is a safe question to ask on every
       render of every screen. */
-  ppScens() { return { prepaid: 'Rakan Al-Tell', ppbonus: 'Jude Barghouti', ppfils: 'Nadeen Fakhoury' }; }
+  ppScens() {
+    if (this.isSeedAcct()) return { prepaid: 'Rakan Al-Tell', ppbonus: 'Jude Barghouti', ppfils: 'Nadeen Fakhoury' };
+    const S = this.scenAll(), P = this.demoMember();
+    return (S.prepaid && P) ? { prepaid: P.name } : {};
+  }
   isPrepaid(scen) { return !!this.ppScens()[scen]; }
+  /** IS STORED VALUE ON THIS SHOP'S PLAN AT ALL? Taking a customer's cash is not a card type a
+      merchant can switch on for themselves — it is an account permission, and the console's own
+      account row is the authority. Joined by company name, the same join every other surface uses.
+      A day-one account the console has not written a row for yet falls back to the PLAN, where
+      Starter does not carry it. One question, asked in one place, so the till, the shift summary
+      and the demo rail can never disagree about whether this counter takes deposits. */
+  ppAllowed() {
+    const name = this.acctName();
+    try {
+      const C = ((typeof window !== 'undefined' && window.WASLA_DB) || {}).console || {};
+      const A = Array.isArray(C.accounts) ? C.accounts : [];
+      for (let i = 0; i < A.length; i++) {
+        if (A[i] && A[i].name === name) { const e = A[i].eligible; return !!(e && typeof e === 'object' && e.prepaid === true); }
+      }
+    } catch (e) {}
+    return String(this.acctRec().plan || '') !== 'Starter';
+  }
+  /** THE FOUNDER'S SWITCH, in one place. 'locked' keeps stored value on the demo rail as a plan
+      upsell that names the plan and cannot be tapped; 'hidden' leaves it off the rail entirely.
+      Either way the till itself never offers a screen this account cannot use. */
+  ppOffMode() { return 'locked'; }
   /** PIN tags this type owns. `ppr` is the refund, and it wants the MANAGER code, never staff. */
   isPpTag(tag) { return typeof tag === 'string' && tag.slice(0, 2) === 'pp'; }
   isPpMgrTag(tag) { return tag === 'ppRefund'; }
@@ -3567,11 +4251,15 @@ class Component extends DCLogic {
       const M = (DB && Array.isArray(DB.members)) ? DB.members : [];
       for (let i = 0; i < M.length; i++) if (M[i] && M[i].name === name && M[i].prepaid) { src = M[i].prepaid; break; }
     } catch (e) { src = null; }
-    const floor = {
+    // THE FLOOR IS THE SEEDED ACCOUNT'S — three hand-written balances belonging to three named
+    // people. A card on another account that the data has nothing for has never been loaded, and
+    // its balance is zero. Handing it Rakan's JOD 140.250 would be somebody else's money on
+    // somebody else's counter.
+    const floor = this.isSeedAcct() ? {
       prepaid: { principalMinor: 137750, bonus: [{ id: 'rk-b2', grantedMinor: 2500, remainingMinor: 2500, grantedAt: '2026-08-03', expiresAt: '2027-01-30', campaign: 'summer-5' }], depositedMinor: 175000, spentMinor: 47250, refundedMinor: 0 },
       ppbonus: { principalMinor: 0, bonus: [{ id: 'jb-b2', grantedMinor: 8000, remainingMinor: 8000, grantedAt: '2026-08-02', expiresAt: '2027-01-29', campaign: 'eid-gift' }], depositedMinor: 100000, spentMinor: 110000, refundedMinor: 0 },
       ppfils: { principalMinor: 4125, bonus: [], depositedMinor: 50000, spentMinor: 47375, refundedMinor: 0 }
-    }[scen];
+    }[scen] : { principalMinor: 0, bonus: [], depositedMinor: 0, spentMinor: 0, refundedMinor: 0 };
     const out = this.ppShape(src) || this.ppShape(floor) || { principalMinor: 0, bonus: [], depositedMinor: 0, spentMinor: 0, refundedMinor: 0, closed: false };
     (this._ppSeed = this._ppSeed || {})[scen] = out;
     return out;
@@ -3938,10 +4626,10 @@ class Component extends DCLogic {
     this.logAction(scen, 'ppRefund', paid, { by, pp: { kind: 'refund', paidMinor: paid, beforeMinor, afterMinor: 0 } });
     this.flashNow('↩', '#F0A92B', this.L('Refunded ' + this.jodM(paid) + ' — card closed', 'استُرد ' + this.jodM(paid) + ' — أُغلقت البطاقة'),
       forfeitMinor > 0
-        ? this.L('Pay her ' + this.jodM(paid) + ' from the drawer. ' + this.jodM(forfeitMinor) + ' was bonus and is not cash. Authorised by ' + String(by).split(' ')[0] + ' · ' + this.tillBranch() + '.',
-          'ادفع لها ' + this.jodM(paid) + ' من الصندوق. ' + this.jodM(forfeitMinor) + ' كانت مكافأة وليست نقداً. بموافقة ' + this.ovName(by).split(' ')[0] + ' · ' + this.branchAr(this.tillBranch()) + '.')
-        : this.L('Pay her ' + this.jodM(paid) + ' from the drawer. Authorised by ' + String(by).split(' ')[0] + ' · ' + this.tillBranch() + '.',
-          'ادفع لها ' + this.jodM(paid) + ' من الصندوق. بموافقة ' + this.ovName(by).split(' ')[0] + ' · ' + this.branchAr(this.tillBranch()) + '.'));
+        ? this.L('Pay her ' + this.jodM(paid) + ' from the drawer. ' + this.jodM(forfeitMinor) + ' was bonus and is not cash. Authorised by ' + this.shortName(by) + ' · ' + this.tillBranch() + '.',
+          'ادفع لها ' + this.jodM(paid) + ' من الصندوق. ' + this.jodM(forfeitMinor) + ' كانت مكافأة وليست نقداً. بموافقة ' + this.shortNameAr(this.ovName(by)) + ' · ' + this.branchAr(this.tillBranch()) + '.')
+        : this.L('Pay her ' + this.jodM(paid) + ' from the drawer. Authorised by ' + this.shortName(by) + ' · ' + this.tillBranch() + '.',
+          'ادفع لها ' + this.jodM(paid) + ' من الصندوق. بموافقة ' + this.shortNameAr(this.ovName(by)) + ' · ' + this.branchAr(this.tillBranch()) + '.'));
     this.emitLive(this.liveFor(scen, 'reward', 'was refunded ' + this.jodM(paid) + ' and the card was closed'));
     this.saveScan();
   }
@@ -4038,7 +4726,12 @@ class Component extends DCLogic {
   }
   /** Does the person on this till handle stored value at all? The money block on the shift summary
       belongs on a till that can take a deposit and nowhere else. */
-  ppOnThisTill() { return this.myCardIds().indexOf('zaman') >= 0; }
+  ppOnThisTill() {
+    if (!this.ppAllowed()) return false;
+    const ids = this.myCardIds();
+    for (let i = 0; i < ids.length; i++) if (this.cardTypeOf(ids[i]) === 'prepaid') return true;
+    return this.isSeedAcct() && ids.indexOf('zaman') >= 0;   // the literal floor, kept
+  }
 
   // ── the refusals this type owns, in both languages ──────────────────────────
   /** The prepaid screen's own refusal, or null. Every one names the rule and the sentence to say —
@@ -4220,7 +4913,8 @@ class Component extends DCLogic {
     // the rail is the demo's own English index, not phone-side copy — but the numbers it quotes are
     // still the merchant's, so a rule edit shows up here too rather than going quietly stale
     const railTS = this.tierState('vip');
-    const demoDefs = [
+    const seedRail = this.isSeedAcct();
+    const demoDefs = !seedRail ? this.derivedRail() : [
       ['stamps', 'Sara — a stamp is one tap', 'Stamp card · 6/8, two from a reward', '#1E5C43', '•••', '13px'],
       ['cashback', 'Khaled — cashback is money', 'JOD 3.20 balance · partial redeem · min JOD ' + this.minRedeemFor('cashback').toFixed(2), '#5C6B2F', '5%', '11.5px'],
       ['points', 'Salma — the redeem ladder', 'points · nothing preselected, shortfalls shown', '#B14A32', '250', '10px'],
@@ -4237,7 +4931,7 @@ class Component extends DCLogic {
     ];
     // the states where the answer is no — or not yet. Each one names the rule it comes from.
     const railCap = this.redeemCapFor('overcap'), railGuard = this.guardPerDay(this.rulesForScen('stamps'));
-    const edgeDefs = [
+    const edgeDefs = !seedRail ? this.derivedEdgeRail() : [
       ['paused', 'Dana — the shop paused the card', 'earning stops · redeeming still honoured', '#F0A92B', '❙❙', '10px'],
       ['guard', 'Sara — already stamped today', 'the earning guard (' + (railGuard === Infinity ? 'off' : railGuard + '/day') + ') · ask the manager', '#F0A92B', '⏱', '12px'],
       ['overcap', 'Noor — the daily redeem cap', railCap <= 0 ? 'the merchant switched the cap off' : railCap + ' already taken today · ask the manager', '#E2563A', railCap <= 0 ? '∞' : railCap + '×', '11px'],
@@ -4282,14 +4976,35 @@ class Component extends DCLogic {
     //    thing the guard had just refused, with no PIN, no manager, and a log row indistinguishable
     //    from a normal stamp. The button obeys the rule now, and says so before it is tapped. ──
     const guardBlocks = this.guardedScen(scen) && this.guardTripped();
-    const CARDS = this.cardDefs();
     const corrL = this.corrRow(), corrC = this.correctionFor(corrL);
     const lookHits = st.lookupOpen ? this.lookupHits() : [];
     const histHits = st.historyOpen ? this.histHits() : [];
     const cwd = this.corrWindowDays();
     const corrWindowWord = cwd <= 1 ? 'today only' : cwd === 2 ? 'today and yesterday' : 'for ' + cwd + ' days';
     const corrWindowWordAr = cwd <= 1 ? 'اليوم فقط' : cwd === 2 ? 'اليوم وأمس' : 'لمدة ' + cwd + ' أيام';
-    const joinCard = CARDS[st.joinCard] || CARDS.daraj, joinWho = this.joinPerson(st.joinCard);
+    const joinCard = this.cardDefOf(st.joinCard), joinWho = this.joinPerson(st.joinCard);
+    // ── DAY ONE, resolved once for every screen below. `hasCard` is the difference between a till
+    //    that is waiting for a customer and a till that is waiting for a card, and those are two
+    //    completely different sentences. `lookPoolN` is how many people can be looked up at all —
+    //    zero of them is "nobody has joined yet", not "nobody matches that". ──
+    const hasCard = this.hasLiveCard(), pendCard = this.pendingSubs().length > 0;
+    const tillBr = this.tillBranch(), tillBrAr = this.branchAr(tillBr);
+    // −1 = the sheet is shut and the question was never asked. Zero is a real answer and must not
+    // be what "we did not look" evaluates to.
+    const lookPoolN = st.lookupOpen ? this.lookupPool().length : -1;
+    const RW = this.rw(scen);
+    const roster = this.staffList();
+    const soloOwner = roster.length === 1 && !!String(this.acctRec().owner || '') && roster[0].name === String(this.acctRec().owner || '');
+    const virgin = this.firstShiftEver() && (st.scansToday | 0) === 0;
+    /* The query string this session was opened with, re-attached to the links that leave this
+       surface. Read from the RESOLVER'S ANSWER rather than from location.search, so a link can
+       never carry a slug wasla-data.js declined — and so the default account keeps a bare URL. */
+    const acctQuery = (() => {
+      try {
+        const a = (typeof window !== 'undefined' && window.WASLA_ACCT) || '';
+        return (a && this.sfx()) ? ('?acct=' + a) : '';
+      } catch (e) { return ''; }
+    })();
 
     return {
       dir: EN ? 'ltr' : 'rtl', t,
@@ -4300,21 +5015,46 @@ class Component extends DCLogic {
       ctaAnim: AN('fadeUp', '.4s', '.2s'), ctaAnim2: AN('fadeUp', '.4s', '.27s'),
       sweepAnim: SEED(st.scanSeq, 'sweepA', 'sweepB', '1.25s'),
       isIdle: st.screen === 'idle', isScan: st.screen === 'scan', isMember: st.screen === 'member', resolving: st.resolving,
-      idleSubLine: this.L('Rainbow St · ' + Math.round(st.scansToday * rampIdle) + ' scans today', 'شارع الرينبو · ' + Math.round(st.scansToday * rampIdle) + ' عملية مسح اليوم'),
+      // the branch is the account's, and a till that has never taken a scan says THAT rather than
+      // printing a zero next to the word "today" as though something should already be there
+      idleSubLine: virgin
+        ? this.L(tillBr + ' · first shift on this till', tillBrAr + ' · أول مناوبة على هذا الصندوق')
+        : this.L(tillBr + ' · ' + Math.round(st.scansToday * rampIdle) + (Math.round(st.scansToday * rampIdle) === 1 ? ' scan today' : ' scans today'),
+          tillBrAr + ' · ' + (this.isSeedAcct() ? Math.round(st.scansToday * rampIdle) + ' عملية مسح اليوم' : this.arScans(Math.round(st.scansToday * rampIdle)) + ' اليوم')),
       staffAvatarAnim: st.staffSeq ? SEED(st.staffSeq, 'bumpA', 'bumpB', '.42s') : AN('popIn', '.4s'),
       staffNameAnim: st.staffSeq ? SEED(st.staffSeq, 'nameA', 'nameB', '.45s', '.06s') : 'none',
-      // the circle is a customer walking up, so it obeys the earning guard; the demo rail does not
-      scanDefault: () => this.scanTo('stamps', true),
+      // the circle is a customer walking up, so it obeys the earning guard; the demo rail does not.
+      // With no card live there is nothing for a scan to resolve TO, so it says so instead of
+      // opening a member screen with no member and no card on it.
+      scanDefault: () => { const f = this.firstScen(); if (!f) { this.noCardFlash(); return; } this.scanTo(f, true); },
+      // THE READY CIRCLE. "Ready to scan" over a shop with no card is the sentence-contradicts-the-
+      // state defect in its shortest form. The bilingual pairing (each line in the other language)
+      // is kept in both spellings — it is what makes this the one screen both people can read.
+      readyLine: hasCard ? t.ready : this.L('Nothing to scan yet', 'ما في شي للمسح بعد'),
+      readyAltLine: hasCard ? t.readyAlt : this.L('ما في شي للمسح بعد', 'Nothing to scan yet'),
       // ── the four jobs the counter actually has, next to the one it already had ──
       idleActions: [
         { icon: '#', label: t.manual, go: () => this.setState({ manualOpen: true, manualCode: '', manualError: false }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' },
         { icon: '⌕', label: this.L('Find a customer', 'ابحث عن زبون'), go: () => this.setState({ lookupOpen: true, lookupQ: '' }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' },
-        { icon: '＋', label: this.L('New customer', 'زبون جديد'), go: () => this.openJoin(), br: 'rgba(232,128,36,.5)', bg: 'rgba(232,128,36,.08)', fg: '#F09A4D' },
+        // handing over a pass needs a pass to hand over: the button stays, dimmed, and says why
+        { icon: '＋', label: this.L('New customer', 'زبون جديد'), go: () => this.openJoin(),
+          br: hasCard ? 'rgba(232,128,36,.5)' : 'rgba(244,242,238,.14)', bg: hasCard ? 'rgba(232,128,36,.08)' : 'transparent', fg: hasCard ? '#F09A4D' : '#6E6C77' },
         { icon: '☰', label: this.L('History · 7 days', 'السجل · 7 أيام'), go: () => this.setState({ historyOpen: true, corrId: null, histQ: '', histDay: 'all' }), br: 'rgba(244,242,238,.2)', bg: 'transparent', fg: '#F4F2EE' }
       ].map((a, i) => ({ ...a, anim: AN('fadeUp', '.34s', (0.1 + 0.04 * i) + 's') })),
+      // ── "Your cards", and the state where there are none. An empty chip row is a shelf with
+      //    nothing on it; this says which of the two empties it is — waiting on Wasla, or waiting
+      //    on the merchant — because those need two different next actions. ──
+      noCardsChip: this.myCardIds().length === 0,
+      noCardsLine: pendCard
+        ? this.L('The first card is with Wasla for review.', 'أول بطاقة عند واسلة للمراجعة.')
+        : this.L('No card is live on this account yet.', 'ما في بطاقة شغّالة على هذا الحساب بعد.'),
+      onlyYoursLine: this.myCardIds().length ? t.onlyYours
+        : (pendCard
+          ? this.L('The moment Wasla approves it, it appears here and this till can scan it. Nothing else has to happen.', 'لحظة ما تعتمدها واسلة تظهر هنا ويقدر الصندوق يمسحها. ولا شي غير هيك لازم يصير.')
+          : this.L('Build the first card in the merchant dashboard. It lands here the moment Wasla approves it.', 'أنشئ أول بطاقة من لوحة تحكم التاجر. توصل هنا لحظة ما تعتمدها واسلة.')),
       // the chips are the cards this person is cleared for — not a pair of literals
       myCards: this.myCardIds().map((id, i) => {
-        const c = CARDS[id] || CARDS.daraj;
+        const c = this.cardDefOf(id);
         return { name: this.L(c.name, c.ar), bg: c.bg, br: c.br, fg: c.fg, dot: c.dot, anim: AN('fadeUp', '.34s', (0.14 + 0.05 * i) + 's') };
       }),
       lockNow: () => this.lockTill(false),
@@ -4331,7 +5071,7 @@ class Component extends DCLogic {
       // every card that carries a printed code offers it here — not three of nine
       manualHints: Object.keys(this.manualCodes()).map(code => {
         const k = this.manualCodes()[code], S = this.scenInfo(k);
-        return { code, who: this.L(S.m[0].split(' ')[0], S.m[1].split(' ')[0]) };
+        return { code, who: this.L(this.shortName(S.m[0]), this.shortNameAr(S.m[1])) };
       }).map(({ code, who }, i) => ({
         label: who + ' · ' + code,
         anim: AN('fadeUp', '.3s', (0.08 + 0.025 * i) + 's'),
@@ -4613,7 +5353,7 @@ class Component extends DCLogic {
         amount: (r.deltaMinor >= 0 ? '+ ' : '− ') + this.M(Math.abs(r.deltaMinor)),
         amountFg: r.corrected ? '#6E6C77' : (r.deltaMinor >= 0 ? '#7BD8A5' : '#F09A4D'),
         after: this.L('leaves ' + this.jodM(r.afterMinor), 'يتبقّى ' + this.jodM(r.afterMinor)),
-        meta: this.ppStmtWhen(r.ts) + ' · ' + (r.by ? this.ovName(r.by).split(' ')[0] : this.L('the till', 'الصندوق')) + (r.ref ? ' · ' + r.ref : ''),
+        meta: this.ppStmtWhen(r.ts) + ' · ' + (r.by ? this.L(this.shortName(this.ovName(r.by)), this.shortNameAr(this.ovName(r.by))) : this.L('the till', 'الصندوق')) + (r.ref ? ' · ' + r.ref : ''),
         corrected: r.corrected, correctedLabel: t.correctedBadge,
         op: r.corrected ? '.55' : '1',
         anim: AN('fadeUp', '.3s', (0.04 + 0.03 * Math.min(i, 9)) + 's')
@@ -4658,10 +5398,18 @@ class Component extends DCLogic {
       stampHeroMark: cardArt ? this.stampPhoto(cardArt, 42, true, 'drop-shadow(0 4px 10px rgba(0,0,0,.5))') : this.stampGlyph(30, '#E88024', 1.9),
       stampNumAnim: st.stampSeq > 0 ? SEED(st.stampSeq, 'bumpA', 'bumpB', '.34s') : 'none',
       gridSettleAnim: st.stampSeq > 0 ? SEED(st.stampSeq, 'gridA', 'gridB', '.36s') : 'none',
+      // AN EMPTY CARD IS A BEGINNING, NOT A SHORTFALL. "8 to a free falafel sandwich" on a pass
+      // that has never been stamped reads like a debt; the same card one tap later reads like
+      // progress. The reward itself is the CARD's — the merchant wrote it, and the till quotes it.
       stampHint: full ? this.L('Full card — switch to Redeem.', 'البطاقة مكتملة — انتقل إلى الاستبدال.')
-        : guardBlocks ? this.L('Her stamp for today is already on the pass — this is her card, not a second one.', 'ختم اليوم على بطاقتها أصلاً — هذه بطاقتها، لا ختم إضافي.')
-          : this.L((st.goal - sCount) + ' to a free drink · always preview before acting', (st.goal - sCount) + ' للحصول على مشروب مجاني · راجع دائماً قبل التنفيذ'),
-      addStampLabel: guardBlocks ? this.L('Already stamped today — see why', 'جُمع ختمها اليوم — اعرف السبب')
+        : guardBlocks ? (this.isSeedAcct()
+          ? this.L('Her stamp for today is already on the pass — this is her card, not a second one.', 'ختم اليوم على بطاقتها أصلاً — هذه بطاقتها، لا ختم إضافي.')
+          : this.L('Today’s stamp is already on this pass — it is the same card, not a second one.', 'ختم اليوم على هذه البطاقة أصلاً — هي نفس البطاقة، لا بطاقة ثانية.'))
+          : (sCount <= 0 && !this.isSeedAcct()
+            ? this.L('An empty card, ' + st.goal + ' to ' + RW.a + '. One tap starts it.', 'بطاقة فاضية — ' + this.arStamps(st.goal) + ' حتى ' + RW.ar + '. ضغطة وحدة تبدأها.')
+            : this.L((st.goal - sCount) + ' to ' + RW.a + ' · always preview before acting', (st.goal - sCount) + ' للحصول على ' + RW.ar + ' · راجع دائماً قبل التنفيذ')),
+      addStampLabel: guardBlocks ? (this.isSeedAcct() ? this.L('Already stamped today — see why', 'جُمع ختمها اليوم — اعرف السبب')
+        : this.L('Already stamped today — see why', 'الختم أُخذ اليوم — اعرف السبب'))
         : st.offline ? this.L('+ Add a stamp (queues offline)', '+ إضافة ختم (يُحفظ للمزامنة)') : this.L('+ Add a stamp', '+ إضافة ختم'),
       // a blocked stamp button must LOOK blocked — a green CTA that refuses is a trap
       addStampBg: guardBlocks ? '#26262B' : '#2FAE66', addStampFg: guardBlocks ? '#F0A92B' : '#FFFFFF',
@@ -4673,19 +5421,31 @@ class Component extends DCLogic {
         // the override queue built on top of it means nothing.
         if (guardBlocks) { this.setState({ scenario: 'guard', mode: 'collect', undo: null }); return; }
         const n = sCount + 1;
+        // THE FIRST STAMP THIS SHOP HAS EVER TAKEN. It happens once, in front of the owner, and it
+        // is the moment the thing stops being a slide deck. Read off the ledger, not off a flag,
+        // so it can never fire twice or fire on a till that already has a week behind it.
+        const firstEver = this.firstStampEver();
         // the earning guard counts the earns, and the MERCHANT decides how many is too many —
         // and it counts only the member the rule is quoted about
         this.setState(s => ({ ...this.stampPatch(s, scen, n), sStamps: s.sStamps + 1, stampSeq: s.stampSeq + 1, ...(this.guardedScen(scen) ? { earnsToday: (s.earnsToday || 0) + 1 } : {}) }));
         this.armUndo('stamp', 1, st.offline);
-        this.flashNow('stamp', '#2FAE66', this.L('Stamp ' + n + ' of ' + st.goal, 'الختم ' + n + ' من ' + st.goal),
+        this.flashNow('stamp', '#2FAE66',
+          (firstEver && !st.offline) ? this.L('The first stamp', 'أول ختم')
+            : this.L('Stamp ' + n + ' of ' + st.goal, 'الختم ' + n + ' من ' + st.goal),
           st.offline ? this.L('Queued — it lands the second the till is back online.', 'محفوظ — يصل لحظة عودة الاتصال.')
-            : (n >= st.goal ? this.L('Full card! The reward is ready to redeem.', 'اكتملت البطاقة! المكافأة جاهزة للاستبدال.')
-              : this.L(SCEN.m[0].split(' ')[0] + ' sees it on her lock screen right now.', SCEN.m[1].split(' ')[0] + ' ترى الختم على شاشة هاتفها الآن.')));
+            : (firstEver ? this.L('Stamp ' + n + ' of ' + st.goal + ' on the first card ' + this.acctName() + ' ever issued. It is on the pass already.',
+              'الختم ' + n + ' من ' + st.goal + ' على أول بطاقة أصدرها ' + String(this.acctRec().companyAr || this.acctName()) + '. وصار على البطاقة فوراً.')
+              : (n >= st.goal ? this.L('Full card! The reward is ready to redeem.', 'اكتملت البطاقة! المكافأة جاهزة للاستبدال.')
+                : (this.isSeedAcct()
+                  ? this.L(this.shortName(SCEN.m[0]) + ' sees it on her lock screen right now.', this.shortNameAr(SCEN.m[1]) + ' ترى الختم على شاشة هاتفها الآن.')
+                  : this.L('It is on ' + this.shortName(SCEN.m[0]) + '’s lock screen right now.', 'الختم ظاهر على شاشة هاتف ' + this.shortNameAr(SCEN.m[1]) + ' الآن.')))));
         this.logAction(scen, 'stamp');
-        const ev = this.liveFor(scen, 'earn', 'earned a stamp');
+        const ev = this.liveFor(scen, 'earn', firstEver ? 'earned the first stamp on this account' : 'earned a stamp');
         if (st.offline) this.pushQueue(scen, 'qStamp', undefined, ev); else this.emitLive(ev);
         this.saveScan();
       },
+      // the reward hero names the thing the MERCHANT promised on this card, not a coffee shop's
+      rewardTitle: this.isSeedAcct() ? t.freeDrink : this.L(RW.cap, 'المكافأة جاهزة'),
       stampsReady: full, stampsNotReady: !full,
       stampsResetLine: this.L(st.goal + ' / ' + st.goal + ' — the card resets after redeeming', st.goal + ' / ' + st.goal + ' — تُصفَّر البطاقة بعد الاستبدال'),
       shortfallLine: this.L(sCount + ' / ' + st.goal + ' — ' + (st.goal - sCount) + ' short', sCount + ' / ' + st.goal + ' — ناقص ' + (st.goal - sCount)),
@@ -4694,7 +5454,7 @@ class Component extends DCLogic {
       redeemStampsCls: full && !st.offline && !rdLocked ? 'ws-cta' : 'ws-cta ws-off',
       redeemStampsLabel: rdLocked ? lockedLabel
         : st.offline ? this.L('Redeem locked offline — no double-spend', 'الاستبدال مقفل دون إنترنت — منعاً للصرف المزدوج')
-          : (full ? this.L('Redeem the free drink (PIN)', 'استبدال المشروب المجاني (رمز)') : this.L('Nothing to redeem yet', 'لا شيء للاستبدال بعد')),
+          : (full ? this.L('Redeem ' + RW.the + ' (PIN)', 'استبدال ' + RW.arThe + ' (رمز)') : this.L('Nothing to redeem yet', 'لا شيء للاستبدال بعد')),
       redeemStamps: () => { if (!full || st.offline || rdLocked) return; this.askPin('stamps'); },
       // ── amount types ──
       bAmount: (isCash || isPts) && !capTrip, isCashback: isCash, isPoints: isPts,
@@ -4959,11 +5719,15 @@ class Component extends DCLogic {
       // ── an answer that landed while she was away from the counter, waiting to be applied ──
       rfHasApply: !!ovParked,
       rfApplyLabel: t.askApplyBtn,
-      rfApplyLine: ovParked ? this.L(this.ovName(ovParked.by).split(' ')[0] + ' lifted the ' + this.ovNoun(ovParked.kind) + ' for her while you were with someone else. Nothing has moved yet.',
-        this.ovName(ovParked.by).split(' ')[0] + ' رفع ' + this.ovNoun(ovParked.kind) + ' لأجلها بينما كنت مع زبون آخر. ولم يتحرّك شيء بعد.') : '',
+      rfApplyLine: ovParked ? this.L(this.shortName(this.ovName(ovParked.by)) + ' lifted the ' + this.ovNoun(ovParked.kind) + ' for her while you were with someone else. Nothing has moved yet.',
+        this.shortNameAr(this.ovName(ovParked.by)) + ' رفع ' + this.ovNoun(ovParked.kind) + ' لأجلها بينما كنت مع زبون آخر. ولم يتحرّك شيء بعد.') : '',
       applyParked: () => { const g = this.state.ovGrant; if (!g) return; this.applyGranted(g.kind, g.by, g.scen, false); },
       rfWaiting: ovWaiting,
-      rfWaitTitle: t.askMgrWaitTitle, rfWaitSub: t.askMgrWaitSub,
+      rfWaitTitle: t.askMgrWaitTitle,
+      // the manager the request is sitting with is THIS account's owner — 'Yara' is one shop's name
+      rfWaitSub: this.isSeedAcct() ? t.askMgrWaitSub
+        : this.L('It is on ' + this.ownerFirst() + '’s dashboard right now. The customer is standing in front of you — don’t leave them waiting on this.',
+          'الطلب على لوحة ' + this.ownerFirstAr() + ' الآن. والزبون واقف أمامك — لا تتركه ينتظر طويلاً.'),
       // the clock time it was asked at, not "N seconds ago" — nothing re-renders this line on a
       // tick, so a counter here would freeze at whatever second it was born on and quietly lie
       rfWaitLine: ovWaiting ? this.L('Asked at ' + askedAt + ' · ' + this.ovNoun(ovReq.kind),
@@ -5001,10 +5765,16 @@ class Component extends DCLogic {
               : st.pin === 'correct' ? this.L('A correction moves real value — it needs a code and it signs itself.', 'التصحيح يحرّك قيمة حقيقية — يطلب رمزاً ويوقّع باسم صاحبه.')
                 : t.pinSub,
       // THE HINT NAMES A PERSON NOW, because the code does. A colleague standing at the same till
-      // authorises with their own four digits and the row signs itself with their name.
+      // authorises with their own four digits and the row signs itself with their name — but only
+      // where there IS a colleague. On a one-person shop the lock screen has already said the owner
+      // is the whole roster, and offering "a colleague's code" two screens later contradicts it and
+      // sends the cashier looking for somebody who does not work here. Same roster, one answer.
       pinHintLine: (this.isMgrTag(st.pin) || this.isPpMgrTag(st.pin)) ? t.mgrPinHint
-        : this.L(t.pinHint + ' ' + this.staffPin() + ' · ' + String(st.staffName).split(' ')[0] + ' — a colleague’s own code works too',
-          t.pinHint + ' ' + this.staffPin() + ' · ' + String(st.staffAr).split(' ')[0] + ' — ورمز الزميل يعمل كذلك'),
+        : soloOwner
+          ? this.L(t.pinHint + ' ' + this.staffPin() + ' · ' + this.shortName(st.staffName) + ' — yours is the only code on this till',
+            t.pinHint + ' ' + this.staffPin() + ' · ' + this.shortNameAr(st.staffAr) + ' — رمزك وحده على هذا الصندوق')
+          : this.L(t.pinHint + ' ' + this.staffPin() + ' · ' + this.shortName(st.staffName) + ' — a colleague’s own code works too',
+            t.pinHint + ' ' + this.staffPin() + ' · ' + this.shortNameAr(st.staffAr) + ' — ورمز الزميل يعمل كذلك'),
       pinDots: [0, 1, 2, 3].map(i => ({
         bg: st.pinErr ? '#E2563A' : (i < st.pinDigits.length ? '#E88024' : 'transparent'),
         br: st.pinErr ? '#E2563A' : (i < st.pinDigits.length ? '#E88024' : 'rgba(244,242,238,.4)'),
@@ -5039,14 +5809,39 @@ class Component extends DCLogic {
       closeShift: () => this.setState({ shiftOpen: false, handoverPick: false }),
       showShiftSummary: st.shiftOpen && !st.handoverPick, showHandoverPicker: st.shiftOpen && st.handoverPick,
       shiftAvatarAnim: AN('popIn', '.42s'),
+      /* THE NOUN IS DERIVED FROM THE NUMBER IT SITS UNDER, not written beside it. A fixed plural
+         under a live count is the shape this codebase keeps re-introducing: at exactly one — the
+         number a first shift ends on — it read "1 scans", and the Arabic "1 أختام" broke the
+         agreement rule the copy two lines below already follows. The word is resolved from the
+         RENDERED value (ramp applied, then rounded), so the two can never disagree, including
+         mid-animation. */
       shiftTotals: [
-        [st.scansToday, this.L('scans', 'مسح')],
-        [st.sStamps, this.L('stamps', 'أختام')],
-        [st.sRewards, this.L('rewards', 'مكافآت')]
-      ].map(([n, label], i) => ({ n: Math.round(n * rampShift), label, anim: AN('fadeUp', '.4s', (0.06 + 0.06 * i) + 's') })),
+        [st.scansToday, (k) => this.wordScans(k)],
+        [st.sStamps, (k) => this.wordStamps(k)],
+        [st.sRewards, (k) => this.wordRewards(k)]
+      ].map(([n, word], i) => { const v = Math.round(n * rampShift);
+        return { n: v, label: word(v), anim: AN('fadeUp', '.4s', (0.06 + 0.06 * i) + 's') }; }),
       // THE SUMMARY IS A VIEW OF THE TILL LEDGER, filtered to this shift — handover resets the
       // counters above and leaves every row where it is
       shiftLogEmpty: this.shiftRows().length === 0,
+      // A SHIFT THAT HAS TAKEN NOTHING ON A TILL THAT HAS NEVER TAKEN ANYTHING is a different empty
+      // from a quiet hour, and it is the one a merchant sees first. It names what would land here.
+      shiftEmptyLine: virgin
+        ? (hasCard ? this.L('Nothing yet. The first scan on this till lands here.', 'ما في شي بعد. أول عملية مسح على هذا الصندوق تظهر هنا.')
+          : this.L('Nothing yet — there is no card to scan. The first one starts this list.', 'ما في شي بعد — ما في بطاقة للمسح. أول بطاقة تبدأ هذه القائمة.'))
+        : t.noActionsYet,
+      // handing over to nobody is not a handover: a one-person shop closes its shift, full stop
+      shiftNoteLine: soloOwner
+        ? this.L('Closing resets the counters for your next shift. Today’s record stays on this till — nothing is erased.', 'الإغلاق يصفّر العدّادات لمناوبتك التالية. وسجل اليوم يبقى على هذا الصندوق — ولا شي يُمحى.')
+        : t.shiftNote,
+      handOverLabel: soloOwner ? this.L('Close the shift', 'إغلاق المناوبة') : t.handOver,
+      // "Who's taking over?" over a roster of one is a question with one answer, and that answer is
+      // you. The screen says what is actually happening instead: the shift closes and re-opens.
+      handoverTitle: soloOwner ? this.L('Start a fresh shift?', 'تبدأ مناوبة جديدة؟') : t.handoverPickTitle,
+      handoverSub: soloOwner
+        ? this.L('You are the only person on this roster. Signing back in with your code starts a new shift — the counters reset, the day’s record does not.',
+          'أنت ' + (this.ownerFem() ? 'الوحيدة' : 'الوحيد') + ' على هذا الطاقم. تسجيل الدخول برمزك من جديد يبدأ مناوبة جديدة — العدّادات تُصفَّر، وسجل اليوم لا.')
+        : t.handoverPickSub,
       shiftLog: this.shiftRows().map((l, i) => ({ member: this.rowWho(l), action: this.actionText(l.k, l.v), time: this.timeAgo(l), anim: AN('fadeUp', '.34s', (0.14 + 0.04 * Math.min(i, 8)) + 's') })),
       // ── CLOSING A SHIFT THAT TOOK CASH. Without these five numbers the drawer cannot be counted,
       //    and a cashier who credits JOD 90 while taking JOD 100 shows up nowhere at all. Cash
@@ -5078,7 +5873,19 @@ class Component extends DCLogic {
       lockPickOpen: st.locked && st.lockStaff == null,
       lockPinOpen: st.locked && st.lockStaff != null,
       lockPickErr: st.locked && st.lockStaff == null && st.lockErr,
-      lockBrandLine: this.L('Wasla · Rainbow St', 'وصلة · شارع الرينبو'),
+      lockBrandLine: this.L('Wasla · ' + tillBr, 'وصلة · ' + tillBrAr),
+      // ── THE LOCK SCREEN OF A ONE-PERSON SHOP. There is no name to pick between and no other
+      //    branch to be turned away from, so neither sentence pretends there is: the owner IS the
+      //    roster, and the code they type is the same code that authorises an override later. ──
+      lockPickSub: soloOwner
+        ? this.L('Your PIN opens the till. The shift starts when you sign in.', 'رمزك يفتح الصندوق. وتبدأ المناوبة عند الدخول.')
+        : t.lockWhoSub,
+      // the Arabic agrees with the person it is addressing, and the account record is what says who
+      // that is — see ownerFem(). Neither account can drift, because neither reads the other's.
+      lockBranchRule: soloOwner
+        ? this.L('You are the whole roster here — the owner and the till.',
+          'أنت الطاقم كله هنا — ' + (this.ownerFem() ? 'صاحبة المحل' : 'صاحب المحل') + ' والصندوق.')
+        : this.L('Only ' + tillBr + ' staff can open this till.', 'موظفو ' + tillBrAr + ' وحدهم يفتحون هذا الصندوق.'),
       lockPickAnim: st.lockSeq ? SEED(st.lockSeq, 'bumpA', 'bumpB', '.42s') : AN('lockRise', '.45s'),
       lockPinAnim: st.lockSeq ? SEED(st.lockSeq, 'bumpA', 'bumpB', '.42s') : AN('lockRise', '.4s'),
       lockStaffRows: this.staffList().map((p, i) => {
@@ -5120,9 +5927,13 @@ class Component extends DCLogic {
       // ── history · seven days of it, because a dispute arrives the morning after ──
       historyOpen: st.historyOpen,
       closeHistory: () => this.setState({ historyOpen: false, corrId: null }),
-      // the window is said in words, generated from corrWindowDays() — one number, one sentence
-      histSubLine: this.L(histHits.length + (histHits.length === 1 ? ' action · ' : ' actions · ') + 'Rainbow St · correctable ' + corrWindowWord,
-        histHits.length + ' عملية · شارع الرينبو · قابلة للتصحيح ' + corrWindowWordAr),
+      // The window is said in words, generated from corrWindowDays() — one number, one sentence.
+      // THE BRANCH IS THE ACCOUNT'S. This header used to print another shop's street over a till
+      // whose own idle screen, one tap away, named the right one — tillBranch() is what that idle
+      // screen reads, so both read it now. On the seeded account it resolves to the same
+      // 'Rainbow St' this line used to hardcode, so the mature demo is byte-for-byte unchanged.
+      histSubLine: this.L(histHits.length + (histHits.length === 1 ? ' action · ' : ' actions · ') + tillBr + ' · correctable ' + corrWindowWord,
+        (this.isSeedAcct() ? histHits.length + ' عملية' : this.arActions(histHits.length)) + ' · ' + tillBrAr + ' · قابلة للتصحيح ' + corrWindowWordAr),
       histQ: st.histQ,
       histPh: t.histPh,
       onHistInput: (e) => this.setState({ histQ: String((e && e.target && e.target.value) || '').slice(0, 28) }),
@@ -5133,19 +5944,27 @@ class Component extends DCLogic {
           pick: () => this.setState({ histDay: x.d, corrId: null }) };
       }),
       histEmpty: histHits.length === 0,
-      histEmptyLine: (st.histQ || st.histDay !== 'all') ? t.histNoMatch : t.noActionsYet,
+      // AN EMPTY SEVEN DAYS IS NOT AN EMPTY SHIFT. `t.noActionsYet` says "this shift", which is the
+      // right sentence under the shift summary and the wrong one here — this sheet is the till's
+      // whole week, and on a shop that opened this morning the week is empty because the shop is
+      // new, not because the shift is young. The seeded account keeps its own string untouched.
+      histEmptyLine: (st.histQ || st.histDay !== 'all')
+        ? (this.isSeedAcct() ? t.histNoMatch
+          : this.L('Nothing matches that in the last 7 days. Try a surname, or the last 4 digits of the phone.', 'لا شيء يطابق ذلك في آخر 7 أيام. جرّب اسم العائلة أو آخر أربعة أرقام من رقم الهاتف.'))
+        : (this.isSeedAcct() ? t.noActionsYet
+          : this.L('Nothing on this till yet — these seven days start with the first scan.', 'ما في شي على هذا الصندوق بعد — هذه الأيام السبعة تبدأ بأول عملية مسح.')),
       histRows: histHits.map((l, i) => {
         const c = this.correctionFor(l), fixed = this.isFixed(l);
         const noPp = !!c && !fixed && !this.ppCanReverse(l);
         const tooOld = (!!c && !fixed && this.rowAgeDays(l) >= this.corrWindowDays()) || noPp;
         const canFix = this.canCorrect(l);
         const S = this.scenInfo(l.scen);
-        const staffFirst = l.prior ? this.L(String(l.staff || '').split(' ')[0], String(l.staffAr || l.staff || '').split(' ')[0]) : this.L(String(st.staffName).split(' ')[0], String(st.staffAr).split(' ')[0]);
+        const staffFirst = l.prior ? this.L(this.shortName(l.staff), this.shortNameAr(l.staffAr || l.staff)) : this.L(this.shortName(st.staffName), this.shortNameAr(st.staffAr));
         return {
           member: this.rowWho(l), action: this.actionText(l.k, l.v),
           actionFg: fixed ? '#6E6C77' : '#9B99A3',
           initials: (S.m[2] || '·'), color: S.color,
-          meta: this.rowWhen(l) + ' · ' + staffFirst + (l.by && l.by !== (l.staff || st.staffName) ? (' · ' + this.L('code: ', 'رمز: ') + this.ovName(l.by).split(' ')[0]) : '') + (l.ovr ? (' · ' + t.grantedBadge + ' ' + this.ovName(l.ovr)) : '') + (noPp ? ' · ' + this.ppNoReverseWhy(l) : ''),
+          meta: this.rowWhen(l) + ' · ' + staffFirst + (l.by && l.by !== (l.staff || st.staffName) ? (' · ' + this.L('code: ', 'رمز: ') + this.L(this.shortName(this.ovName(l.by)), this.shortNameAr(this.ovName(l.by)))) : '') + (l.ovr ? (' · ' + t.grantedBadge + ' ' + this.ovName(l.ovr)) : '') + (noPp ? ' · ' + this.ppNoReverseWhy(l) : ''),
           corrected: fixed, canFix, tooOld,
           cls: canFix ? 'ws-row' : '', cur: canFix ? 'pointer' : 'default',
           br: canFix ? 'rgba(244,242,238,.11)' : 'rgba(244,242,238,.06)',
@@ -5158,7 +5977,9 @@ class Component extends DCLogic {
       corrOpen: !!st.corrId,
       corrMember: corrL ? this.rowWho(corrL) : '',
       corrAction: corrL ? this.actionText(corrL.k, corrL.v) : '',
-      corrMeta: corrL ? (this.rowWhen(corrL) + ' · ' + this.L('Rainbow St', 'شارع الرينبو')) : '',
+      // the correction sheet stamps the row with WHERE it happened — this till's branch, not a
+      // literal. Same source as the history header above it and the idle screen behind it.
+      corrMeta: corrL ? (this.rowWhen(corrL) + ' · ' + this.L(tillBr, tillBrAr)) : '',
       corrEffect: corrC ? corrC.effect : '',
       // a prior-day correction is the same discipline said out loud: same PIN, same exact reversal
       corrPrior: !!(corrL && corrL.prior),
@@ -5172,10 +5993,20 @@ class Component extends DCLogic {
       lookupOpen: st.lookupOpen,
       closeLookup: () => this.setState({ lookupOpen: false, lookupQ: '' }),
       lookupQ: st.lookupQ,
-      lookupSubLine: st.lookupQ ? t.lookupSub : t.lookupStart,
+      // "or pick someone you served today" needs somebody to have been served. On an empty roster
+      // the prompt is the search itself, not a shortlist that does not exist.
+      lookupSubLine: st.lookupQ ? t.lookupSub : (lookPoolN === 0 ? t.lookupSub : t.lookupStart),
       onLookupInput: (e) => this.setState({ lookupQ: String((e && e.target && e.target.value) || '').slice(0, 28) }),
       lookupNone: lookHits.length === 0,
-      lookupNoneLine: this.L('Nobody matches that. Check the spelling, or try the last 4 digits of her phone.', 'لا أحد يطابق ذلك. تحقق من الإملاء، أو جرّب آخر أربعة أرقام من هاتفها.'),
+      // AN EMPTY ROSTER IS NOT A FAILED SEARCH. "Nobody matches that" over a shop where nobody has
+      // joined blames the cashier's spelling for a thing that has not happened yet.
+      lookupNoneLine: lookPoolN === 0
+        ? (hasCard
+          ? this.L('Nobody has joined yet. Show the counter QR and the first pass exists in seconds.', 'ما حدا انضم بعد. اعرض رمز الصندوق وتصير أول بطاقة جاهزة خلال ثوانٍ.')
+          : this.L('No card is live yet, so there is nobody to look up. The first card is what starts this.', 'ما في بطاقة شغّالة بعد، فما في حدا للبحث عنه. أول بطاقة هي البداية.'))
+        : (this.isSeedAcct()
+          ? this.L('Nobody matches that. Check the spelling, or try the last 4 digits of her phone.', 'لا أحد يطابق ذلك. تحقق من الإملاء، أو جرّب آخر أربعة أرقام من هاتفها.')
+          : this.L('Nobody matches that. Check the spelling, or try the last 4 digits of the phone.', 'لا أحد يطابق ذلك. تحقق من الإملاء، أو جرّب آخر أربعة أرقام من رقم الهاتف.')),
       // a hit on a card this person is not assigned is shown, labelled, and refused when tapped —
       // it never opens a working member screen
       lookupRows: lookHits.map((p, i) => ({
@@ -5193,46 +6024,76 @@ class Component extends DCLogic {
       joinPick: st.joinStage === 'pick', joinQr: st.joinStage === 'qr',
       joinWaiting: st.joinStage === 'scanning', joinDone: st.joinStage === 'done',
       joinCards: this.myCardIds().map((id, i) => {
-        const c = CARDS[id] || CARDS.daraj;
+        const c = this.cardDefOf(id);
         return { name: this.L(c.name, c.ar), sub: this.L(c.line, c.lineAr), initial: c.initial, dot: c.color,
           anim: AN('fadeUp', '.36s', (0.1 + 0.07 * i) + 's'),
           pick: () => this.setState({ joinCard: id, joinStage: 'qr' }) };
       }),
-      joinTitle: this.L('Point her camera here', 'وجّه كاميرتها إلى هنا'),
+      joinPickTitle: this.isSeedAcct() ? t.joinPickTitle : this.L('Which card are they joining?', 'أي بطاقة سينضم إليها؟'),
+      joinScanBtn: this.isSeedAcct() ? t.joinScanBtn : this.L('The camera is on it now', 'الكاميرا عليه الآن'),
+      joinTitle: this.isSeedAcct() ? this.L('Point her camera here', 'وجّه كاميرتها إلى هنا') : this.L('Point the camera here', 'وجّه الكاميرا إلى هنا'),
       joinQrEl: st.joinOpen ? this.joinQrEl(this.joinUrlFor(st.joinCard), 158) : null,
       joinUrl: this.joinUrlFor(st.joinCard),
       joinColor: joinCard.color, joinInitial: joinCard.initial,
       joinCardName: this.L(joinCard.name, joinCard.ar),
-      joinHint: this.L('No app, no form, no password. The card lands in her wallet and starts counting today.', 'بلا تطبيق ولا نموذج ولا كلمة سر. البطاقة تصل محفظتها وتبدأ العدّ اليوم.'),
+      joinHint: this.isSeedAcct()
+        ? this.L('No app, no form, no password. The card lands in her wallet and starts counting today.', 'بلا تطبيق ولا نموذج ولا كلمة سر. البطاقة تصل محفظتها وتبدأ العدّ اليوم.')
+        : this.L('No app, no form, no password. The card lands in the wallet and starts counting today.', 'بلا تطبيق ولا نموذج ولا كلمة سر. البطاقة تصل المحفظة وتبدأ العدّ اليوم.'),
       joinQrAnim: AN('qrLand', '.5s', '.06s'),
       joinScanning: () => this.joinScanning(),
-      joinWaitTitle: this.L('She’s scanning…', 'تمسح الرمز الآن…'),
-      joinDoneTitle: this.L(joinWho.en + ' has the card', joinWho.ar + ' معها البطاقة'),
-      joinDoneSub: this.L('It is in her wallet already — ' + joinCard.name + ', counting from today. Yara sees the join on the dashboard.', 'صارت في محفظتها — ' + joinCard.ar + '، وتعدّ من اليوم. ويارا ترى الانضمام على لوحة التحكم.'),
+      joinWaitTitle: this.isSeedAcct() ? this.L('She’s scanning…', 'تمسح الرمز الآن…') : this.L('Scanning…', 'يجري المسح الآن…'),
+      joinDoneTitle: this.isSeedAcct() ? this.L(joinWho.en + ' has the card', joinWho.ar + ' معها البطاقة')
+        : this.L(joinWho.en + ' has the card', 'البطاقة صارت مع ' + joinWho.ar),
+      // THE SEEDED COPY IS ABOUT A NAMED WOMAN AND A NAMED OWNER and stays exactly as written. Every
+      // other account joins whoever its own data says joins — who may be a man — and its owner is
+      // its own, so the second spelling carries no gender and no borrowed first name.
+      joinDoneSub: this.isSeedAcct()
+        ? this.L('It is in her wallet already — ' + joinCard.name + ', counting from today. Yara sees the join on the dashboard.', 'صارت في محفظتها — ' + joinCard.ar + '، وتعدّ من اليوم. ويارا ترى الانضمام على لوحة التحكم.')
+        : this.L('It is in the wallet already — ' + joinCard.name + ', counting from today. The join shows on ' + this.ownerFirst() + '’s dashboard.', 'صارت في المحفظة — ' + joinCard.ar + '، وتعدّ من اليوم. ويظهر الانضمام على لوحة تحكم ' + this.ownerFirstAr() + '.'),
       joinAgain: () => this.setState({ joinStage: this.myCardIds().length > 1 ? 'pick' : 'qr' }),
 
       // ── the demo rail · the counts are COMPUTED, so the header can never claim nine and list
       //    eight-and-a-refusal again ──
-      railTypesHead: 'One screen · ' + demoDefs.length + ' card types · ' + demoDefs.length + ' أنواع · 3 seconds',
-      railTypesLabel: 'Scan a customer · ' + demoDefs.length + ' types',
-      railEdgeLabel: 'When it isn’t a simple yes · ' + edgeDefs.length,
-      railEdgeSub: 'Five refusals and two cards you have to explain — each one names the rule and the sentence to say next.',
-      demoScans: demoDefs.map(([key, label, sub, dot, glyph, glyphSize], i) => ({
+      railTypesHead: seedRail ? 'One screen · ' + demoDefs.length + ' card types · ' + demoDefs.length + ' أنواع · 3 seconds'
+        : (demoDefs.length ? 'One screen · ' + this.acctName() + ' · ' + demoDefs.length + (demoDefs.length === 1 ? ' card' : ' cards')
+          : 'One screen · ' + this.acctName() + ' · day one'),
+      railTypesLabel: seedRail ? 'Scan a customer · ' + demoDefs.length + ' types'
+        : (demoDefs.length ? 'Scan a customer · ' + demoDefs.length + (demoDefs.length === 1 ? ' card' : ' cards') : 'Scan a customer'),
+      railEdgeLabel: seedRail ? 'When it isn’t a simple yes · ' + edgeDefs.length
+        : (edgeDefs.length ? 'When it isn’t a simple yes · ' + edgeDefs.length : 'When it isn’t a simple yes'),
+      railEdgeSub: seedRail ? 'Five refusals and two cards you have to explain — each one names the rule and the sentence to say next.'
+        : 'Only what this account can actually reach today. A paused card and a lapsed membership are things that happen to a shop — this one has not had them happen yet.',
+      // ── the two rails, and the two designed empties behind them. An empty rail is not a bug on
+      //    day one: it is the window between the account going live and the first card being
+      //    approved, and saying so is the whole point of building this account at all. ──
+      railEmpty: demoDefs.length === 0,
+      railEmptyTitle: this.pendingSubs().length ? 'The first card is in review' : 'No card is live yet',
+      railEmptyLine: this.pendingSubs().length
+        ? 'Wasla is looking at it now. The moment it is approved it appears here and this till can scan it — nothing else has to happen.'
+        : 'This account went live with no cards, which is where every shop starts. Build the first one in the merchant dashboard; it lands here the moment Wasla approves it.',
+      edgeEmpty: edgeDefs.length === 0,
+      edgeEmptyLine: 'Nothing to refuse yet. The refusals arrive with the rules — the earning guard turns up the second the first card does.',
+      demoScans: demoDefs.map(([key, label, sub, dot, glyph, glyphSize, note], i) => ({
         label, sub, dot, glyph, glyphSize,
         discBg: tint(dot, .10), discBr: tint(dot, .3),
-        go: () => st.locked ? this.lockNudge() : this.scanTo(key),
+        go: () => note ? this.flashNow('◇', '#8E8C96', this.L(label, label), note) : (st.locked ? this.lockNudge() : this.scanTo(key)),
         anim: AN('fadeUp', '.34s', (0.04 + 0.03 * i) + 's'),
-        br: st.scenario === key && st.screen !== 'idle' ? '#E88024' : '#E7E0D5',
-        bg: st.scenario === key && st.screen !== 'idle' ? '#FDF4EC' : '#FFFFFF'
+        br: note ? '#EDE6DA' : (st.scenario === key && st.screen !== 'idle' ? '#E88024' : '#E7E0D5'),
+        bg: note ? '#F7F3ED' : (st.scenario === key && st.screen !== 'idle' ? '#FDF4EC' : '#FFFFFF')
       })),
-      edgeScans: edgeDefs.map(([key, label, sub, dot, glyph, glyphSize], i) => ({
+      edgeScans: edgeDefs.map(([key, label, sub, dot, glyph, glyphSize, note], i) => ({
         label, sub, dot, glyph, glyphSize,
         discBg: tint(dot, .10), discBr: tint(dot, .3),
-        go: () => st.locked ? this.lockNudge() : this.scanTo(key),
+        go: () => note ? this.flashNow('◇', '#8E8C96', this.L(label, label), note) : (st.locked ? this.lockNudge() : this.scanTo(key)),
         anim: AN('fadeUp', '.34s', (0.04 + 0.03 * i) + 's'),
-        br: st.scenario === key && st.screen !== 'idle' ? '#E88024' : '#E7E0D5',
-        bg: st.scenario === key && st.screen !== 'idle' ? '#FDF4EC' : '#FFFFFF'
+        br: note ? '#EDE6DA' : (st.scenario === key && st.screen !== 'idle' ? '#E88024' : '#E7E0D5'),
+        bg: note ? '#F7F3ED' : (st.scenario === key && st.screen !== 'idle' ? '#FDF4EC' : '#FFFFFF')
       })),
+      /* Both cross-surface links carry the account; the hub does not, because the hub is where a
+         viewer picks one. Same derivation as Customer's, so the two agree by construction. */
+      dashHref: 'Wasla Dashboard.dc.html' + acctQuery,
+      custHref: 'Wasla Customer.dc.html' + acctQuery,
+      hubHref: 'Wasla Demo.dc.html',
       resetLabel: st.resetArm ? 'Tap again to wipe this demo session' : 'Reset demo · مسح جلسة العرض',
       resetBr: st.resetArm ? '#E2563A' : '#DCD3C4', resetFg: st.resetArm ? '#E2563A' : '#93887A',
       resetDemo: () => {

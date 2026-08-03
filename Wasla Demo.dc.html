@@ -57,6 +57,11 @@
   .wl-step:hover .wl-stepdisc{transform:scale(1.12);box-shadow:0 0 0 4px rgba(232,128,36,.16);}
   .wl-pill{transition:border-color .2s,background .2s;}
   .wl-pill:hover{border-color:#43444A !important;background:rgba(255,255,255,.06) !important;}
+  /* the day-one route · a quieter lift than .wl-seat, because it rides under the
+     merchant tile rather than standing beside it — same column, second morning */
+  .wl-day{transition:transform .26s cubic-bezier(.22,.61,.36,1),border-color .22s,background .22s,box-shadow .26s;}
+  .wl-day:hover{transform:translateY(-3px);border-color:rgba(232,128,36,.72) !important;background:rgba(232,128,36,.15) !important;box-shadow:0 14px 30px rgba(0,0,0,.42);}
+  .wl-day:active{transform:translateY(-1px) scale(.99);}
 
   /* ── reduced motion · blanket collapse. Every entrance uses fill-mode `both`, so a
        ~0ms duration still resolves to the `to` state — end-states stay visible. Every
@@ -95,11 +100,19 @@
 
     <!-- ── the five seats ────────────────────────────────────────────────────
          grid tuned to skip the "4-wide + 1 orphan" row that minmax(232px,1fr)
-         would hit at tablet-landscape widths — see the walk-through below. ── -->
+         would hit at tablet-landscape widths — see the walk-through below.
+         STILL EXACTLY FIVE GRID CHILDREN, and it has to stay that way: inside the
+         1060px shell five 180px tiles fit one row (5×180 + 4×16 = 964) and six do
+         not (6×180 + 5×16 = 1160), so a sixth child brings the orphan row straight
+         back. The day-one route is therefore a second anchor inside the merchant
+         CELL, not a sixth tile — same seat, different morning. ── -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:30px;">
 
-      <!-- merchant · the mini dashboard breathes -->
-      <div style="display:flex;animation:fadeUp .62s cubic-bezier(.22,.61,.36,1) .26s both;">
+      <!-- merchant · the mini dashboard breathes. Two routes share this column:
+           the mature account above, day one below. The second link cannot be
+           nested inside the first — the tile is already an <a> — so the cell
+           becomes a column of two anchors and the grid still counts one child. -->
+      <div style="display:flex;flex-direction:column;gap:10px;animation:fadeUp .62s cubic-bezier(.22,.61,.36,1) .26s both;">
       <a href="Wasla Dashboard.dc.html" class="wl-seat wl-seat-lite" style="display:flex;flex-direction:column;flex:1;background:linear-gradient(165deg,#F6F1E8,#EDE5D6);border-radius:22px;padding:20px;color:#241C16;position:relative;overflow:hidden;">
         <div style="position:absolute;top:14px;inset-inline-end:14px;background:#E88024;color:#FFFFFF;font-size:9px;font-weight:800;letter-spacing:.08em;border-radius:999px;padding:4px 11px;">START HERE</div>
         <div style="height:104px;display:flex;align-items:center;justify-content:center;">
@@ -118,8 +131,20 @@
         <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;margin-top:10px;">The merchant</div>
         <div style="font-size:11.5px;color:#5D5348;line-height:1.55;margin-top:4px;">Enter as Yara — six cards, a live wizard, broadcasts, and the whole business breathing.</div>
         <div style="height:28px;margin-top:7px;overflow:hidden;">
-          <div class="wl-hint" style="font-size:10.5px;font-weight:700;color:#C96A14;line-height:1.3;">→ You'll print a poster and submit a business.</div>
+          <!-- the wizard submits a CARD for review, not a business — the business
+               already exists by the time anyone reaches this seat -->
+          <div class="wl-hint" style="font-size:10.5px;font-weight:700;color:#C96A14;line-height:1.3;">→ You'll print a poster and submit a card for review.</div>
         </div>
+      </a>
+      <!-- the day-one route · same surface, ?acct= picks the other account before a
+           single line of component code runs (see the resolver in wasla-data.js) -->
+      <a href="Wasla Dashboard.dc.html?acct=al-quds-falafel" class="wl-day" style="display:block;background:rgba(232,128,36,.10);border:1px solid rgba(232,128,36,.30);border-radius:16px;padding:11px 13px;">
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+          <span style="background:#E88024;color:#FFFFFF;font-size:8.5px;font-weight:800;letter-spacing:.08em;border-radius:999px;padding:3px 8px;flex-shrink:0;">DAY ONE</span>
+          <span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:12.5px;color:#F4F2EE;">Al-Quds Falafel</span>
+          <span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10.5px;color:#C97A2E;">فلافل القدس</span>
+        </div>
+        <div style="font-size:10.5px;color:#9B948A;line-height:1.5;margin-top:5px;">The same dashboard on its first morning — no cards, no members, nothing has happened yet.</div>
       </a>
       </div>
 
@@ -245,43 +270,58 @@
 
     </div>
 
-    <!-- ── the twelve-minute walk, as a rail ─────────────────────────────── -->
-    <div style="margin-top:32px;background:rgba(255,255,255,.04);border:1px solid #2E2F34;border-radius:18px;padding:18px 22px 20px;animation:fadeUp .62s cubic-bezier(.22,.61,.36,1) .66s both;">
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;color:#F09A4D;">THE TWELVE-MINUTE WALK — ONE LOOP, ALL FIVE SEATS</div>
-        <div style="margin-inline-start:auto;display:flex;align-items:center;gap:7px;background:rgba(232,128,36,.10);border:1px solid rgba(232,128,36,.26);border-radius:999px;padding:5px 12px;">
-          <span style="width:5px;height:5px;border-radius:50%;background:#E88024;flex-shrink:0;"></span>
-          <span style="font-size:10.5px;color:#D8D2C8;font-weight:600;">≈ 12 minutes · the whole loop</span>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;margin-top:14px;">
-        <sc-for list="{{ path }}" as="p" hint-placeholder-count="8">
-          <div style="display:flex;align-items:center;animation:fadeUp .5s cubic-bezier(.22,.61,.36,1) {{ p.delay }} both;">
-            <a href="{{ p.href }}" class="wl-step" style="display:flex;align-items:center;gap:9px;background:#101114;border:1px solid #2E2F34;border-radius:13px;padding:8px 13px 8px 9px;">
-              <span class="wl-stepdisc" style="width:23px;height:23px;border-radius:50%;background:linear-gradient(160deg,#F09A4D,#E88024);color:#FFFFFF;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;flex-shrink:0;">{{ p.n }}</span>
-              <span style="display:block;">
-                <span style="display:block;font-size:12px;font-weight:700;color:#F4F2EE;line-height:1.2;">{{ p.a }}</span>
-                <!-- optional Arabic gloss · same idiom as the "Wasla وصلة" lockup in the header.
-                     It sits in its own span with the Arabic face and a margin, so no Latin token
-                     ever touches an Arabic letter. p.hasAr is a real boolean, never a bare ''. -->
-                <span style="display:block;font-size:10px;color:#8E877D;line-height:1.3;margin-top:2px;">{{ p.b }}<sc-if value="{{ p.hasAr }}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#C97A2E;margin-inline-start:5px;">{{ p.ar }}</span></sc-if></span>
-              </span>
-            </a>
-            <sc-if value="{{ p.arrow }}" hint-placeholder-val="{{ true }}">
-              <span style="display:flex;align-items:center;gap:3px;padding:0 7px;flex-shrink:0;">
-                <span style="display:block;width:16px;height:2px;border-radius:99px;background:linear-gradient(90deg,rgba(232,128,36,.15),rgba(232,128,36,.5));"></span>
-                <span style="color:#C97A2E;font-size:11px;font-weight:800;line-height:1;">→</span>
-              </span>
-            </sc-if>
+    <!-- ── the walk · two rails ──────────────────────────────────────────────
+         Two ways through the same platform. The first is the product at scale.
+         The second is the point of this wave: ONE business, from a lead in Lina's
+         pocket to its first redeemed reward, with nothing narrated in between.
+         Both rails render from the markup below exactly once — the step numbers,
+         the arrows and the counts on the badges are all derived from each rail's
+         own array in renderVals, so a step added later cannot leave a hardcoded
+         count or a dangling arrow behind it. ── -->
+    <div style="margin-top:32px;display:flex;flex-direction:column;gap:14px;">
+      <sc-for list="{{ rails }}" as="r" hint-placeholder-count="2">
+        <div style="{{ r.box }}animation:fadeUp .62s cubic-bezier(.22,.61,.36,1) {{ r.delay }} both;">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;color:#F09A4D;">{{ r.title }}<sc-if value="{{ r.hasAr }}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;letter-spacing:0;margin-inline-start:8px;color:#C97A2E;">{{ r.ar }}</span></sc-if></div>
+            <div style="margin-inline-start:auto;display:flex;align-items:center;gap:7px;background:rgba(232,128,36,.10);border:1px solid rgba(232,128,36,.26);border-radius:999px;padding:5px 12px;">
+              <span style="width:5px;height:5px;border-radius:50%;background:#E88024;flex-shrink:0;"></span>
+              <span style="font-size:10.5px;color:#D8D2C8;font-weight:600;">{{ r.badge }}</span>
+            </div>
           </div>
-        </sc-for>
-      </div>
+          <div style="display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;margin-top:14px;">
+            <sc-for list="{{ r.steps }}" as="p" hint-placeholder-count="8">
+              <div style="display:flex;align-items:center;animation:fadeUp .5s cubic-bezier(.22,.61,.36,1) {{ p.delay }} both;">
+                <a href="{{ p.href }}" class="wl-step" style="display:flex;align-items:center;gap:9px;background:#101114;border:1px solid #2E2F34;border-radius:13px;padding:8px 13px 8px 9px;">
+                  <span class="wl-stepdisc" style="min-width:23px;height:23px;padding:0 5px;border-radius:99px;background:linear-gradient(160deg,#F09A4D,#E88024);color:#FFFFFF;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;flex-shrink:0;">{{ p.n }}</span>
+                  <span style="display:block;">
+                    <span style="display:block;font-size:12px;font-weight:700;color:#F4F2EE;line-height:1.2;">{{ p.a }}</span>
+                    <!-- optional Arabic gloss · same idiom as the "Wasla وصلة" lockup in the header.
+                         It sits in its own span with the Arabic face and a margin, so no Latin token
+                         ever touches an Arabic letter. p.hasAr is a real boolean, never a bare ''. -->
+                    <span style="display:block;font-size:10px;color:#8E877D;line-height:1.3;margin-top:2px;">{{ p.b }}<sc-if value="{{ p.hasAr }}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#C97A2E;margin-inline-start:5px;">{{ p.ar }}</span></sc-if></span>
+                  </span>
+                </a>
+                <sc-if value="{{ p.arrow }}" hint-placeholder-val="{{ true }}">
+                  <span style="display:flex;align-items:center;gap:3px;padding:0 7px;flex-shrink:0;">
+                    <span style="display:block;width:16px;height:2px;border-radius:99px;background:linear-gradient(90deg,rgba(232,128,36,.15),rgba(232,128,36,.5));"></span>
+                    <span style="color:#C97A2E;font-size:11px;font-weight:800;line-height:1;">→</span>
+                  </span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
     </div>
 
     <!-- ── footer ─────────────────────────────────────────────────────────── -->
-    <!-- footer lands after the last rail disc — the rail now runs to 1.07s (8 steps), not 1.02s -->
-    <div style="text-align:center;margin-top:28px;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) 1.12s both;">
-      <div style="font-size:11px;color:#6E6960;">Built for Rawan &amp; Khaled · every surface is clickable, every flow completes · Amman, 2026</div>
+    <!-- footer lands after the last disc of the LAST rail. The delay is computed in
+         renderVals from that rail's own length, so adding a step pushes the footer
+         with it instead of leaving it to land early on a still-animating page. -->
+    <div style="text-align:center;margin-top:28px;animation:fadeUp .6s cubic-bezier(.22,.61,.36,1) {{ footDelay }} both;">
+      <!-- it used to say "every flow completes", which was not true of the one flow
+           that matters most: a business going from a lead to its first reward. -->
+      <div style="font-size:11px;color:#6E6960;">Built for Rawan &amp; Khaled · every surface is clickable · one business, lead to first reward · Amman, 2026</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;">
         <span style="width:4px;height:4px;border-radius:50%;background:#E88024;opacity:.65;flex-shrink:0;"></span>
         <span style="font-size:10px;color:#4E4A44;letter-spacing:.03em;">Built with the Wasla design system</span>
@@ -326,31 +366,100 @@ class Component extends DCLogic {
     } catch (e) { return null; }
   }
 
+  /** One rail, finished. `n`, `arrow` and every delay are DERIVED from the array's
+      own shape — never typed on a row — so a step inserted anywhere renumbers the
+      rail, keeps the arrow off the last step, and re-times the stagger by itself.
+      hasAr is derived too, so the sc-if never sees a bare '' from a step with no gloss. */
+  rail(steps, base, gap) {
+    return steps.map((p, i) => ({
+      ...p,
+      n: String(i + 1),
+      ar: p.ar || '',
+      hasAr: !!p.ar,
+      arrow: i < steps.length - 1,
+      delay: (base + i * gap).toFixed(2) + 's'
+    }));
+  }
+
   renderVals() {
     const stamps = this.stampRow();
-    const path = [
+
+    /* RAIL ONE · the mature account. Tala at scale — six cards, three branches,
+       the prepaid till. Every href here is bare, and bare means Tala: the resolver
+       in wasla-data.js falls back to tala-hospitality-group when no ?acct= is present. */
+    const mature = [
       // where the account comes from, before Yara ever logs in — Lina works the field
-      { n: '1', a: 'Sell it as Lina', b: 'capture Louma Chocolate in the field', arrow: true, href: 'Wasla Sales.dc.html' },
-      { n: '2', a: 'Print the poster', b: 'in the dashboard — signup pages', arrow: true, href: 'Wasla Dashboard.dc.html' },
-      { n: '3', a: 'Join as Sara', b: 'scan it in the customer journey', arrow: true, href: 'Wasla Customer.dc.html' },
-      { n: '4', a: 'Stamp her card', b: 'at the staff till', arrow: true, href: 'Wasla Scanner.dc.html' },
-      { n: '5', a: 'Redeem the reward', b: 'when the card fills', arrow: true, href: 'Wasla Scanner.dc.html' },
+      { a: 'Sell it as Lina', b: 'capture Louma Chocolate in the field', href: 'Wasla Sales.dc.html' },
+      { a: 'Print the poster', b: 'in the dashboard — signup pages', href: 'Wasla Dashboard.dc.html' },
+      { a: 'Join as Sara', b: 'scan it in the customer journey', href: 'Wasla Customer.dc.html' },
+      { a: 'Stamp her card', b: 'at the staff till', href: 'Wasla Scanner.dc.html' },
+      { a: 'Redeem the reward', b: 'when the card fills', href: 'Wasla Scanner.dc.html' },
       // the ninth card type, and the only one that holds real money — the till takes the cash,
       // the pass shows what is left and what a refund would return
-      { n: '6', a: 'Load real cash', b: 'onto Zaman Arcade at the till', ar: 'زمان أركيد', arrow: true, href: 'Wasla Scanner.dc.html' },
-      { n: '7', a: 'Submit Sukkar', b: 'the wizard, live previews', arrow: true, href: 'Wasla Dashboard.dc.html' },
-      { n: '8', a: 'Approve it', b: 'in the console — it goes live', arrow: false, href: 'Wasla Console.dc.html' }
+      { a: 'Load real cash', b: 'onto Zaman Arcade at the till', ar: 'زمان أركيد', href: 'Wasla Scanner.dc.html' },
+      { a: 'Submit Sukkar', b: 'the wizard, live previews', href: 'Wasla Dashboard.dc.html' },
+      { a: 'Approve it', b: 'in the console — it goes live', href: 'Wasla Console.dc.html' }
     ];
+
+    /* RAIL TWO · day one. Al-Quds Falafel, one business, eleven clicks.
+       ?acct= IS LOAD-BEARING on every merchant-facing step. wasla-data.js is a plain
+       synchronous script at line 12 of every surface and reads the parameter before
+       any component code runs, so the link alone decides which account the whole
+       surface is. Drop it from one step and that step silently shows Tala — the walk
+       does not break, it just quietly becomes the other story, which is worse.
+       Sales and the Console take NO ?acct=: they work the platform-wide registers
+       (leads, invites, activations, the approvals queue), which are not per-account —
+       the Console reaches an account by drilling into it, not by URL. */
+    const ACCT = '?acct=al-quds-falafel';
+    const dayOne = [
+      { a: 'Convert the won lead', b: 'Al-Quds is Won — Lina sends the invite', ar: 'فلافل القدس', href: 'Wasla Sales.dc.html' },
+      // labelled as simulated on purpose: it is the one beat in this chain that is an
+      // animation on the rep's phone rather than a real event, and an unlabelled
+      // fiction inside an otherwise-real chain costs more than the beat is worth
+      { a: 'Set the password', b: 'simulated, on Abu Shadi’s phone', ar: 'أبو شادي', href: 'Wasla Sales.dc.html' },
+      { a: 'Activate the account', b: 'Omar clicks it live in the console', href: 'Wasla Console.dc.html' },
+      { a: 'Open an empty dashboard', b: 'no cards, no members, nothing yet', href: 'Wasla Dashboard.dc.html' + ACCT },
+      { a: 'Build the first card', b: 'the wizard, live in front of him', href: 'Wasla Dashboard.dc.html' + ACCT },
+      { a: 'Approve it', b: 'a real submission in Omar’s queue', href: 'Wasla Console.dc.html' },
+      { a: 'Print the poster', b: 'now there is a card to print', href: 'Wasla Dashboard.dc.html' + ACCT },
+      { a: 'Join as Rami', b: 'the first pass — nothing on it yet', ar: 'رامي حداد', href: 'Wasla Customer.dc.html' + ACCT },
+      { a: 'Open the till', b: 'a shop that has never taken a scan', href: 'Wasla Scanner.dc.html' + ACCT },
+      { a: 'The first stamp', b: 'it lands on his phone as it happens', href: 'Wasla Scanner.dc.html' + ACCT },
+      { a: 'The first reward', b: 'a full card one week old, redeemed', href: 'Wasla Scanner.dc.html' + ACCT }
+    ];
+
+    /* The stagger runs straight through both rails, then the footer lands after the
+       last disc of the second. Every number below is computed from the arrays. */
+    const M_BASE = 0.72, M_GAP = 0.05;
+    const D_BASE = M_BASE + mature.length * M_GAP + 0.02, D_GAP = 0.035;
+    const footDelay = (D_BASE + (dayOne.length - 1) * D_GAP + 0.06).toFixed(2) + 's';
+
+    const railBox = (fill, line) => 'background:' + fill + ';border:1px solid ' + line + ';border-radius:18px;padding:18px 22px 20px;';
+
     return {
       pills: [
         { t: 'Demo data throughout' },
         { t: 'Every number reconciles' },
         { t: '9 card types · stamps to prepaid' },
-        { t: '5 seats · one story' }
+        // earned by the day-one rail: five seats really do follow one business now
+        { t: '5 seats · one business, end to end' }
       ],
-      // the rail lands last, one disc at a time, picking up where the cards left off.
-      // hasAr is derived here, once, so the sc-if never sees a bare '' from a step without a gloss
-      path: path.map((p, i) => ({ ...p, ar: p.ar || '', hasAr: !!p.ar, delay: (0.72 + i * 0.05).toFixed(2) + 's' })),
+      rails: [
+        {
+          title: 'THE TWELVE-MINUTE WALK · THE MATURE ACCOUNT', ar: '', hasAr: false,
+          badge: mature.length + ' steps · ≈ 12 minutes',
+          box: railBox('rgba(255,255,255,.04)', '#2E2F34'), delay: '.66s',
+          steps: this.rail(mature, M_BASE, M_GAP)
+        },
+        {
+          title: 'DAY ONE · LEAD TO FIRST REWARD', ar: 'من الصفقة إلى أول مكافأة', hasAr: true,
+          badge: dayOne.length + ' steps · one business',
+          box: railBox('linear-gradient(140deg,rgba(232,128,36,.11),rgba(232,128,36,.04))', 'rgba(232,128,36,.30)'),
+          delay: '.70s',
+          steps: this.rail(dayOne, D_BASE, D_GAP)
+        }
+      ],
+      footDelay,
       stamps: stamps || [],
       hasStamps: !!stamps,
       noStamps: !stamps
