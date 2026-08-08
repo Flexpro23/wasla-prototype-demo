@@ -11,6 +11,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;700&amp;display=swap" rel="stylesheet">
 <script src="wasla-data.js"></script>
 <script src="wasla-stamps.js"></script>
+<!-- data → art → geometry → component. wasla-stamps.js says WHAT a stamp looks like; this one says
+     WHERE the stamps go, and it is the same file the pass and the dashboard preview ask, so the
+     card in the customer's hand and the card on this till cannot disagree about its shape. Both
+     siblings are read defensively at render time — a missing file degrades, it does not throw. -->
+<script src="wasla-stamp-layout.js"></script>
 <style>
   html,body{margin:0;padding:0;background:#F3EFE9;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#241C16;}
   a{color:#C96A14;text-decoration:none;} a:hover{color:#E88024;}
@@ -271,9 +276,9 @@
               <sc-if value="{{ modeCollect }}" hint-placeholder-val="{{ true }}">
                 <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
                   <div style="font-family:'Nunito','IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:40px;font-variant-numeric:tabular-nums;animation:{{ stampNumAnim }};">{{ stampCount }}<span style="color:#8E8C96;font-size:22px;"> / {{ goal }}</span></div>
-                  <div style="display:flex;justify-content:center;align-items:center;gap:13px;flex-wrap:wrap;max-width:265px;animation:{{ gridSettleAnim }};">
+                  <div style="{{ stampGridStyle }}animation:{{ gridSettleAnim }};">{{ stampTrail }}
                     <sc-for list="{{ stampCells }}" as="stc" hint-placeholder-count="8">
-                      <span style="position:relative;display:inline-block;line-height:0;transform:translateY({{ stc.dy }});animation:{{ stc.enter }};">
+                      <span style="{{ stc.pos }}line-height:0;transform:translateY({{ stc.dy }});animation:{{ stc.enter }};">
                         <span class="ws-halo" style="position:absolute;inset:{{ stc.haloInset }};border-radius:50%;background:radial-gradient(circle, rgba(232,128,36,.42), rgba(232,128,36,0) 68%);opacity:0;animation:{{ stc.halo }};"></span>
                         <span style="position:relative;display:inline-block;transform:rotate({{ stc.rot }});">
                           <sc-if value="{{ stc.isArt }}" hint-placeholder-val="{{ true }}">
@@ -1456,6 +1461,10 @@ class Component extends DCLogic {
       initial: str(r.initial, 1, name.slice(0, 1).toUpperCase()),
       tagline: str(r.tagline, 80, ''), taglineAr: '',
       stampStyle: str(r.stampStyle, 24, ''),
+      // the ARRANGEMENT the merchant chose, alongside the art they chose. Carried through raw and
+      // normalised at the one place that reads it, so a value this build has never heard of — an
+      // older wizard's, a newer one's — becomes 'auto' rather than a broken grid.
+      stampLayout: str(r.stampLayout, 24, ''),
       goal: (typeof r.goal === 'number' && isFinite(r.goal)) ? Math.max(1, Math.min(30, Math.round(r.goal))) : 8,
       reward: str(r.reward, 80, ''),
       rules: this.narrowRules(r.rules), state: 'live', fromWizard: true
@@ -2855,6 +2864,128 @@ class Component extends DCLogic {
   /** The art set for a card, or null when a card ships no photography — null is the branch the SVG
       disc path below still serves, which is why that path stays in the code. */
   cardArt(scen) { const style = this.scenInfo(scen).art; return style === 'coffee' ? this.stampArt(style) : null; }
+
+  // ── WHERE THE STAMPS GO · the shared geometry, never this file's own ────────
+  /** wasla-stamp-layout.js, read the same paranoid way its sibling wasla-stamps.js is: at RENDER
+      time, off window, shape-checked. The script tag resolves independently of this component, so
+      "the file is not there" is a state the till has to survive rather than a state it can assume
+      away — every caller below falls back to the flex row this screen shipped with. */
+  layoutMod() {
+    try {
+      const M = (typeof window !== 'undefined' && window.WASLA_STAMP_LAYOUT) || null;
+      return (M && typeof M.compute === 'function' && typeof M.normalize === 'function') ? M : null;
+    } catch (e) { return null; }
+  }
+  /** The card record field the arrangement lives in — the module's own name for it, so renaming it
+      there does not leave this file reading a key nobody writes. */
+  layoutField() { const M = this.layoutMod(); return (M && typeof M.FIELD === 'string' && M.FIELD) || 'stampLayout'; }
+  /** WHICH ARRANGEMENT THIS CARD'S STAMPS ARE DRAWN IN. Resolved in the same layer order, and for
+      the same reason, as rulesFor():
+        1  the dashboard's LIVE overlay, cardMods[id] — a merchant who re-arranged the card has
+           already re-arranged the pass in the customer's pocket, so the till must follow within a
+           beat or the two disagree across a counter;
+        2  the card record itself — the shared data's, or the approved submission's, which is where
+           a card born in the wizard carries its choice from;
+        3  nothing, which is 'auto'.
+      `edits[id]` is deliberately not read, exactly as with the rules: a proposal awaiting Wasla is
+      not yet true of the pass, and a till drawing a shape the customer's card does not have is the
+      same lie in a different medium. normalize() is the ONLY gate — an unknown, empty or hostile
+      value becomes 'auto', which is why every card that predates this feature keeps its look. */
+  layoutForScen(scen) {
+    const M = this.layoutMod();
+    if (!M) return 'auto';
+    const FIELD = this.layoutField();
+    const id = this.cardIdFor(scen);
+    let v = '';
+    try {
+      const b = this.dashBlob();
+      const cm = (b && b.cardMods && typeof b.cardMods === 'object' && !Array.isArray(b.cardMods)) ? b.cardMods[id] : null;
+      if (cm && typeof cm === 'object' && typeof cm[FIELD] === 'string') v = cm[FIELD];
+    } catch (e) { v = ''; }
+    if (!v) { try { const c = this.cardRecOf(id); if (c && typeof c[FIELD] === 'string') v = c[FIELD]; } catch (e) {} }
+    return M.normalize(v);
+  }
+  /** THE ONE GEOMETRY CALL. Everything about where a cup sits on this till comes from here, so the
+      three surfaces cannot drift on it. Three things are this surface's to decide and are passed
+      in; the arithmetic is entirely the module's.
+
+      THE PIN IS A DIAMETER, NOT AN ARRANGEMENT. Today's till draws a FIXED cup — 50px with art,
+      32px on the drawn-disc fallback — in a 265px-wide box with a 13px gap, and lets the column
+      grow downwards. Under v1 that pin did two jobs at once: it set the cup's diameter AND, because
+      the module re-solved `auto`/`zigzag`/`trail` from whatever width a pinned cell left over, it
+      silently chose the WRAP COUNT too — which is how this till came to draw a different shape from
+      the pass on 32 combinations. v2 removed that path entirely: rows, cols and rowCounts are a
+      function of (layout, goal) alone, and `size` cannot reach them. So the pin stays, and it now
+      means only what it says.
+
+      WHEN THE PIN GIVES. A pinned cup is only honest while the arrangement can hold it: one row of
+      eight 50px cups needs 491px and the box is 265. `fit:'shrink'` is the module's own name for
+      the trade — keep the pin while it fits, hand the size back to the solver when it does not, and
+      never move the structure either way. That is exactly the two-pass this method used to spell
+      out by hand, so the hand-rolled copy is gone: a surface keeping its own version of a module
+      policy is how the two drift apart again. Verified byte-for-byte identical to the old two-pass
+      across 5,600 (layout x goal 1-40 x dir x cup x filled) cases — same cells, same styles, same
+      trail path.
+
+      AND IT DOES FIRE ON `auto` NOW, WHICH IS THE POINT. The old note here said `auto` never
+      reached the shrink branch. That was true only because `auto` used to bend its row count to
+      this till's width; now it does not, so `auto` shrinks the cup at goals 5 and 9-12 (42px at
+      9-10, 33px at 11-12) rather than re-wrapping into a shape the customer's pass does not draw.
+      Daraj's goal 8 is untouched — two rows of four at a full 50px, pinned, no shrink.
+
+      THE HEIGHT IS DERIVED, NOT TYPED. The module centres its block inside the box it is given, so
+      a typed height would either strand the grid in dead space or clip it — and a stamp card is
+      2 rows tall at goal 8 and 3 at goal 12. So it is solved twice: once in a box tall enough that
+      nothing is squeezed (which is what decides the zigzag's step and the arc's sag), then once
+      more in a box exactly as tall as the result needs, with the cup the first pass settled on. A
+      hardcoded 126 here would be the house defect in pixels — a number beside a picture that has
+      stopped agreeing with it. */
+  stampGeom(layout, goal, filled, cell, dir) {
+    const M = this.layoutMod();
+    if (!M) return null;
+    const W = 265, GAP = 13;
+    const ask = (h, pin, fit) => ({ layout, goal, filled, box: { w: W, h }, gap: GAP, size: pin, maxSize: cell, dir, fit });
+    // a box far taller than any card, so pass one is never the thing that limits the arrangement
+    const TALL = 4000;
+    let probe = M.compute(ask(TALL, cell, 'shrink'));
+    // BELT AND BRACES, not a second policy: `fit` arrived with the module's v2. A sibling that
+    // predates it ignores the word and hands the pin straight back, so if the cup came back at
+    // full size and still does not fit, ask again with 0 — the module's "solve the size yourself".
+    if (probe.overflow && probe.size >= cell) probe = M.compute(ask(TALL, 0));
+    return M.compute(ask(Math.max(1, Math.ceil(probe.content.h)), probe.size));
+  }
+  /** The trail's connecting line. The module returns the PATH — a `d` string and the box it lives
+      in — and the stroke, the colour, the dash and the z-order are this surface's, exactly as the
+      cup art is. Built as React elements rather than template markup for the same reason
+      stampGlyph is: an SVG written as an HTML string arrives at the runtime as escaped text.
+      The walked half is drawn solid in the earning green over the dashed route, so a cashier reads
+      how far along the card is from the line as well as from the cups. */
+  stampTrailArt(G) {
+    const R = (typeof React !== 'undefined' && React) ? React : null;
+    if (!R || !G || !G.path || !G.path.d) return null;
+    const P = G.path;
+    const w = Math.max(2, Math.round((G.size || 50) * 0.09));
+    const cap = { fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' };
+    const kids = [R.createElement('path', { key: 'route', d: P.d, stroke: 'rgba(244,242,238,.20)', strokeWidth: w, strokeDasharray: (w * 2) + ' ' + (w * 2.6), style: cap })];
+    if (P.dFilled) kids.push(R.createElement('path', { key: 'walked', d: P.dFilled, stroke: 'rgba(47,174,102,.75)', strokeWidth: w, style: cap }));
+    return R.createElement('svg', { viewBox: P.viewBox, fill: 'none', style: this.styleObj(P.svgStyle) }, kids);
+  }
+  /** A declaration string → the object React wants. The module hands its geometry out as CSS text
+      because that is what the templates bind; a createElement call needs the parsed form, and
+      parsing the module's own string keeps one source rather than a second copy of the same
+      numbers written out by hand here. Pure geometry only ever — no url(), so no data URI can be
+      truncated at its own ';base64,'. */
+  styleObj(css) {
+    const o = {};
+    String(css || '').split(';').forEach(d => {
+      const i = d.indexOf(':');
+      if (i < 0) return;
+      const k = d.slice(0, i).trim();
+      if (!k) return;
+      o[k.replace(/-([a-z])/g, (m, c) => c.toUpperCase())] = d.slice(i + 1).trim();
+    });
+    return o;
+  }
   /** A cup at any size. Used for the flash mark and the redeem hero; the grid renders its own <img>
       in the template so the punch animation and per-cell opacity can bind to placeholders. */
   stampPhoto(art, px, filled, shadow) {
@@ -2891,8 +3022,10 @@ class Component extends DCLogic {
   /** Deterministic per-index tilt in −r°..+r° — the same cell always leans the same way, so the card
       looks hand-stamped rather than randomised on every render. Photography takes a tighter range
       (±3°) than the flat SVG disc (±6°): a rotated photo reads as a mistake long before a rotated
-      icon does. */
-  stampTilt(i, r) { const n = r || 6; return (((i * 5 + 2) % (2 * n + 1)) - n) + 'deg'; }
+      icon does. Returns a NUMBER, not a string, because on the arc layout it is added to the lean
+      the shared geometry already gives the cell: one is the row's shape and the other is the hand,
+      and they have to end up in a single rotate() rather than fighting over the element. */
+  stampTiltN(i, r) { const n = r || 6; return ((i * 5 + 2) % (2 * n + 1)) - n; }
   /** Log rows are stored as keys, never as sentences — so the log re-reads itself in Arabic too. */
   actionText(k, v) {
     switch (k) {
@@ -4870,6 +5003,32 @@ class Component extends DCLogic {
     const tierIdx = this.tierIdxFor(st.rVisits, this.tiersFor(scen === 'tierlock' ? 'tierlock' : 'vip'));
     const brand = SCEN.color;   // the SVG fallback disc is the card's own brand colour
     const cardArt = this.cardArt(scen);
+    // ── THE SHAPE OF THE CARD · asked once, per render, of the shared module ──────────────────
+    //    The cup DIAMETER is this surface's (50px photo / 32px drawn disc, the two this till has
+    //    always drawn); the ARRANGEMENT is the merchant's and the ARITHMETIC is the module's. Those
+    //    three are now genuinely separate: rows, cols and rowCounts are a function of (layout, goal)
+    //    alone, so the cup this till pins can shrink the picture but can never re-shape it. The
+    //    till, the pass and the two Dashboard strips return the same structure at every goal, every
+    //    layout and both directions — 1,512 comparisons over the wizard's range, 0 disagreements.
+    //    dir is passed and is not optional: the moment cells are positioned absolutely the free
+    //    RTL mirroring a flex row gets from dir="rtl" disappears, and forgetting it does not throw
+    //    and does not look broken — it silently puts stamp 1 on the wrong end of an Arabic card. It
+    //    is the PHONE's direction, the same `EN ? 'ltr' : 'rtl'` the shell's own dir="{{ dir }}" is
+    //    bound to — never the page wrapper's hardcoded dir="ltr", which only frames the mock.
+    //    stampGeom returns null when the sibling file is absent, and every read below falls back to
+    //    the flex row this screen shipped with.
+    const stampCell = cardArt ? 50 : 32;
+    const stampLay = this.layoutForScen(scen);
+    const stampG = (st.goal >= 1) ? this.stampGeom(stampLay, st.goal, sCount, stampCell, EN ? 'ltr' : 'rtl') : null;
+    const stampSize = stampG ? stampG.size : stampCell;
+    // AUTO KEEPS THE TILL'S OWN HAND. This grid has always stepped every other cup ±5px — the read
+    // that stops a counter card looking like a spreadsheet — and `auto` is the merchant declining
+    // to choose, so the step stays exactly where it was, in a transform, taking no layout room and
+    // changing no geometry. A merchant who has CHOSEN a shape gets that shape and nothing on top of
+    // it: the zigzag is then the module's, with vertical room reserved for it, and the rows are
+    // clean rows. `family` is the REQUEST that was honoured, so this reads 'auto' whether the goal
+    // table resolved it to one row, two or three — which is the same card, drawn the same way.
+    const stampStep = (!stampG || stampG.family === 'auto');
     // ONE money format for both languages — "JOD <n>". Latin digits are already what every other
     // number in the Arabic UI uses, and the prepaid work standardised on this; a second currency
     // shape on the same counter is how a cashier and a customer end up reading two prices.
@@ -5360,16 +5519,34 @@ class Component extends DCLogic {
       })),
       // ── stamps · the type panel stands down when the cap refusal has taken the screen ──
       bStamps: isStampsS && !capTrip, stampCount: sCount, goal: st.goal,
-      stampCells: Array.from({ length: st.goal }, (_, i) => {
+      // The box the cells are positioned INSIDE — its own size is the module's, because absolutely
+      // positioned cells need a positioned ancestor of exactly the right size or the grid floats
+      // off its own centre. Without the module it is the flex-wrap row this screen shipped with,
+      // unchanged to the character, so a missing sibling file costs the choice and nothing else.
+      stampGridStyle: stampG ? stampG.containerStyle
+        : 'display:flex;justify-content:center;align-items:center;gap:13px;flex-wrap:wrap;max-width:265px;',
+      // the trail's line, BEFORE the cells in DOM order so it sits behind the cups. null for every
+      // other layout, and null is what React draws as nothing.
+      stampTrail: this.stampTrailArt(stampG),
+      stampCells: (stampG ? stampG.cells : Array.from({ length: st.goal }, (_, i) => ({ i: i, rot: 0, style: '' }))).map((C) => {
+        const i = C.i;
         const stamped = i < sCount;
         const landed = i === sCount - 1 && st.stampSeq > 0;
         const halo = (i === sCount && !full) ? 'nextGlow 2.2s ease-in-out infinite' : 'none';
+        // WHERE it sits is the module's; WHICH WAY IT LEANS is both. The arc's lean comes back
+        // already mirrored for Arabic, and the hand-stamped tilt is added on top of it — one is
+        // geometry, the other is character, and they compose on the same element rather than
+        // fighting over it. Every other layout returns a lean of 0, so today's rows are untouched.
+        const lean = Math.round((C.rot || 0) * 10) / 10;
+        const pos = stampG ? C.style : 'position:relative;display:inline-block;';
+        const dy = stampStep ? (i % 2 ? '5px' : '-5px') : '0px';
+        const inset = '-' + Math.round(stampSize * 0.22) + 'px';
         if (cardArt) return {
           isArt: true, isDisc: false,
-          dy: i % 2 ? '5px' : '-5px',
-          rot: stamped ? this.stampTilt(i, 3) : '0deg',
+          pos, dy,
+          rot: (lean + (stamped ? this.stampTiltN(i, 3) : 0)) + 'deg',
           img: stamped ? cardArt.filled : cardArt.empty,
-          size: '50px', haloInset: '-11px',
+          size: stampSize + 'px', haloInset: inset,
           // the earned/unearned read has to survive a glance from across a counter, so the unearned
           // cup is ghosted — the coffee alone is too small a difference at grid size
           op: stamped ? '1' : '.34',
@@ -5381,13 +5558,15 @@ class Component extends DCLogic {
         };
         return {
           isArt: false, isDisc: true,
-          dy: i % 2 ? '5px' : '-5px',
-          rot: stamped ? this.stampTilt(i, 6) : '0deg',
-          img: '', size: '32px', haloInset: '-7px', op: '1', shadow: 'none',
+          pos, dy,
+          rot: (lean + (stamped ? this.stampTiltN(i, 6) : 0)) + 'deg',
+          img: '', size: stampSize + 'px', haloInset: inset, op: '1', shadow: 'none',
           bg: stamped ? 'linear-gradient(158deg, ' + this.lift(brand, .17) + ', ' + brand + ')' : 'transparent',
           border: stamped ? '1.5px solid ' + this.lift(brand, .34) : '1.5px dashed rgba(244,242,238,.35)',
           punch: stamped ? 'inset 0 0 0 2.5px rgba(0,0,0,.2), 0 2px 6px rgba(0,0,0,.42)' : 'none',
-          glyph: stamped ? this.stampGlyph(19, '#FFFFFF', 1.9) : null,
+          // the glyph is drawn to the disc it sits in — a fixed 19px inside a cup the chosen
+          // arrangement has shrunk would burst its own circle
+          glyph: stamped ? this.stampGlyph(Math.max(8, Math.round(stampSize * 19 / 32)), '#FFFFFF', 1.9) : null,
           enter: AN('popIn', '.34s', (0.08 + 0.035 * i) + 's'),
           anim: landed ? AN('stampPunch', '.45s') : 'none',
           halo

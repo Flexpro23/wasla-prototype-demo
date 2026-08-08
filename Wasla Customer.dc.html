@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;700&amp;display=swap" rel="stylesheet">
 <script src="wasla-data.js"></script>
 <script src="wasla-stamps.js"></script>
+<script src="wasla-stamp-layout.js"></script>
 <style>
   html,body{margin:0;padding:0;background:#F3EFE9;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#241C16;}
   a{color:#C96A14;text-decoration:none;} a:hover{color:#E88024;}
@@ -307,7 +308,12 @@
                 <div style="font-size:12px;font-weight:700;">{{ bName }}</div>
                 <div style="margin-inline-start:auto;text-align:end;"><div style="font-size:8.5px;letter-spacing:.08em;opacity:.75;">{{ stampsWord }}</div><div style="font-size:13px;font-weight:700;" dir="ltr">{{ sheetProgress }}</div></div>
               </div>
-              <div aria-label="{{ sheetStampsAria }}" style="display:flex;justify-content:center;gap:7px;margin:15px 0;">
+              <!-- one LINE of cups, deliberately not the merchant's arrangement (see
+                   stampCupRow). flex-wrap is the honest floor: at a goal of 11 or 12
+                   twelve 30px cups need 437px inside a 318px card, and without it the
+                   line ran off both edges of the sheet. At the demo's goal of 8 it
+                   measures 289px and still sits on one line, unchanged. -->
+              <div aria-label="{{ sheetStampsAria }}" style="display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:15px 0;">
                 <sc-for list="{{ sheetStamps }}" as="sh" hint-placeholder-count="8"><span style="{{ sh.box }}"><sc-if value="{{ sh.hasArt }}" hint-placeholder-val="{{ true }}"><span style="{{ sh.inner }}"><img src="{{ sh.src }}" alt="" style="{{ sh.img }}"></span></sc-if><sc-if value="{{ sh.noArt }}" hint-placeholder-val="{{ false }}"><span style="{{ sh.disc }}"></span></sc-if></span></sc-for>
               </div>
               <div style="background:#FFFFFF;border-radius:9px;padding:8px;display:flex;justify-content:center;">
@@ -419,7 +425,18 @@
                         <div style="margin:13px -16px 0;background:rgba(255,255,255,.1);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:10.5px;font-weight:700;letter-spacing:.02em;text-align:center;line-height:1.5;color:rgba(255,255,255,.9);animation:{{ popAnim }};">{{ freshLine }}</div>
                       </sc-if>
                       <div style="margin:14px -16px 12px;position:relative;aspect-ratio:375/123;overflow:hidden;display:flex;align-items:center;justify-content:center;">
-                        <div aria-label="{{ stampsAria }}" style="display:flex;justify-content:center;align-items:center;gap:9px 14px;flex-wrap:wrap;max-width:232px;">
+                        <!-- THE STAMP GRID · arrangement from wasla-stamp-layout.js.
+                             This element is the POSITIONED ANCESTOR the module's cells
+                             are absolute against, which is what passGridStyle carries.
+                             The trail's route is emitted first so the line sits behind
+                             the cups; every other layout leaves it out entirely. -->
+                        <div aria-label="{{ stampsAria }}" style="{{ passGridStyle }}">
+                          <sc-if value="{{ passTrailOn }}" hint-placeholder-val="{{ false }}">
+                            <svg viewBox="{{ passTrailBox }}" fill="none" style="{{ passTrailStyle }}">
+                              <path d="{{ passTrailD }}" fill="none" stroke="rgba(255,255,255,.3)" strokeWidth="2" strokeDasharray="4 7" strokeLinecap="round" strokeLinejoin="round"></path>
+                              <path d="{{ passTrailDone }}" fill="none" stroke="rgba(255,214,10,.72)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"></path>
+                            </svg>
+                          </sc-if>
                           <sc-for list="{{ passStamps }}" as="ps" hint-placeholder-count="8">
                             <span style="{{ ps.box }}">
                               <sc-if value="{{ ps.hasArt }}" hint-placeholder-val="{{ true }}">
@@ -1196,6 +1213,12 @@ class Component extends DCLogic {
     const mine = this.ACCT_SLUG();
     const str = (v, d) => (typeof v === 'string' && v.trim()) ? v : d;
     const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+    /* The arrangement's field name is the MODULE'S, not a literal repeated here —
+       see layoutField(). A submission row is reshaped into a card record, so the
+       key is read AND written under the same derived name: a rename in the module
+       moves both ends together instead of leaving this reader looking for a key
+       the wizard no longer writes. */
+    const LF = this.layoutField();
     Object.keys(b).forEach((k) => {
       const r = b[k];
       if (!r || typeof r !== 'object' || Array.isArray(r)) return;
@@ -1211,6 +1234,12 @@ class Component extends DCLogic {
         color: str(r.color, '#1E5C43'), color2: str(r.color2, str(r.color, '#154232')),
         initial: str(r.initial, name.charAt(0)),
         stampStyle: str(r.stampStyle, ''),
+        /* WHERE the stamps go, beside WHAT they look like. The wizard writes the
+           merchant's chosen arrangement here; a submission made before the picker
+           existed simply has no field, and no field is 'auto' — the arrangement
+           that already shipped. Never validated here: the geometry module owns
+           that, and normalize() turns anything it does not know into 'auto'. */
+        [LF]: str(r[LF], ''),
         /* The wizard collects ONE tagline. It is the merchant's own words, so it is
            shown as written in both languages rather than machine-doubled into an
            Arabic line the owner never approved. */
@@ -1295,6 +1324,18 @@ class Component extends DCLogic {
       slot after a colon or a dash, never as the object of a preposition, so the
       surrounding words never have to agree with a number they cannot see. */
   stampsArN(n) { return n === 1 ? 'ختم واحد' : (n === 2 ? 'ختمان' : (n <= 10 ? n + ' أختام' : n + ' ختماً')); }
+  /** THE SAME RULE, IN THE SLOT AFTER A PREPOSITION. stampsArN() is documented as
+      NOMINATIVE and its own comment says so — it is only ever placed after a colon
+      or a dash. The pass grid's aria-label does not have that shape: it reads
+      "6 من 8 أختام", so the GOAL is the object of من, and the count that has to
+      agree is the goal, not the stamps she has.
+
+      Two things change in that slot. The dual is genitive — "من ختمين", never
+      "من ختمان" — and 11-99 takes the accusative singular tamyiz, so goals 11 and
+      12, both of which the wizard's 4..12 stepper can reach, were rendering
+      "11 أختام" / "12 أختام". 3-10 is unchanged, which is why the mature demo's
+      goal of 8 still reads exactly "من 8 أختام". Numerals stay LATIN. */
+  stampsArOf(n) { return n === 1 ? 'ختم واحد' : (n === 2 ? 'ختمين' : (n <= 10 ? n + ' أختام' : n + ' ختماً')); }
   /** The English half of the same rule. "1 stamps" is the same defect as "1 أختام",
       and it renders on the one card in this demo that starts at zero. */
   stampsEnN(n) { return n === 1 ? '1 stamp' : n + ' stamps'; }
@@ -1335,6 +1376,11 @@ class Component extends DCLogic {
     const acc = (d.account && typeof d.account === 'object') ? d.account : {};
     const sg = (d.signup && typeof d.signup === 'object') ? d.signup : {};
     const str = (v, f) => (typeof v === 'string' && v.trim()) ? v : f;
+    /* The arrangement travels under the MODULE'S field name, in and out — the card
+       record is read with it and BRAND re-exports it under the same key, so
+       cardLayout() has one name to ask for and there is no second spelling of the
+       contract anywhere in this file. See layoutField(). */
+    const LF = this.layoutField();
     const shopEn = str(acc.company, 'Tala Hospitality Group');
     const shopAr = str(acc.companyAr, shopEn);
     const c = this.primaryCard();
@@ -1347,7 +1393,7 @@ class Component extends DCLogic {
       return { has: false, id: '', name: shopEn, ar: shopAr,
         shortEn: this.shortEn(shopEn), shortAr: this.shortAr(shopAr),
         initial: str(acc.initials, shopEn).charAt(0).toUpperCase(),
-        c: '#3E3A35', c2: '#26231F', type: '', stampStyle: '',
+        c: '#3E3A35', c2: '#26231F', type: '', stampStyle: '', [LF]: '',
         goal: 0, reward: '', tagline: '', taglineAr: '',
         joinUrl: str(sg.url, ''), branches: Array.isArray(acc.branches) ? acc.branches : [],
         shopEn, shopAr };
@@ -1357,6 +1403,12 @@ class Component extends DCLogic {
       initial: str(c.initial, str(c.name, 'W')).charAt(0).toUpperCase(),
       c: str(c.color, '#1E5C43'), c2: str(c.color2, '#154232'),
       type: str(c.type, 'stamps'), stampStyle: str(c.stampStyle, ''),
+      /* The merchant's chosen ARRANGEMENT, carried raw. It is normalized once, in
+         cardLayout(), by the geometry module that owns the vocabulary — a card
+         from before the picker, or one carrying a value this build has never
+         heard of, both come out as 'auto' there rather than being silently
+         rewritten here into a second opinion about what a layout id is. */
+      [LF]: str(c[LF], ''),
       goal: (typeof c.goal === 'number' && isFinite(c.goal)) ? Math.max(0, Math.min(12, Math.round(c.goal))) : 0,
       reward: str(c.reward, ''), tagline: str(c.tagline, ''), taglineAr: str(c.taglineAr, str(c.tagline, '')),
       /* A join URL is minted PER CARD, which is why the account's own signup.url is
@@ -1938,6 +1990,56 @@ class Component extends DCLogic {
     this._dashOv = this.parseDashLinks(raw);
     return this._dashOv;
   }
+  /* ══ THE OTHER HALF OF THE SAME BLOB · cardMods ═══════════════════════════
+     parseDashLinks() walks the four LINK keys and nothing else, which is right
+     for what it is for — and was the whole of the defect. `cardMods[id]` is
+     where the dashboard writes an INSTANT card edit, and it is LAYER 1 of how
+     the Scanner till resolves a card's stamp ARRANGEMENT. This file could not
+     see it, so the merchant re-arranged the card in the editor, the till obeyed
+     within a beat, and the pass in the customer's pocket never moved — the till
+     and the card across one counter disagreeing, which is exactly the drift the
+     shared geometry module exists to end.
+
+     One blob, one key, two readers. This one narrows to exactly the field the
+     module NAMES and ignores everything else in the mod (`state`, `color`,
+     `rules`, `fields`, `cfg`) because none of it is this method's business, and
+     a reader that swallowed the whole mod would be a second opinion about what
+     a card record is. `edits[id]` is deliberately NOT read, for the same reason
+     the Scanner does not read it: a proposal still awaiting Wasla is not yet
+     true of the pass. Version-checked, own-property read, never throws.
+     We are a READER. Nothing here ever writes the dashboard's key. */
+  parseDashMods(raw, field) {
+    try {
+      const b = JSON.parse(raw);
+      if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== 1) return null;
+      const cm = b.cardMods;
+      if (!cm || typeof cm !== 'object' || Array.isArray(cm)) return null;
+      const out = {};
+      Object.keys(cm).forEach((cid) => {
+        const m = cm[cid];
+        if (!m || typeof m !== 'object' || Array.isArray(m)) return;
+        /* own-property, both hops: a blob is merchant-editable JSON, and
+           JSON.parse gives '__proto__' as a real own key */
+        const v = Object.prototype.hasOwnProperty.call(m, field) ? m[field] : null;
+        if (typeof v === 'string' && v.trim()) out[cid] = v.trim();
+      });
+      return Object.keys(out).length ? out : null;
+    } catch (e) { return null; }
+  }
+  /** Same string-keyed cache discipline as dashOverlay() — re-parse only when the
+      stored STRING changes — and keyed on the FIELD as well, because the module
+      names the field and a render that happened before the sibling script landed
+      would otherwise leave a map cached under a name nobody writes. */
+  dashMods() {
+    const field = this.layoutField();
+    let raw = null;
+    try { raw = this._lsGet(this.dashKey()); } catch (e) { raw = null; }
+    if (!raw) { this._modRaw = null; this._modField = field; this._modOv = null; return null; }
+    if (raw === this._modRaw && field === this._modField) return this._modOv;
+    this._modRaw = raw; this._modField = field;
+    this._modOv = this.parseDashMods(raw, field);
+    return this._modOv;
+  }
   /* ── THE NO-DATABASE FLOOR, and why it stopped being the general fallback ──
      This used to be the last resort for every key on every card: nothing found
      anywhere → Daraj's Instagram. That was harmless while there was one merchant and
@@ -2115,6 +2217,10 @@ class Component extends DCLogic {
     const gs = Math.round(size * 0.6 * 10) / 10;
     return {
       box: 'width:' + size + 'px;height:' + size + 'px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;transform:rotate(' + rot + 'deg);',
+      /* the tilt is surfaced as a NUMBER as well as baked into `box`, because the
+         pass grid re-homes the cell onto the layout module's absolute geometry and
+         has to re-emit this same rotation on top of it (see stampCupGrid) */
+      rot, size,
       disc, d: g.d, s: g.s, sw: g.sw, gw: g.gw, ink: q.ink || '#1E5C43',
       hasGlyph: !!(g.d || g.s), hasBody: !!g.d, hasLines: !!g.s,
       svg: 'width:' + gs + 'px;height:' + gs + 'px;display:block;overflow:visible;'
@@ -2165,7 +2271,7 @@ class Component extends DCLogic {
     // ±3°, same deterministic hash as the disc cell so a row is stable across renders
     const rot = q.flat ? 0 : (((this.hashHue('stamp' + (q.seed === undefined ? 7 : q.seed)) + (q.i || 0) * 47) % 7) - 3);
     return {
-      ...disc, hasArt: true, noArt: false, src,
+      ...disc, hasArt: true, noArt: false, src, rot, size,
       box: 'width:' + size + 'px;height:' + size + 'px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;transform:rotate(' + rot + 'deg);',
       inner: 'position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;' + (q.anim ? 'animation:' + q.anim + ';' : ''),
       // z-index keeps the cup above its own halo; both stay under the reward shimmer (z-3)
@@ -2175,12 +2281,139 @@ class Component extends DCLogic {
       halo: 'position:absolute;inset:-14%;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(255,214,10,.55),rgba(255,214,10,.12) 52%,rgba(255,214,10,0) 72%);animation:stampNext 2.6s cubic-bezier(.22,.61,.36,1) infinite;'
     };
   }
+  /* A single UNWRAPPED line of cups — the Add-Pass sheet preview and nothing else.
+     It is a thumbnail of an empty card inside an iOS sheet, not the card, so it
+     stays a plain flex line (which is what the geometry module calls 'row') and is
+     deliberately NOT handed the merchant's arrangement. */
   stampCupRow(filled, goal, opts) {
     const o = opts || {};
     return Array.from({ length: goal }, (_, i) => {
       const anim = (o.anim && i === filled - 1) ? o.anim : '';
       const next = o.next !== false && i === filled;
       return { ...this.stampCupCell({ ...o, i, filled: i < filled, next, anim }), anim: anim || 'none' };
+    });
+  }
+
+  /* ══ WHERE THE STAMPS GO · the shared geometry module ═════════════════════
+     The arrangement of a stamp card used to be solved three separate times — here,
+     in the Scanner's till card and in the Dashboard's preview — which is how the
+     pass in a customer's hand ends up disagreeing with the till in front of her.
+     It is now one file, wasla-stamp-layout.js, loaded beside wasla-stamps.js. The
+     two siblings divide the same way the problem does:
+
+         wasla-stamps.js        WHAT a stamp looks like   (this file draws it)
+         wasla-stamp-layout.js  WHERE the stamps go       (this file obeys it)
+
+     Read defensively at RENDER time, exactly like WASLA_STAMPS and WASLA_DB: the
+     script tag resolves independently of this component, so nothing here may
+     assume it arrived. A null return puts every caller back on the wrapping flex
+     line that shipped before, which is the point — a missing sibling degrades the
+     arrangement instead of taking down renderVals(), and renderVals() computes
+     EVERY screen on EVERY render. ══════════════════════════════════════════ */
+  stampGeom(opts) {
+    try {
+      const M = (typeof window !== 'undefined') && window.WASLA_STAMP_LAYOUT;
+      if (!M || typeof M.compute !== 'function') return null;
+      const g = M.compute(opts || {});
+      return (g && g.ok === true && Array.isArray(g.cells) && g.cells.length) ? g : null;
+    } catch (e) { return null; }
+  }
+  /** The card-record field the arrangement lives in — the MODULE'S name for it, so
+      renaming it there does not leave this file reading a key nobody writes. Same
+      derivation the Scanner uses, and it falls back to the literal only when there
+      is no module to ask. */
+  layoutField() {
+    try {
+      const M = (typeof window !== 'undefined') && window.WASLA_STAMP_LAYOUT;
+      return (M && typeof M.FIELD === 'string' && M.FIELD) || 'stampLayout';
+    } catch (e) { return 'stampLayout'; }
+  }
+  /** THE ARRANGEMENT THIS CARD ASKS FOR · TWO LAYERS, IN ONE ORDER, and it is the
+      SAME order the Scanner till resolves in — deliberately, because these two
+      surfaces face each other across a counter and a disagreement between them is
+      visible to the customer holding the card:
+
+        1  the dashboard's LIVE overlay, cardMods[id][FIELD]. The editor writes an
+           arrangement change as INSTANT — already true of the card, already on the
+           member's pass — so the pass has to follow within a beat. This layer was
+           missing, and that was the defect: the merchant re-arranged the card, the
+           till obeyed, and the card in the customer's hand did not.
+        2  the card record itself — the shared data's, or the approved submission's,
+           which is where a card born in the wizard carries its choice from. That is
+           what BRAND()[FIELD] is, carried raw from primaryCard(). It is spelled the
+           module's way THERE too, not just here: BRAND() reads the record under the
+           derived name and re-exports it under the same one, so there is exactly one
+           name for this field in the file and a rename in the module cannot leave
+           half the chain reading a key nobody writes.
+        3  nothing, which is 'auto' — the arrangement that already shipped, which is
+           why a card saved before the picker existed does not move.
+
+      `edits[id]` is NOT consulted, exactly as on the till: a proposal still waiting
+      on Wasla is not yet true of the pass, and a pass drawing a shape the merchant
+      has only ASKED for is the same lie in a different medium.
+
+      The value is never trusted raw at any layer: the module's normalize() is the
+      single vocabulary, so an unknown, empty, legacy or hostile string becomes
+      'auto' rather than a broken card. */
+  cardLayout() {
+    try {
+      const M = (typeof window !== 'undefined') && window.WASLA_STAMP_LAYOUT;
+      if (!M || typeof M.normalize !== 'function') return 'auto';
+      const B = this.BRAND();
+      let v = '';
+      const mods = this.dashMods();
+      if (mods && B.id && Object.prototype.hasOwnProperty.call(mods, B.id)) {
+        const x = mods[B.id];
+        if (typeof x === 'string') v = x;
+      }
+      const LF = this.layoutField();
+      if (!v && typeof B[LF] === 'string') v = B[LF];
+      return M.normalize(v);
+    } catch (e) { return 'auto'; }
+  }
+  /** THE PASS STAMP BAND · the real box the cups are drawn into, measured.
+      Not a taste number and not a cap: the phone shell is 402px over an 11px bezel
+      (380 inside), the pass scene pads 14px a side (352), and the band bleeds back
+      out over the card's own 16px padding to that same 352. Its height is the
+      band's declared aspect-ratio:375/123 applied to that width.
+
+      Handing the module the TRUE width is what lets it SOLVE the arrangement. The
+      old flex line was capped at max-width:232px, which was only ever a device for
+      forcing four-per-row at a pinned 46px — and which, at a goal of 9 or more,
+      stacked three 46px rows (156px) inside a 115px band and clipped the top and
+      bottom rows straight off the card. At the true width the solver reaches the
+      same 4x4 at goal 8 to the pixel, and keeps every goal up to 12 inside the
+      band at full size. */
+  PASS_BAND() { const w = 352; return { w, h: w * 123 / 375 }; }
+  PASS_GAP() { return { x: 14, y: 9 }; }
+  PASS_MAX() { return 46; }
+
+  /* ── THE PASS GRID · geometry from the module, art from this file ─────────
+     One builder, two halves. WHERE each cup sits comes from the module's cells;
+     WHAT it looks like — the rasterised cup, the cream disc fallback, the next-up
+     halo, the punch that only the cup that just landed carries — stays here.
+
+     COMPOSE, never replace. cell.style is pure geometry (position/left/top/
+     width/height) and carries no transform, so the hand-stamped tilt is re-emitted
+     on top of it. The tilt and the arc's lean are the SAME rotation, summed into
+     one transform on the OUTER span, because the punch animation on the inner span
+     rotates too and two transforms on one element fight each other.
+
+     A null `geo` (the sibling file absent) keeps each cell's own flex box style, so
+     the row falls back to the wrapping line that shipped before. */
+  stampCupGrid(filled, goal, geo, opts) {
+    const o = opts || {};
+    const cells = (geo && Array.isArray(geo.cells)) ? geo.cells : null;
+    return Array.from({ length: goal }, (_, i) => {
+      const g = (cells && cells[i]) ? cells[i] : null;
+      const anim = (o.anim && i === filled - 1) ? o.anim : '';
+      const next = o.next !== false && i === filled;
+      const cell = this.stampCupCell({ ...o, i, size: g ? g.size : o.size, filled: i < filled, next, anim });
+      const tilt = Math.round(((cell.rot || 0) + (g ? g.rot : 0)) * 100) / 100;
+      const box = g
+        ? g.style + 'display:inline-flex;align-items:center;justify-content:center;transform:rotate(' + tilt + 'deg);'
+        : cell.box;
+      return { ...cell, box, anim: anim || 'none' };
     });
   }
   /* One row of cells for a given context — the only thing the three grids differ on. */
@@ -3271,9 +3504,12 @@ class Component extends DCLogic {
     const stSeq = st.stampSeq % 2 ? '1' : '2';
     const slidePx = ((st.navDir === 'back' ? -1 : 1) * (EN ? 1 : -1) * 30);
     // ── the three stamp grids ──
-    //   pass front  → real cups, 46px, 2×4          (the production surface)
-    //   sheet preview → real cups, 30px, one row    (iOS renders the actual pass art here)
+    //   pass front  → real cups, the MERCHANT'S arrangement  (the production surface)
+    //   sheet preview → real cups, 30px, one line   (iOS renders the actual pass art here)
     //   wallet row  → discs, 11px                   (a photo at 11px is mud)
+    //   Only the FIRST of the three asks the geometry module. The other two are
+    //   thumbnails, not the card, and a thumbnail that re-stated the arrangement at
+    //   11px would say it in mud.
     /* The stamp palette is the CARD's, not one shop's: cream disc, the card's own
        colour as the ink, its darker second colour as the punched inset ring, and its
        own artwork style. `seed` is the card id, so the hand-stamped tilt of a row is
@@ -3282,11 +3518,31 @@ class Component extends DCLogic {
                     inner: this.hexA(B.c2, .24), ring: '#FFFFFF', seed: B.id || 'wasla' };
     // the Google hero band reuses the card's own art; null when wasla-stamps.js is absent
     const heroArt = (this.stampArt(DARAJ.style) || {}).filled || null;
+    /* ── THE PASS FRONT · the one grid the merchant's choice reaches ──────────
+       The arrangement comes from the shared module, in the band's real box, with
+       the reading DIRECTION passed in. That last argument is not optional and is
+       not cosmetic: the old grid was a flex line inside dir="{{ dir }}", so Arabic
+       mirrored itself for free; absolutely-positioned cells do not, and left:Npx
+       is left in both languages. Forgetting `dir` would not throw and would not
+       look broken — it would quietly put stamp 1 on the wrong end of an Arabic
+       pass. A card with no chosen layout resolves to 'auto', which reproduces the
+       4x4 at goal 8 to the pixel. */
+    const passGeo = this.stampGeom({
+      layout: this.cardLayout(), goal: st.goal, filled: st.stamps,
+      box: this.PASS_BAND(), gap: this.PASS_GAP(), maxSize: this.PASS_MAX(),
+      dir: EN ? 'ltr' : 'rtl'
+    });
     // DARAJ is spread in so the DISC FALLBACK is styled too, not just the cup path
-    const passStamps = this.stampCupRow(st.stamps, st.goal, {
+    const passStamps = this.stampCupGrid(st.stamps, st.goal, passGeo, {
       ...DARAJ, size: 46,
       anim: st.stampSeq ? 'stampPunch' + stSeq + ' .45s' + HOUSE + 'both' : ''
     });
+    /* The trail layout's connecting line. The module returns only the path data —
+       the stroke, the colour, the dash and the z-order are this surface's, and the
+       svg is emitted BEFORE the cups so the route sits behind them. The second
+       path is the EARNED stretch, drawn solid in the reward gold over the dashed
+       full route, so the line says how far along she is rather than repeating it. */
+    const passTrail = (passGeo && passGeo.path) ? passGeo.path : null;
     const fallbackHistory = [
       ['Today 08:41', 'Stamp 6 of 8 · Rainbow St · by Ahmad'],
       ['Tue 08:37', 'Stamp 5 of 8 · Rainbow St'],
@@ -4359,9 +4615,25 @@ class Component extends DCLogic {
       /* the gift moment names the day, not a pronoun */
       openGift: () => { this.userTouch(); this.go('gift'); },
       passStamps, giftOn: st.gift && !retired && !left,
+      /* ── the pass grid's own container ──────────────────────────────────────
+         The module's containerStyle is what makes its absolutely-positioned cells
+         land where it says: it IS the positioned ancestor. When the sibling file
+         is absent, passGeo is null and this falls back to the wrapping flex line
+         the surface shipped with, which is the same fallback stampCupGrid takes,
+         so the two halves can never disagree about which grid is being drawn. */
+      passGridStyle: passGeo ? passGeo.containerStyle
+        : 'display:flex;justify-content:center;align-items:center;gap:9px 14px;flex-wrap:wrap;max-width:232px;',
+      passTrailOn: !!passTrail,
+      passTrailBox: passTrail ? passTrail.viewBox : '0 0 0 0',
+      passTrailStyle: passTrail ? passTrail.svgStyle : '',
+      passTrailD: passTrail ? passTrail.d : '',
+      passTrailDone: passTrail ? passTrail.dFilled : '',
       // the cups carry alt="" — one label on the row beats eight identical ones
-      stampsAria: T(st.stamps + ' of ' + st.goal + ' stamps collected', st.stamps + ' من ' + st.goal + ' أختام'),
-      sheetStampsAria: T('0 of ' + st.goal + ' stamps — a new card', '0 من ' + st.goal + ' أختام — بطاقة جديدة'),
+      /* Both counts go through the number-noun pair — the goal sits after من on the
+         Arabic side and after "of" on the English one, so "1 stamps" and "11 أختام"
+         are the same defect and neither is reachable now. */
+      stampsAria: T(st.stamps + ' of ' + this.stampsEnN(st.goal) + ' collected', st.stamps + ' من ' + this.stampsArOf(st.goal)),
+      sheetStampsAria: T('0 of ' + this.stampsEnN(st.goal) + ' — a new card', '0 من ' + this.stampsArOf(st.goal) + ' — بطاقة جديدة'),
       passRewardLine: retired
         ? T('The programme ended — thank you for every visit', 'انتهى البرنامج — شكراً على كل زيارة')
         : (paused ? T('Paused — your stamps are safe, rewards still redeem', 'موقوفة — أختامك محفوظة والمكافآت تُستبدل')

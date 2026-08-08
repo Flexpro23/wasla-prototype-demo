@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;700&amp;display=swap" rel="stylesheet">
 <script src="wasla-data.js"></script>
 <script src="wasla-stamps.js"></script>
+<script src="wasla-stamp-layout.js"></script>
 <style>
   html,body{margin:0;padding:0;background:#F3EFE9;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#241C16;}
   a{color:#C96A14;text-decoration:none;} a:hover{color:#E88024;}
@@ -699,8 +700,11 @@
                   <div style="margin:16px 0 12px;min-height:60px;display:flex;align-items:center;justify-content:center;">
                     <sc-if value="{{ dmIsStamps }}" hint-placeholder-val="{{ true }}">
                       <div style="{{ dmStampRow }}">
+                        <sc-if value="{{ dmTrailOn }}" hint-placeholder-val="{{ false }}">
+                          <svg style="{{ dmTrailStyle }}" viewBox="{{ dmTrailBox }}" fill="none"><path d="{{ dmTrailD }}" stroke="rgba(255,255,255,.3)" strokeWidth="2" strokeDasharray="5 7" strokeLinecap="round" strokeLinejoin="round"></path><path d="{{ dmTrailDone }}" stroke="rgba(255,255,255,.85)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                        </sc-if>
                         <sc-for list="{{ dmStamps }}" as="ds" hint-placeholder-count="8">
-                          <span style="{{ ds.box }}"><sc-if value="{{ ds.hasHalo }}" hint-placeholder-val="{{ false }}"><span style="{{ ds.halo }}"></span></sc-if><sc-if value="{{ ds.isPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ ds.src }}" alt="" style="{{ ds.img }}"></sc-if><sc-if value="{{ ds.isDisc }}" hint-placeholder-val="{{ false }}"><span style="{{ ds.disc }}"><svg viewBox="0 0 24 24" style="{{ ds.svg }}"><path d="{{ ds.d }}" fill="{{ ds.ink }}" stroke="{{ ds.ink }}" strokeWidth="{{ ds.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ ds.s }}" fill="none" stroke="{{ ds.ink }}" strokeWidth="{{ ds.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></sc-if></span>
+                          <span style="{{ ds.pos }}"><span style="{{ ds.box }}"><sc-if value="{{ ds.hasHalo }}" hint-placeholder-val="{{ false }}"><span style="{{ ds.halo }}"></span></sc-if><sc-if value="{{ ds.isPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ ds.src }}" alt="" style="{{ ds.img }}"></sc-if><sc-if value="{{ ds.isDisc }}" hint-placeholder-val="{{ false }}"><span style="{{ ds.disc }}"><svg viewBox="0 0 24 24" style="{{ ds.svg }}"><path d="{{ ds.d }}" fill="{{ ds.ink }}" stroke="{{ ds.ink }}" strokeWidth="{{ ds.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ ds.s }}" fill="none" stroke="{{ ds.ink }}" strokeWidth="{{ ds.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></sc-if></span></span>
                         </sc-for>
                       </div>
                     </sc-if>
@@ -852,6 +856,35 @@
                           <span style="font-size:10px;font-weight:600;color:#93887A;text-align:center;line-height:1.25;">{{ t.stStyleUpload }}</span>
                         </div>
                       </div></div>
+                    <sc-if value="{{ wHasLayoutPicker }}" hint-placeholder-val="{{ true }}">
+                    <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:4px;">{{ t.stLayoutLabel }}</div>
+                      <div style="font-size:11px;color:#93887A;margin-bottom:10px;line-height:1.5;">{{ t.stLayoutNote }}</div>
+                      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;">
+                        <sc-for list="{{ layoutOpts }}" as="lo" hint-placeholder-count="7">
+                          <div class="wl-press" onClick="{{ lo.pick }}" title="{{ lo.hint }}" style="{{ lo.tile }}">
+                            <div style="{{ lo.boxStyle }}"><div style="{{ lo.previewStyle }}">
+                              <sc-if value="{{ lo.hasPath }}" hint-placeholder-val="{{ false }}">
+                                <svg style="{{ lo.pathStyle }}" viewBox="{{ lo.pathBox }}" fill="none"><path d="{{ lo.pathD }}" stroke="{{ lo.pathInk }}" strokeWidth="1.6" strokeDasharray="4 5" strokeLinecap="round" strokeLinejoin="round"></path><path d="{{ lo.pathDone }}" stroke="{{ lo.pathDoneInk }}" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                              </sc-if>
+                              <sc-for list="{{ lo.cells }}" as="lc" hint-placeholder-count="8">
+                                <span style="{{ lc.pos }}"><span style="{{ lc.box }}"><sc-if value="{{ lc.isPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ lc.src }}" alt="" style="{{ lc.img }}"></sc-if><sc-if value="{{ lc.isDisc }}" hint-placeholder-val="{{ false }}"><span style="{{ lc.disc }}"><svg viewBox="0 0 24 24" style="{{ lc.svg }}"><path d="{{ lc.d }}" fill="{{ lc.ink }}" stroke="{{ lc.ink }}" strokeWidth="{{ lc.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ lc.s }}" fill="none" stroke="{{ lc.ink }}" strokeWidth="{{ lc.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></sc-if></span></span>
+                              </sc-for>
+                            </div></div>
+                            <div style="{{ lo.nameStyle }}">{{ lo.name }}</div>
+                            <div style="font-size:10px;color:#93887A;text-align:center;line-height:1.3;">{{ lo.summary }}</div>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <sc-if value="{{ wLayoutDropped }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;gap:8px;align-items:flex-start;background:#FDF4EC;border:1px solid #F0DCC6;border-radius:11px;padding:9px 12px;margin-top:10px;">
+                          <span style="color:#C96A14;font-size:12px;font-weight:900;flex-shrink:0;">!</span>
+                          <span style="font-size:11.5px;color:#7A5A2E;line-height:1.5;min-width:0;">{{ wLayoutDroppedText }}</span>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ wLayoutHasSummary }}" hint-placeholder-val="{{ true }}">
+                        <div style="font-size:11px;color:#5D5348;margin-top:10px;"><span style="font-weight:700;">{{ t.stLayoutNow }}</span> · {{ wLayoutSummary }}</div>
+                      </sc-if></div>
+                    </sc-if>
                     <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:6px;">{{ wRewardAtLine }}</div>
                       <input value="{{ wRewardRaw }}" onChange="{{ setWReward }}" placeholder="{{ rewardPlaceholder }}" style="width:100%;border:1px solid #D8D0C2;border-radius:10px;padding:12px 14px;font-size:14px;background:#FFFFFF;"></div>
                     <div><div style="font-size:11.5px;font-weight:700;color:#5D5348;margin-bottom:8px;">{{ t.rlEarnGuard }}</div>
@@ -1158,8 +1191,11 @@
                         </sc-if>
                         <sc-if value="{{ isStampsType }}" hint-placeholder-val="{{ true }}">
                           <div style="{{ wStampRow }}">
+                            <sc-if value="{{ wTrailOn }}" hint-placeholder-val="{{ false }}">
+                              <svg style="{{ wTrailStyle }}" viewBox="{{ wTrailBox }}" fill="none"><path d="{{ wTrailD }}" stroke="rgba(255,255,255,.3)" strokeWidth="2" strokeDasharray="5 7" strokeLinecap="round" strokeLinejoin="round"></path><path d="{{ wTrailDone }}" stroke="rgba(255,255,255,.85)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                            </sc-if>
                             <sc-for list="{{ wStamps }}" as="st" hint-placeholder-count="8">
-                              <span style="{{ st.box }}"><sc-if value="{{ st.hasHalo }}" hint-placeholder-val="{{ false }}"><span style="{{ st.halo }}"></span></sc-if><sc-if value="{{ st.isPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ st.src }}" alt="" style="{{ st.img }}"></sc-if><sc-if value="{{ st.isDisc }}" hint-placeholder-val="{{ false }}"><span style="{{ st.disc }}"><svg viewBox="0 0 24 24" style="{{ st.svg }}"><path d="{{ st.d }}" fill="{{ st.ink }}" stroke="{{ st.ink }}" strokeWidth="{{ st.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ st.s }}" fill="none" stroke="{{ st.ink }}" strokeWidth="{{ st.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></sc-if></span>
+                              <span style="{{ st.pos }}"><span style="{{ st.box }}"><sc-if value="{{ st.hasHalo }}" hint-placeholder-val="{{ false }}"><span style="{{ st.halo }}"></span></sc-if><sc-if value="{{ st.isPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ st.src }}" alt="" style="{{ st.img }}"></sc-if><sc-if value="{{ st.isDisc }}" hint-placeholder-val="{{ false }}"><span style="{{ st.disc }}"><svg viewBox="0 0 24 24" style="{{ st.svg }}"><path d="{{ st.d }}" fill="{{ st.ink }}" stroke="{{ st.ink }}" strokeWidth="{{ st.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ st.s }}" fill="none" stroke="{{ st.ink }}" strokeWidth="{{ st.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></sc-if></span></span>
                             </sc-for>
                           </div>
                         </sc-if>
@@ -1961,6 +1997,50 @@
                         </div>
                       </div>
                       <div style="font-size:10.5px;color:#93887A;margin-top:12px;line-height:1.5;">{{ edStampHintLine }}</div>
+
+                      <sc-if value="{{ edHasLayoutPicker }}" hint-placeholder-val="{{ true }}">
+                      <div style="height:1px;background:#F5F0E8;margin:16px 0 14px;"></div>
+                      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;margin-bottom:4px;">{{ t.edStampLayoutLabel }}</div>
+                      <div style="font-size:11px;color:#93887A;margin-bottom:10px;line-height:1.5;">{{ t.stLayoutNote }}</div>
+                      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;">
+                        <sc-for list="{{ edLayoutOpts }}" as="el" hint-placeholder-count="7">
+                          <div class="wl-press" onClick="{{ el.pick }}" title="{{ el.hint }}" style="opacity:{{ roDim }};{{ el.tile }}">
+                            <div style="{{ el.boxStyle }}"><div style="{{ el.previewStyle }}">
+                              <sc-if value="{{ el.hasPath }}" hint-placeholder-val="{{ false }}">
+                                <svg style="{{ el.pathStyle }}" viewBox="{{ el.pathBox }}" fill="none"><path d="{{ el.pathD }}" stroke="{{ el.pathInk }}" strokeWidth="1.6" strokeDasharray="4 5" strokeLinecap="round" strokeLinejoin="round"></path><path d="{{ el.pathDone }}" stroke="{{ el.pathDoneInk }}" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                              </sc-if>
+                              <sc-for list="{{ el.cells }}" as="elc" hint-placeholder-count="8">
+                                <span style="{{ elc.pos }}"><span style="{{ elc.box }}"><sc-if value="{{ elc.isPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ elc.src }}" alt="" style="{{ elc.img }}"></sc-if><sc-if value="{{ elc.isDisc }}" hint-placeholder-val="{{ false }}"><span style="{{ elc.disc }}"><svg viewBox="0 0 24 24" style="{{ elc.svg }}"><path d="{{ elc.d }}" fill="{{ elc.ink }}" stroke="{{ elc.ink }}" strokeWidth="{{ elc.gw }}" strokeLinejoin="round" strokeLinecap="round"></path><path d="{{ elc.s }}" fill="none" stroke="{{ elc.ink }}" strokeWidth="{{ elc.sw }}" strokeLinecap="round" strokeLinejoin="round"></path></svg></span></sc-if></span></span>
+                              </sc-for>
+                            </div></div>
+                            <div style="{{ el.nameStyle }}">{{ el.name }}</div>
+                            <div style="font-size:10px;color:#93887A;text-align:center;line-height:1.3;">{{ el.summary }}</div>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <sc-if value="{{ edLayoutDropped }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;gap:8px;align-items:flex-start;background:#FDF4EC;border:1px solid #F0DCC6;border-radius:11px;padding:9px 12px;margin-top:10px;">
+                          <span style="color:#C96A14;font-size:12px;font-weight:900;flex-shrink:0;">!</span>
+                          <span style="font-size:11.5px;color:#7A5A2E;line-height:1.5;min-width:0;">{{ edLayoutDroppedText }}</span>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ edLayoutHasSummary }}" hint-placeholder-val="{{ true }}">
+                        <div style="font-size:11px;color:#5D5348;margin-top:10px;"><span style="font-weight:700;">{{ t.stLayoutNow }}</span> · {{ edLayoutSummary }}</div>
+                      </sc-if>
+                      <sc-if value="{{ edLayoutNext }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;gap:8px;align-items:flex-start;background:#F7F3EC;border:1px solid #EDE6DA;border-radius:11px;padding:9px 12px;margin-top:8px;">
+                          <span style="width:7px;height:7px;border-radius:50%;background:#7A5A2E;margin-top:4px;flex-shrink:0;"></span>
+                          <span style="font-size:11px;color:#7A5A2E;line-height:1.5;min-width:0;">{{ edLayoutNextText }}</span>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ edLayoutNextDrop }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;gap:8px;align-items:flex-start;background:#FDF4EC;border:1px solid #F0DCC6;border-radius:11px;padding:9px 12px;margin-top:8px;">
+                          <span style="color:#C96A14;font-size:12px;font-weight:900;flex-shrink:0;">!</span>
+                          <span style="font-size:11px;color:#7A5A2E;line-height:1.5;min-width:0;">{{ edLayoutNextDropText }}</span>
+                        </div>
+                      </sc-if>
+                      <div style="font-size:10.5px;color:#93887A;margin-top:8px;line-height:1.5;">{{ edLayoutHintLine }}</div>
+                      </sc-if>
                     </div>
                   </sc-if>
 
@@ -4845,6 +4925,15 @@ class Component extends DCLogic {
   }
   rulesDefaults(type) {
     return {
+      /* NO `stampLayout` DEFAULT HERE, DELIBERATELY. rulesFromCfg() writes the
+         arrangement into a card's rules when the card is BORN, and cardLayout()
+         reads it from there — but an explicit 'auto' in the type defaults would
+         land a new key in liveRules() for every stamp card that already exists,
+         which is a row appearing in the console's review diff and in the tile's
+         rule set for a value nobody set. Absent already means 'auto' (the
+         module's normalize() guarantees it), so writing it would add a
+         difference without adding information. Measured, not assumed: adding it
+         moved 130 bindings across the mature account. */
       stamps: { guard: '1 / visit', guardNote: 'One stamp per customer per day · resets at midnight', redeemCap: 2 },
       vip: { redeemCap: 2, tiers: [{ name: 'Silver', at: 0 }, { name: 'Gold', at: 12 }, { name: 'Royal', at: 20 }] },
       cashback: { minRedeem: 2, redeemCap: 2 },
@@ -4921,6 +5010,10 @@ class Component extends DCLogic {
       return r;
     }
     if (type === 'stamps' && c.cap) { r.guard = c.cap; r.guardNote = this.guardNoteFor(c.cap); }
+    /* the arrangement crosses from wizard config to till rules HERE, once, and
+       is normalised on the way so an unknown or stale id can never reach a
+       pass — the module turns anything it does not recognise into 'auto'. */
+    if (type === 'stamps') r[this.stampLayoutField()] = this.stampLayoutId(c[this.stampLayoutField()]);
     const cap = this.redeemCapNum(c.xcap);
     if (cap !== null) r.redeemCap = cap;
     if (type === 'vip' && Array.isArray(c.tiers)) r.tiers = c.tiers.map(x => ({
@@ -5192,7 +5285,12 @@ class Component extends DCLogic {
   };
   cfgDefaults(id) {
     return {
-      stamps: { icon: 'coffee', cap: '1 / visit' }, cashback: { rate: 5, min: 2, bexp: 'Never' },
+      /* `icon` is the stamp STYLE (the art); the module's field is the stamp
+         LAYOUT (the arrangement). 'auto' is the default and reproduces what
+         shipped before this control existed, so an untouched card does not
+         move a pixel. */
+      stamps: { icon: 'coffee', cap: '1 / visit', [this.stampLayoutField()]: 'auto' },
+      cashback: { rate: 5, min: 2, bexp: 'Never' },
       points: { per: 10, ladder: [{ name: 'Free espresso', cost: 250 }, { name: 'A dozen ka\'ak', cost: 500 }] },
       discount: { pct: 15, fine: '' }, coupon: { offer: 'One free dessert', expiry: '1 month', qty: 'First 100' },
       vip: { tiers: [{ name: 'Silver', at: 0, perk: 'Members-only offers' }, { name: 'Gold', at: 15, perk: 'Skip the line + 15% off' }, { name: 'Royal', at: 40, perk: 'Private tastings, always' }] },
@@ -5224,7 +5322,9 @@ class Component extends DCLogic {
      ART OR DISC — the size decides, not the style. Raster art needs room to
      read; below roughly 20px an illustration turns to mud and a flat glyph
      in a tinted disc is simply the better drawing. So:
-       ART  the two wallet strips (25–46px, sized by fitStamps), the live
+       ART  the two wallet strips (25–46px, sized by WASLA_STAMP_LAYOUT —
+            NOT by fitStamps, which has no caller and is kept only as the
+            history of the box-solver this feature replaced), the live
             step-2 demo pass (up to 48px) and the 42px style picker.
        DISC the gallery type-tile mini pass (18px, and its white-disc/knocked-
             out-glyph look is deliberate against the card art), the Google
@@ -5377,9 +5477,286 @@ class Component extends DCLogic {
       svg: 'width:' + gs + 'px;height:' + gs + 'px;display:block;overflow:visible;'
     };
   }
-  /* the strips are fixed boxes, so the cups size themselves to fill one:
-     try 1/2/3 rows and keep whichever gives the biggest cup. Goal 8 lands on
-     two rows of four — exactly how the production pass reads. */
+  /* ══ WHERE THE STAMPS GO IS NOT THIS FILE'S BUSINESS ══════════════════════
+     The arrangement of a stamp card used to be solved three times — here, in
+     the Customer pass and in the Scanner till card — which is how a pass in a
+     customer's hand ends up disagreeing with the till in front of them. It now
+     lives once, in wasla-stamp-layout.js, loaded from the helmet beside
+     wasla-stamps.js. That file divides cleanly from its sibling:
+
+         wasla-stamps.js        WHAT a stamp looks like  (the art, per style)
+         wasla-stamp-layout.js  WHERE the stamps go      (the geometry)
+
+     Everything below is a THIN wrapper. Nothing here re-derives a position, a
+     row count or a validity range; if a number is missing from the module the
+     answer is to ask the module for it, not to compute it here — a local
+     workaround recreates exactly the drift this design removed.
+
+     READ IT DEFENSIVELY, LIKE WASLA_STAMPS. The script tag resolves
+     independently of this component, so every accessor tolerates its absence
+     and every call site degrades to the flex row that shipped before. That is
+     a renderVals() requirement, not politeness: renderVals computes EVERY
+     screen on EVERY render, so one lookup that throws takes down the whole
+     dashboard, on every tab. ═══════════════════════════════════════════════ */
+  stampLayoutApi() {
+    const L = (typeof window !== 'undefined' && window.WASLA_STAMP_LAYOUT) || null;
+    return (L && typeof L === 'object' && typeof L.compute === 'function'
+      && typeof L.normalize === 'function' && typeof L.isValid === 'function') ? L : null;
+  }
+  /* the card-record field, NAMED BY THE MODULE. Hardcoding 'stampLayout' here
+     would be a second spelling of one contract; this reads whatever the module
+     calls it and only falls back to the literal with no module to ask. */
+  stampLayoutField() { const L = this.stampLayoutApi(); return (L && L.FIELD) || 'stampLayout'; }
+  stampLayoutId(v) { const L = this.stampLayoutApi(); return L ? L.normalize(v) : 'auto'; }
+  /* ── ONE ARRANGEMENT PER CARD, FOUND IN ONE ORDER ────────────────────────
+     The layout can sit in four places, exactly like every other card setting,
+     and they are a LAYERING, never four competing values:
+       1. cardMods[id]        the instant edit the editor just made
+       2. the card record     `stampLayout`, beside `stampStyle` — what the
+                              Customer and Scanner read via fromCard()
+       3. cards[].cfg         what the wizard was holding when it was born
+       4. cards[].rules       the copy that travels with the till's rule set
+     First non-empty wins, and everything unknown normalises to 'auto', which
+     is why a card saved before this feature existed keeps its exact look. */
+  cardLayout(c, mod) {
+    const F = this.stampLayoutField();
+    const pick = (o) => {
+      if (!o || typeof o !== 'object') return '';
+      const v = o[F];
+      return (typeof v === 'string' && v.trim()) ? v.trim() : '';
+    };
+    const card = (c && typeof c === 'object') ? c : {};
+    return this.stampLayoutId(pick(mod) || pick(card) || pick(card.cfg) || pick(card.rules));
+  }
+  /* The picker's option list and the validity gate — both DERIVED by the
+     module from the goal, never a typed table. A goal window written down in
+     this file is a sentence waiting to contradict the picture beside it. */
+  layoutOptionsFor(goal) {
+    const L = this.stampLayoutApi();
+    if (!L) return [];
+    const o = L.optionsFor(goal);
+    return Array.isArray(o) ? o : [];
+  }
+  layoutValid(id, goal) {
+    const L = this.stampLayoutApi();
+    return L ? !!L.isValid(id, goal) : this.stampLayoutId(id) === 'auto';
+  }
+  /* THE ID THAT WILL ACTUALLY RENDER. compute() silently draws auto for a
+     choice this goal cannot carry, so anything that HIGHLIGHTS a choice has to
+     ask the same question, or the picker ticks "three rows" over a picture of
+     one. Used by both pickers and by the goal steppers. */
+  layoutInUse(id, goal) {
+    const k = this.stampLayoutId(id);
+    return this.layoutValid(k, goal) ? k : 'auto';
+  }
+  layoutName(id, lang) { const L = this.stampLayoutApi(); return L ? L.label(id, lang) : ''; }
+  layoutHint(id, lang) { const L = this.stampLayoutApi(); return L ? L.hint(id, lang) : ''; }
+  /* the row breakdown as a sentence — 'Two rows of 4' / 'صفّان من 4' — DERIVED
+     by the module from (layout, goal) and NOTHING ELSE.
+
+     ── NO BOX. THAT IS THE FIX, NOT A TIDY-UP ────────────────────────────
+     This used to hand compute() `box: L.REFERENCE, gap: …, maxSize: …` and
+     read the sentence off the result. Under v1 that was not decoration: the
+     box STEERED the arrangement, so "On the pass now · Two rows of 3" was
+     solved in the Dashboard's own 258x84 strip while the Customer pass —
+     352 wide — drew one row of 6, and the picker tile beside the caption
+     (176x76) drew a third thing again. One card, three sentences.
+
+     Under v2 structure is a function of (layout, goal) alone, so there is no
+     longer a box worth passing, and passing one would be a lie about where
+     the answer comes from. structure(id, goal) IS the whole answer, and
+     summary() accepts it directly — it only ever reads rowCounts. Verified:
+     summary(structure(id,g)) === summary(compute({layout:id,goal:g})) for
+     every layout across goals 1..40 in both languages, 0 mismatches.
+
+     Feature-detected rather than assumed: an older module on the page has no
+     structure(), and compute() with no box still answers correctly there. */
+  layoutSummary(id, goal, lang) {
+    const L = this.stampLayoutApi();
+    if (!L) return '';
+    try {
+      const shape = typeof L.structure === 'function'
+        ? L.structure(id, goal)
+        : L.compute({ layout: id, goal });
+      return L.summary(shape, lang) || '';
+    } catch (e) { return ''; }
+  }
+  /* ── THE ONE CALL INTO THE MODULE ────────────────────────────────────────
+     Every stamp arrangement this file draws goes through here. `cellFn(i, g)`
+     is the caller's own stampCell() call — colour, tilt, punch animation and
+     halo stay entirely local, because the module returns GEOMETRY and never
+     markup or art. `g` carries the module's own answers for that cell (size,
+     filled, next, row, col, the lean), so a caller never counts stamps itself.
+
+     COMPOSITION, NOT REPLACEMENT. `pos` is the module's pure-geometry style
+     (position/left/top/width/height) plus, for the arc, the lean. It goes on a
+     WRAPPER span; stampCell's own box — which carries the hand-stamped tilt —
+     stays on the span inside it, and the punch animation stays one level below
+     that. Three transforms, three elements, none fighting.
+
+     `opts.fallback` is what to draw with no module at all: today's flex-wrap
+     row, byte for byte. It is a degraded path, not a second implementation —
+     it does not know about layouts and never claims to. */
+  stampStrip(opts, cellFn) {
+    const q = opts || {};
+    const goal = Math.max(0, Math.round(Number(q.goal) || 0));
+    const filled = Math.max(0, Math.round(Number(q.filled) || 0));
+    const L = this.stampLayoutApi();
+    const mk = (i, g) => {
+      const c = cellFn(i, g) || {};
+      const lean = Number(g.rot) || 0;
+      c.pos = (g.style || '') + (lean ? 'transform:rotate(' + (Math.round(lean * 100) / 100) + 'deg);' : '');
+      return c;
+    };
+    if (L) {
+      let r = null;
+      try { r = L.compute(q); } catch (e) { r = null; }
+      if (r && r.ok && Array.isArray(r.cells)) {
+        const p = r.path;
+        /* rowCounts travels with rows/cols because it — not `rows` — is the
+           STRUCTURAL FINGERPRINT: 8 over three rows is 3/3/2, and 'three rows'
+           alone does not say that. It is what summary() is built from, and it
+           is what the acceptance test compares across the five boxes. Passing
+           it up costs nothing and means this file can PROVE the strip it drew
+           matches the pass, instead of asserting it in a comment. */
+        return { ok: true, rowStyle: r.containerStyle, size: r.size, rows: r.rows, cols: r.cols,
+          rowCounts: Array.isArray(r.rowCounts) ? r.rowCounts : [],
+          layout: r.layout, family: r.family, fellBack: !!r.fellBack, overflow: !!r.overflow,
+          cells: r.cells.map(g => mk(g.i, g)),
+          /* the trail's connecting line. The module hands over an SVG `d`; the
+             stroke, the colour, the dash and the z-order are this file's. */
+          hasPath: !!p, noPath: !p,
+          pathD: p ? p.d : '', pathDone: p ? p.dFilled : '',
+          pathStyle: p ? p.svgStyle : '', pathBox: p ? p.viewBox : '0 0 1 1',
+          summary: L.summary(r, q.lang) };
+      }
+    }
+    /* ── no module · the flex row exactly as it shipped ─────────────────── */
+    const fb = q.fallback || {};
+    const size = Math.max(1, Math.round(Number(fb.size || q.size || 22)));
+    return { ok: false, rowStyle: fb.rowStyle || '', size, rows: 1, cols: goal,
+      rowCounts: goal > 0 ? [goal] : [],
+      layout: 'row', family: 'auto', fellBack: false, overflow: false,
+      cells: Array.from({ length: goal }, (_, i) => mk(i, {
+        i, row: 0, col: i, size, rot: 0, dy: 0, filled: i < filled,
+        next: i === filled && filled < goal, style: 'flex-shrink:0;display:inline-flex;' })),
+      hasPath: false, noPath: true, pathD: '', pathDone: '', pathStyle: '', pathBox: '0 0 1 1',
+      summary: '' };
+  }
+  /* ══ THE PICKER · ONE BUILDER, TWO OWNERS ════════════════════════════════
+     The wizard and the card editor are deliberately separate implementations
+     of the RULES everywhere else in this file, and that is right — they answer
+     to different authorities (birth vs. a live card). But they must not be two
+     separate DRAWINGS of one arrangement, or the preview a merchant chooses
+     from and the preview they check a week later can drift apart. So the tile
+     is built once, here, and each owner hands in its own `pick`.
+
+     IT SHOWS THE REAL THING. The card's real goal, the card's real stamp art,
+     positioned by the same module the wallet pass uses — not a schematic and
+     not an icon, because a merchant choosing a layout is choosing what their
+     customer will open. The caption under each tile is built by the module
+     from the row breakdown it just drew, so the sentence cannot contradict the
+     picture above it.
+
+     AND — THE PART THAT USED TO BE FALSE — THE TILE IS NOW A PROMISE. A tile
+     is drawn in a 176x76 thumbnail and the card is drawn in a 352-wide pass,
+     and under v1 the box chose the row count, so 'auto' at goal 6 offered one
+     row of six in the tile and the pass then drew two rows of three. The
+     merchant picked a picture the card would not draw. Structure is now a
+     function of (layout, goal) alone, so the tile's arrangement IS the card's
+     arrangement, in every surface, at every goal, in both directions. That is
+     not this file's claim to make and there is no matrix in this tree to point
+     at: it holds because WASLA_STAMP_LAYOUT.structure(id, goal) TAKES NO BOX
+     ARGUMENT, so there is no box for two surfaces to differ by — see the
+     ACCEPTANCE paragraph at the head of wasla-stamp-layout.js, which is the
+     contract this depends on. The only thing this box still decides is how big the stamps
+     come out, which is why SURFACES marks the tile judge:false — it is a
+     comparison thumbnail, and a merchant judges LEGIBILITY from the pass
+     preview beside it, not from a 24px cell.
+
+     ONLY LEGIBLE OPTIONS APPEAR. optionsFor(goal) is the complete and only
+     list; three rows at goal 4 is not offered because it is not a card, and
+     one row of twelve is not offered because it is mud. Nothing here writes a
+     goal range down — every range is derived by the module. */
+  layoutPicker(o) {
+    const q = o || {};
+    const goal = Math.max(1, Math.round(Number(q.goal) || 1));
+    const lang = q.lang === 'ar' ? 'ar' : 'en';
+    /* the CURRENT choice as it will really render — a stored layout the goal
+       has since invalidated ticks 'Automatic', which is what the strip draws */
+    const cur = this.layoutInUse(q.current, goal);
+    const style = this.stampKey(q.style);
+    const ink = q.color || '#26262B';
+    /* THE PREVIEW BOX IS SIZED BY WHAT MUST BE TELLABLE APART, not by what
+       fits. At 132x54 every two-row layout drew the same picture — the zigzag
+       step and the trail's line were both under two pixels — so a merchant
+       comparing tiles was reading captions, not cards. This box is wide enough
+       for the widest offer (six columns at goal 12: 6*24 + 5*4 = 164 into 176)
+       and tall enough for three rows (3*22 + 2*4 = 74 into 76), at a cell size
+       where the module's own decorations are visible. Same box for every tile,
+       so the layouts are actually comparable.
+       IT STEERS NOTHING. This box now buys exactly one thing — the cell size,
+       clamped at 24 — and it is the same box in SURFACES, where it is the one
+       entry marked judge:false. If it is ever changed, change it there in the
+       same commit, or the module will be judging legibility in a box nothing
+       draws in. */
+    const BOX = { w: 176, h: 76 };
+    const shown = q.filled === undefined ? Math.max(1, Math.round(goal / 2)) : Math.min(goal, Math.max(0, q.filled));
+    return this.layoutOptionsFor(goal).map((e, k) => {
+      const on = cur === e.id;
+      const strip = this.stampStrip({
+        layout: e.id, goal, filled: shown, box: BOX, gap: { x: 4, y: 4 },
+        maxSize: 24, minSize: 6, dir: q.dir, lang
+      }, (i, g) => this.stampCell({
+        i, seed: 5, size: g.size, filled: g.filled, style, photo: true,
+        disc: this.hexA(ink, on ? .95 : .55), ink: '#FFFFFF',
+        inner: 'rgba(0,0,0,.17)', ring: on ? '#C96A14' : '#93887A',
+        /* no punch and no pulse in a picker: seven tiles animating at once is
+           a fairground, and the merchant is comparing shapes, not motion */
+        next: false
+      }));
+      return { id: e.id, on,
+        name: this.layoutName(e.id, lang), hint: this.layoutHint(e.id, lang),
+        /* DERIVED from the rows this tile just drew, never typed */
+        summary: strip.summary,
+        cells: strip.cells, previewStyle: strip.rowStyle,
+        hasPath: strip.hasPath, pathD: strip.pathD, pathDone: strip.pathDone,
+        pathStyle: strip.pathStyle, pathBox: strip.pathBox,
+        pathInk: this.hexA(ink, .3), pathDoneInk: this.hexA(ink, .75),
+        tile: 'cursor:pointer;width:202px;display:flex;flex-direction:column;align-items:center;gap:8px;'
+          + 'border:2px solid ' + (on ? '#E88024' : '#E7E0D5') + ';background:' + (on ? '#FDF4EC' : '#FFFFFF')
+          + ';border-radius:14px;padding:11px 12px 12px;transition:border-color .2s,background .2s,transform .2s;'
+          + 'animation:' + ('popIn .34s cubic-bezier(.22,.61,.36,1) ' + (0.04 * k + 0.04) + 's both') + ';',
+        boxStyle: 'background:' + this.hexA(ink, .07) + ';border-radius:10px;padding:4px 5px;',
+        nameStyle: 'font-size:11.5px;font-weight:' + (on ? 800 : 700) + ';color:' + (on ? '#C96A14' : '#5D5348') + ';text-align:center;line-height:1.25;',
+        pick: q.pick ? q.pick(e.id) : (() => {}) };
+    });
+  }
+  /* ══ HISTORICAL · THE BOX-SOLVER THIS FEATURE EXISTS TO REPLACE ══════════
+     It tries 1/2/3 rows in a given box and keeps whichever gives the biggest
+     cup. That is the v1 idea, and the v1 bug: THE BOX DECIDED THE STRUCTURE,
+     so one card drew a different shape on every surface.
+
+     TWO SENTENCES THAT USED TO SIT HERE ARE NOW FALSE, AND WERE DELETED
+     RATHER THAN SOFTENED:
+       "wasla-stamp-layout.js reproduces this algorithm exactly" — it does
+       not, deliberately. The module's `auto` is one published goal→rows table
+       (1-5 → 1 row, 6-16 → 2, 17+ → 3), which is what this function answered
+       IN THE 258x84 APPLE STRIP and nowhere else. Executed, goals 4..16:
+       identical in 258x84; differs at goals 5, 15 and 16 in the 250x96 demo
+       box; differs at goals 6, 7, 8 in the 250x84 disc box and at 6, 7, 8, 9
+       in the 250x96 disc box — where this function answers ONE ROW and the
+       module answers two, which is precisely the divergence the pass and the
+       till used to show each other.
+       "and is the live path" — it is not. It has NO CALLER. stampStrip()'s
+       no-module branch inlines the plain flex row directly, because with the
+       module absent there are no layouts to arrange and a wrap solver would
+       be arranging nothing.
+
+     So this is kept as READABLE HISTORY of what the geometry used to be, and
+     as the shape a reviewer can diff the module against. Do not call it. If
+     you want rows and columns, ask WASLA_STAMP_LAYOUT.structure(id, goal) —
+     it needs no box, which is the entire point. */
   fitStamps(n, W, H, gx, gy, cap) {
     let best = { size: 0, cols: n, rows: 1 };
     for (let r = 1; r <= 3; r++) {
@@ -5918,6 +6295,7 @@ class Component extends DCLogic {
         capBanner: 'Banner swapped — cropped to both wallet specs.',
         capBannerOff: 'Banner removed — the card goes back to clean color.',
         capStamp: 'Stamp style changed — every stamp on this card redraws.',
+        capLayout: 'Stamp layout changed — the pass and the till rearrange together.',
         capBranchEd: 'Branches updated — scanners follow this list from the next scan.',
         capFieldEd: 'Signup fields updated — the join page redraws.',
         capLinkOver: '{label} now carries this card’s own value.',
@@ -5941,6 +6319,26 @@ class Component extends DCLogic {
         wRecPending: 'Pick one from each row and we point at a tile.',
         stName: { coffee: 'Coffee', dessert: 'Dessert', burger: 'Burger', salon: 'Salon', flower: 'Flower', star: 'Star', drive: 'Drive', classic: 'Classic' },
         stStyleLabel: 'Stamp style — lands on every stamp', stStyleUpload: 'Upload your own',
+        /* ── the stamp LAYOUT: where the stamps sit, as against what they look
+           like. Every option name and one-liner in the picker comes from
+           wasla-stamp-layout.js, in both languages, so the wizard and the card
+           editor cannot end up calling one arrangement two things. Only the
+           framing below belongs to this file. */
+        stLayoutLabel: 'Stamp layout — how they sit on the card',
+        stLayoutNote: 'Only the arrangements that stay legible at this goal are offered, so the list changes when the goal does.',
+        stLayoutNow: 'On the pass now',
+        stLayoutDropped: 'The {layout} arrangement does not fit this goal — the pass is drawing Automatic.',
+        stLayoutReset: 'The {layout} arrangement does not fit this goal — back to Automatic.',
+        /* THE STAGED GOAL, SAID OUT LOUD RATHER THAN APPLIED. The card editor
+           offers, ticks and captions at the LIVE goal, because the layout it
+           writes is live; a goal waiting on Wasla is a forthcoming change and
+           these two lines are the whole of how it appears. {shape} is the
+           module's own row breakdown at the proposed goal, so this sentence
+           cannot describe an arrangement the approved card would not draw. */
+        stLayoutAtGoal: 'At your proposed goal of {n} this becomes {shape} — today’s card keeps its arrangement until Wasla approves the new goal.',
+        stLayoutAtGoalDrop: 'The {layout} arrangement does not fit your proposed goal of {n} — today’s card keeps it, and if Wasla approves the new goal the pass falls back to Automatic.',
+        edStampLayoutLabel: 'Stamp layout',
+        edLayoutHint: 'Instant — the arrangement reaches the wallet pass and the till on the next refresh. It changes nothing a customer has already earned.',
         /* the tile caption's three honest states — see tileRun(). A per-type
            sentence used to sit here naming accounts nothing in the data
            supports; the name is now filled from the evidence or not at all. */
@@ -6248,6 +6646,12 @@ class Component extends DCLogic {
           type: 'Type chosen — the whole pass is rebuilt around it.',
           color: 'Brand color updated — both passes recolor.',
           stamp: 'Stamp style updated — it lands on every stamp.',
+          /* NOT "both passes". The Google preview two panes over is a 16px
+             thumbnail row, capped at ten discs, and it is deliberately outside
+             the layout module — it draws layout 'row' whatever the merchant
+             picks. A toast that announced it rearranging was describing a
+             thing the screen beside it visibly does not do. */
+          layout: 'Layout updated — the Apple strip and the till follow it. The Google row stays a single line.',
           goal: 'Goal is now {n} — the strip redraws.',
           banner: 'Banner on both passes — cropped to each spec.',
           bannerOff: 'Banner removed — the passes go back to plain color.',
@@ -6667,6 +7071,7 @@ class Component extends DCLogic {
         capBanner: 'بُدّل البانر — مقصوص لمواصفات المحفظتين.',
         capBannerOff: 'أُزيل البانر — البطاقة تعود للون الصافي.',
         capStamp: 'تغيّر شكل الختم — كل ختم على هذه البطاقة يُعاد رسمه.',
+        capLayout: 'تغيّر ترتيب الأختام — البطاقة والكاشير يُعاد ترتيبهما معاً.',
         capBranchEd: 'تحدّثت الفروع — الماسحات تتبع هذه القائمة من المسح التالي.',
         capFieldEd: 'تحدّثت حقول التسجيل — صفحة الانضمام تُعاد رسمها.',
         capLinkOver: '{label} يحمل الآن قيمة هذه البطاقة.',
@@ -6690,6 +7095,30 @@ class Component extends DCLogic {
         wRecPending: 'واحدة من كل صف، ونشير إلى بطاقة.',
         stName: { coffee: 'قهوة', dessert: 'حلوى', burger: 'برغر', salon: 'صالون', flower: 'وردة', star: 'نجمة', drive: 'سيارة', classic: 'كلاسيكي' },
         stStyleLabel: 'شكل الختم — يهبط على كل ختم', stStyleUpload: 'ارفع ختمك',
+        stLayoutLabel: 'ترتيب الأختام — كيف تجلس على البطاقة',
+        stLayoutNote: 'لا تُعرض إلا الترتيبات التي تبقى واضحة عند هذا الهدف، فالقائمة تتغيّر مع تغيّر الهدف.',
+        stLayoutNow: 'على البطاقة الآن',
+        /* ── AGREEMENT · WHY THESE TWO OPEN WITH «ترتيب» ────────────────────
+           {layout} is a layout NAME, and two of the seven are not singular:
+           «صفّان» is dual and «ثلاثة صفوف» is a plural — and those two are
+           precisely the ones a goal change strips of their validity, so they
+           are the names that actually land here. '{layout} لا يناسب' put a
+           masculine-singular verb on a dual and on a plural subject: «صفّان لا
+           يناسب» wants «لا يناسبان», «ثلاثة صفوف لا يناسب» wants «لا تناسب».
+           Rather than conjugate the verb per name — three spellings of one
+           sentence, one of which will be wrong the day an eighth layout is
+           added — the NAME is quoted and the subject is the singular «ترتيب».
+           The verb then agrees with «ترتيب» whatever the name inside is, and
+           the layout names keep the numeral-noun agreement the module already
+           gets right (صف واحد / صفّان / ثلاثة صفوف). */
+        stLayoutDropped: 'ترتيب «{layout}» لا يناسب هذا الهدف — البطاقة ترسم الترتيب التلقائي.',
+        stLayoutReset: 'ترتيب «{layout}» لا يناسب هذا الهدف — عدنا إلى التلقائي.',
+        /* الهدف المقترح يُعرَض ولا يُطبَّق — انظر النسخة الإنجليزية. {shape} هو
+           تفصيل الصفوف من الوحدة نفسها عند الهدف المقترح، والأرقام لاتينية. */
+        stLayoutAtGoal: 'عند الهدف المقترح {n} يصبح الشكل: {shape} — وبطاقة اليوم تحتفظ بترتيبها حتى توافق وصلة على الهدف الجديد.',
+        stLayoutAtGoalDrop: 'ترتيب «{layout}» لا يناسب الهدف المقترح {n} — بطاقة اليوم تحتفظ به، وإن وافقت وصلة على الهدف الجديد رسمت البطاقة الترتيب التلقائي.',
+        edStampLayoutLabel: 'ترتيب الأختام',
+        edLayoutHint: 'فوري — الترتيب يصل بطاقة المحفظة والكاشير مع التحديث التالي، ولا يمسّ شيئاً كسبه الزبون.',
         wRunsPeer: 'فعّالة اليوم عند {c}', wRunsYours: 'فعّالة اليوم على بطاقتك {c}', wRunsNobody: 'لا أحد على وصلة يستخدم هذا النوع بعد',
         wWhatItIs: 'ما هي', wAtCounter: 'عند الكاونتر', wGoodFor: 'مناسبة لـ', wDesignThis: 'صمّم هذه البطاقة ←',
         wImpactNote: 'أرقام معتادة لبطاقات مشابهة عبر وصلة — بطاقتك ستكتب أرقامها.',
@@ -6986,6 +7415,10 @@ class Component extends DCLogic {
           type: 'اختير النوع — البطاقة كلها أُعيد بناؤها حوله.',
           color: 'تحدّث لون الهوية — البطاقتان تتلوّنان.',
           stamp: 'تحدّث شكل الختم — يهبط على كل ختم.',
+          /* الجملة الإنجليزية المقابلة تشرح لماذا لم تعد "البطاقتان": صف جوجل
+             ثمبنيل بعرض 16px خارج وحدة الترتيب عمداً. وتُصاغ هنا بـ"أمّا…فـ"
+             لا بواو العطف، لأن "وصف" تُقرأ وصفاً لا صفّاً. */
+          layout: 'تحدّث الترتيب — شريط آبل والكاشير يتبعانه، أما صف جوجل فيبقى سطراً واحداً.',
           goal: 'الهدف الآن {n} — الشريط يُعاد رسمه.',
           banner: 'البانر على كلتا البطاقتين — مقصوص لكل مواصفة.',
           bannerOff: 'أُزيل البانر — البطاقتان تعودان للون الصافي.',
@@ -7576,15 +8009,75 @@ class Component extends DCLogic {
        With no art (wasla-stamps.js absent) the strip keeps the drawn discs at
        their old 22px, so nothing else moves. */
     const wPhoto = !!this.stampArt(wStampStyle);
-    const wFit = wPhoto ? this.fitStamps(wiz.goal, 258, 84, 8, 5, 46)
-                        : { size: 22, rowStyle: 'display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;max-width:250px;margin:0 auto;position:relative;' };
-    const wStamps = Array.from({ length: wiz.goal }, (_, i) => this.stampCell({
-      i, seed: stampSeed, size: wFit.size, filled: i < stampsShown, style: wStampStyle, photo: true,
+    /* ── THE ARRANGEMENT THE WIZARD IS DRAWING WITH ────────────────────────
+       `wLayoutWant` is what the merchant last picked; `wLayout` is what will
+       actually render. They differ the moment a goal change strips a layout of
+       its validity — three rows is nonsense at goal 4 — and the difference is
+       shown, not swallowed, so the picker's tick and the strip agree. */
+    const wLayoutWant = this.stampLayoutId(cfg[this.stampLayoutField()]);
+    const wLayout = this.layoutInUse(wLayoutWant, wiz.goal);
+    const wLayoutDropped = wLayoutWant !== 'auto' && wLayout !== wLayoutWant;
+    /* the row breakdown for the caption under the picker, from the layout that
+       will actually RENDER and from the module's box-free structure() — the
+       same accessor the card editor's caption uses, so the two panes cannot
+       describe one card two ways. Empty only when the module is absent. */
+    const wLayoutSummaryLine = this.layoutSummary(wLayout, wiz.goal, st.lang);
+    const wDir = EN ? 'ltr' : 'rtl';
+    /* THE ONE PLACE THE WIZARD'S STAMP GOAL CHANGES. Changing the goal can
+       strip a layout of its validity — three rows is not a card at goal 4 — so
+       the STORED choice is corrected here, at the change, rather than left to
+       disagree with the strip. compute() would render auto either way; what
+       this prevents is the picker going on ticking a shape nothing draws. */
+    const wizGoal = (g) => {
+      const keep = this.layoutValid(wLayoutWant, g);
+      this.setState({ wiz: { ...wiz, goal: g,
+        cfg: keep ? cfg : { ...cfg, [this.stampLayoutField()]: 'auto' } } });
+      this.wnote(keep ? fill((t.wNotes || {}).goal, { n: g })
+        : fill(t.stLayoutReset, { layout: this.layoutName(wLayoutWant, st.lang) }), 'stamp');
+    };
+    /* the cell as this file draws it — colour, hand-stamped tilt, punch and
+       halo. `g` is the module's answer for that cell, so nothing below counts
+       stamps or decides which one is next. */
+    const wCell = (i, g) => this.stampCell({
+      i, seed: stampSeed, size: g.size, filled: g.filled, style: wStampStyle, photo: true,
       disc: 'rgba(255,255,255,.96)', ink: wiz.color, inner: 'rgba(0,0,0,.14)', ring: '#FFFFFF',
-      dy: wPhoto ? 0 : (i % 2 ? 3 : -3), shadow: appleBannerOn, next: i === stampsShown,
-      anim: i < stampsShown ? ('stampPop .42s cubic-bezier(.22,.61,.36,1) ' + ((stampSeed % 11) + i * 30) + 'ms both') : ''
-    }));
-    /* the Google pass shows a tighter, flatter row of the same stamps */
+      dy: wPhoto ? 0 : (i % 2 ? 3 : -3), shadow: appleBannerOn, next: g.next,
+      anim: g.filled ? ('stampPop .42s cubic-bezier(.22,.61,.36,1) ' + ((stampSeed % 11) + i * 30) + 'ms both') : ''
+    });
+    /* ART fills the 258x84 box; the no-art disc row keeps its old pinned 22px
+       inside a 250-wide box, which is the max-width the flex row always had.
+
+       ── WHY THE DISC ROW SAYS fit:'shrink' ────────────────────────────────
+       A pinned 22px cell no longer decides how many stamps fit on a line —
+       the structure is the module's, from (layout, goal). So at any three-row
+       structure the pin simply does not fit: 3*22 + 2*10 = 86px into an 84px
+       box, and the module says so honestly with overflow:true rather than
+       quietly re-wrapping the card into a shape no other surface draws.
+       'shrink' turns the pin into a CAP — kept while it fits, handed back to
+       the solver when it does not — so the card shrinks instead of clipping.
+       Measured, both strips, every offered layout across goals 4..12 in BOTH
+       directions — 106 combinations each: this 250x84 box overflows 14 of them
+       under 'pin' (three rows at goals 6..12, ltr and rtl alike) and 0 under
+       'shrink'; the 250x96 demo strip below overflows 0 either way and carries
+       the flag so a future box change degrades by shrinking rather than by
+       clipping. NOT ONE structure moves in either strip, and Daraj at goal 8
+       stays a pinned 22px 4/4. Re-derivable in a line: compare r.overflow from
+       WASLA_STAMP_LAYOUT.compute() with and without fit:'shrink'. */
+    const wStrip = this.stampStrip(wPhoto
+      ? { layout: wLayout, goal: wiz.goal, filled: stampsShown, box: { w: 258, h: 84 }, gap: { x: 8, y: 5 }, maxSize: 46, dir: wDir, lang: st.lang,
+          fallback: { size: 22, rowStyle: 'display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;max-width:250px;margin:0 auto;position:relative;' } }
+      : { layout: wLayout, goal: wiz.goal, filled: stampsShown, box: { w: 250, h: 84 }, gap: 10, size: 22, fit: 'shrink', dir: wDir, lang: st.lang,
+          fallback: { size: 22, rowStyle: 'display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;max-width:250px;margin:0 auto;position:relative;' } },
+      wCell);
+    const wStamps = wStrip.cells;
+    /* ── THE GOOGLE ROW IS A THUMBNAIL, NOT THE CARD ───────────────────────
+       16px discs on a saturated field, left-aligned, capped at ten. The layout
+       module's own contract carves this row out by name: a merchant's zigzag
+       is a choice about the pass their customer opens, and reproducing it at
+       16px in a corner would be noise, not agreement. It stays a plain flat
+       row — which IS layout 'row' — and it is deliberately not a fourth
+       implementation of the geometry, because there is no geometry to solve:
+       one line, fixed size, no wrap decision. */
     const wStampsG = Array.from({ length: Math.min(wiz.goal, 10) }, (_, i) => this.stampCell({
       i, seed: stampSeed + 3, size: 16, filled: i < stampsShown, style: wStampStyle,
       disc: 'rgba(255,255,255,.96)', ink: wiz.color, inner: 'rgba(0,0,0,.14)', ring: '#FFFFFF',
@@ -7594,7 +8087,14 @@ class Component extends DCLogic {
     const mkCfgChips = (list, key) => list.map(v => ({ label: v, pick: () => { setCfg({ [key]: v }); this.wnote((t.wNotes || {}).rules, 'edit'); }, br: cfg[key] === v ? '#E88024' : '#E7E0D5', bg: cfg[key] === v ? '#FDF4EC' : '#FFFFFF', fg: cfg[key] === v ? '#C96A14' : '#5D5348' }));
     const tierDots = ['#AEB7C2', '#E8B824', '#6E37A0', '#B87333'];
     const typeRows = {
-      stamps: [['Stamps to a reward', String(wiz.goal)], ['Stamp style', (t.stName || {})[wStampStyle] || wStampStyle], ['The reward', wReward], ['Earning guard', cfg.cap || '']],
+      /* the layout row is printed from the layout that will actually RENDER,
+         never from the stored request, and its row breakdown is derived by the
+         module — so the reviewer's list, the strip above it and the card that
+         gets born cannot describe three different arrangements. English, like
+         guardNote: these rows are a wire value the console reads. */
+      stamps: [['Stamps to a reward', String(wiz.goal)], ['Stamp style', (t.stName || {})[wStampStyle] || wStampStyle],
+        ['Stamp layout', [this.layoutName(wLayout, 'en'), this.layoutSummary(wLayout, wiz.goal, 'en')].filter(Boolean).join(' · ')],
+        ['The reward', wReward], ['Earning guard', cfg.cap || '']],
       cashback: [['Cashback rate', cfg.rate + '%'], ['Redeem from', 'JOD ' + cfg.min], ['Balance expires', cfg.bexp || 'Never']],
       points: [['Points per JOD', '×' + cfg.per], ['The ladder', ladder.map(r => r.name + ' (' + r.cost + ')').join(' · ')]],
       discount: [['Standing discount', '−' + cfg.pct + '%'], ...((cfg.fine || '').trim() ? [['Fine print', cfg.fine]] : [])],
@@ -7659,21 +8159,45 @@ class Component extends DCLogic {
     const dAnimHead = reAnim('tickUp', '.45s', dT * 5 + 3);
     const dAnimBig = reAnim('tickUp', '.5s', dT * 7 + 5);
     let dmHeadLabel = hd[0], dmHeadValue = hd[1], dmBigLabel = modelHero[0], dmBigValue = modelHero[1], dmBigSize = modelHero[2];
-    let dmSub = '', dmChips = [], dmStamps = [], dmIsStamps = isStamps, dmFit = { size: 20, rowStyle: '' };
+    let dmSub = '', dmChips = [], dmStamps = [], dmIsStamps = isStamps;
+    let dmStrip = { rowStyle: '', hasPath: false, noPath: true, pathD: '', pathDone: '', pathStyle: '', pathBox: '0 0 1 1' };
     if (wtype === 'stamps') {
       const cyc = wiz.goal + 3, got = Math.min(dT % cyc, wiz.goal);
       dmHeadValue = got + ' / ' + wiz.goal;
       /* the live demo beats once a second — a CSS animation only replays when
          its NAME changes, so the landing stamp alternates stampPop/stampPopB */
       const landKf = (dT % 2) ? 'stampPopB' : 'stampPop';
-      /* same rule as the Apple strip: art fills the box, discs keep 20px */
-      dmFit = wPhoto ? this.fitStamps(wiz.goal, 250, 96, 8, 6, 48)
-                     : { size: 20, rowStyle: 'display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;max-width:250px;margin:0 auto;position:relative;' };
-      dmStamps = Array.from({ length: wiz.goal }, (_, i) => this.stampCell({
-        i, seed: 11, size: dmFit.size, filled: i < got, style: wStampStyle, photo: true,
+      /* ── THE SAME ARRANGEMENT, AND NOW THAT IS A GUARANTEE ──────────────
+         These two previews sit one above the other on step 2, so they must
+         draw one card. They did not. Both asked for `wLayout`, but under v1
+         the BOX decided the row count, and these are different boxes — 258x84
+         here against 250x96 below — so 'auto' at goal 6 came back as two rows
+         of three up there and one row of six down here, on the same screen.
+         The comment that used to sit at this line asserted they matched; the
+         pixels did not.
+         Under v2 the box cannot reach the structure at all: rows, cols,
+         rowCounts and the concrete layout come from (layout, goal) alone, so
+         passing the same `wLayout` and the same `wiz.goal` is now sufficient
+         and the only thing that differs is the cell SIZE. Not because two call
+         sites were compared once — because structure(id, goal) takes no box
+         argument, so these two boxes have nothing to disagree with.
+         Art fills the 250x96 box; the no-art disc row keeps its old 20px, as
+         a cap rather than a pin for the reason spelled out at the Apple strip
+         above (this box is taller, so it never actually overflows today — the
+         flag is here so a future box change degrades by shrinking, not by
+         clipping stamps off the bottom of the card). */
+      const dmCell = (i, g) => this.stampCell({
+        i, seed: 11, size: g.size, filled: g.filled, style: wStampStyle, photo: true,
         disc: 'rgba(255,255,255,.96)', ink: wiz.color, inner: 'rgba(0,0,0,.14)', ring: '#FFFFFF',
-        dy: wPhoto ? 0 : (i % 2 ? 3 : -3), next: i === got,
-        anim: i === got - 1 ? (landKf + ' .5s cubic-bezier(.22,.61,.36,1) both') : '' }));
+        dy: wPhoto ? 0 : (i % 2 ? 3 : -3), next: g.next,
+        anim: i === got - 1 ? (landKf + ' .5s cubic-bezier(.22,.61,.36,1) both') : '' });
+      dmStrip = this.stampStrip(wPhoto
+        ? { layout: wLayout, goal: wiz.goal, filled: got, box: { w: 250, h: 96 }, gap: { x: 8, y: 6 }, maxSize: 48, dir: wDir, lang: st.lang,
+            fallback: { size: 20, rowStyle: 'display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;max-width:250px;margin:0 auto;position:relative;' } }
+        : { layout: wLayout, goal: wiz.goal, filled: got, box: { w: 250, h: 96 }, gap: 9, size: 20, fit: 'shrink', dir: wDir, lang: st.lang,
+            fallback: { size: 20, rowStyle: 'display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;max-width:250px;margin:0 auto;position:relative;' } },
+        dmCell);
+      dmStamps = dmStrip.cells;
       dmSub = got >= wiz.goal ? t.wDemoReady : fill(t.wDemoToGo, { n: wiz.goal - got });
     } else if (wtype === 'cashback') {
       dmHeadValue = 'JOD ' + money(3.20 + (dT % 9) * 0.35);
@@ -7843,6 +8367,11 @@ class Component extends DCLogic {
       branch: (wBranches.length ? wBranches : (Acc.branches || [])).join(' · '),
       branches: wBranches.slice(),
       stampStyle: this.stampKey((wiz.cfg || {}).icon),
+      /* the arrangement, beside the art — this is the field the Customer pass
+         and the Scanner till read (WASLA_STAMP_LAYOUT.fromCard). Written from
+         the LIVE choice, so a layout the goal invalidated is born as 'auto'
+         rather than as a promise the pass cannot keep. */
+      [this.stampLayoutField()]: wLayout,
       fields: { ...wFields },
       customFields: wCustomFields.map(f => ({ label: f.label, type: f.type || 'Text', req: !!f.req })),
       cfg: { ...(wiz.cfg || {}) },
@@ -7876,6 +8405,9 @@ class Component extends DCLogic {
       color: card.color, color2: card.color2, initial: card.initial,
       tagline: card.tagline, goal: card.goal, reward: card.reward,
       branches: card.branches, stampStyle: card.stampStyle,
+      /* the arrangement travels with the art, under the module's own field
+         name, so an approved card lands in the console carrying both */
+      [this.stampLayoutField()]: card[this.stampLayoutField()],
       fields: card.fields, customFields: card.customFields,
       cfg: card.cfg, rules: card.rules,
       by: Acc.owner || '', submitted: t.pdJustNow,
@@ -8746,6 +9278,65 @@ class Component extends DCLogic {
         isReal: real, notReal: !real, realSrc: real ? sArt.filled : '',
         realStyle: 'width:64%;height:64%;object-fit:contain;display:block;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35));',
         pick: g(() => { putMod({ stampStyle: id }); edNote(t.capStamp, 'instant'); this.say(t.capStamp); }) }; });
+    /* ══ THE LAYOUT PICKER, ON A LIVE CARD ════════════════════════════════
+       The editor's half. Building only the wizard's would reproduce the
+       "wizard configures it, the editor cannot touch it" bug this file has
+       already fixed for every other setting — and it would be worse here,
+       because the arrangement is the one stamp setting a merchant will want to
+       change AFTER watching customers hold the card.
+
+       INSTANT, exactly like the stamp style beside it, and for the same
+       reason: rearranging the picture on a pass takes nothing away from
+       anybody. It touches no count, no guard and no redemption cap, so there
+       is nothing for Wasla to review. It goes through putMod() so view-as
+       stays look-don't-touch.
+
+       ══ IT RUNS ON THE LIVE GOAL, AND THAT IS THE WHOLE POINT ═══════════
+       Two writes sit in this one pane and they have DIFFERENT LIFECYCLES.
+       The goal stepper stages a PROPOSAL: `ed.goal` moves, the card keeps
+       running on `ac.goal`, and nothing reaches a wallet until Wasla approves
+       it. The layout is INSTANT: putMod() is on the pass and the till at the
+       next refresh, with nothing in between.
+
+       Judging this picker at `ed.goal` mixed the two, and the result was not
+       cosmetic. A merchant staging 8 → 12 was offered three rows — an
+       arrangement that only exists at 12 — ticked it, and the LIVE card, still
+       at goal 8, immediately rearranged into a shape chosen for a card that
+       does not exist yet. An instant write was being judged against a goal
+       nobody had approved.
+
+       So everything that OFFERS, TICKS or CLAIMS runs on `acLiveGoal`: the
+       tile list, the tick, "On the pass now" and the drop warning all describe
+       the card a customer is holding right now, which is the card this pick
+       will actually change. The staged goal is not hidden — it is SHOWN below
+       the caption as a forthcoming change ("at your proposed 12 this becomes
+       …"), or, when it would strip the stored arrangement of its validity, as
+       a plain warning that approval will fall the pass back to Automatic.
+       Stated, never pre-applied. */
+    const acLayoutWant = this.cardLayout(ac, acMod);
+    /* the goal the card is RUNNING on. Never ed.goal: that is a proposal, and
+       a proposal must not decide what an instant control writes. */
+    const acLiveGoal = Math.max(1, Math.round(Number(ac.goal || 8)));
+    const acStagedGoal = Math.max(1, Math.round(Number(ed.goal || ac.goal || 8)));
+    const acGoalStaged = ac.type === 'stamps' && acStagedGoal !== acLiveGoal;
+    const acLayout = this.layoutInUse(acLayoutWant, acLiveGoal);
+    const acLayoutDropped = acLayoutWant !== 'auto' && acLayout !== acLayoutWant;
+    const edLayoutSummaryLine = this.layoutSummary(acLayout, acLiveGoal, st.lang);
+    /* the forthcoming change, STATED. Two honest cases and no third: either the
+       stored arrangement survives the proposed goal and simply reshapes — a
+       different row breakdown for the same layout — or it does not survive it
+       at all, and an approval would drop the card to Automatic. Both are read
+       off the same module, at the staged goal, and neither writes anything. */
+    const acLayoutNextDrops = acGoalStaged && acLayoutWant !== 'auto'
+      && !this.layoutValid(acLayoutWant, acStagedGoal);
+    const acLayoutNextSummary = acGoalStaged
+      ? this.layoutSummary(this.layoutInUse(acLayoutWant, acStagedGoal), acStagedGoal, st.lang)
+      : '';
+    const edLayoutOpts = this.layoutPicker({
+      goal: acLiveGoal, current: acLayoutWant, style: acStampStyle, color: ac.color || '#26262B',
+      dir: EN ? 'ltr' : 'rtl', lang: st.lang,
+      pick: (id) => g(() => { putMod({ [this.stampLayoutField()]: id }); edNote(t.capLayout, 'instant'); this.say(t.capLayout); })
+    });
     // ── the account-links editor behind Settings → Links
     /* ══ A SWITCH FOR A LINK THAT DOES NOT EXIST ═══════════════════════════
        "Include Instagram on cards by default" was rendered ON, in green, above
@@ -9730,7 +10321,9 @@ class Component extends DCLogic {
       recPick: () => { if (!recId) return; this.setState({ wiz: { ...wiz, typeId: recId, step: 2, reward: '', cfg: this.cfgDefaults(recId) }, demoT: 0 }); this.wnote((t.wNotes || {}).type, 'type'); },
       impactTiles, runningToday, typeFaq,
       runNone, runSome: !runNone, runTitle, runLine, runNote,
-      dmIsStamps, dmNotStamps: !dmIsStamps, dmStamps, dmStampRow: dmFit.rowStyle, dmHeadLabel, dmHeadValue, dmHeadAnim: dAnimHead,
+      dmIsStamps, dmNotStamps: !dmIsStamps, dmStamps, dmStampRow: dmStrip.rowStyle, dmHeadLabel, dmHeadValue, dmHeadAnim: dAnimHead,
+      dmTrailOn: dmStrip.hasPath, dmTrailD: dmStrip.pathD, dmTrailDone: dmStrip.pathDone,
+      dmTrailStyle: dmStrip.pathStyle, dmTrailBox: dmStrip.pathBox,
       dmBigLabel, dmBigValue, dmBigSize, dmBigAnim: dAnimBig, dmSub, dmChips, dmHasChips: dmChips.length > 0,
       dmLine: (t.wDemoLine || {})[wtype] || '',
       wLogo: wLogoRaw, wLogoOn: !!wLogoRaw, wLogoOff: !wLogoRaw,
@@ -9787,10 +10380,20 @@ class Component extends DCLogic {
       wRewardRaw: wiz.reward, setWReward: (e) => { this.setState({ wiz: { ...wiz, reward: e.target.value } }); this.wnote((t.wNotes || {}).reward, 'edit'); },
       rewardPlaceholder: rewardDefaults[wiz.typeId || 'stamps'] || '',
       swatches, wColor: wiz.color, wColor2: this.shade(wiz.color), wName, wArName: wiz.ar || '—',
+      /* ── THE GOAL RE-VALIDATES THE LAYOUT ────────────────────────────────
+         Picking three rows at goal 12 and then dropping the goal to 4 must not
+         leave three rows selected: the module would silently render auto and
+         the picker would go on ticking a shape nothing draws. So the STORED
+         choice is corrected here, at the one place the goal changes, rather
+         than papered over at render time. Both steppers go through it. */
       wGoal: wiz.goal,
-      goalUp: () => { const g = Math.min(12, wiz.goal + 1); this.setState({ wiz: { ...wiz, goal: g } }); this.wnote(fill((t.wNotes || {}).goal, { n: g }), 'stamp'); },
-      goalDown: () => { const g = Math.max(4, wiz.goal - 1); this.setState({ wiz: { ...wiz, goal: g } }); this.wnote(fill((t.wNotes || {}).goal, { n: g }), 'stamp'); },
-      isStampsType: isStamps, notStampsType: !isStamps, wStamps, wStampRow: wFit.rowStyle, wHeadLabel: hd[0], wHeadValue: headVal,
+      goalUp: () => wizGoal(Math.min(12, wiz.goal + 1)),
+      goalDown: () => wizGoal(Math.max(4, wiz.goal - 1)),
+      isStampsType: isStamps, notStampsType: !isStamps, wStamps, wStampRow: wStrip.rowStyle, wHeadLabel: hd[0], wHeadValue: headVal,
+      /* the trail's connecting line — the module's `d`, this file's ink */
+      wTrailOn: wStrip.hasPath, wTrailOff: wStrip.noPath,
+      wTrailD: wStrip.pathD, wTrailDone: wStrip.pathDone,
+      wTrailStyle: wStrip.pathStyle, wTrailBox: wStrip.pathBox,
       wPrimaryLabel: modelHero[0], wPrimaryValue: modelHero[1], wPrimarySize: modelHero[2], wReward,
       wGTypeLabel: selType.name || '', wGTitle: model.g || '',
       isCashbackType: wtype === 'cashback', isPointsType: wtype === 'points', isDiscountType: wtype === 'discount', isCouponType: wtype === 'coupon', isVipType: wtype === 'vip', isChallengeType: wtype === 'challenge', isMembershipType: wtype === 'membership',
@@ -9814,6 +10417,41 @@ class Component extends DCLogic {
           isReal: real, notReal: !real, realSrc: real ? sArt.filled : '',
           realStyle: 'width:64%;height:64%;object-fit:contain;display:block;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35));',
           pick: () => { setCfg({ icon: id }); this.wnote((t.wNotes || {}).stamp, 'stamp'); } }; }),
+      /* ── THE LAYOUT PICKER · where the founder actually chooses ───────────
+         Same component as the card editor's, pointed at the wizard's draft.
+         Every tile is a live mini-pass at THIS goal in THIS stamp style, so
+         the merchant is comparing cards, not diagrams. */
+      layoutOpts: this.layoutPicker({
+        goal: wiz.goal, current: wLayoutWant, style: wStampStyle, color: wiz.color,
+        dir: wDir, lang: st.lang,
+        pick: (id) => () => { setCfg({ [this.stampLayoutField()]: id }); this.wnote((t.wNotes || {}).layout, 'stamp'); }
+      }),
+      /* ── "On the pass now · <breakdown>" ─────────────────────────────────
+         ONE FUNCTION FOR BOTH PANES. The wizard used to read this off its own
+         strip while the card editor read it off layoutSummary(), and under v1
+         those were two different boxes and therefore two different sentences.
+         They are now provably the same string — summary(structure(id,goal))
+         equals summary(compute(...)) for every layout across goals 1..40 in
+         both languages — so the wizard calls the same accessor the editor
+         does, and there is no second place for the caption to come from.
+         Guarded, because with the module absent there is no structure to
+         describe and a caption reading "On the pass now · " describes
+         nothing; the tile row above it is empty for the same reason. */
+      wLayoutSummary: wLayoutSummaryLine,
+      wLayoutHasSummary: !!wLayoutSummaryLine,
+      /* WITH NO MODULE THERE IS NO PANEL, not a heading over an empty row.
+         optionsFor() is the complete list of arrangements, so an empty list
+         means there are no arrangements to choose between — and the two
+         sentences above the tiles ("how they sit on the card", "only the
+         arrangements that stay legible at this goal are offered") would then
+         be describing a picker the merchant cannot see. That is the same
+         defect class as the caption that contradicted the picture, one step
+         further out: a sentence with nothing beside it. The strip below still
+         draws its flex row, which is what the surface did before layouts
+         existed. */
+      wHasLayoutPicker: (this.layoutOptionsFor(Math.max(1, Math.round(Number(wiz.goal) || 1))) || []).length > 0,
+      /* a choice this goal cannot carry is SAID, not swallowed */
+      wLayoutDropped, wLayoutDroppedText: fill(t.stLayoutDropped, { layout: this.layoutName(wLayoutWant, st.lang) }),
       uploadStampToast: () => this.say(t.wStampUploadToast),
       stampCapChips: mkCfgChips(['1 / visit', '2 / day', 'No limit'], 'cap'),
       cbRate: cfg.rate, cbRateUp: () => setCfg({ rate: Math.min(15, (cfg.rate || 5) + 1) }), cbRateDown: () => setCfg({ rate: Math.max(1, (cfg.rate || 5) - 1) }),
@@ -10184,6 +10822,37 @@ class Component extends DCLogic {
       removeEdBanner: g(() => { putArt('banner', ''); edNote(t.capBannerOff, 'art'); this.say(t.capBannerOff); }),
       edArtHintLine: fill(t.edArtHint, { name: ac.name || '' }),
       edStampStyles, edStampHintLine: t.edStampHint,
+      edLayoutOpts, edLayoutHintLine: t.edLayoutHint,
+      /* THE CAPTION AND THE TILES ARE NOW ONE ANSWER. This pane used to hold
+         two: the tile captions were solved in the 176x76 thumbnail box and
+         this line in the module's 258x84 reference, about ten pixels apart in
+         the same card, and under v1 those boxes produced different row counts.
+         Structure no longer sees a box, so both come from (layout, goal) and
+         the pane cannot argue with itself. Same accessor as the wizard's
+         caption, and guarded the same way. */
+      edLayoutSummary: edLayoutSummaryLine,
+      edLayoutHasSummary: !!edLayoutSummaryLine,
+      /* and the whole panel — divider, heading, note, tiles, caption, hint —
+         is gone with no module, for the reason spelled out at the wizard's
+         wHasLayoutPicker. Everything else in the Design tab is untouched. */
+      edHasLayoutPicker: (edLayoutOpts || []).length > 0,
+      /* A STAGED GOAL DOES NOT DESTROY A LIVE SETTING, AND IT DOES NOT DRIVE
+         ONE EITHER. This warning is about the card as it runs TODAY: the
+         stored arrangement is not legible at the LIVE goal, so the pass is
+         already drawing Automatic. It is read at acLiveGoal for the same
+         reason the tiles are — the goal above is a proposal and this pane is
+         an instant control. Nothing is written back either way: if Wasla
+         sends the goal change back, the card's own layout is still there. */
+      edLayoutDropped: acLayoutDropped, edLayoutDroppedText: fill(t.stLayoutDropped, { layout: this.layoutName(acLayoutWant, st.lang) }),
+      /* ── the staged goal, SHOWN as a forthcoming change ─────────────────
+         The one place `ed.goal` is allowed near this panel. It describes; it
+         offers nothing, ticks nothing and writes nothing. Suppressed entirely
+         when no goal is staged, and — because the summary is the module's —
+         suppressed with no module rather than printing an empty sentence. */
+      edLayoutNext: acGoalStaged && !acLayoutNextDrops && !!acLayoutNextSummary,
+      edLayoutNextText: fill(t.stLayoutAtGoal, { n: acStagedGoal, shape: acLayoutNextSummary }),
+      edLayoutNextDrop: acLayoutNextDrops,
+      edLayoutNextDropText: fill(t.stLayoutAtGoalDrop, { n: acStagedGoal, layout: this.layoutName(acLayoutWant, st.lang) }),
       /* ── the editor: links (INSTANT) ──────────────────────────────────── */
       edLinkRows, edBackRows, edBackEmpty, edBackHasRows: !edBackEmpty,
       /* ── the editor: branches + signup fields (INSTANT) ────────────────── */
